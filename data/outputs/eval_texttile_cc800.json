@@ -1,0 +1,1376 @@
+[
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 11,
+    "auto_gold": [
+      3,
+      7,
+      8,
+      10
+    ],
+    "pred": [
+      3,
+      4,
+      9,
+      11
+    ],
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 11,
+    "auto_gold": [
+      3,
+      7,
+      8,
+      10
+    ],
+    "pred": [
+      3,
+      6,
+      9,
+      11
+    ],
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 11,
+    "auto_gold": [
+      3,
+      7,
+      8,
+      10
+    ],
+    "pred": [
+      3,
+      6,
+      9,
+      11
+    ],
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 11,
+    "auto_gold": [
+      3,
+      7,
+      8,
+      10
+    ],
+    "pred": [
+      3,
+      6,
+      8,
+      10
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 11,
+    "auto_gold": [
+      3,
+      7,
+      8,
+      10
+    ],
+    "pred": [
+      3,
+      6,
+      8,
+      10
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 11,
+    "auto_gold": [
+      3,
+      7,
+      8,
+      10
+    ],
+    "pred": [
+      3,
+      6,
+      8,
+      10
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      2
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      2
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      2
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      2
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      2
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      2
+    ],
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 5,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "pred": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 5,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "pred": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 5,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "pred": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 5,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "pred": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 5,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "pred": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 5,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      4
+    ],
+    "pred": [
+      2,
+      3,
+      4,
+      5
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3,
+      4
+    ],
+    "P": 0.6666666666666666,
+    "R": 1.0,
+    "F1": 0.8,
+    "P@1": 0.6666666666666666,
+    "R@1": 1.0,
+    "F1@1": 0.8,
+    "domain": "live"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3,
+      4
+    ],
+    "P": 0.6666666666666666,
+    "R": 1.0,
+    "F1": 0.8,
+    "P@1": 0.6666666666666666,
+    "R@1": 1.0,
+    "F1@1": 0.8,
+    "domain": "live"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3,
+      4
+    ],
+    "P": 0.6666666666666666,
+    "R": 1.0,
+    "F1": 0.8,
+    "P@1": 0.6666666666666666,
+    "R@1": 1.0,
+    "F1@1": 0.8,
+    "domain": "live"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3,
+      4
+    ],
+    "P": 0.6666666666666666,
+    "R": 1.0,
+    "F1": 0.8,
+    "P@1": 0.6666666666666666,
+    "R@1": 1.0,
+    "F1@1": 0.8,
+    "domain": "live"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3,
+      4
+    ],
+    "P": 0.6666666666666666,
+    "R": 1.0,
+    "F1": 0.8,
+    "P@1": 0.6666666666666666,
+    "R@1": 1.0,
+    "F1@1": 0.8,
+    "domain": "live"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 4,
+    "auto_gold": [
+      2,
+      3
+    ],
+    "pred": [
+      2,
+      3,
+      4
+    ],
+    "P": 0.6666666666666666,
+    "R": 1.0,
+    "F1": 0.8,
+    "P@1": 0.6666666666666666,
+    "R@1": 1.0,
+    "F1@1": 0.8,
+    "domain": "live"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 6,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "pred": [
+      2,
+      3,
+      4,
+      6
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 6,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "pred": [
+      2,
+      3,
+      5,
+      6
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 6,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "pred": [
+      2,
+      3,
+      5,
+      6
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 6,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "pred": [
+      2,
+      3,
+      5,
+      6
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 6,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "pred": [
+      2,
+      3,
+      5,
+      6
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 6,
+    "auto_gold": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "pred": [
+      2,
+      3,
+      5,
+      6
+    ],
+    "P": 0.75,
+    "R": 0.75,
+    "F1": 0.75,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 3,
+    "auto_gold": [
+      1,
+      2
+    ],
+    "pred": [
+      2,
+      3
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 5,
+    "auto_gold": [
+      2,
+      4
+    ],
+    "pred": [
+      3,
+      4
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 5,
+    "auto_gold": [
+      2,
+      4
+    ],
+    "pred": [
+      3,
+      5
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 5,
+    "auto_gold": [
+      2,
+      4
+    ],
+    "pred": [
+      3,
+      5
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 5,
+    "auto_gold": [
+      2,
+      4
+    ],
+    "pred": [
+      3,
+      5
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 5,
+    "auto_gold": [
+      2,
+      4
+    ],
+    "pred": [
+      3,
+      5
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 5,
+    "auto_gold": [
+      2,
+      4
+    ],
+    "pred": [
+      2,
+      5
+    ],
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.0,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      3
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.2,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      3
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.3,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      3
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.5,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      3
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 0.7,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      3
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "chunk_chars": 800,
+    "alpha": 1.0,
+    "n_chunks": 3,
+    "auto_gold": [
+      2
+    ],
+    "pred": [
+      3
+    ],
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt"
+  }
+]

@@ -1,0 +1,76 @@
+{
+  "chapters": [
+    {
+      "title": "我是二三考研的我是二二年·八百八的基础题",
+      "start": 0.24,
+      "end": 558.19,
+      "indices": [
+        0,
+        1
+      ],
+      "title_zh": "我是二三考研的我是二二年·八百八的基础题",
+      "title_en": "I am a student preparing for the 2023 exam, focusing on basic questions from 2022 with 880 points."
+    },
+    {
+      "title": "为什么说大a的行列是等于0·所以线性代数学到最后它就像拼积木",
+      "start": 558.19,
+      "end": 719.66,
+      "indices": [
+        2,
+        3
+      ],
+      "title_zh": "为什么说大a的行列是等于0·所以线性代数学到最后它就像拼积木",
+      "title_en": "Why is it said that matrix A has a rank of zero, making linear algebra feel like assembling building blocks by the end?"
+    },
+    {
+      "title": "24年考研的一个真题·基础阶段我们就是熟悉概念",
+      "start": 720.44,
+      "end": 1036.17,
+      "indices": [
+        4,
+        5
+      ],
+      "title_zh": "24年考研的一个真题·基础阶段我们就是熟悉概念",
+      "title_en": "A real exam question from 2024; during the foundational stage, we focus on understanding concepts."
+    }
+  ],
+  "ablation": {
+    "alpha": 0.3,
+    "text_dists": [
+      0.8,
+      1.0,
+      0.9090909090909091,
+      1.0,
+      1.0
+    ],
+    "visual_dists": [
+      0.10281980037689209,
+      0.057324767112731934,
+      0.029046058654785156,
+      0.09571689367294312,
+      0.08306747674942017
+    ],
+    "fused_dists": [
+      0.3,
+      0.8149950150195763,
+      0.3818181818181816,
+      0.9711161185342703,
+      0.9196774224823425
+    ],
+    "depth_scores": [
+      -0.2574975075097881,
+      0.47408592411048545,
+      -0.5112373849587417,
+      0.3203683163840082,
+      -0.025719348025963873
+    ],
+    "text_only_boundaries": [
+      2,
+      4
+    ],
+    "multimodal_boundaries": [
+      2,
+      4
+    ]
+  }
+}

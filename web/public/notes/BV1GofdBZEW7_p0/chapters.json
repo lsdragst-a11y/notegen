@@ -1,0 +1,201 @@
+{
+  "chapters": [
+    {
+      "title": "Vibe Coding与React应用",
+      "start": 0.0,
+      "end": 189.58,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章介绍Vibe Coding的核心理念及其在React应用中的实践，强调拥抱Exponentials和创建简单应用的重要性。",
+      "title_zh": "Vibe Coding与React应用",
+      "title_en": "Vibe Coding and React Applications",
+      "abstract_zh": "本章介绍Vibe Coding的核心理念及其在React应用中的实践，强调拥抱Exponentials和创建简单应用的重要性。",
+      "abstract_en": "This chapter introduces Vibe Coding’s core principles and their application in React projects, emphasizing the importance of embracing Exponentials and creating simple applications."
+    },
+    {
+      "title": "分析与计算思考",
+      "start": 189.74,
+      "end": 358.74,
+      "indices": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章探讨分析与计算思考的方法，明确项目需求和关键功能，为后续开发奠定基础。",
+      "title_zh": "分析与计算思考",
+      "title_en": "Analyzing and Computational Thinking",
+      "abstract_zh": "本章探讨分析与计算思考的方法，明确项目需求和关键功能，为后续开发奠定基础。",
+      "abstract_en": "This chapter explores methods of analysis and computational thinking, clarifying project requirements and key features to lay a foundation for subsequent development."
+    },
+    {
+      "title": "高级思考与前端构建",
+      "start": 358.74,
+      "end": 500.3,
+      "indices": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "abstract": "本章深入高级思考与前端构建，涵盖CSS和HTML的应用，以及构建清晰的产品目标。",
+      "title_zh": "高级思考与前端构建",
+      "title_en": "Advanced Thinking and Frontend Development",
+      "abstract_zh": "本章深入高级思考与前端构建，涵盖CSS和HTML的应用，以及构建清晰的产品目标。",
+      "abstract_en": "This chapter delves into advanced thinking and frontend construction, covering the application of CSS and HTML, as well as building clear product goals."
+    },
+    {
+      "title": "实现与构建体验",
+      "start": 500.3,
+      "end": 606.22,
+      "indices": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "abstract": "本章讲述实现与构建体验的过程，包括实现细节、构建体验、安装Git等关键步骤。",
+      "title_zh": "实现与构建体验",
+      "title_en": "Implementing and Building User Experience",
+      "abstract_zh": "本章讲述实现与构建体验的过程，包括实现细节、构建体验、安装Git等关键步骤。",
+      "abstract_en": "This chapter describes the process of implementing and building experiences, including implementation details, building experiences, and installing Git."
+    },
+    {
+      "title": "版本控制与使用AI",
+      "start": 606.28,
+      "end": 738.36,
+      "indices": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "abstract": "本章介绍版本控制的基本操作及如何利用AI辅助开发，强调添加文件、提交更改和远程连接的重要性。",
+      "title_zh": "版本控制与使用AI",
+      "title_en": "Version Control and Utilizing AI",
+      "abstract_zh": "本章介绍版本控制的基本操作及如何利用AI辅助开发，强调添加文件、提交更改和远程连接的重要性。",
+      "abstract_en": "This chapter introduces basic version control operations and how to use AI to assist in development, emphasizing the importance of adding files, committing changes, and remote connections."
+    },
+    {
+      "title": "调试与解决问题",
+      "start": 738.38,
+      "end": 905.02,
+      "indices": [
+        22,
+        23,
+        24,
+        25
+      ],
+      "abstract": "本章强调调试的重要性，提供解决方法和问题定位技巧，帮助开发者更好地理解代码运行情况。",
+      "title_zh": "调试与解决问题",
+      "title_en": "Debugging and Problem Solving",
+      "abstract_zh": "本章强调调试的重要性，提供解决方法和问题定位技巧，帮助开发者更好地理解代码运行情况。",
+      "abstract_en": "This chapter stresses the importance of debugging, providing solutions and troubleshooting techniques to help developers better understand code execution."
+    },
+    {
+      "title": "使用Replit与SEO",
+      "start": 905.02,
+      "end": 1080.28,
+      "indices": [
+        26,
+        27,
+        28,
+        29
+      ],
+      "abstract": "本章介绍使用Replit进行开发和SEO优化的关键特性，强调接受建议以提升项目质量。",
+      "title_zh": "使用Replit与SEO",
+      "title_en": "Using Replit and SEO",
+      "abstract_zh": "本章介绍使用Replit进行开发和SEO优化的关键特性，强调接受建议以提升项目质量。",
+      "abstract_en": "This chapter explains key features of using Replit for development and SEO optimization, emphasizing the importance of accepting suggestions to improve project quality."
+    },
+    {
+      "title": "从小做起与最小可行产品",
+      "start": 1080.28,
+      "end": 1451.92,
+      "indices": [
+        30,
+        31,
+        32,
+        33
+      ],
+      "abstract": "本章讲解从小做起和最小可行产品的理念，通过版本控制和实施新功能来逐步完善应用。",
+      "title_zh": "从小做起与最小可行产品",
+      "title_en": "Starting Small and Minimum Viable Product",
+      "abstract_zh": "本章讲解从小做起和最小可行产品的理念，通过版本控制和实施新功能来逐步完善应用。",
+      "abstract_en": "This chapter discusses the concept of starting small and building minimum viable products, improving applications through version control and implementing new features."
+    },
+    {
+      "title": "调试与Replit",
+      "start": 1451.92,
+      "end": 1659.62,
+      "indices": [
+        34,
+        35,
+        36,
+        37
+      ],
+      "abstract": "本章继续讨论调试与Replit的使用，强调获取信息和限制代码变更的方法，确保开发过程高效。",
+      "title_zh": "调试与Replit",
+      "title_en": "Debugging with Replit",
+      "abstract_zh": "本章继续讨论调试与Replit的使用，强调获取信息和限制代码变更的方法，确保开发过程高效。",
+      "abstract_en": "This chapter continues the discussion on debugging and using Replit, emphasizing methods for gathering information and limiting code changes to ensure efficient development processes."
+    },
+    {
+      "title": "学习资源与移动应用",
+      "start": 1659.62,
+      "end": 1788.96,
+      "indices": [
+        38,
+        39,
+        40,
+        41
+      ],
+      "abstract": "本章介绍学习资源，包括Brilliant课程和移动应用，帮助开发者提升技能和适应移动开发环境。",
+      "title_zh": "学习资源与移动应用",
+      "title_en": "Learning Resources and Mobile Apps",
+      "abstract_zh": "本章介绍学习资源，包括Brilliant课程和移动应用，帮助开发者提升技能和适应移动开发环境。",
+      "abstract_en": "This chapter introduces learning resources, including Brilliant courses and mobile apps, to help developers enhance their skills and adapt to mobile development environments."
+    },
+    {
+      "title": "免费试用与视频内容",
+      "start": 1788.96,
+      "end": 2001.06,
+      "indices": [
+        42,
+        43,
+        44,
+        45
+      ],
+      "abstract": "本章总结免费试用的价值，为用户提供尝试新技术的机会。",
+      "title_zh": "免费试用与视频内容",
+      "title_en": "Free Trials and Video Content",
+      "abstract_zh": "本章总结免费试用的价值，为用户提供尝试新技术的机会。",
+      "abstract_en": "This chapter summarizes the value of free trials, offering users opportunities to try new technologies."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "attempt_3",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "oversize",
+        "oversize"
+      ],
+      "fallback_used": false
+    },
+    "duration": 2002.140625,
+    "n_chunks": 46,
+    "lang": "zh",
+    "n_chapters": 11,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
+  }
+}

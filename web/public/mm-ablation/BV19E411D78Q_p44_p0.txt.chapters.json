@@ -1,0 +1,96 @@
+{
+  "chapters": [
+    {
+      "title": "以太网交换机与MAC地址",
+      "start": 0.14,
+      "end": 831.18,
+      "indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "abstract": "本章介绍以太网交换机的功能及MAC地址的学习和登记流程，重点阐述交换机的转发机制。"
+    },
+    {
+      "title": "广播与交换表",
+      "start": 831.38,
+      "end": 1259.89,
+      "indices": [
+        4,
+        5
+      ],
+      "abstract": "本章讨论广播帧的处理方式以及交换表的维护机制，强调其在网络通信中的作用。",
+      "children": [
+        {
+          "title": "交换机转发机制",
+          "start": 831.38,
+          "end": 1259.89,
+          "indices": [
+            4,
+            5
+          ],
+          "abstract": "本章涵盖 广播帧处理方式 · 交换表维护机制"
+        }
+      ]
+    },
+    {
+      "title": "直通与存储转发",
+      "start": 1260.51,
+      "end": 1575.7,
+      "indices": [
+        6,
+        7
+      ],
+      "abstract": "本章对比直通与存储转发两种交换方式，并详细解析MAC帧的格式。",
+      "children": [
+        {
+          "title": "交换表维护机制",
+          "start": 1260.51,
+          "end": 1413.65,
+          "indices": [
+            6
+          ],
+          "abstract": "本章涵盖 直通与存储转发"
+        },
+        {
+          "title": "MAC帧格式解析",
+          "start": 1413.67,
+          "end": 1575.7,
+          "indices": [
+            7
+          ],
+          "abstract": "本章涵盖 MAC帧格式解析"
+        }
+      ]
+    },
+    {
+      "title": "直通交换原理 · 本节复习",
+      "start": 1576.4,
+      "end": 1733.35,
+      "indices": [
+        8
+      ],
+      "abstract": "本章深入探讨直通交换的工作原理及其优势。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "attempt_3",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "duplicate",
+        "duplicate"
+      ],
+      "fallback_used": false
+    },
+    "duration": 1734.7626875,
+    "n_chunks": 9,
+    "lang": "zh",
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 4,
+    "has_wrapup": true
+  }
+}

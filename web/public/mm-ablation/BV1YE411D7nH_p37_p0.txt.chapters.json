@@ -1,0 +1,51 @@
+{
+  "chapters": [
+    {
+      "title": "哲学家进餐问题",
+      "start": 1.46,
+      "end": 234.55,
+      "indices": [
+        0
+      ],
+      "abstract": "本章介绍哲学家进餐问题及其核心冲突，探讨如何通过信号量来解决这一问题。"
+    },
+    {
+      "title": "冲突与信号量",
+      "start": 234.55,
+      "end": 534.57,
+      "indices": [
+        1,
+        2
+      ],
+      "abstract": "本章分析互斥操作在哲学家进餐问题中的表现，并详细讲解死锁避免的具体策略。"
+    },
+    {
+      "title": "互斥和避免",
+      "start": 534.57,
+      "end": 898.14,
+      "indices": [
+        3,
+        4
+      ],
+      "abstract": ""
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "too_few_chapters"
+      ],
+      "fallback_used": false
+    },
+    "duration": 900.3946875,
+    "n_chunks": 5,
+    "lang": "zh",
+    "n_chapters": 3,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": false
+  }
+}

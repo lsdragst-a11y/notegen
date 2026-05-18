@@ -1,0 +1,114 @@
+{
+  "chapters": [
+    {
+      "title": "以太网交换机的功能原理·交换机的mac 地址",
+      "start": 0.14,
+      "end": 484.51,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章涵盖 以太网交换机的功能原理 · 交换机的mac 地址",
+      "title_zh": "以太网交换机的功能原理·交换机的mac 地址",
+      "title_en": "Ethernet switch functions and MAC address",
+      "abstract_zh": "本章涵盖 以太网交换机的功能原理 · 交换机的mac 地址",
+      "abstract_en": "This chapter covers the functional principles of Ethernet switches · switch MAC addresses"
+    },
+    {
+      "title": "交换机接收2号帧·6号帧的接收方",
+      "start": 484.59,
+      "end": 831.18,
+      "indices": [
+        2,
+        3
+      ],
+      "abstract": "本章涵盖 交换机接收2号帧 · 6号帧的接收方",
+      "title_zh": "交换机接收2号帧·6号帧的接收方",
+      "title_en": "Switch receives Frame 2 · Receiver of Frame 6",
+      "abstract_zh": "本章涵盖 交换机接收2号帧 · 6号帧的接收方",
+      "abstract_en": "This chapter covers the receiver of Frame 2 and Frame 6 by Switch"
+    },
+    {
+      "title": "7号帧给到极限器·交换机的h 节点的自学习功能",
+      "start": 831.38,
+      "end": 1259.89,
+      "indices": [
+        4,
+        5
+      ],
+      "abstract": "本章涵盖 7号帧给到极限器 · 交换机的h 节点的自学习功能",
+      "title_zh": "7号帧给到极限器·交换机的h 节点的自学习功能",
+      "title_en": "Frame 7 goes to the limiter · Self-learning function of Switch H node",
+      "abstract_zh": "本章涵盖 7号帧给到极限器 · 交换机的h 节点的自学习功能",
+      "abstract_en": "This chapter covers Frame 7 delivered to the limiter · self-learning function of Switch H node"
+    },
+    {
+      "title": "交换机的两种交换方式·交换机的传输方式",
+      "start": 1260.51,
+      "end": 1733.35,
+      "indices": [
+        6,
+        7,
+        8
+      ],
+      "abstract": "本章涵盖 交换机的两种交换方式 · 交换机的传输方式 · 交换方式的两种交换方式",
+      "title_zh": "交换机的两种交换方式·交换机的传输方式",
+      "title_en": "Two switching methods of the switch · Transmission methods of the switch",
+      "abstract_zh": "本章涵盖 交换机的两种交换方式 · 交换机的传输方式 · 交换方式的两种交换方式",
+      "abstract_en": "This chapter covers two types of switching methods in switches · transmission methods of switches · two types of switching methods"
+    }
+  ],
+  "ablation": {
+    "alpha": 0.3,
+    "text_dists": [
+      0.5,
+      0.5,
+      0.2857142857142857,
+      0.2857142857142857,
+      0.5,
+      0.6666666666666667,
+      0.8,
+      1.0
+    ],
+    "visual_dists": [
+      0.05234372615814209,
+      0.0058533549308776855,
+      0.0012006163597106934,
+      0.003727138042449951,
+      0.07945418357849121,
+      0.1381455659866333,
+      0.009829044342041016,
+      0.19245260953903198
+    ],
+    "fused_dists": [
+      0.29022364987926486,
+      0.21729833738277096,
+      0.0,
+      0.003963129963885416,
+      0.33274941440020744,
+      0.5881467018379751,
+      0.5175346479357841,
+      1.0
+    ],
+    "depth_scores": [
+      0.03646265624824696,
+      0.07218651244313853,
+      -0.1106307336733282,
+      -0.1624115772362183,
+      0.036694498499277195,
+      0.16300467066997937,
+      -0.2765387029832035,
+      0.24123267603210796
+    ],
+    "text_only_boundaries": [
+      2,
+      5,
+      7
+    ],
+    "multimodal_boundaries": [
+      2,
+      4,
+      6
+    ]
+  }
+}

@@ -1,0 +1,137 @@
+{
+  "chapters": [
+    {
+      "title": "模块与茶文化写作",
+      "start": 30.47,
+      "end": 116.64,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍模块的重要性及茶文化论文的写作流程。"
+    },
+    {
+      "title": "最终修订与工作流类型",
+      "start": 116.84,
+      "end": 273.73,
+      "indices": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "abstract": "本章探讨最终修订与确认过程，对比线性和非线性工作流，强调创造性结果与控制权之间的二元对立。"
+    },
+    {
+      "title": "构建块与系统创建",
+      "start": 276.16,
+      "end": 382.13,
+      "indices": [
+        6,
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章介绍构建块及其执行不同任务的能力，详细说明创建系统的步骤和提取关键信息的方法。"
+    },
+    {
+      "title": "寻找客户与邮件编写",
+      "start": 382.49,
+      "end": 494.55,
+      "indices": [
+        10,
+        11,
+        12,
+        13
+      ],
+      "abstract": "本章指导如何寻找潜在客户并编写和发送邮件，强调选择合适模型和使用外部工具的重要性。"
+    },
+    {
+      "title": "分解任务与产品发送",
+      "start": 494.69,
+      "end": 667.94,
+      "indices": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "abstract": "本章讲解分解任务的过程，确保发送正确的产品，同时通过设计模式示例展示改进系统的方法。"
+    },
+    {
+      "title": "邮件改进与设计模式",
+      "start": 668.0,
+      "end": 766.92,
+      "indices": [
+        18,
+        19,
+        20,
+        21
+      ],
+      "abstract": "本章讨论如何通过写邮件来改进效果，反思代码设计模式，提供无代码方法教程和工具使用定义。"
+    },
+    {
+      "title": "代码工具与系统评估",
+      "start": 767.0,
+      "end": 1146.12,
+      "indices": [
+        22,
+        23,
+        24,
+        25,
+        26
+      ],
+      "abstract": "本章介绍代码访问工具，评估潜在失败点，客观评估系统并在不同迭代中使用矩阵评价体系。"
+    },
+    {
+      "title": "评价指标与设计模式",
+      "start": 1146.16,
+      "end": 1553.49,
+      "indices": [
+        27,
+        28,
+        29,
+        30,
+        31
+      ],
+      "abstract": "本章提出通用评价指标，规划设计模式，讨论多代理系统和公司任务分配，探索数据可视化选项。"
+    },
+    {
+      "title": "实际部署与任务执行",
+      "start": 1553.65,
+      "end": 1821.75,
+      "indices": [
+        32,
+        33,
+        34,
+        35
+      ],
+      "abstract": "本章总结实际部署过程，确保任务顺利执行。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "promote_oversized",
+        "repair_missing",
+        "repair_oversize"
+      ],
+      "llm_fail_reasons": [
+        "oversize",
+        "missing",
+        "oversize"
+      ],
+      "fallback_used": false
+    },
+    "duration": 1823.0915,
+    "n_chunks": 36,
+    "lang": "zh",
+    "keyframes": true,
+    "n_chapters": 9,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
+  }
+}

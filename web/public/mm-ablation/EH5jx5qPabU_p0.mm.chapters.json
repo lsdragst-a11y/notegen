@@ -1,0 +1,311 @@
+{
+  "chapters": [
+    {
+      "title": "AI Agent Overview",
+      "start": 0.0,
+      "end": 87.94,
+      "indices": [
+        0
+      ],
+      "abstract": "This chapter provides an overview of AI agents, defining their roles and functions."
+    },
+    {
+      "title": "Static and Dynamic Processes",
+      "start": 87.94,
+      "end": 154.62,
+      "indices": [
+        1
+      ],
+      "abstract": "This section contrasts static and dynamic processes, explaining their characteristics and applications."
+    },
+    {
+      "title": "Tools for Agents",
+      "start": 154.88,
+      "end": 194.7,
+      "indices": [
+        2
+      ],
+      "abstract": "This chapter discusses various tools available for AI agents to enhance their functionality."
+    },
+    {
+      "title": "Building Agent Systems",
+      "start": 194.78,
+      "end": 219.62,
+      "indices": [
+        3
+      ],
+      "abstract": "This chapter guides readers through the process of building AI agent systems, including design and implementation."
+    },
+    {
+      "title": "Agent Organization",
+      "start": 219.62,
+      "end": 258.2,
+      "indices": [
+        4
+      ],
+      "abstract": "This chapter explains the organization of AI agents, focusing on how they can be structured and managed."
+    },
+    {
+      "title": "Guardrails for Agents",
+      "start": 258.36,
+      "end": 319.02,
+      "indices": [
+        5
+      ],
+      "abstract": "This section details guardrails for AI agents, ensuring they operate within safe and ethical boundaries."
+    },
+    {
+      "title": "APIs and HTTP Requests",
+      "start": 319.02,
+      "end": 394.72,
+      "indices": [
+        6
+      ],
+      "abstract": "This chapter covers APIs and HTTP requests, explaining how to interact with web services using these protocols."
+    },
+    {
+      "title": "Post Request Explanation",
+      "start": 394.72,
+      "end": 424.08,
+      "indices": [
+        7
+      ],
+      "abstract": "This section provides a detailed explanation of POST requests, highlighting their use in web development."
+    },
+    {
+      "title": "API Types Overview",
+      "start": 424.2,
+      "end": 455.9,
+      "indices": [
+        8
+      ],
+      "abstract": "This chapter offers an overview of different types of APIs, providing insights into their functionalities and uses."
+    },
+    {
+      "title": "Using N8n for Agents",
+      "start": 456.04,
+      "end": 484.94,
+      "indices": [
+        9
+      ],
+      "abstract": "This section explains how to use N8n for creating AI agents, detailing its capabilities and setup."
+    },
+    {
+      "title": "Agent Framework Explanation",
+      "start": 484.94,
+      "end": 508.66,
+      "indices": [
+        10
+      ],
+      "abstract": "This chapter delves into the explanation of an AI agent framework, illustrating its components and usage."
+    },
+    {
+      "title": "Real-Agent Examples",
+      "start": 508.66,
+      "end": 579.04,
+      "indices": [
+        11
+      ],
+      "abstract": "This section presents real examples of AI agents, showcasing practical applications and benefits."
+    },
+    {
+      "title": "N8n Platform Introduction",
+      "start": 579.04,
+      "end": 603.58,
+      "indices": [
+        12
+      ],
+      "abstract": "This chapter introduces the N8n platform, explaining its features and how it can be used for building workflows."
+    },
+    {
+      "title": "Node Setup Guide",
+      "start": 603.58,
+      "end": 689.93,
+      "indices": [
+        13
+      ],
+      "abstract": "This section provides a guide on setting up nodes in N8n, explaining their configuration and integration."
+    },
+    {
+      "title": "LLM Memory Integration",
+      "start": 689.93,
+      "end": 728.99,
+      "indices": [
+        14
+      ],
+      "abstract": "This chapter focuses on integrating LLM memory into workflows, emphasizing its importance for context management."
+    },
+    {
+      "title": "Personal Agent Example",
+      "start": 728.99,
+      "end": 776.99,
+      "indices": [
+        15
+      ],
+      "abstract": "This section illustrates a personal AI agent example, demonstrating its potential in everyday scenarios."
+    },
+    {
+      "title": "Setting Up Workflow Triggers",
+      "start": 776.99,
+      "end": 827.63,
+      "indices": [
+        16
+      ],
+      "abstract": "This chapter explains how to set up workflow triggers in N8n, enabling automated responses and actions."
+    },
+    {
+      "title": "Connecting Nodes and Tools",
+      "start": 827.63,
+      "end": 855.19,
+      "indices": [
+        17
+      ],
+      "abstract": "This section guides users on connecting nodes and tools in N8n, enhancing workflow efficiency and flexibility."
+    },
+    {
+      "title": "OpenAI API Key",
+      "start": 855.19,
+      "end": 899.21,
+      "indices": [
+        18
+      ],
+      "abstract": "This chapter emphasizes the importance of securing OpenAI API keys, discussing best practices for protection."
+    },
+    {
+      "title": "Choosing OpenAI Model",
+      "start": 899.21,
+      "end": 924.93,
+      "indices": [
+        19
+      ],
+      "abstract": "This section provides guidance on selecting an appropriate OpenAI model for specific tasks and requirements."
+    },
+    {
+      "title": "Chat Node Setup",
+      "start": 924.93,
+      "end": 945.91,
+      "indices": [
+        20
+      ],
+      "abstract": "This chapter details the setup of chat nodes in N8n, explaining their role in facilitating communication."
+    },
+    {
+      "title": "Memory Context Importance",
+      "start": 945.91,
+      "end": 997.05,
+      "indices": [
+        21
+      ],
+      "abstract": "This section highlights the significance of memory context in AI agents, discussing strategies for effective data management."
+    },
+    {
+      "title": "Saving Workflow Changes",
+      "start": 997.05,
+      "end": 1040.61,
+      "indices": [
+        22
+      ],
+      "abstract": "This chapter covers saving changes to workflows in N8n, ensuring that updates are preserved and applied correctly."
+    },
+    {
+      "title": "HTTP Request Node",
+      "start": 1040.61,
+      "end": 1137.44,
+      "indices": [
+        23
+      ],
+      "abstract": "This section explains the use of HTTP request nodes in N8n, detailing their role in interacting with external services."
+    },
+    {
+      "title": "JSON Response Format",
+      "start": 1137.44,
+      "end": 1178.04,
+      "indices": [
+        24
+      ],
+      "abstract": "This chapter focuses on the JSON response format, explaining its structure and importance in API interactions."
+    },
+    {
+      "title": "API Documentation Search",
+      "start": 1178.04,
+      "end": 1230.83,
+      "indices": [
+        25
+      ],
+      "abstract": "This section guides users on searching for API documentation, enhancing their understanding and utilization of APIs."
+    },
+    {
+      "title": "Prompt Generation Guide",
+      "start": 1230.83,
+      "end": 1272.47,
+      "indices": [
+        26
+      ],
+      "abstract": "This chapter provides a comprehensive guide on prompt generation, offering tips and techniques for effective communication."
+    },
+    {
+      "title": "Handling Errors",
+      "start": 1272.47,
+      "end": 1305.25,
+      "indices": [
+        27
+      ],
+      "abstract": "This section discusses strategies for handling errors in AI workflows, ensuring robustness and reliability."
+    },
+    {
+      "title": "Testing Workflow",
+      "start": 1305.25,
+      "end": 1351.11,
+      "indices": [
+        28
+      ],
+      "abstract": "This chapter outlines steps for testing workflows, validating their performance and identifying issues."
+    },
+    {
+      "title": "Improving Prompt Formatting",
+      "start": 1351.11,
+      "end": 1395.11,
+      "indices": [
+        29
+      ],
+      "abstract": "This section offers advice on improving prompt formatting, enhancing clarity and effectiveness in communication."
+    },
+    {
+      "title": "Advanced Agent Uses",
+      "start": 1395.11,
+      "end": 1429.16,
+      "indices": [
+        30
+      ],
+      "abstract": "This chapter explores advanced uses of AI agents, pushing the boundaries of what is possible with current technology."
+    },
+    {
+      "title": "Future AI Learning Resources",
+      "start": 1429.16,
+      "end": 1556.65,
+      "indices": [
+        31,
+        32,
+        33
+      ],
+      "abstract": ""
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false
+    },
+    "duration": 1557.273,
+    "n_chunks": 34,
+    "lang": "en",
+    "keyframes": true,
+    "n_chapters": 32,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": false
+  }
+}

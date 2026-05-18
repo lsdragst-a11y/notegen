@@ -1,0 +1,64 @@
+{
+  "chapters": [
+    {
+      "title": "以太网交换机功能与MAC地址学习",
+      "start": 0.14,
+      "end": 831.18,
+      "indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "abstract": "本章介绍以太网交换机的功能及MAC地址的学习过程，重点阐述交换机的转发机制和MAC地址的登记与转发流程。"
+    },
+    {
+      "title": "广播帧与交换表维护",
+      "start": 831.38,
+      "end": 1259.89,
+      "indices": [
+        4,
+        5
+      ],
+      "abstract": "本章讨论广播帧的处理方法以及交换表的维护机制，强调其在网络通信中的重要性。"
+    },
+    {
+      "title": "交换方式比较",
+      "start": 1260.51,
+      "end": 1413.65,
+      "indices": [
+        6
+      ],
+      "abstract": "本章对比不同类型的交换方式，帮助理解各种交换技术的特点和适用场景。"
+    },
+    {
+      "title": "直通与存储转发 · 本节复习",
+      "start": 1413.67,
+      "end": 1733.35,
+      "indices": [
+        7,
+        8
+      ],
+      "abstract": "本章分析直通与存储转发两种交换方式的区别，并通过真题解析加深对这两种方式的理解。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "oversize"
+      ],
+      "fallback_used": false
+    },
+    "duration": 1734.7626875,
+    "n_chunks": 9,
+    "lang": "zh",
+    "keyframes": true,
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 4,
+    "has_wrapup": true
+  }
+}

@@ -1,0 +1,50 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.venv/
+venv/
+env/
+
+# Data & model artifacts
+data/raw/*
+data/audio/*
+data/outputs/*
+!data/raw/.gitkeep
+!data/audio/.gitkeep
+!data/outputs/.gitkeep
+# 评估聚合结果（论文用，必须入库）
+!data/outputs/eval_*.json
+!data/outputs/headline_rating_*.json
+models/
+models_msc_cache/
+wheels/
+*.pt
+*.bin
+*.safetensors
+*.ckpt
+
+# Frontend
+web/node_modules/
+web/.next/
+web/out/
+# 前端 demo 视频 612MB，本地资源不入库
+web/public/videos/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Logs
+logs/
+*.log
+wandb/
+runs/

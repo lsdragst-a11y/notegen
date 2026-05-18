@@ -1,0 +1,30 @@
+# PyTorch 单独装（按 CUDA 版本，看 README）
+# pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# ASR
+faster-whisper>=1.0.3
+
+# 摘要 / 文本模型（transformers 5.x 需要 torch>=2.4，故锁 4.x）
+transformers>=4.40.0,<5.0
+accelerate>=0.30.0,<1.0
+sentencepiece
+protobuf
+
+# 视频下载 + 处理
+yt-dlp>=2024.4.9
+opencv-python<4.11
+pillow
+
+# 中文 NLP
+jieba
+rouge-chinese
+
+# Web 后端（Week 3 用）
+fastapi
+uvicorn[standard]
+python-multipart
+
+# 工具（numpy 2.x 与 torch 2.3 不兼容，锁 1.x）
+numpy<2
+tqdm
+pyyaml

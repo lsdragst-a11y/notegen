@@ -1,0 +1,71 @@
+{
+  "chapters": [
+    {
+      "title": "以太网与802.3工作组",
+      "start": 0.0,
+      "end": 173.48,
+      "indices": [
+        0
+      ],
+      "abstract": "本章介绍以太网与802.3工作组的关系，重点阐述以太网的发展背景。"
+    },
+    {
+      "title": "双绞线与以太网传输",
+      "start": 173.5,
+      "end": 436.1,
+      "indices": [
+        1,
+        2
+      ],
+      "abstract": "本章探讨双绞线在以太网中的应用及其传输速率，强调不同连接方式的优势。"
+    },
+    {
+      "title": "同轴电缆及以太网组件",
+      "start": 436.73,
+      "end": 1498.65,
+      "indices": [
+        3,
+        4,
+        5
+      ],
+      "abstract": "本章分析同轴电缆与以太网的兼容性，重点介绍双绞线全双工模式及其对网络性能的影响。"
+    },
+    {
+      "title": "以太网物理层与设备",
+      "start": 1498.65,
+      "end": 1892.84,
+      "indices": [
+        6,
+        7,
+        8
+      ],
+      "abstract": "本章详细说明以太网物理层标准，重点讨论交换机与极限器的功能及其在网络中的作用。"
+    },
+    {
+      "title": "以太网帧与编码 · 本节复习",
+      "start": 1892.84,
+      "end": 2238.26,
+      "indices": [
+        9,
+        10
+      ],
+      "abstract": "本章解析以太网帧的组成与曼彻斯特编码技术，强调其在数据传输中的重要性。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false
+    },
+    "duration": 2239.2106875,
+    "n_chunks": 11,
+    "lang": "zh",
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": true
+  }
+}

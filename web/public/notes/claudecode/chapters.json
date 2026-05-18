@@ -1,0 +1,61 @@
+{
+  "chapters": [
+    {
+      "title": "10 分钟学会claude code 基础操作·如何手动打开",
+      "start": 0.0,
+      "end": 264.2,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章涵盖 10 分钟学会claude code 基础操作 · 手动打开cnb",
+      "title_zh": "10 分钟学会claude code 基础操作·如何手动打开",
+      "title_en": "How to Master Claude Code Basics in 10 Minutes · How to Manually Open",
+      "abstract_zh": "本章涵盖 10 分钟学会claude code 基础操作 · 手动打开cnb",
+      "abstract_en": "This chapter covers learning basic operations of Claude Code in just 10 minutes · manually opening cnb"
+    },
+    {
+      "title": "ineed 命令·claude code的skills",
+      "start": 264.46,
+      "end": 654.93,
+      "indices": [
+        2,
+        3
+      ],
+      "abstract": "本章涵盖 ineed 命令 · claude code的skills",
+      "title_zh": "ineed 命令·claude code的skills",
+      "title_en": "The Ineed Command · Essential Skills for Claude Code",
+      "abstract_zh": "本章涵盖 ineed 命令 · claude code的skills",
+      "abstract_en": "This chapter covers the ineed command · skills of Claude Code"
+    }
+  ],
+  "ablation": {
+    "alpha": 0.3,
+    "text_dists": [
+      0.9090909090909091,
+      0.9090909090909091,
+      0.9090909090909091
+    ],
+    "visual_dists": [
+      0.04331028461456299,
+      0.036957383155822754,
+      0.029283881187438965
+    ],
+    "fused_dists": [
+      0.6499999999999999,
+      0.5141226564226343,
+      0.35
+    ],
+    "depth_scores": [
+      0.06793867178868274,
+      0.014122656422634383,
+      -0.08206132821131717
+    ],
+    "text_only_boundaries": [
+      2
+    ],
+    "multimodal_boundaries": [
+      2
+    ]
+  }
+}

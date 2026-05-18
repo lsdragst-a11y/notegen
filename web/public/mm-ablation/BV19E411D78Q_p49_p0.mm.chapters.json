@@ -1,0 +1,72 @@
+{
+  "chapters": [
+    {
+      "title": "无分类编址与地址块分配",
+      "start": 0.5,
+      "end": 267.1,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍无分类编址CIDR及CIDR地址块分配方法，强调其通过位掩码来优化IP地址使用。"
+    },
+    {
+      "title": "子网划分与定常子网划分",
+      "start": 267.62,
+      "end": 568.97,
+      "indices": [
+        2,
+        3
+      ],
+      "abstract": "本章探讨子网划分策略，重点区分定常子网划分与变长子网划分的区别和应用。"
+    },
+    {
+      "title": "变长子网划分与IP资源分配",
+      "start": 569.63,
+      "end": 1013.07,
+      "indices": [
+        4,
+        5,
+        6
+      ],
+      "abstract": "本章详细讲解变长子网划分及其在IP资源分配中的应用，通过实例展示其灵活性。"
+    },
+    {
+      "title": "哈夫曼树与子网高度",
+      "start": 1014.75,
+      "end": 1500.02,
+      "indices": [
+        7,
+        8
+      ],
+      "abstract": "本章分析哈夫曼树与子网的关系，解释子网划分高度的概念及其重要性。"
+    },
+    {
+      "title": "定常与变长子网前缀 · 本节复习",
+      "start": 1500.02,
+      "end": 2002.3,
+      "indices": [
+        9,
+        10
+      ],
+      "abstract": "本章对比定常子网划分与变长子网前缀，突出两者在子网设计中的不同优势。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false
+    },
+    "duration": 2002.944,
+    "n_chunks": 11,
+    "lang": "zh",
+    "keyframes": true,
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": true
+  }
+}

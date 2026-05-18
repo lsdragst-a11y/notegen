@@ -1,0 +1,125 @@
+{
+  "chapters": [
+    {
+      "title": "以太网和ieee 802.3的技术标准·双脚线或光纤可以支持",
+      "start": 0.0,
+      "end": 694.86,
+      "indices": [
+        0,
+        1,
+        2
+      ],
+      "abstract": "本章涵盖 以太网和ieee 802.3的技术标准 · 双脚线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么",
+      "title_zh": "以太网和ieee 802.3的技术标准·双脚线或光纤可以支持",
+      "title_en": "Ethernet and IEEE 802.3 standards · Twisted pair or fiber can support",
+      "abstract_zh": "本章涵盖 以太网和ieee 802.3的技术标准 · 双脚线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么",
+      "abstract_en": "This chapter covers Ethernet and IEEE 802.3 standards · Twisted pair or fiber can support half-duplex and full-duplex modes · What connects two nodes using fiber?"
+    },
+    {
+      "title": "交换机路由器有mac 地址吗",
+      "start": 694.86,
+      "end": 1634.92,
+      "indices": [
+        3,
+        4,
+        5,
+        6
+      ],
+      "abstract": "本章涵盖 ip 数据链路层为网络层服务 · 以太网mac帧的长度范围 · 以太网mac帧的最后一跳 · 交换机路由器有mac 地址吗",
+      "title_zh": "交换机路由器有mac 地址吗",
+      "title_en": "Do switches and routers have MAC addresses?",
+      "abstract_zh": "本章涵盖 ip 数据链路层为网络层服务 · 以太网mac帧的长度范围 · 以太网mac帧的最后一跳 · 交换机路由器有mac 地址吗",
+      "abstract_en": "This chapter covers IP data link layer services for the network layer · The range of Ethernet MAC frame lengths · The final hop of an Ethernet MAC frame · Do switches and routers have MAC addresses?"
+    },
+    {
+      "title": "f 发送单波针看两个广播针的例子·交换机隔离了冲突域",
+      "start": 1634.92,
+      "end": 2000.17,
+      "indices": [
+        7,
+        8
+      ],
+      "abstract": "本章涵盖 f 发送单波针看两个广播针的例子 · 交换机隔离了冲突域",
+      "title_zh": "f 发送单波针看两个广播针的例子·交换机隔离了冲突域",
+      "title_en": "Example: Sending a unicast frame versus two broadcast frames · Switches isolate collision domains",
+      "abstract_zh": "本章涵盖 f 发送单波针看两个广播针的例子 · 交换机隔离了冲突域",
+      "abstract_en": "This chapter covers sending unicast frames and examples of broadcast frames · Switches isolate collision domains"
+    },
+    {
+      "title": "以太网与ieee 802.3802.3 工作组·以太网的物理",
+      "start": 2000.17,
+      "end": 2238.6,
+      "indices": [
+        9,
+        10
+      ],
+      "abstract": "本章涵盖 以太网与ieee 802.3802.3 工作组 · 以太网的物理层",
+      "title_zh": "以太网与ieee 802.3802.3 工作组·以太网的物理",
+      "title_en": "Ethernet and IEEE 802.3 · 802.3工作组的工作 · Ethernet的物理层",
+      "abstract_zh": "本章涵盖 以太网与ieee 802.3802.3 工作组 · 以太网的物理层",
+      "abstract_en": "This chapter covers Ethernet and IEEE 802.3, specifically the 802.3 working group · Ethernet's physical layer"
+    }
+  ],
+  "ablation": {
+    "alpha": 0.3,
+    "text_dists": [
+      0.9090909090909091,
+      0.9090909090909091,
+      1.0,
+      0.6666666666666667,
+      0.8,
+      0.8,
+      0.9090909090909091,
+      0.6666666666666667,
+      0.9090909090909091,
+      0.9090909090909091
+    ],
+    "visual_dists": [
+      0.0294950008392334,
+      0.1941967010498047,
+      0.04556518793106079,
+      0.029250621795654297,
+      0.017528831958770752,
+      0.1643800139427185,
+      0.008500277996063232,
+      0.08880925178527832,
+      0.11104047298431396,
+      0.01253420114517212
+    ],
+    "fused_dists": [
+      0.5430087237120783,
+      0.8090909090909089,
+      0.7598798447360573,
+      0.03352301050018472,
+      0.29458599010293474,
+      0.53182994919866,
+      0.5090909090909089,
+      0.12974235981805626,
+      0.674748696088629,
+      0.5156078733104213
+    ],
+    "depth_scores": [
+      -0.13304109268941533,
+      0.1576466248668411,
+      0.3385728849405105,
+      -0.4937099069193114,
+      0.01190951025351239,
+      0.12999149960173817,
+      0.1783047545825508,
+      -0.4621774427717127,
+      0.35207357952439017,
+      -0.07957041138910381
+    ],
+    "text_only_boundaries": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "multimodal_boundaries": [
+      3,
+      7,
+      9
+    ]
+  }
+}

@@ -1,0 +1,154 @@
+{
+  "chapters": [
+    {
+      "title": "Vibe Coding与Exponentials",
+      "start": 0.0,
+      "end": 189.58,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章介绍Vibe Coding的核心理念及其在React应用中的实践，强调拥抱Exponentials的原则。"
+    },
+    {
+      "title": "分析与计算性思考",
+      "start": 189.74,
+      "end": 358.74,
+      "indices": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章探讨分析性与计算性思考方法，明确项目需求及关键功能，为后续开发奠定基础。"
+    },
+    {
+      "title": "目标与详细规划",
+      "start": 358.74,
+      "end": 532.92,
+      "indices": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "abstract": "本章聚焦目标设定与详细规划过程，强调避免损失的重要性，并利用AI和CSS提升用户体验。"
+    },
+    {
+      "title": "实现与提升体验",
+      "start": 532.92,
+      "end": 649.52,
+      "indices": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "abstract": "本章讲述实现细节与提升用户体验的方法，强调保持积极态度及掌握版本控制工具Git和GitHub。"
+    },
+    {
+      "title": "初始化与版本控制",
+      "start": 649.52,
+      "end": 859.06,
+      "indices": [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "abstract": "本章介绍初始化Git仓库、添加文件、提交更改及远程连接的操作流程，帮助理解版本控制的基本结构。"
+    },
+    {
+      "title": "调试与使用Replit",
+      "start": 859.06,
+      "end": 1080.28,
+      "indices": [
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "abstract": "本章强调调试的重要性，指导如何解决代码问题并提供上下文，同时介绍使用Replit进行开发的方法。"
+    },
+    {
+      "title": "SEO与版本控制",
+      "start": 1080.28,
+      "end": 1523.5,
+      "indices": [
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "abstract": "本章讨论SEO优化与版本控制，强调接受建议并从小开始，确保网站性能和用户友好度。"
+    },
+    {
+      "title": "最小可行产品与调试",
+      "start": 1523.5,
+      "end": 1711.62,
+      "indices": [
+        35,
+        36,
+        37,
+        38,
+        39
+      ],
+      "abstract": "本章介绍最小可行产品的实现与新功能的实施，强调调试过程中的错误排查及获取反馈的重要性。"
+    },
+    {
+      "title": "学习资源与课程内容",
+      "start": 1712.4,
+      "end": 1945.16,
+      "indices": [
+        40,
+        41,
+        42,
+        43,
+        44
+      ],
+      "abstract": "本章提供丰富的学习资源，包括Brilliant课程，强调学习应用的实际操作以提升编程技能。"
+    },
+    {
+      "title": "视频内容与学习应用",
+      "start": 1945.16,
+      "end": 2001.06,
+      "indices": [
+        45
+      ],
+      "abstract": "本章总结视频内容的学习应用，强调通过实际操作提升编程能力的重要性。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_oversize"
+      ],
+      "llm_fail_reasons": [
+        "oversize",
+        "oversize",
+        "oversize"
+      ],
+      "fallback_used": false
+    },
+    "duration": 2002.140625,
+    "n_chunks": 46,
+    "lang": "zh",
+    "keyframes": true,
+    "n_chapters": 10,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
+  }
+}

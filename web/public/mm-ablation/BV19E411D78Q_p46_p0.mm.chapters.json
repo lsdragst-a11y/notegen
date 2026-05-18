@@ -1,0 +1,66 @@
+{
+  "chapters": [
+    {
+      "title": "IPv4分组与首部字段",
+      "start": 0.05,
+      "end": 734.94,
+      "indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "abstract": "本章介绍IPv4分组及其IP首部字段，重点解析总长度字段的作用。"
+    },
+    {
+      "title": "IP数据报分片与重组",
+      "start": 734.94,
+      "end": 1260.16,
+      "indices": [
+        4,
+        5,
+        6
+      ],
+      "abstract": "本章探讨IP数据报的分片与重组过程，强调分片标识的重要性。"
+    },
+    {
+      "title": "IP数据报分片与TTL",
+      "start": 1260.16,
+      "end": 1677.53,
+      "indices": [
+        7,
+        8
+      ],
+      "abstract": "本章讨论IP数据报的分片与生存时间(TTL)的关系，以及校验和在不同协议中的应用。"
+    },
+    {
+      "title": "IP首部校验与数据报结构 · 本节复习",
+      "start": 1678.14,
+      "end": 2019.81,
+      "indices": [
+        9,
+        10
+      ],
+      "abstract": "本章详细说明IP首部的校验方法及数据报的整体结构，涵盖关键字段的功能。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "oversize"
+      ],
+      "fallback_used": false
+    },
+    "duration": 2020.5013125,
+    "n_chunks": 11,
+    "lang": "zh",
+    "keyframes": true,
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 4,
+    "has_wrapup": true
+  }
+}

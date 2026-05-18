@@ -1,0 +1,56 @@
+{
+  "chapters": [
+    {
+      "title": "以太网中的数据链路层",
+      "start": 0.24,
+      "end": 209.58,
+      "indices": [
+        0
+      ],
+      "abstract": "本章涵盖 以太网中的数据链路层",
+      "title_zh": "以太网中的数据链路层",
+      "title_en": "Data Link Layer in Ethernet",
+      "abstract_zh": "本章涵盖 以太网中的数据链路层",
+      "abstract_en": "This chapter covers the data link layer in Ethernet."
+    },
+    {
+      "title": "关于ppp 协议的数字数字·字节填充法实现透明传输",
+      "start": 210.15,
+      "end": 552.09,
+      "indices": [
+        1,
+        2
+      ],
+      "abstract": "本章涵盖 关于ppp 协议的数字数字 · 字节填充法实现透明传输",
+      "title_zh": "关于ppp 协议的数字数字·字节填充法实现透明传输",
+      "title_en": "Implementation of Digital Byte Stuffing for Transparent Transmission in PPP Protocol",
+      "abstract_zh": "本章涵盖 关于ppp 协议的数字数字 · 字节填充法实现透明传输",
+      "abstract_en": "This chapter covers the implementation of digital-to-byte stuffing for transparent transmission in the PPP protocol."
+    }
+  ],
+  "ablation": {
+    "alpha": 0.3,
+    "text_dists": [
+      0.9090909090909091,
+      0.6666666666666667
+    ],
+    "visual_dists": [
+      0.07956200838088989,
+      0.02508091926574707
+    ],
+    "fused_dists": [
+      1.0,
+      0.0
+    ],
+    "depth_scores": [
+      0.5,
+      -0.5
+    ],
+    "text_only_boundaries": [
+      1
+    ],
+    "multimodal_boundaries": [
+      1
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+[
+  {
+    "id": "python",
+    "title": "20分钟学完一遍python基础",
+    "domain": "编程教学",
+    "duration_sec": 1252,
+    "chunks": 8,
+    "chapters": 3,
+    "uploader": "__阿岳__",
+    "webpage_url": "https://www.bilibili.com/video/BV1Sz4y1U77N",
+    "video_size_mb": 22.7
+  },
+  {
+    "id": "os",
+    "title": "王道计算机考研 操作系统 p37 2.3.5_3 哲学家进餐问题",
+    "domain": "考研专业课",
+    "duration_sec": 898,
+    "chunks": 5,
+    "chapters": 2,
+    "uploader": "王道计算机教育",
+    "webpage_url": "https://www.bilibili.com/video/BV1YE411D7nH?p=37",
+    "video_size_mb": 36.7
+  },
+  {
+    "id": "claudecode",
+    "title": "10分钟学会24个ClaudeCode使用技巧",
+    "domain": "工具教程",
+    "duration_sec": 654,
+    "chunks": 4,
+    "chapters": 2,
+    "uploader": "Yin_Code",
+    "webpage_url": "https://www.bilibili.com/video/BV1SddcBFESs",
+    "video_size_mb": 15.4
+  },
+  {
+    "id": "network",
+    "title": "计算机网络：以太网与 MAC 帧",
+    "domain": "考研专业课",
+    "duration_sec": 2238,
+    "chunks": 11,
+    "chapters": 4,
+    "uploader": "",
+    "webpage_url": "",
+    "video_size_mb": 17.8
+  },
+  {
+    "id": "linear-algebra",
+    "title": "【数一147】|线代从0到满分|各阶段该怎么做|线代真的简单吗？",
+    "domain": "考研专业课",
+    "duration_sec": 1036,
+    "chunks": 6,
+    "chapters": 3,
+    "uploader": "考研数学DZZ",
+    "webpage_url": "https://www.bilibili.com/video/BV1Vi5Q66EYo",
+    "video_size_mb": 22.6
+  }
+]

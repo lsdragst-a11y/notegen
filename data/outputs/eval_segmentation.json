@@ -1,0 +1,2762 @@
+[
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      5,
+      8,
+      14,
+      20
+    ],
+    "gold": [
+      7,
+      14,
+      18,
+      22
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      5,
+      8,
+      16,
+      20
+    ],
+    "gold": [
+      7,
+      14,
+      18,
+      22
+    ],
+    "K": 5,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.25,
+    "R@1": 0.25,
+    "F1@1": 0.25,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      5,
+      16,
+      20,
+      23
+    ],
+    "gold": [
+      7,
+      14,
+      18,
+      22
+    ],
+    "K": 5,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.25,
+    "R@1": 0.25,
+    "F1@1": 0.25,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      5,
+      14,
+      16,
+      23
+    ],
+    "gold": [
+      7,
+      14,
+      18,
+      22
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      5,
+      7,
+      16,
+      23
+    ],
+    "gold": [
+      7,
+      14,
+      18,
+      22
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      5,
+      7,
+      16,
+      23
+    ],
+    "gold": [
+      7,
+      14,
+      18,
+      22
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      3,
+      5,
+      15,
+      18
+    ],
+    "gold": [
+      7,
+      14,
+      17,
+      20
+    ],
+    "K": 5,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      3,
+      5,
+      7,
+      15
+    ],
+    "gold": [
+      7,
+      14,
+      17,
+      20
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      3,
+      7,
+      15,
+      21
+    ],
+    "gold": [
+      7,
+      14,
+      17,
+      20
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      5,
+      7,
+      15,
+      21
+    ],
+    "gold": [
+      7,
+      14,
+      17,
+      20
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      7,
+      15,
+      19,
+      21
+    ],
+    "gold": [
+      7,
+      14,
+      17,
+      20
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV19E411D78Q_p38.f30280",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      7,
+      11,
+      15,
+      19
+    ],
+    "gold": [
+      7,
+      14,
+      17,
+      20
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "ppt",
+    "label": "计网（PPT 教学, 30min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      5,
+      7
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      5,
+      7
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      5,
+      7
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      5,
+      7
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      4,
+      8
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      4,
+      8
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      4,
+      8
+    ],
+    "gold": [
+      5,
+      8
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      6,
+      8
+    ],
+    "gold": [
+      5,
+      8
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      6,
+      8
+    ],
+    "gold": [
+      5,
+      8
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      6,
+      8
+    ],
+    "gold": [
+      5,
+      8
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      6,
+      8
+    ],
+    "gold": [
+      5,
+      8
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1SddcBFESs_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      3,
+      7
+    ],
+    "gold": [
+      5,
+      8
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "ClaudeCode（PPT 教学, 11min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      4
+    ],
+    "gold": [
+      4
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      4
+    ],
+    "gold": [
+      4
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      4
+    ],
+    "gold": [
+      4
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      4
+    ],
+    "gold": [
+      4
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      5
+    ],
+    "gold": [
+      4
+    ],
+    "K": 2,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      5
+    ],
+    "gold": [
+      4
+    ],
+    "K": 2,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1G85V6cE1g_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "懂王评论（实拍解说, 7min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      4,
+      6,
+      8,
+      10
+    ],
+    "gold": [
+      2,
+      4,
+      7,
+      9
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      4,
+      6,
+      8,
+      10
+    ],
+    "gold": [
+      2,
+      4,
+      7,
+      9
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      4,
+      6,
+      8,
+      10
+    ],
+    "gold": [
+      2,
+      4,
+      7,
+      9
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      4,
+      6,
+      8,
+      10
+    ],
+    "gold": [
+      2,
+      4,
+      7,
+      9
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      4,
+      6,
+      8,
+      10
+    ],
+    "gold": [
+      2,
+      4,
+      7,
+      9
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      4,
+      6,
+      8,
+      11
+    ],
+    "gold": [
+      2,
+      4,
+      7,
+      9
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      4,
+      5,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      2,
+      6,
+      7
+    ],
+    "K": 5,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.25,
+    "R@1": 0.25,
+    "F1@1": 0.25,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "gold": [
+      1,
+      2,
+      6,
+      7
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      3,
+      5,
+      7,
+      9
+    ],
+    "gold": [
+      1,
+      2,
+      6,
+      7
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      5,
+      6,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      2,
+      6,
+      7
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      5,
+      6,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      2,
+      6,
+      7
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1W8AGzwEFW_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      5,
+      6,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      2,
+      6,
+      7
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "live",
+    "label": "外卖 Vlog（实拍, 17min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      3,
+      6
+    ],
+    "gold": [
+      2,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      3,
+      7
+    ],
+    "gold": [
+      2,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      3,
+      7
+    ],
+    "gold": [
+      2,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      3,
+      7
+    ],
+    "gold": [
+      2,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      4,
+      7
+    ],
+    "gold": [
+      2,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      4,
+      7
+    ],
+    "gold": [
+      2,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      3,
+      5
+    ],
+    "gold": [
+      2,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      3,
+      6
+    ],
+    "gold": [
+      2,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      3,
+      6
+    ],
+    "gold": [
+      2,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      3,
+      6
+    ],
+    "gold": [
+      2,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      3,
+      6
+    ],
+    "gold": [
+      2,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1x25P6tEKe_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      3,
+      6
+    ],
+    "gold": [
+      2,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "iOS 评测（数码科普, 10min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      3,
+      5,
+      7
+    ],
+    "gold": [
+      4,
+      5,
+      7
+    ],
+    "K": 4,
+    "P": 0.6666666666666666,
+    "R": 0.6666666666666666,
+    "F1": 0.6666666666666666,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      3,
+      5,
+      7
+    ],
+    "gold": [
+      4,
+      5,
+      7
+    ],
+    "K": 4,
+    "P": 0.6666666666666666,
+    "R": 0.6666666666666666,
+    "F1": 0.6666666666666666,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      3,
+      5,
+      7
+    ],
+    "gold": [
+      4,
+      5,
+      7
+    ],
+    "K": 4,
+    "P": 0.6666666666666666,
+    "R": 0.6666666666666666,
+    "F1": 0.6666666666666666,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      4,
+      5,
+      9
+    ],
+    "gold": [
+      4,
+      5,
+      7
+    ],
+    "K": 4,
+    "P": 0.6666666666666666,
+    "R": 0.6666666666666666,
+    "F1": 0.6666666666666666,
+    "P@1": 0.6666666666666666,
+    "R@1": 0.6666666666666666,
+    "F1@1": 0.6666666666666666,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      2,
+      4,
+      9
+    ],
+    "gold": [
+      4,
+      5,
+      7
+    ],
+    "K": 4,
+    "P": 0.3333333333333333,
+    "R": 0.3333333333333333,
+    "F1": 0.3333333333333333,
+    "P@1": 0.3333333333333333,
+    "R@1": 0.3333333333333333,
+    "F1@1": 0.3333333333333333,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      2,
+      4,
+      9
+    ],
+    "gold": [
+      4,
+      5,
+      7
+    ],
+    "K": 4,
+    "P": 0.3333333333333333,
+    "R": 0.3333333333333333,
+    "F1": 0.3333333333333333,
+    "P@1": 0.3333333333333333,
+    "R@1": 0.3333333333333333,
+    "F1@1": 0.3333333333333333,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      3,
+      4,
+      6
+    ],
+    "gold": [
+      4,
+      5,
+      6
+    ],
+    "K": 4,
+    "P": 0.6666666666666666,
+    "R": 0.6666666666666666,
+    "F1": 0.6666666666666666,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      3,
+      6,
+      8
+    ],
+    "gold": [
+      4,
+      5,
+      6
+    ],
+    "K": 4,
+    "P": 0.3333333333333333,
+    "R": 0.3333333333333333,
+    "F1": 0.3333333333333333,
+    "P@1": 0.6666666666666666,
+    "R@1": 0.6666666666666666,
+    "F1@1": 0.6666666666666666,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      3,
+      6,
+      8
+    ],
+    "gold": [
+      4,
+      5,
+      6
+    ],
+    "K": 4,
+    "P": 0.3333333333333333,
+    "R": 0.3333333333333333,
+    "F1": 0.3333333333333333,
+    "P@1": 0.6666666666666666,
+    "R@1": 0.6666666666666666,
+    "F1@1": 0.6666666666666666,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      3,
+      6,
+      8
+    ],
+    "gold": [
+      4,
+      5,
+      6
+    ],
+    "K": 4,
+    "P": 0.3333333333333333,
+    "R": 0.3333333333333333,
+    "F1": 0.3333333333333333,
+    "P@1": 0.6666666666666666,
+    "R@1": 0.6666666666666666,
+    "F1@1": 0.6666666666666666,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      2,
+      6,
+      8
+    ],
+    "gold": [
+      4,
+      5,
+      6
+    ],
+    "K": 4,
+    "P": 0.3333333333333333,
+    "R": 0.3333333333333333,
+    "F1": 0.3333333333333333,
+    "P@1": 0.3333333333333333,
+    "R@1": 0.3333333333333333,
+    "F1@1": 0.3333333333333333,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1XY546vE1o_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      2,
+      6,
+      8
+    ],
+    "gold": [
+      4,
+      5,
+      6
+    ],
+    "K": 4,
+    "P": 0.3333333333333333,
+    "R": 0.3333333333333333,
+    "F1": 0.3333333333333333,
+    "P@1": 0.3333333333333333,
+    "R@1": 0.3333333333333333,
+    "F1@1": 0.3333333333333333,
+    "domain": "live",
+    "label": "影视飓风×刘谦（多镜头, 14min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      3,
+      5,
+      9,
+      14
+    ],
+    "gold": [
+      1,
+      5,
+      9,
+      13
+    ],
+    "K": 5,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      5,
+      9,
+      11,
+      14
+    ],
+    "gold": [
+      1,
+      5,
+      9,
+      13
+    ],
+    "K": 5,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      5,
+      9,
+      11,
+      14
+    ],
+    "gold": [
+      1,
+      5,
+      9,
+      13
+    ],
+    "K": 5,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      3,
+      5,
+      11,
+      14
+    ],
+    "gold": [
+      1,
+      5,
+      9,
+      13
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      3,
+      5,
+      11,
+      14
+    ],
+    "gold": [
+      1,
+      5,
+      9,
+      13
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      3,
+      8,
+      11,
+      14
+    ],
+    "gold": [
+      1,
+      5,
+      9,
+      13
+    ],
+    "K": 5,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      4,
+      7,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      4,
+      8,
+      10
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      4,
+      7,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      4,
+      8,
+      10
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      4,
+      7,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      4,
+      8,
+      10
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      4,
+      7,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      4,
+      8,
+      10
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      4,
+      7,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      4,
+      8,
+      10
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1cwdzBDEL3_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      4,
+      6,
+      9,
+      11
+    ],
+    "gold": [
+      1,
+      4,
+      8,
+      10
+    ],
+    "K": 5,
+    "P": 0.25,
+    "R": 0.25,
+    "F1": 0.25,
+    "P@1": 0.75,
+    "R@1": 0.75,
+    "F1@1": 0.75,
+    "domain": "live",
+    "label": "日本小镇 Vlog（实拍, 15min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      4,
+      6
+    ],
+    "gold": [
+      1,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      4,
+      6
+    ],
+    "gold": [
+      1,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      4,
+      6
+    ],
+    "gold": [
+      1,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      4,
+      6
+    ],
+    "gold": [
+      1,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      4,
+      6
+    ],
+    "gold": [
+      1,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      3,
+      6
+    ],
+    "gold": [
+      1,
+      5
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      3,
+      5
+    ],
+    "gold": [
+      1,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      3,
+      5
+    ],
+    "gold": [
+      1,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      3,
+      5
+    ],
+    "gold": [
+      1,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      3,
+      5
+    ],
+    "gold": [
+      1,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      3,
+      5
+    ],
+    "gold": [
+      1,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1ygo9BeEvV_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      3,
+      5
+    ],
+    "gold": [
+      1,
+      4
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "多 Agent 可视化（屏幕录制, 11min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      4,
+      8
+    ],
+    "gold": [
+      5,
+      11
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      5,
+      8
+    ],
+    "gold": [
+      5,
+      11
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      5,
+      8
+    ],
+    "gold": [
+      5,
+      11
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      5,
+      8
+    ],
+    "gold": [
+      5,
+      11
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      5,
+      8
+    ],
+    "gold": [
+      5,
+      11
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      5,
+      8
+    ],
+    "gold": [
+      5,
+      11
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      3,
+      8
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.0,
+    "R@1": 0.0,
+    "F1@1": 0.0,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      3,
+      8
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.0,
+    "R@1": 0.0,
+    "F1@1": 0.0,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      3,
+      8
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.0,
+    "R@1": 0.0,
+    "F1@1": 0.0,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      3,
+      8
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 0.0,
+    "R@1": 0.0,
+    "F1@1": 0.0,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      5,
+      8
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1YE411D7nH_p37_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      5,
+      8
+    ],
+    "gold": [
+      5,
+      10
+    ],
+    "K": 3,
+    "P": 0.5,
+    "R": 0.5,
+    "F1": 0.5,
+    "P@1": 0.5,
+    "R@1": 0.5,
+    "F1@1": 0.5,
+    "domain": "ppt",
+    "label": "王道操作系统 哲学家进餐（408 PPT, 15min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "chars",
+    "alpha": 0.0,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "chars",
+    "alpha": 0.2,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "chars",
+    "alpha": 0.3,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "chars",
+    "alpha": 0.5,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "chars",
+    "alpha": 0.7,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "chars",
+    "alpha": 1.0,
+    "pred": [
+      3
+    ],
+    "gold": [
+      3
+    ],
+    "K": 2,
+    "P": 1.0,
+    "R": 1.0,
+    "F1": 1.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "alpha": 0.0,
+    "pred": [
+      3
+    ],
+    "gold": [
+      2
+    ],
+    "K": 2,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "alpha": 0.2,
+    "pred": [
+      3
+    ],
+    "gold": [
+      2
+    ],
+    "K": 2,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "alpha": 0.3,
+    "pred": [
+      3
+    ],
+    "gold": [
+      2
+    ],
+    "K": 2,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "alpha": 0.5,
+    "pred": [
+      3
+    ],
+    "gold": [
+      2
+    ],
+    "K": 2,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "alpha": 0.7,
+    "pred": [
+      3
+    ],
+    "gold": [
+      2
+    ],
+    "K": 2,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  },
+  {
+    "video": "BV1L24y1i7v3_p0",
+    "chunker": "texttile",
+    "alpha": 1.0,
+    "pred": [
+      3
+    ],
+    "gold": [
+      2
+    ],
+    "K": 2,
+    "P": 0.0,
+    "R": 0.0,
+    "F1": 0.0,
+    "P@1": 1.0,
+    "R@1": 1.0,
+    "F1@1": 1.0,
+    "domain": "ppt",
+    "label": "5分钟看懂深度学习（AI 科普, 5min）"
+  }
+]

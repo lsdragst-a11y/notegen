@@ -1,0 +1,50 @@
+{
+  "chapters": [
+    {
+      "title": "主题: 懂王访华轰20要飞了",
+      "start": 0.14,
+      "end": 120.12,
+      "indices": [
+        0
+      ],
+      "title_zh": "主题: 懂王访华轰20要飞了",
+      "title_en": "Theme: The King's Visit to China Is About to Take Off"
+    },
+    {
+      "title": "主题: 我知道这亲戚是什么样的人啊",
+      "start": 120.12,
+      "end": 406.44,
+      "indices": [
+        1,
+        2
+      ],
+      "title_zh": "主题: 我知道这亲戚是什么样的人啊",
+      "title_en": "Theme: I Know What Kind of Person This Relative Is"
+    }
+  ],
+  "ablation": {
+    "alpha": 1.0,
+    "text_dists": [
+      1.0,
+      1.0
+    ],
+    "visual_dists": [
+      0.05942404270172119,
+      0.03267097473144531
+    ],
+    "fused_dists": [
+      1.0,
+      0.0
+    ],
+    "depth_scores": [
+      0.5,
+      -0.5
+    ],
+    "text_only_boundaries": [
+      1
+    ],
+    "multimodal_boundaries": [
+      1
+    ]
+  }
+}

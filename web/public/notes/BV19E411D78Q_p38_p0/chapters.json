@@ -1,0 +1,88 @@
+{
+  "chapters": [
+    {
+      "title": "以太网和IEEE 802.3",
+      "start": 0.0,
+      "end": 173.48,
+      "indices": [
+        0
+      ],
+      "abstract": "本章涵盖 以太网和ieee 802.3",
+      "title_zh": "以太网和IEEE 802.3",
+      "title_en": "Ethernet and IEEE 802.3",
+      "abstract_zh": "本章涵盖 以太网和ieee 802.3",
+      "abstract_en": "This chapter covers Ethernet and IEEE 802.3"
+    },
+    {
+      "title": "双脚线连接的两个节点",
+      "start": 173.5,
+      "end": 318.64,
+      "indices": [
+        1
+      ],
+      "abstract": "本章涵盖 双脚线连接的两个节点",
+      "title_zh": "双脚线连接的两个节点",
+      "title_en": "A Twisted Pair Connection Between Two Nodes",
+      "abstract_zh": "本章涵盖 双脚线连接的两个节点",
+      "abstract_en": "This section covers nodes connected by a twisted pair"
+    },
+    {
+      "title": "10Mbps的光纤支持全双共通性",
+      "start": 318.64,
+      "end": 436.1,
+      "indices": [
+        2
+      ],
+      "abstract": "本章涵盖 10mbps的光纤支持全双共通性",
+      "title_zh": "10Mbps的光纤支持全双共通性",
+      "title_en": "10 Mbps Fiber Optic Supports Full Duplex Communication",
+      "abstract_zh": "本章涵盖 10mbps的光纤支持全双共通性",
+      "abstract_en": "This chapter covers 10Mbps fiber supporting full-duplex communication"
+    },
+    {
+      "title": "双脚线连接的终端节点",
+      "start": 436.73,
+      "end": 1032.35,
+      "indices": [
+        3,
+        4
+      ],
+      "abstract": "本章涵盖 p12：双脚线连接连接的终端节点 · 网络层的协议是什么",
+      "title_zh": "双脚线连接的终端节点",
+      "title_en": "Terminal Nodes in a Twisted Pair Connection",
+      "abstract_zh": "本章涵盖 p12：双脚线连接连接的终端节点 · 网络层的协议是什么",
+      "abstract_en": "This chapter covers P12: Terminal nodes connected by a twisted pair · What protocols are at the network layer"
+    },
+    {
+      "title": "网络层的协议是什么？",
+      "start": 1032.35,
+      "end": 1498.65,
+      "indices": [
+        5
+      ],
+      "abstract": "本章涵盖 以太网mac 真的结束了",
+      "title_zh": "网络层的协议是什么？",
+      "title_en": "What Protocols Are Used at the Network Layer?",
+      "abstract_zh": "本章涵盖 以太网mac 真的结束了",
+      "abstract_en": "This chapter covers Ethernet MAC truly concludes"
+    },
+    {
+      "title": "以太网MAC真的结束了",
+      "start": 1498.65,
+      "end": 2238.26,
+      "indices": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "abstract": "本章涵盖 交换机有mac 地址有哪些终端节点 · 曼彻斯特编码这些物理层的信号无脑的转发给自己 · 节点发送的广播帧 · 交换机隔离了冲突域再分析广播域 · 以太网帧的物理层标准",
+      "title_zh": "以太网MAC真的结束了",
+      "title_en": "Is Ethernet MAC Truly Finished?",
+      "abstract_zh": "本章涵盖 交换机有mac 地址有哪些终端节点 · 曼彻斯特编码这些物理层的信号无脑的转发给自己 · 节点发送的广播帧 · 交换机隔离了冲突域再分析广播域 · 以太网帧的物理层标准",
+      "abstract_en": "This chapter covers switch MAC addresses for terminal nodes · Manchester encoding physical layer signals mindlessly forwarding to themselves · Broadcast frames sent by nodes · Switch isolating collision domains and analyzing broadcast domains · Physical layer standards for Ethernet frames"
+    }
+  ],
+  "ablation": null
+}

@@ -1,0 +1,124 @@
+{
+  "chapters": [
+    {
+      "title": "Vibe Coding与前端开发",
+      "start": 28.58,
+      "end": 208.39,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍Vibe Coding的基本概念及前端开发的基础知识。"
+    },
+    {
+      "title": "软件架构与安全",
+      "start": 213.39,
+      "end": 354.27,
+      "indices": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "abstract": "本章探讨软件架构的基础知识和安全措施，包括需求分析、设计原则、数据库选择以及安全与隐私保护。"
+    },
+    {
+      "title": "AI编码与跨平台",
+      "start": 354.27,
+      "end": 446.39,
+      "indices": [
+        6,
+        7
+      ],
+      "abstract": "本章讨论AI编码时需要注意的问题以及如何确保应用在不同平台上的兼容性。"
+    },
+    {
+      "title": "代码容器化与学习旅程",
+      "start": 446.39,
+      "end": 526.04,
+      "indices": [
+        8,
+        9
+      ],
+      "abstract": "本章介绍代码容器化的实践方法以及个人学习旅程中的重要步骤。"
+    },
+    {
+      "title": "项目设置与代理状态",
+      "start": 526.04,
+      "end": 608.5,
+      "indices": [
+        10,
+        11
+      ],
+      "abstract": "本章讲解项目设置与监控的方法，并介绍如何查看和管理代理状态。"
+    },
+    {
+      "title": "使用Codiff与分享技巧",
+      "start": 608.5,
+      "end": 698.7,
+      "indices": [
+        12,
+        13
+      ],
+      "abstract": "本章指导如何使用Codiff工具，并分享有效的学习技巧。"
+    },
+    {
+      "title": "笔记本总结与代码逻辑",
+      "start": 698.7,
+      "end": 815.87,
+      "indices": [
+        14,
+        15
+      ],
+      "abstract": "本章强调使用笔记本进行项目总结的重要性，并解释代码逻辑以提高理解度。"
+    },
+    {
+      "title": "实践学习与适应项目",
+      "start": 815.87,
+      "end": 877.15,
+      "indices": [
+        16,
+        17
+      ],
+      "abstract": "本章强调通过实践学习新技能，并帮助新手适应现有项目。"
+    },
+    {
+      "title": "获取建议与理解文档",
+      "start": 877.15,
+      "end": 922.97,
+      "indices": [
+        18,
+        19
+      ],
+      "abstract": "本章提供获取多种建议的方法，并帮助理解和使用项目文档。"
+    },
+    {
+      "title": "视频结束",
+      "start": 923.43,
+      "end": 948.97,
+      "indices": [
+        20
+      ],
+      "abstract": "本章总结课程内容，为学习者提供结束语和下一步建议。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "attempt_3",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "oversize",
+        "oversize"
+      ],
+      "fallback_used": false
+    },
+    "duration": 949.7890625,
+    "n_chunks": 21,
+    "lang": "zh",
+    "n_chapters": 10,
+    "max_chunks_per_chapter": 4,
+    "has_wrapup": false
+  }
+}

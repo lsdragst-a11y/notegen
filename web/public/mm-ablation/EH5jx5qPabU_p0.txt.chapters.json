@@ -1,0 +1,208 @@
+{
+  "chapters": [
+    {
+      "title": "AI Agent Overview and Tools",
+      "start": 0.0,
+      "end": 258.2,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "abstract": "This chapter provides an overview of AI agents, contrasting static and dynamic processes, and discusses tools and building systems for agents."
+    },
+    {
+      "title": "Agent Guardrails and API Usage",
+      "start": 258.36,
+      "end": 455.9,
+      "indices": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "abstract": "This chapter covers guardrails for AI agents, explains API usage, and explores multi-agent systems and HTTP requests."
+    },
+    {
+      "title": "Post Requests and N8n Usage",
+      "start": 456.04,
+      "end": 508.66,
+      "indices": [
+        9,
+        10
+      ],
+      "abstract": "This section delves into post requests and demonstrates their use with N8n for AI agents."
+    },
+    {
+      "title": "Agent Framework Basics",
+      "start": 508.66,
+      "end": 579.04,
+      "indices": [
+        11
+      ],
+      "abstract": "This chapter introduces the basics of an agent framework, laying the groundwork for further development."
+    },
+    {
+      "title": "Personalizing Agent Responses",
+      "start": 579.04,
+      "end": 603.58,
+      "indices": [
+        12
+      ],
+      "abstract": "This chapter focuses on personalizing responses from AI agents to enhance user interaction."
+    },
+    {
+      "title": "Setting Up Workflows",
+      "start": 603.58,
+      "end": 689.93,
+      "indices": [
+        13
+      ],
+      "abstract": "This chapter guides the setup of workflows, including connecting nodes and setting up API keys."
+    },
+    {
+      "title": "Connecting Nodes and API Keys",
+      "start": 689.93,
+      "end": 855.19,
+      "indices": [
+        14,
+        15,
+        16,
+        17
+      ],
+      "abstract": "This section explains how to connect nodes in N8n, set up OpenAI API keys, choose models, and use chat nodes."
+    },
+    {
+      "title": "Memory Context Importance",
+      "start": 855.19,
+      "end": 899.21,
+      "indices": [
+        18
+      ],
+      "abstract": "This chapter highlights the importance of memory context in AI agents and its impact on decision-making."
+    },
+    {
+      "title": "Saving Workflow Changes",
+      "start": 899.21,
+      "end": 924.93,
+      "indices": [
+        19
+      ],
+      "abstract": "This section covers saving changes to workflows and ensuring they are properly stored for future use."
+    },
+    {
+      "title": "Adding Tools to Workflow",
+      "start": 924.93,
+      "end": 945.91,
+      "indices": [
+        20
+      ],
+      "abstract": "This chapter explains how to add tools to workflows, enhancing functionality and efficiency."
+    },
+    {
+      "title": "Air Quality Check",
+      "start": 945.91,
+      "end": 997.05,
+      "indices": [
+        21
+      ],
+      "abstract": "This chapter focuses on air quality checks using AI agents to monitor and report environmental conditions."
+    },
+    {
+      "title": "HTTP Request Nodes and URL Generation",
+      "start": 997.05,
+      "end": 1137.44,
+      "indices": [
+        22,
+        23
+      ],
+      "abstract": "This section details HTTP request nodes and demonstrates how to generate full URLs for API requests."
+    },
+    {
+      "title": "Renaming Nodes for Clarity",
+      "start": 1137.44,
+      "end": 1178.04,
+      "indices": [
+        24
+      ],
+      "abstract": "This chapter emphasizes renaming nodes for clarity and organization within workflows."
+    },
+    {
+      "title": "Handling API Errors and Testing",
+      "start": 1178.04,
+      "end": 1351.11,
+      "indices": [
+        25,
+        26,
+        27,
+        28
+      ],
+      "abstract": "This section covers handling API errors, formatting requests, testing workflow success, and exploring advanced features."
+    },
+    {
+      "title": "Advanced Agent Features",
+      "start": 1351.11,
+      "end": 1395.11,
+      "indices": [
+        29
+      ],
+      "abstract": "This chapter delves into advanced features of AI agents, including research and integration with workflows."
+    },
+    {
+      "title": "Research and Workflow Integration",
+      "start": 1395.11,
+      "end": 1429.16,
+      "indices": [
+        30
+      ],
+      "abstract": "This section discusses future courses on AI, focusing on research and workflow integration."
+    },
+    {
+      "title": "Future Courses on AI",
+      "start": 1429.16,
+      "end": 1457.47,
+      "indices": [
+        31
+      ],
+      "abstract": "This chapter explores research and customization in AI, particularly in the context of UT studies."
+    },
+    {
+      "title": "UT Research and Customization",
+      "start": 1458.19,
+      "end": 1525.43,
+      "indices": [
+        32
+      ],
+      "abstract": "This section explains the use of chat nodes and money management strategies within AI workflows."
+    },
+    {
+      "title": "Chat Node and Money Management",
+      "start": 1525.43,
+      "end": 1556.65,
+      "indices": [
+        33
+      ],
+      "abstract": ""
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "oversize"
+      ],
+      "fallback_used": false
+    },
+    "duration": 1557.273,
+    "n_chunks": 34,
+    "lang": "en",
+    "n_chapters": 19,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
+  }
+}

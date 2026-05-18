@@ -1,0 +1,89 @@
+{
+  "chapters": [
+    {
+      "title": "IPv4分组与IP首部",
+      "start": 0.05,
+      "end": 275.13,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍IPv4分组结构，并详细解析IP首部中的各个字段。"
+    },
+    {
+      "title": "IP首部总长度与数据报总长度",
+      "start": 275.23,
+      "end": 852.94,
+      "indices": [
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章解释IP首部总长度和数据报总长度的概念，并分析IP数据报首部的组成。"
+    },
+    {
+      "title": "IP数据报分片与分片标识",
+      "start": 854.14,
+      "end": 1260.16,
+      "indices": [
+        5,
+        6
+      ],
+      "abstract": "本章探讨IP数据报分片的过程，重点介绍分片标识符和更多片段标志(MF)的作用。"
+    },
+    {
+      "title": "IP数据报分片偏移",
+      "start": 1260.16,
+      "end": 1515.9,
+      "indices": [
+        7
+      ],
+      "abstract": "本章聚焦IP数据报分片偏移字段的意义及其在分片重组中的应用。"
+    },
+    {
+      "title": "TTL与IP数据报寿命",
+      "start": 1517.13,
+      "end": 1677.53,
+      "indices": [
+        8
+      ],
+      "abstract": "本章讨论TTL(Time To Live)与IP数据报寿命的关系，解释数据报在网络中的生命周期。"
+    },
+    {
+      "title": "IP首部校验",
+      "start": 1678.14,
+      "end": 1786.22,
+      "indices": [
+        9
+      ],
+      "abstract": "本章介绍IP首部校验字段的功能及其在数据报传输过程中的作用。"
+    },
+    {
+      "title": "IP数据报传输 · 本节复习",
+      "start": 1786.22,
+      "end": 2019.81,
+      "indices": [
+        10
+      ],
+      "abstract": "本章概述IP数据报如何在互联网中进行传输，涉及分片、重组及路径选择等关键环节。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "oversize"
+      ],
+      "fallback_used": false
+    },
+    "duration": 2020.5013125,
+    "n_chunks": 11,
+    "lang": "zh",
+    "n_chapters": 7,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": true
+  }
+}

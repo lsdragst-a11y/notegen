@@ -1,0 +1,50 @@
+{
+  "chapters": [
+    {
+      "title": "哲学家进餐与冲突",
+      "start": 1.46,
+      "end": 432.0,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章探讨哲学家进餐问题及其引发的冲突，强调资源分配的重要性。"
+    },
+    {
+      "title": "信号量与互斥操作",
+      "start": 432.0,
+      "end": 659.7,
+      "indices": [
+        2,
+        3
+      ],
+      "abstract": "本章介绍信号量作为解决互斥操作的方法，并分析其在同步中的应用。"
+    },
+    {
+      "title": "死锁避免机制",
+      "start": 659.7,
+      "end": 898.14,
+      "indices": [
+        4
+      ],
+      "abstract": "本章详细解释死锁避免机制，重点在于资源预分配策略以防止死锁发生。"
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false
+    },
+    "duration": 900.3946875,
+    "n_chunks": 5,
+    "lang": "zh",
+    "keyframes": true,
+    "n_chapters": 3,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": false
+  }
+}
