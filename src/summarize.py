@@ -689,12 +689,13 @@ def _render_text_with_confidence(item: dict, threshold: float) -> str:
 def _format_item(item: dict, idx: int, depth: int = 2,
                  keyframe_rel_prefix: str = "",
                  anchor: bool = False,
-                 confidence_threshold: float = 0.0) -> list[str]:
+                 confidence_threshold: float = 0.0,
+                 show_marks: bool = True) -> list[str]:
     ts = f"{format_seconds(item['start'])} - {format_seconds(item['end'])}"
     headline = item.get("headline")
     head_prefix = "#" * depth + " "
     label = f"第 {idx} 段"
-    marks = chunk_marks(item)
+    marks = chunk_marks(item) if show_marks else []
     mark_str = (" " + " ".join(marks)) if marks else ""
     h = (f"{head_prefix}{label}：{headline}{mark_str}（{ts}）" if headline
          else f"{head_prefix}{label}{mark_str}（{ts}）")
@@ -715,31 +716,44 @@ def _format_item(item: dict, idx: int, depth: int = 2,
     return out
 
 
+def _chapter_label(ci: int, category: str) -> str:
+    """章节级标签：vlog/talk 用「片段 N」（无量词，避免和 chunk 级「第 N 段」撞名），
+    teaching/popsci 用「第 N 章」。"""
+    return f"片段 {ci}" if category in ("vlog", "talk") else f"第 {ci} 章"
+
+
 def _format_overview_card(summaries: list[dict],
-                          chapters: list[dict] | None) -> list[str]:
-    """顶部摘要卡：时长 / 章段数 / 核心关键词。"""
+                          chapters: list[dict] | None,
+                          category: str = "teaching") -> list[str]:
+    """顶部摘要卡：时长 / 章段数 / 核心关键词。
+
+    vlog/talk 不显示「N 章」字段（避免和「M 段」撞「段」字 → 「2 段 / 3 段」）。"""
     if not summaries:
         return []
+    is_vlog_like = category in ("vlog", "talk")
     total = summaries[-1].get("end", 0) - summaries[0].get("start", 0)
     n_chap = len(chapters) if chapters else 0
     n_seg = len(summaries)
-    chap_part = f"{n_chap} 章 / " if n_chap else ""
+    chap_part = f"{n_chap} 章 / " if (n_chap and not is_vlog_like) else ""
     kws = build_overview_keywords(summaries, top_k=8)
     kw_part = f" · **核心关键词** {' · '.join(kws)}" if kws else ""
     return [f"> **时长** {format_seconds(total)} · "
             f"**{chap_part}{n_seg} 段**{kw_part}\n"]
 
 
-def _format_toc(chapters: list[dict]) -> list[str]:
-    lines = ["## 📑 目录\n"]
+def _format_toc(chapters: list[dict], icon: str = "📑", label: str = "目录",
+                category: str = "teaching") -> list[str]:
+    lines = [f"## {icon} {label}\n"]
     for ci, ch in enumerate(chapters, 1):
         ts = f"{format_seconds(ch['start'])} - {format_seconds(ch['end'])}"
-        lines.append(f"{ci}. [第 {ci} 章：{ch['title']}](#chapter-{ci})（{ts}）\n")
+        lines.append(
+            f"{ci}. [{_chapter_label(ci, category)}：{ch['title']}](#chapter-{ci})（{ts}）\n")
     return lines
 
 
 def _format_knowledge_points(summaries: list[dict],
-                             chapters: list[dict]) -> list[str]:
+                             chapters: list[dict],
+                             show_marks: bool = True) -> list[str]:
     """知识点速览：按章列出章内各段 headline 作为 bullet，带重难点标记。"""
     lines = ["## 💡 知识点速览\n"]
     for ci, ch in enumerate(chapters, 1):
@@ -750,7 +764,7 @@ def _format_knowledge_points(summaries: list[dict],
             if not headline:
                 continue
             ts = format_seconds(item["start"])
-            marks = chunk_marks(item)
+            marks = chunk_marks(item) if show_marks else []
             mark_str = (" " + " ".join(marks)) if marks else ""
             lines.append(
                 f"- [{ts} 第 {global_idx + 1} 段](#chunk-{global_idx + 1})：{headline}{mark_str}\n")
@@ -776,23 +790,39 @@ def to_markdown(summaries: list[dict], title: str = "网课笔记",
                 keyframe_rel_prefix: str = "",
                 learning_mode: bool = True,
                 confidence_threshold: float = 0.0,
-                lang: str = "zh") -> str:
+                lang: str = "zh",
+                category: str = "teaching") -> str:
     """没有 chapters 时输出扁平 H2 段落；有 chapters 时输出 H2 章节 + H3 段落。
 
-    learning_mode=True 时（学习类视频，默认）在正文前追加：
-      - 顶部摘要卡（时长/章段数/核心关键词）
-      - 目录 TOC（仅当有 chapters）
-      - 知识点速览（仅当有 chapters）
-      - 术语表
-    并在每章末尾追加 1-2 句"本章小结"。
+    category 派生模板分发（对齐前端 NotesContent.tsx）：
+      teaching: 全开（摘要卡 / 📑 目录 / 💡 知识点速览 / 📚 术语表 / 🎯⭐ 标记 / 本章小结）
+      popsci:   保留摘要卡 / 目录 / 知识点速览 / 术语表 / 本章小结；关闭 🎯⭐ 标记
+      vlog/talk: 仅保留摘要卡 / 时间轴 TOC；关闭知识点速览 / 术语表 / 标记 / 本章小结；
+                章节单位用"段"、TOC 用 🎬 时间轴、章节概述改"本段简介"
+
+    learning_mode=False 是旧 flag，等价于关闭所有学习类元素（最朴素 md）。
     """
+    is_vlog_like = category in ("vlog", "talk")
+    show_marks = learning_mode and category == "teaching"
+    show_kp = learning_mode and (not is_vlog_like)
+    show_glossary = learning_mode and (not is_vlog_like)
+    show_chapter_recap = learning_mode and (not is_vlog_like)
+
+    toc_icon = "🎬" if is_vlog_like else "📑"
+    toc_label = "时间轴" if is_vlog_like else "目录"
+    chapter_abstract_label = "本段简介" if is_vlog_like else "本章概述"
+
     lines = [f"# {title}\n"]
     if learning_mode:
-        lines.extend(_format_overview_card(summaries, chapters))
+        lines.extend(_format_overview_card(summaries, chapters, category=category))
         if chapters:
-            lines.extend(_format_toc(chapters))
-            lines.extend(_format_knowledge_points(summaries, chapters))
-        lines.extend(_format_glossary(summaries))
+            lines.extend(_format_toc(chapters, icon=toc_icon, label=toc_label,
+                                     category=category))
+            if show_kp:
+                lines.extend(_format_knowledge_points(summaries, chapters,
+                                                     show_marks=show_marks))
+        if show_glossary:
+            lines.extend(_format_glossary(summaries))
         if any(lines[1:]):
             lines.append("---\n")
 
@@ -801,18 +831,19 @@ def to_markdown(summaries: list[dict], title: str = "网课笔记",
             ts = f"{format_seconds(ch['start'])} - {format_seconds(ch['end'])}"
             if learning_mode:
                 lines.append(f'<a id="chapter-{ci}"></a>\n')
-            lines.append(f"## 第 {ci} 章：{ch['title']}（{ts}）\n")
+            lines.append(f"## {_chapter_label(ci, category)}：{ch['title']}（{ts}）\n")
             # 章节级 abstractive 概述（pipeline neural 模式生成，置于章标题下）
             ab = ch.get("abstract")
             if ab:
-                lines.append(f"> **本章概述**：{ab}\n")
+                lines.append(f"> **{chapter_abstract_label}**：{ab}\n")
             for global_idx in ch["indices"]:
                 lines.extend(_format_item(
                     summaries[global_idx], global_idx + 1,
                     depth=3, keyframe_rel_prefix=keyframe_rel_prefix,
                     anchor=learning_mode,
-                    confidence_threshold=confidence_threshold))
-            if learning_mode:
+                    confidence_threshold=confidence_threshold,
+                    show_marks=show_marks))
+            if show_chapter_recap:
                 recap_texts = [summaries[i].get("text", "") for i in ch["indices"]]
                 recap = chapter_recap(recap_texts, max_sentences=2, lang=lang)
                 if recap:
@@ -822,5 +853,6 @@ def to_markdown(summaries: list[dict], title: str = "网课笔记",
             lines.extend(_format_item(item, i, depth=2,
                                       keyframe_rel_prefix=keyframe_rel_prefix,
                                       anchor=learning_mode,
-                                      confidence_threshold=confidence_threshold))
+                                      confidence_threshold=confidence_threshold,
+                                      show_marks=show_marks))
     return "\n".join(lines)

@@ -372,15 +372,19 @@ def _mark_wrapup_chapter(chapter_list: list, lang: str = "zh") -> None:
 
 
 def _apply_chapter_abstracts(chapter_list: list, llm_chapters: bool,
-                              lang: str = "zh") -> None:
+                              lang: str = "zh",
+                              category: str = "teaching") -> None:
     """给每章填 `abstract` 字段。`--llm-chapters` 时优先 Qwen 生成 1-2 句 prose；
     Qwen 失败 / 关闭时 fallback 到 `summarize_chapter`（拼 headlines）。
-    顶层 + 子章节都处理；子章节当前用 fallback（Qwen 批量逻辑仅做顶层）。"""
+    顶层 + 子章节都处理；子章节当前用 fallback（Qwen 批量逻辑仅做顶层）。
+
+    category=vlog/talk 时切到 vlog 简介 prompt（"本段..."开头），其它走教学版"本章..."。"""
     abstracts = None
     if llm_chapters:
         try:
             from segment_llm import generate_chapter_abstracts
-            abstracts = generate_chapter_abstracts(chapter_list, lang=lang)
+            abstracts = generate_chapter_abstracts(chapter_list, lang=lang,
+                                                    category=category)
         except Exception as e:
             print(f"      [llm-chapter-abstract] 异常：{e}，fallback summarize_chapter",
                   flush=True)
@@ -684,6 +688,26 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         except Exception as e:
             print(f"      [vl-cap] 异常：{e}（跳过 caption，回退 sim cue）", flush=True)
 
+    # ===== 内容大类轻量分类（teaching/popsci/vlog/talk）=====
+    # 提到 LLM 章节切分前，让切分用对应 category 的 prompt（vlog/talk 章节更碎）。
+    # 末段还会再算一次（用相同 transcript）回写 meta.json，结果一致。
+    inferred_category = "teaching"
+    _meta_for_cat = _load_meta_safe(META_DIR / f"{video.stem}.meta.json") or {}
+    try:
+        from classify_category import classify_category
+        cat_transcript = " ".join((c.get("text") or "")[:600] for c in summaries[:10])[:5000]
+        cat_keywords_flat = [kw for c in summaries for kw in (c.get("keywords") or [])]
+        _cat_result = classify_category(
+            _meta_for_cat, transcript=cat_transcript,
+            keywords=cat_keywords_flat,
+            duration_sec=asr_result.get("duration"))
+        inferred_category = _cat_result["category"]
+        print(f"      [category-early] {inferred_category} "
+              f"({_cat_result['confidence']}) → LLM 切分用 {inferred_category} prompt",
+              flush=True)
+    except Exception as e:
+        print(f"      [category-early] 分类异常：{e}，按 teaching 走", flush=True)
+
     # ===== LLM 层级章节切分（替代 TextTiling 章节路径）=====
     if llm_chapters:
         print("[chapters] LLM 层级章节切分（Qwen2.5-7B-AWQ）...", flush=True)
@@ -691,7 +715,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             from segment_llm import segment_hierarchical
             outline = segment_hierarchical(summaries, visual_sims=visual_sims_for_llm,
                                             visual_captions=visual_captions_for_llm,
-                                            lang=resolved_lang)
+                                            lang=resolved_lang,
+                                            category=inferred_category)
         except Exception as e:
             print(f"      [llm-chapters] 异常：{e}，fallback TextTiling", flush=True)
             outline = None
@@ -710,7 +735,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             try:
                 outline_rescue = segment_hierarchical(
                     summaries, visual_sims=visual_sims_for_llm,
-                    visual_captions=None, lang=resolved_lang)
+                    visual_captions=None, lang=resolved_lang,
+                    category=inferred_category)
                 if outline_rescue and outline_rescue.get("chapters"):
                     print(f"      [vl-rescue] retry 成功，VL caption 是失败原因",
                           flush=True)
@@ -747,7 +773,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             # 章节级 abstractive 概述：llm_chapters 模式下用 Qwen 生成 prose，
             # 否则 / Qwen 失败时 fallback 到拼接式 summarize_chapter
             if summarizer == "neural":
-                _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang)
+                _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang,
+                                                          category=inferred_category)
             _mark_wrapup_chapter(chapter_list, lang=resolved_lang)
 
     if chapter_list is None and chapters is not None and chapters != 0:
@@ -805,7 +832,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
                 outline_for_titles = {"chapters": [
                     {"chunks": ch["indices"]} for ch in chapter_list]}
                 refined_titles = refine_chapter_titles(outline_for_titles, summaries,
-                                                        lang=resolved_lang)
+                                                        lang=resolved_lang,
+                                                        category=inferred_category)
             except Exception as e:
                 print(f"      [llm-chapter-title-fallback] 异常：{e}", flush=True)
                 refined_titles = None
@@ -817,7 +845,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
                       flush=True)
         # 章节级 abstractive 概述（仅 neural 模式）
         if summarizer == "neural" and chapter_list:
-            _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang)
+            _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang,
+                                                          category=inferred_category)
         _mark_wrapup_chapter(chapter_list, lang=resolved_lang)
         mm_bounds = [ch["indices"][0] for ch in chapter_list[1:]]
         ablation = {
@@ -924,14 +953,46 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         )
     md_path = OUTPUT_DIR / f"{stem}.md"
     md_title = stem
-    md_meta = _load_meta_safe(META_DIR / f"{video.stem}.meta.json")
+    meta_path = META_DIR / f"{video.stem}.meta.json"
+    md_meta = _load_meta_safe(meta_path)
     if md_meta is not None:
         md_title = md_meta.get("title", stem)
+
+    # ===== 内容大类分类（teaching/popsci/vlog/talk）=====
+    # 写入 raw/{stem}.meta.json，server._publish_to_web 会 copy 到 web/public。
+    # 前端据此切换 UI 模板（vlog 不显示术语表 / 知识点速览改时间轴等）。
+    # 与 L688-706 [category-early] 同输入同结果（纯启发式，毫秒级）；重算只为
+    # 拿 confidence 字段写 meta，category 用 inferred_category 保证 md 与 meta 一致
+    if md_meta is not None:
+        try:
+            from classify_category import classify_category
+            transcript = " ".join((c.get("text") or "")[:600] for c in summaries[:10])[:5000]
+            keywords_flat: list[str] = []
+            for c in summaries:
+                for kw in (c.get("keywords") or []):
+                    keywords_flat.append(kw)
+            cat_result = classify_category(
+                md_meta, transcript=transcript,
+                keywords=keywords_flat,
+                duration_sec=asr_result.get("duration"))
+            md_meta["category"] = cat_result["category"]
+            md_meta["category_confidence"] = cat_result["confidence"]
+            meta_path.write_text(
+                json.dumps(md_meta, ensure_ascii=False, indent=2),
+                encoding="utf-8")
+            print(f"      [category] {cat_result['category']} "
+                  f"({cat_result['confidence']}) scores={cat_result['scores']}",
+                  flush=True)
+        except Exception as e:
+            print(f"      [category] 分类异常：{e}（meta 不写 category 字段）",
+                  flush=True)
+
     md_path.write_text(to_markdown(summaries, title=md_title, chapters=chapter_list,
                                    keyframe_rel_prefix=kf_rel_prefix,
                                    learning_mode=learning_mode,
                                    confidence_threshold=confidence_threshold,
-                                   lang=resolved_lang),
+                                   lang=resolved_lang,
+                                   category=inferred_category),
                        encoding="utf-8")
 
     print(f"\n[OK] 完成! 笔记: {md_path}")

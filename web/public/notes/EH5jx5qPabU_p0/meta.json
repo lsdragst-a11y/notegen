@@ -4,5 +4,7 @@
   "uploader": "YouTube",
   "duration": 1557,
   "webpage_url": "https://youtu.be/EH5jx5qPabU",
-  "description": "English tutorial: AI agents explained, automation vs agent distinction, tool use, multi-agent systems, building your first agent with n8n."
+  "description": "English tutorial: AI agents explained, automation vs agent distinction, tool use, multi-agent systems, building your first agent with n8n.",
+  "category": "teaching",
+  "category_confidence": "medium"
 }
