@@ -36,8 +36,10 @@ def load_clip(model_dir: Path | str = DEFAULT_CLIP_DIR,
     dtype = dtype or (torch.float16 if device == "cuda" else torch.float32)
     print(f"      [clip] loading from {model_dir} (device={device}, dtype={dtype}) ...")
     processor = ChineseCLIPProcessor.from_pretrained(str(model_dir))
+    # transformers 4.46 在 model.safetensors 缺 __metadata__ 时会 NPE，
+    # 模型目录里同时有 pytorch_model.bin，退回 .bin 路径绕过
     model = ChineseCLIPModel.from_pretrained(
-        str(model_dir), torch_dtype=dtype
+        str(model_dir), torch_dtype=dtype, use_safetensors=False,
     ).to(device)
     model.eval()
     _CACHE[key] = (model, processor, device, dtype)

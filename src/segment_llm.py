@@ -24,6 +24,58 @@ import os
 import re
 from typing import Optional
 
+import jieba
+jieba.setLogLevel(60)  # 静音 jieba 启动 INFO 日志，pipeline 输出已经够吵
+
+
+def _apply_autoawq_shim():
+    """autoawq 0.2.6 跟 transformers 4.49+ import 链兼容修复。
+    模块级运行，让任何 import segment_llm 的下游（含 caption_vl）共享 shim。
+    幂等。"""
+    import sys as _sys
+    import types as _types
+    import os as _os
+    # Windows: autoawq_kernels .pyd 不在默认 DLL 搜索路径，注入 torch lib 目录
+    # 让 cudart64_12 / cublas64_12 等可被 awq_ext.pyd 解析
+    if hasattr(_os, "add_dll_directory"):
+        try:
+            import torch as _t
+            _t_lib = _os.path.join(_os.path.dirname(_t.__file__), "lib")
+            if _os.path.isdir(_t_lib):
+                _os.add_dll_directory(_t_lib)
+        except Exception:
+            pass
+    # datasets stub：awq.utils.calib_data import 它，pyarrow 24 在 Windows 上 segfault
+    # 推理不需要 calibration，stub 掉
+    if "datasets" not in _sys.modules:
+        _ds_stub = _types.ModuleType("datasets")
+        _ds_stub.load_dataset = lambda *a, **k: None
+        try:
+            import importlib.machinery as _im
+            _ds_stub.__spec__ = _im.ModuleSpec("datasets", loader=None)
+        except Exception:
+            pass
+        _sys.modules["datasets"] = _ds_stub
+    # transformers 4.47+ 删了 shard_checkpoint，autoawq 量化路径用，推理用不到
+    try:
+        import transformers.modeling_utils as _mu
+        if not hasattr(_mu, "shard_checkpoint"):
+            _mu.shard_checkpoint = lambda *a, **k: None
+    except Exception:
+        pass
+    # transformers 4.57 改了 PytorchGELUTanh 模块组织，旧 autoawq 找不到时退化到 nn.GELU
+    try:
+        import transformers.activations as _ta
+        import torch.nn as _nn
+        for _sym in ("PytorchGELUTanh", "NewGELUActivation", "GELUActivation"):
+            if not hasattr(_ta, _sym):
+                setattr(_ta, _sym, _nn.GELU)
+    except Exception:
+        pass
+
+
+_apply_autoawq_shim()
+
 
 _MODEL = None
 _TOKENIZER = None
@@ -79,27 +131,6 @@ def load_model(model_id: str = _DEFAULT_MODEL):
     else:
         model_path = model_id
         print(f"      [llm] load from HF: {model_id}（首次会下载 ~5GB）", flush=True)
-
-    # autoawq 0.2.6 跟 transformers 4.57 多处 import 不兼容（autoawq 0.2.9 需要
-    # triton 在 Windows 上没 wheel），所以打 shim 让 awq lib 能 import 通过：
-    #   - shard_checkpoint：transformers 4.46+ 删了，autoawq 量化路径用，推理用不到
-    #   - PytorchGELUTanh：transformers 4.57 改了模块组织
-    #   - datasets：calib_data.py 触发 pyarrow native segfault（不需要校准就用 stub）
-    # 这些 shim 只为让 import 链不炸，实际推理走 transformers native AWQ + autoawq_kernels
-    import sys as _sys
-    import types as _types
-    if "datasets" not in _sys.modules:
-        _ds_stub = _types.ModuleType("datasets")
-        _ds_stub.load_dataset = lambda *a, **k: None
-        _sys.modules["datasets"] = _ds_stub
-    import transformers.modeling_utils as _mu
-    if not hasattr(_mu, "shard_checkpoint"):
-        _mu.shard_checkpoint = lambda *a, **k: None
-    import transformers.activations as _ta
-    import torch.nn as _nn
-    for _sym in ("PytorchGELUTanh", "NewGELUActivation", "GELUActivation"):
-        if not hasattr(_ta, _sym):
-            setattr(_ta, _sym, _nn.GELU)
 
     from transformers import AutoModelForCausalLM, AutoTokenizer
     import torch
