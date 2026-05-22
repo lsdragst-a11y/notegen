@@ -1,0 +1,159 @@
+{
+  "chapters": [
+    {
+      "title": "日本河豚料理",
+      "start": 0.0,
+      "end": 107.33,
+      "indices": [
+        0
+      ],
+      "abstract": "本章介绍日本河豚料理的基本知识。",
+      "title_zh": "日本河豚料理",
+      "title_en": "Japanese pufferfish cuisine",
+      "abstract_zh": "本章介绍日本河豚料理的基本知识。",
+      "abstract_en": "This chapter introduces basic knowledge about Japanese fugu cuisine."
+    },
+    {
+      "title": "河豚内脏处理",
+      "start": 107.33,
+      "end": 212.7,
+      "indices": [
+        1
+      ],
+      "abstract": "本章详细说明河豚内脏的正确处理方法。",
+      "title_zh": "河豚内脏处理",
+      "title_en": "processing pufferfish organs",
+      "abstract_zh": "本章详细说明河豚内脏的正确处理方法。",
+      "abstract_en": "This chapter details the correct processing methods for fugu organs."
+    },
+    {
+      "title": "河豚市场拍卖",
+      "start": 212.7,
+      "end": 275.76,
+      "indices": [
+        2
+      ],
+      "abstract": "本章探讨河豚在市场上的拍卖流程及其相关规则。",
+      "title_zh": "河豚市场拍卖",
+      "title_en": "pufferfish market auctions",
+      "abstract_zh": "本章探讨河豚在市场上的拍卖流程及其相关规则。",
+      "abstract_en": "This chapter explores the auction process and related rules for fugu in the market."
+    },
+    {
+      "title": "河豚厨师经历",
+      "start": 275.76,
+      "end": 338.78,
+      "indices": [
+        3
+      ],
+      "abstract": "本章讲述经验丰富的河豚厨师的工作经历。",
+      "title_zh": "河豚厨师经历",
+      "title_en": "a pufferfish chef's experience",
+      "abstract_zh": "本章讲述经验丰富的河豚厨师的工作经历。",
+      "abstract_en": "This chapter recounts the experiences of experienced fugu chefs."
+    },
+    {
+      "title": "河豚内脏处理与毒性",
+      "start": 338.78,
+      "end": 638.43,
+      "indices": [
+        4,
+        5,
+        6
+      ],
+      "abstract": "本章解释河豚内脏的毒性及处理规定，重点讨论高温处理河豚毒素的方法。",
+      "title_zh": "河豚内脏处理与毒性",
+      "title_en": "toxicity of pufferfish organs",
+      "abstract_zh": "本章解释河豚内脏的毒性及处理规定，重点讨论高温处理河豚毒素的方法。",
+      "abstract_en": "This chapter explains the toxicity of fugu organs and processing regulations, focusing on high-temperature methods to neutralize toxins."
+    },
+    {
+      "title": "河豚美食处理与熟成",
+      "start": 638.43,
+      "end": 846.6,
+      "indices": [
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章分享河豚美食家对河豚鱼肉处理和熟成方法的看法。",
+      "title_zh": "河豚美食处理与熟成",
+      "title_en": "preparing and maturing pufferfish delicacies",
+      "abstract_zh": "本章分享河豚美食家对河豚鱼肉处理和熟成方法的看法。",
+      "abstract_en": "This chapter shares perspectives from fugu food enthusiasts on handling and aging techniques for fugu flesh."
+    },
+    {
+      "title": "河豚生皮与刺体验",
+      "start": 846.6,
+      "end": 987.01,
+      "indices": [
+        10,
+        11
+      ],
+      "abstract": "本章描述河豚生皮的独特口感和食用体验。",
+      "title_zh": "河豚生皮与刺体验",
+      "title_en": "savoring raw pufferfish skin and spines",
+      "abstract_zh": "本章描述河豚生皮的独特口感和食用体验。",
+      "abstract_en": "This chapter describes the unique texture and eating experience of raw fugu skin."
+    },
+    {
+      "title": "预约与菜单",
+      "start": 988.12,
+      "end": 1264.39,
+      "indices": [
+        12,
+        13,
+        14
+      ],
+      "abstract": "本章介绍店铺的预约制度和河豚全席菜单，提及店主陪酒的文化。",
+      "title_zh": "预约与菜单",
+      "title_en": "reservations and menu options",
+      "abstract_zh": "本章介绍店铺的预约制度和河豚全席菜单，提及店主陪酒的文化。",
+      "abstract_en": "This chapter introduces the reservation system at the shop and the full fugu banquet menu, mentioning the culture of the owner serving as host."
+    },
+    {
+      "title": "葡萄酒与梭子蟹",
+      "start": 1264.39,
+      "end": 1500.3,
+      "indices": [
+        15,
+        16,
+        17
+      ],
+      "abstract": "本章推荐高级白葡萄酒搭配河豚，并介绍超高温烹饪梭子蟹的方法。",
+      "title_zh": "葡萄酒与梭子蟹",
+      "title_en": "wine pairings with softshell crabs",
+      "abstract_zh": "本章推荐高级白葡萄酒搭配河豚，并介绍超高温烹饪梭子蟹的方法。",
+      "abstract_en": "This chapter recommends premium white wine pairings for fugu and introduces methods for ultra-high temperature cooking of spiny crabs."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_oversize"
+      ],
+      "llm_fail_reasons": [
+        "oversize",
+        "oversize",
+        "oversize"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 1504.119,
+    "n_chunks": 18,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 1,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 9,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": false
+  }
+}

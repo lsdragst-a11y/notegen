@@ -1,0 +1,85 @@
+{
+  "chapters": [
+    {
+      "title": "TCP首部组成",
+      "start": 0.08,
+      "end": 868.73,
+      "indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "abstract": "本章介绍TCP首部组成，重点讲解序号和确认号字段的作用，并对比IP首部与TCP首部的区别。",
+      "title_zh": "TCP首部组成",
+      "title_en": "Composition of the TCP Header",
+      "abstract_zh": "本章介绍TCP首部组成，重点讲解序号和确认号字段的作用，并对比IP首部与TCP首部的区别。",
+      "abstract_en": "This chapter introduces the TCP header composition, focusing on the roles of sequence and acknowledgment numbers, and contrasts them with the IP header."
+    },
+    {
+      "title": "文件传输与标志位",
+      "start": 869.28,
+      "end": 1474.27,
+      "indices": [
+        4,
+        5,
+        6
+      ],
+      "abstract": "本章通过文件传输示例，解释紧急数据编号，并详细说明TCP标志位的功能。",
+      "title_zh": "文件传输与标志位",
+      "title_en": "File Transfer and Flag Bits",
+      "abstract_zh": "本章通过文件传输示例，解释紧急数据编号，并详细说明TCP标志位的功能。",
+      "abstract_en": "This section uses a file transfer example to explain urgent pointer numbers and details the functions of TCP flags."
+    },
+    {
+      "title": "接收窗口与校验",
+      "start": 1474.89,
+      "end": 1821.31,
+      "indices": [
+        7,
+        8
+      ],
+      "abstract": "本章解释接收窗口字段的意义及其在流量控制中的应用，并介绍校验核方法确保数据传输的准确性。",
+      "title_zh": "接收窗口与校验",
+      "title_en": "Receive Window and Checksum",
+      "abstract_zh": "本章解释接收窗口字段的意义及其在流量控制中的应用，并介绍校验核方法确保数据传输的准确性。",
+      "abstract_en": "This chapter explains the significance of the receive window field and its application in flow control, introducing checksum methods to ensure data accuracy."
+    },
+    {
+      "title": "MSS与报文格式 · 本节复习",
+      "start": 1821.79,
+      "end": 2106.33,
+      "indices": [
+        9,
+        10
+      ],
+      "abstract": "本章介绍MSS预留缓冲区的概念，并详细描述TCP报文段的具体格式。",
+      "title_zh": "MSS与报文格式 · 本节复习",
+      "title_en": "MSS and Message Format · Section Review",
+      "abstract_zh": "本章介绍MSS预留缓冲区的概念，并详细描述TCP报文段的具体格式。",
+      "abstract_en": "This chapter introduces the concept of MSS reserved buffer and describes the specific format of TCP segments in detail."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "oversize"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 2107.2213125,
+    "n_chunks": 11,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": false,
+    "vlm_captions_used": false,
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 4,
+    "has_wrapup": true
+  }
+}

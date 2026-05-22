@@ -1,0 +1,40 @@
+{
+  "chapters": [
+    {
+      "title": "自助与关东煮",
+      "start": 0.0,
+      "end": 798.49,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍自助餐厅的独特体验，并详细探讨关东煮的制作方法及其在日式餐饮中的地位。",
+      "title_zh": "自助与关东煮",
+      "title_en": "Self-service and Jidan Cooked Rice",
+      "abstract_zh": "本章介绍自助餐厅的独特体验，并详细探讨关东煮的制作方法及其在日式餐饮中的地位。",
+      "abstract_en": "This chapter introduces the unique experience of a cafeteria and thoroughly explores the preparation method of konbini snacks and their status in Japanese cuisine."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 799.5326875,
+    "n_chunks": 2,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 1,
+    "vlm_degraded_reason": null,
+    "n_chapters": 1,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": false
+  }
+}

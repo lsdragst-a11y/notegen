@@ -1,0 +1,90 @@
+{
+  "chapters": [
+    {
+      "title": "底特律一美元房子与房产",
+      "start": 0.11,
+      "end": 336.53,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本段实地探访底特律一美元房产，对比 KFC 鸡腿 2 美金和一栋房 1 美金的离谱价差，并解释房产税与翻新成本才是这些房子卖不掉的真因。",
+      "title_zh": "底特律一美元房子与房产",
+      "title_en": "Detroit Dollar Houses and Real Estate",
+      "abstract_zh": "本章介绍底特律一美元房子的历史背景及其背后的故事。",
+      "abstract_en": "This chapter introduces the historical background and story behind Detroit's one-dollar houses."
+    },
+    {
+      "title": "底特律房产翻新",
+      "start": 342.93,
+      "end": 451.03,
+      "indices": [
+        2
+      ],
+      "abstract": "本段深入底特律房产翻新现场，记录工人如何在破旧房屋内进行艰难修复，揭示城市重建的挑战。",
+      "title_zh": "底特律房产翻新",
+      "title_en": "Renovating Detroit Properties",
+      "abstract_zh": "本章探讨底特律房产翻新的过程和市场影响。",
+      "abstract_en": "This chapter explores the process of renovating Detroit properties and its market impact.",
+      "children": [
+        {
+          "title": "翻新方案",
+          "start": 342.93,
+          "end": 451.03,
+          "indices": [
+            2
+          ],
+          "abstract": "本章涵盖 底特律房产翻新"
+        }
+      ]
+    },
+    {
+      "title": "底特律风格披萨",
+      "start": 451.63,
+      "end": 798.82,
+      "indices": [
+        3
+      ],
+      "abstract": "本段品尝正宗底特律风格披萨，其独特的切片方式和浓郁奶酪成为焦点，展现这座城市的食物文化。",
+      "title_zh": "底特律风格披萨",
+      "title_en": "Detroit Style Pizza",
+      "abstract_zh": "本章介绍底特律风格披萨的独特之处及其文化意义。",
+      "abstract_en": "This chapter highlights the unique aspects of Detroit-style pizza and its cultural significance."
+    },
+    {
+      "title": "底特律汽车业衰落",
+      "start": 798.82,
+      "end": 916.27,
+      "indices": [
+        4
+      ],
+      "abstract": "本段回顾底特律汽车业的辉煌与衰落，追溯从鼎盛时期到如今工厂关闭的历程，揭示行业变迁对城市的影响。",
+      "title_zh": "底特律汽车业衰落",
+      "title_en": "The Decline of Detroit's Automotive Industry",
+      "abstract_zh": "本章回顾底特律汽车业的辉煌历史及其当前的衰退状况。",
+      "abstract_en": "This chapter reviews the glorious history of Detroit's automotive industry and its current decline."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 920.926625,
+    "n_chunks": 5,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 1,
+    "vlm_degraded_reason": null,
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": false
+  }
+}

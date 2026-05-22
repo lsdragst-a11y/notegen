@@ -1,0 +1,89 @@
+{
+  "chapters": [
+    {
+      "title": "菜单美食",
+      "start": 0.0,
+      "end": 86.58,
+      "indices": [
+        0
+      ],
+      "abstract": "本章介绍菜单上的随机食物选择。",
+      "title_zh": "菜单美食",
+      "title_en": "Dishes on the Menu",
+      "abstract_zh": "本章介绍菜单上的随机食物选择。",
+      "abstract_en": "This chapter introduces random food choices on the menu."
+    },
+    {
+      "title": "第六家店美食",
+      "start": 86.58,
+      "end": 169.89,
+      "indices": [
+        1
+      ],
+      "abstract": "本章描述第六家店的特色菜品。",
+      "title_zh": "第六家店美食",
+      "title_en": "Dishes at the Sixth Store",
+      "abstract_zh": "本章描述第六家店的特色菜品。",
+      "abstract_en": "This chapter describes the specialty dishes at the sixth store."
+    },
+    {
+      "title": "笋干可颂评价",
+      "start": 170.29,
+      "end": 287.66,
+      "indices": [
+        2
+      ],
+      "abstract": "本章通过顾客评价介绍笋干可颂这一特色产品。",
+      "title_zh": "笋干可颂评价",
+      "title_en": "Spring Bamboo Loaf評价",
+      "abstract_zh": "本章通过顾客评价介绍笋干可颂这一特色产品。",
+      "abstract_en": "This chapter introduces the bamboo shred croissant through customer reviews."
+    },
+    {
+      "title": "凉粉牛杂特色",
+      "start": 288.52,
+      "end": 398.06,
+      "indices": [
+        3
+      ],
+      "abstract": "本章重点讲述凉粉这种特色小吃的独特之处。",
+      "title_zh": "凉粉牛杂特色",
+      "title_en": "Cold Gelatinized Potato and Tripe Specialties",
+      "abstract_zh": "本章重点讲述凉粉这种特色小吃的独特之处。",
+      "abstract_en": "This chapter highlights the unique aspects of cold powder as a specialty snack."
+    },
+    {
+      "title": "尝试牛杂",
+      "start": 398.06,
+      "end": 510.13,
+      "indices": [
+        4
+      ],
+      "abstract": "本章分享对牛杂进行尝试和品尝的过程。",
+      "title_zh": "尝试牛杂",
+      "title_en": "Trying Tripe",
+      "abstract_zh": "本章分享对牛杂进行尝试和品尝的过程。",
+      "abstract_en": "This chapter shares the process of trying and tasting beef tripe."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 515.0650625,
+    "n_chunks": 5,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": false,
+    "vlm_captions_used": false,
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 1,
+    "has_wrapup": false
+  }
+}

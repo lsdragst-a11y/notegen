@@ -1,0 +1,89 @@
+{
+  "chapters": [
+    {
+      "title": "酸菜牛肉面",
+      "start": 0.0,
+      "end": 69.64,
+      "indices": [
+        0
+      ],
+      "abstract": "本章介绍酸菜牛肉面的独特风味和制作工艺。",
+      "title_zh": "酸菜牛肉面",
+      "title_en": "Pickled Cabbage Beef Noodles",
+      "abstract_zh": "本章介绍酸菜牛肉面的独特风味和制作工艺。",
+      "abstract_en": "This chapter introduces the unique flavor and preparation method of pickled mustard green beef noodle soup."
+    },
+    {
+      "title": "香辣牛肉面",
+      "start": 69.64,
+      "end": 157.04,
+      "indices": [
+        1
+      ],
+      "abstract": "本章探讨香辣牛肉面的辣度调配和技术要点。",
+      "title_zh": "香辣牛肉面",
+      "title_en": "Spicy Beef Noodles",
+      "abstract_zh": "本章探讨香辣牛肉面的辣度调配和技术要点。",
+      "abstract_en": "This chapter explores the spiciness adjustment and technical points for fragrant spicy beef noodle soup."
+    },
+    {
+      "title": "粉面选择",
+      "start": 157.04,
+      "end": 256.92,
+      "indices": [
+        2
+      ],
+      "abstract": "本章提供多种粉面的选择，包括特色调料和搭配建议。",
+      "title_zh": "粉面选择",
+      "title_en": "Noodle Options",
+      "abstract_zh": "本章提供多种粉面的选择，包括特色调料和搭配建议。",
+      "abstract_en": "This chapter offers various choices for noodle dishes, including special seasonings and pairing suggestions."
+    },
+    {
+      "title": "老北京炸酱面",
+      "start": 256.92,
+      "end": 305.74,
+      "indices": [
+        3
+      ],
+      "abstract": "本章详细描述老北京炸酱面的传统做法和关键步骤。",
+      "title_zh": "老北京炸酱面",
+      "title_en": "Old Beijing Fried Sauce Noodles",
+      "abstract_zh": "本章详细描述老北京炸酱面的传统做法和关键步骤。",
+      "abstract_en": "This chapter details the traditional做法and key steps for old Beijing soy sauce noodle soup."
+    },
+    {
+      "title": "酸辣藤骨面",
+      "start": 305.74,
+      "end": 373.4,
+      "indices": [
+        4
+      ],
+      "abstract": "本章介绍酸辣藤骨面的酸辣平衡及烹饪技巧。",
+      "title_zh": "酸辣藤骨面",
+      "title_en": "Sour and Spicy Rib Noodles",
+      "abstract_zh": "本章介绍酸辣藤骨面的酸辣平衡及烹饪技巧。",
+      "abstract_en": "This chapter introduces the balance of sour and spicy in pickled vegetable rib noodle soup and cooking techniques."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 373.585875,
+    "n_chunks": 5,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": false,
+    "vlm_captions_used": false,
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 1,
+    "has_wrapup": false
+  }
+}

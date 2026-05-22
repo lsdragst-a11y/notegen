@@ -1,0 +1,123 @@
+{
+  "chapters": [
+    {
+      "title": "IP地址",
+      "start": 0.18,
+      "end": 464.89,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍IP地址的基本概念，探讨NAT和端口号如何影响IP地址的使用。",
+      "title_zh": "IP地址",
+      "title_en": "IP Address",
+      "abstract_zh": "本章介绍IP地址的基本概念，探讨NAT和端口号如何影响IP地址的使用。",
+      "abstract_en": "This chapter introduces basic concepts of IP addresses and explores how NAT and port numbers affect their usage."
+    },
+    {
+      "title": "局域网",
+      "start": 464.89,
+      "end": 1059.16,
+      "indices": [
+        2,
+        3
+      ],
+      "abstract": "本章讨论局域网中的IP地址分配，以及NAT功能如何管理和优化局域网内的IP资源。",
+      "title_zh": "局域网",
+      "title_en": "Local Area Network",
+      "abstract_zh": "本章讨论局域网中的IP地址分配，以及NAT功能如何管理和优化局域网内的IP资源。",
+      "abstract_en": "This chapter discusses IP address allocation in local networks and how NAT functions manage and optimize IP resources within these networks."
+    },
+    {
+      "title": "微信",
+      "start": 1059.16,
+      "end": 1339.6,
+      "indices": [
+        4,
+        5
+      ],
+      "abstract": "本章聚焦微信应用中的端口号使用，同时分析NAT表如何管理IP地址。",
+      "title_zh": "微信",
+      "title_en": "WeChat",
+      "abstract_zh": "本章聚焦微信应用中的端口号使用，同时分析NAT表如何管理IP地址。",
+      "abstract_en": "This chapter focuses on the use of port numbers in WeChat applications and analyzes how NAT tables manage IP addresses."
+    },
+    {
+      "title": "IP数据报",
+      "start": 1339.98,
+      "end": 1505.79,
+      "indices": [
+        6
+      ],
+      "abstract": "本章解释IP数据报在NAT环境下的封装过程和路由选择。",
+      "title_zh": "IP数据报",
+      "title_en": "IP Datagram",
+      "abstract_zh": "本章解释IP数据报在NAT环境下的封装过程和路由选择。",
+      "abstract_en": "This chapter explains the encapsulation process and routing selection of IP datagrams in NAT environments."
+    },
+    {
+      "title": "路由器",
+      "start": 1505.79,
+      "end": 1704.59,
+      "indices": [
+        7
+      ],
+      "abstract": "本章介绍路由器如何处理NAT，强调其对IP地址转换的关键作用。",
+      "title_zh": "路由器",
+      "title_en": "Router",
+      "abstract_zh": "本章介绍路由器如何处理NAT，强调其对IP地址转换的关键作用。",
+      "abstract_en": "This chapter describes how routers handle NAT and emphasizes its critical role in IP address conversion."
+    },
+    {
+      "title": "默认网关",
+      "start": 1705.53,
+      "end": 1961.08,
+      "indices": [
+        8,
+        9
+      ],
+      "abstract": "本章讲解默认网关在IP地址配置中的重要性，同时涉及Web服务器的IP地址配置。",
+      "title_zh": "默认网关",
+      "title_en": "Default Gateway",
+      "abstract_zh": "本章讲解默认网关在IP地址配置中的重要性，同时涉及Web服务器的IP地址配置。",
+      "abstract_en": "This chapter highlights the importance of default gateways in IP address configuration and involves Web server IP address settings."
+    },
+    {
+      "title": "路由器区别 · 本节复习",
+      "start": 1961.08,
+      "end": 2187.61,
+      "indices": [
+        10
+      ],
+      "abstract": "本章比较不同类型的路由器，特别突出NAT路由器在IP地址管理方面的独特之处。",
+      "title_zh": "路由器区别 · 本节复习",
+      "title_en": "Router Differences · Review This Section",
+      "abstract_zh": "本章比较不同类型的路由器，特别突出NAT路由器在IP地址管理方面的独特之处。",
+      "abstract_en": "This chapter compares different types of routers, particularly emphasizing the unique aspects of NAT routers in IP address management."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "dominant_chapter"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 2188.224,
+    "n_chunks": 11,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 1,
+    "vlm_degraded_reason": null,
+    "n_chapters": 7,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": true
+  }
+}

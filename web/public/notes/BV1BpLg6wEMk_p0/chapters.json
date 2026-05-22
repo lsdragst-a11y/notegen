@@ -1,0 +1,93 @@
+{
+  "chapters": [
+    {
+      "title": "炒菜机器人功能",
+      "start": 0.0,
+      "end": 88.42,
+      "indices": [
+        0
+      ],
+      "abstract": "本章介绍炒菜机器人的基本功能及其工作原理。",
+      "title_zh": "炒菜机器人功能",
+      "title_en": "Frying Robot Functions",
+      "abstract_zh": "本章介绍炒菜机器人的基本功能及其工作原理。",
+      "abstract_en": "This chapter introduces the basic functions and working principles of stir-fry robots."
+    },
+    {
+      "title": "炒菜机器人菜单与操作流程",
+      "start": 88.42,
+      "end": 182.67,
+      "indices": [
+        1,
+        2
+      ],
+      "abstract": "本章详细说明炒菜机器人的菜单选择和操作流程，确保用户能够轻松使用。",
+      "title_zh": "炒菜机器人菜单与操作流程",
+      "title_en": "Frying Robot Menu and Operation Flow",
+      "abstract_zh": "本章详细说明炒菜机器人的菜单选择和操作流程，确保用户能够轻松使用。",
+      "abstract_en": "This section details the menu selection and operational流程 of stir-fry robots, ensuring users can use them easily."
+    },
+    {
+      "title": "高级菜谱与智能炒菜",
+      "start": 182.67,
+      "end": 359.3,
+      "indices": [
+        3,
+        4
+      ],
+      "abstract": "本章探讨高级菜谱的使用及智能炒菜的过程，强调个性化烹饪体验。",
+      "title_zh": "高级菜谱与智能炒菜",
+      "title_en": "Advanced Recipes and Smart Frying",
+      "abstract_zh": "本章探讨高级菜谱的使用及智能炒菜的过程，强调个性化烹饪体验。",
+      "abstract_en": "This chapter explores the use of advanced recipes and the intelligent stir-frying process, emphasizing personalized cooking experiences."
+    },
+    {
+      "title": "麻婆豆腐制作",
+      "start": 359.3,
+      "end": 417.98,
+      "indices": [
+        5
+      ],
+      "abstract": "本章通过具体实例展示如何使用炒菜机器人制作一道经典的麻婆豆腐。",
+      "title_zh": "麻婆豆腐制作",
+      "title_en": "Mapo Tofu Preparation",
+      "abstract_zh": "本章通过具体实例展示如何使用炒菜机器人制作一道经典的麻婆豆腐。",
+      "abstract_en": "This chapter demonstrates, through specific examples, how to use a stir-fry robot to make classic mapo tofu."
+    },
+    {
+      "title": "AI炒菜体验",
+      "start": 417.98,
+      "end": 483.86,
+      "indices": [
+        6
+      ],
+      "abstract": "本章分享AI炒菜的实际体验，包括其优势和局限性。",
+      "title_zh": "AI炒菜体验",
+      "title_en": "AI Cooking Experience",
+      "abstract_zh": "本章分享AI炒菜的实际体验，包括其优势和局限性。",
+      "abstract_en": "This chapter shares actual experiences with AI stir-fry robots, including their advantages and limitations."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 484.0746875,
+    "n_chunks": 7,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 1,
+    "vlm_degraded_reason": null,
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": false
+  }
+}

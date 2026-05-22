@@ -1,0 +1,94 @@
+{
+  "chapters": [
+    {
+      "title": "迪士尼游轮",
+      "start": 0.0,
+      "end": 279.75,
+      "indices": [
+        0
+      ],
+      "abstract": "本章介绍迪士尼游轮的整体体验。",
+      "title_zh": "迪士尼游轮",
+      "title_en": "Disney Cruise Ship",
+      "abstract_zh": "本章介绍迪士尼游轮的整体体验。",
+      "abstract_en": "This chapter introduces the overall experience of the Disney cruise."
+    },
+    {
+      "title": "船上餐厅体验",
+      "start": 279.75,
+      "end": 570.62,
+      "indices": [
+        1
+      ],
+      "abstract": "本章详细描述船上餐厅的服务和环境。",
+      "title_zh": "船上餐厅体验",
+      "title_en": "Onboard Restaurant Experience",
+      "abstract_zh": "本章详细描述船上餐厅的服务和环境。",
+      "abstract_en": "This chapter details the service and ambiance of the ship's restaurants."
+    },
+    {
+      "title": "汉堡与自助餐厅推荐",
+      "start": 571.72,
+      "end": 778.25,
+      "indices": [
+        2
+      ],
+      "abstract": "本章推荐几款受欢迎的汉堡餐厅和自助餐厅。",
+      "title_zh": "汉堡与自助餐厅推荐",
+      "title_en": "Hamburgers and Buffet Recommendations",
+      "abstract_zh": "本章推荐几款受欢迎的汉堡餐厅和自助餐厅。",
+      "abstract_en": "This chapter recommends several popular burger and buffet restaurants."
+    },
+    {
+      "title": "选择餐厅",
+      "start": 778.25,
+      "end": 1045.28,
+      "indices": [
+        3
+      ],
+      "abstract": "本章指导游客如何根据个人喜好选择合适的餐厅。",
+      "title_zh": "选择餐厅",
+      "title_en": "Choosing a Restaurant",
+      "abstract_zh": "本章指导游客如何根据个人喜好选择合适的餐厅。",
+      "abstract_en": "This chapter guides tourists on how to choose restaurants according to their preferences."
+    },
+    {
+      "title": "海上烟花秀",
+      "start": 1045.28,
+      "end": 1173.77,
+      "indices": [
+        4
+      ],
+      "abstract": "本章讲述海上烟花秀的壮观场景和最佳观赏位置。",
+      "title_zh": "海上烟花秀",
+      "title_en": "Seaside Fireworks Show",
+      "abstract_zh": "本章讲述海上烟花秀的壮观场景和最佳观赏位置。",
+      "abstract_en": "This chapter describes the spectacular scenes of the sea fireworks show and the best viewing spots."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "attempt_3",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "non_contiguous",
+        "dominant_chapter"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 1191.7641875,
+    "n_chunks": 5,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 1,
+    "vlm_degraded_reason": null,
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 1,
+    "has_wrapup": false
+  }
+}

@@ -1,0 +1,125 @@
+{
+  "chapters": [
+    {
+      "title": "Gemini Models Dialogue",
+      "start": 0.3,
+      "end": 55.71,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "This chapter discusses the Gemini 3.5 flash model and dialogue editing features, highlighting the advancements in conversational AI.",
+      "title_zh": "双子座模型对话",
+      "title_en": "Gemini Models Dialogue",
+      "abstract_zh": "本章讨论了Gemini 3.5闪存模型和对话编辑功能，强调了对话AI的进步。",
+      "abstract_en": "This chapter discusses the Gemini 3.5 flash model and dialogue editing features, highlighting the advancements in conversational AI."
+    },
+    {
+      "title": "AI Subscription Details",
+      "start": 67.47,
+      "end": 84.68,
+      "indices": [
+        2
+      ],
+      "abstract": "This section covers the details of the AI Ultra subscription plan, including its benefits and pricing structure.",
+      "title_zh": "AI 订阅详情",
+      "title_en": "AI Subscription Details",
+      "abstract_zh": "本节介绍了AI Ultra订阅计划的细节，包括其优势和定价结构。",
+      "abstract_en": "This section covers the details of the AI Ultra subscription plan, including its benefits and pricing structure."
+    },
+    {
+      "title": "Anti-Gravity Model Issues",
+      "start": 84.86,
+      "end": 190.24,
+      "indices": [
+        3,
+        4,
+        5
+      ],
+      "abstract": "This chapter addresses issues with the Anti-Gravity 2.0 model, focusing on the model illusion problem and the Star Child-E blueprint.",
+      "title_zh": "反重力模型问题",
+      "title_en": "Anti-Gravity Model Issues",
+      "abstract_zh": "本章探讨了Anti-Gravity 2.0模型的问题，集中在模型幻觉问题和星童-E蓝图上。",
+      "abstract_en": "This chapter addresses issues with the Anti-Gravity 2.0 model, focusing on the model illusion problem and the Star Child-E blueprint."
+    },
+    {
+      "title": "Cloud Managed Agents Company",
+      "start": 190.98,
+      "end": 243.64,
+      "indices": [
+        6,
+        7
+      ],
+      "abstract": "This chapter explores cloud managed agents and introduces Blackstone AI Cloud Company, emphasizing their role in managing AI resources.",
+      "title_zh": "云管理代理公司",
+      "title_en": "Cloud Managed Agents Company",
+      "abstract_zh": "本章探索了云管理代理，并介绍了Blackstone AI Cloud Company，强调他们在管理AI资源中的作用。",
+      "abstract_en": "This chapter explores cloud managed agents and introduces Blackstone AI Cloud Company, emphasizing their role in managing AI resources."
+    },
+    {
+      "title": "Financing Global Alliance",
+      "start": 244.44,
+      "end": 343.84,
+      "indices": [
+        8,
+        9
+      ],
+      "abstract": "This section details the final stage of a 2 billion dollar financing deal and the global alliance between Anthropic and Gemini.",
+      "title_zh": "融资全球联盟",
+      "title_en": "Financing Global Alliance",
+      "abstract_zh": "本节详细描述了一项2亿美元融资交易的最终阶段以及Anthropic和Gemini之间的全球联盟。",
+      "abstract_en": "This section details the final stage of a 2 billion dollar financing deal and the global alliance between Anthropic and Gemini."
+    },
+    {
+      "title": "Gemini for Science Updates",
+      "start": 345.74,
+      "end": 428.93,
+      "indices": [
+        10,
+        11,
+        12
+      ],
+      "abstract": "This chapter provides updates on Gemini for scientific applications, mentioning the Wear OS 7 release and end-of-line AI developments.",
+      "title_zh": "双子座科学更新",
+      "title_en": "Gemini for Science Updates",
+      "abstract_zh": "本章提供了关于科学应用中Gemini更新的信息，提到了Wear OS 7发布和终端AI发展。",
+      "abstract_en": "This chapter provides updates on Gemini for scientific applications, mentioning the Wear OS 7 release and end-of-line AI developments."
+    },
+    {
+      "title": "Android Halo Gemini Functions",
+      "start": 429.19,
+      "end": 458.5,
+      "indices": [
+        13,
+        14
+      ],
+      "abstract": "This section explains the functions of Android Halo and Gemini AI, highlighting their integration and capabilities.",
+      "title_zh": "安卓光环双子座功能",
+      "title_en": "Android Halo Gemini Functions",
+      "abstract_zh": "本节解释了Android Halo和Gemini AI的功能，突出了它们的整合能力和特性",
+      "abstract_en": "This section explains the functions of Android Halo and Gemini AI, highlighting their integration and capabilities."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 459.3139375,
+    "n_chunks": 15,
+    "lang": "en",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 2,
+    "vlm_degraded_reason": null,
+    "n_chapters": 7,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": false
+  }
+}

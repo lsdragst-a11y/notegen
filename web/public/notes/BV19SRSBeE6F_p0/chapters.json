@@ -1,0 +1,75 @@
+{
+  "chapters": [
+    {
+      "title": "北极物价与蔬菜",
+      "start": 0.0,
+      "end": 307.72,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本段走访北极朗伊尔城超市，展示生菜 50 元、黄瓜 30 元一根的高物价，揭示当地食材依赖空运的现实。",
+      "title_zh": "北极物价与蔬菜",
+      "title_en": "Arctic Prices and Vegetables",
+      "abstract_zh": "本章探讨北极地区的物价体系，并特别关注当地蔬菜的价格波动与供应情况。",
+      "abstract_en": "This chapter examines the pricing system in the Arctic region, with a particular focus on fluctuations and supply of local vegetables.",
+      "children": [
+        {
+          "title": "超市标志与规则",
+          "start": 0.0,
+          "end": 129.8,
+          "indices": [
+            0
+          ],
+          "abstract": "本章涵盖 北极物价"
+        },
+        {
+          "title": "蔬菜价格",
+          "start": 145.79,
+          "end": 307.72,
+          "indices": [
+            1
+          ],
+          "abstract": "本章涵盖 北极蔬菜"
+        }
+      ]
+    },
+    {
+      "title": "北极面包",
+      "start": 307.72,
+      "end": 709.18,
+      "indices": [
+        2
+      ],
+      "abstract": "本段记录下在北极吃到的面包，尽管口感不佳，但其背后因运输成本高昂而定价昂贵令人印象深刻。",
+      "title_zh": "北极面包",
+      "title_en": "Arctic Bread",
+      "abstract_zh": "本章介绍北极面包的制作工艺及在极端环境下的适应性。",
+      "abstract_en": "This chapter introduces the生产工艺 of Arctic bread and its adaptability to extreme environments."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "no_nav_points"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 709.5893125,
+    "n_chunks": 3,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 1,
+    "vlm_degraded_reason": null,
+    "n_chapters": 2,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": false
+  }
+}

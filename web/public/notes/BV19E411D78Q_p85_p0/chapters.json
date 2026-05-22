@@ -1,0 +1,130 @@
+{
+  "chapters": [
+    {
+      "title": "拥塞控制与窗口机制",
+      "start": 0.0,
+      "end": 460.81,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍拥塞控制算法及发送窗口与接收窗口的概念，重点阐述如何通过窗口机制进行数据传输控制。",
+      "title_zh": "拥塞控制与窗口机制",
+      "title_en": "Congestion Control and Window Mechanisms",
+      "abstract_zh": "本章介绍拥塞控制算法及发送窗口与接收窗口的概念，重点阐述如何通过窗口机制进行数据传输控制。",
+      "abstract_en": "This chapter introduces congestion control algorithms and the concepts of sending and receiving windows, focusing on how window mechanisms control data transmission."
+    },
+    {
+      "title": "拥塞控制原理",
+      "start": 460.81,
+      "end": 850.14,
+      "indices": [
+        2
+      ],
+      "abstract": "本章详细解释拥塞控制的基本原理，包括如何监测网络状态以避免拥塞的发生。",
+      "title_zh": "拥塞控制原理",
+      "title_en": "Principles of Congestion Control",
+      "abstract_zh": "本章详细解释拥塞控制的基本原理，包括如何监测网络状态以避免拥塞的发生。",
+      "abstract_en": "This chapter explains the basic principles of congestion control, including how to monitor network status to prevent congestion."
+    },
+    {
+      "title": "拥塞控制与流量控制",
+      "start": 850.14,
+      "end": 1048.78,
+      "indices": [
+        3
+      ],
+      "abstract": "本章探讨拥塞控制与流量控制的关系，强调两者在确保网络资源有效利用中的作用。",
+      "title_zh": "拥塞控制与流量控制",
+      "title_en": "Congestion Control and Flow Control",
+      "abstract_zh": "本章探讨拥塞控制与流量控制的关系，强调两者在确保网络资源有效利用中的作用。",
+      "abstract_en": "This chapter explores the relationship between congestion control and flow control, emphasizing their roles in effectively utilizing network resources."
+    },
+    {
+      "title": "拥塞窗口与SSTHRESH",
+      "start": 1048.78,
+      "end": 1186.64,
+      "indices": [
+        4
+      ],
+      "abstract": "本章讲解拥塞窗口与SSTHRESH的作用，重点分析如何通过这些参数来优化网络性能。",
+      "title_zh": "拥塞窗口与SSTHRESH",
+      "title_en": "Congestion Window and SSTHRESH",
+      "abstract_zh": "本章讲解拥塞窗口与SSTHRESH的作用，重点分析如何通过这些参数来优化网络性能。",
+      "abstract_en": "This chapter explains the role of congestion windows and SSTHRESH, focusing on how these parameters optimize network performance."
+    },
+    {
+      "title": "拥塞控制与快重传和窗口增长",
+      "start": 1187.98,
+      "end": 1565.53,
+      "indices": [
+        5,
+        6
+      ],
+      "abstract": "本章讨论拥塞控制与快重传机制，同时介绍拥塞窗口的增长过程及其对网络的影响。",
+      "title_zh": "拥塞控制与快重传和窗口增长",
+      "title_en": "Congestion Control, Fast Retransmit, and Window Growth",
+      "abstract_zh": "本章讨论拥塞控制与快重传机制，同时介绍拥塞窗口的增长过程及其对网络的影响。",
+      "abstract_en": "This chapter discusses congestion control and fast retransmit mechanisms, introducing the process of congestion window growth and its impact on the network."
+    },
+    {
+      "title": "拥塞避免与窗口RTT",
+      "start": 1565.53,
+      "end": 1975.75,
+      "indices": [
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章深入分析拥塞避免算法，重点讲解拥塞窗口与RTT的关系以及超时重传策略。",
+      "title_zh": "拥塞避免与窗口RTT",
+      "title_en": "Avoidance of Congestion and Window RTT",
+      "abstract_zh": "本章深入分析拥塞避免算法，重点讲解拥塞窗口与RTT的关系以及超时重传策略。",
+      "abstract_en": "This chapter analyzes the congestion avoidance algorithm, focusing on the relationship between congestion windows and RTT, as well as timeout retransmission strategies."
+    },
+    {
+      "title": "MSS与拥塞窗口和接收窗口 · 本节复习",
+      "start": 1975.75,
+      "end": 2468.23,
+      "indices": [
+        10,
+        11,
+        12
+      ],
+      "abstract": "本章介绍MSS与拥塞窗口的关系，重点分析接收窗口与拥塞窗口如何共同作用于拥塞控制。",
+      "title_zh": "MSS与拥塞窗口和接收窗口 · 本节复习",
+      "title_en": "MSS, Congestion Window, and Receive Window · Section Review",
+      "abstract_zh": "本章介绍MSS与拥塞窗口的关系，重点分析接收窗口与拥塞窗口如何共同作用于拥塞控制。",
+      "abstract_en": "This chapter introduces the relationship between MSS and congestion windows, focusing on how receiving and congestion windows work together to control congestion."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_oversize"
+      ],
+      "llm_fail_reasons": [
+        "oversize",
+        "oversize",
+        "missing"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 2469.0346875,
+    "n_chunks": 13,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 2,
+    "vlm_degraded_reason": null,
+    "n_chapters": 7,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": true
+  }
+}
