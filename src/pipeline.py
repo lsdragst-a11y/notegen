@@ -25,7 +25,7 @@ for _stream in (sys.stdout, sys.stderr):
 from download import download_video, extract_audio, fetch_metadata
 from asr import (transcribe, apply_term_corrections, dedupe_consecutive_segments,
                  _tag_for_model)
-from summarize import chunk_by_chars, chunk_by_texttile, to_markdown
+from summarize import chunk_by_chars, chunk_by_texttile, split_oversize_chunks, to_markdown
 from summarize import summarize_chunks as summarize_chunks_extractive
 
 OUTPUT_DIR = Path("data/outputs")
@@ -495,6 +495,20 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
     else:
         chunks = chunk_by_chars(asr_result["segments"], chunk_chars=chunk_chars)
         chunker_desc = f"chunker=chars chunk_chars={chunk_chars}"
+
+    # 后处理：硬切超长 chunk（vlog/talk 类视频 chunker 不敏感时兜底）
+    # 阈值 120s — 教学视频 cc=400/600 公式下几乎不会触发，vlog 触发率高
+    n_before = len(chunks)
+    chunks, split_log = split_oversize_chunks(chunks, max_dur_sec=120.0,
+                                              min_split_chars=400)
+    if len(chunks) > n_before:
+        kept = [s for s in split_log if not s.get("skipped")]
+        print(f"      [split] 硬切超长 chunk: {n_before} → {len(chunks)} chunks "
+              f"({len(kept)} 刀)", flush=True)
+        for s in kept[:5]:
+            print(f"        chunk #{s['idx']} dur={s['orig_dur']}s "
+                  f"chars={s['orig_chars']} → 切在 {s['split_at']}s "
+                  f"({s['left_dur']}s | {s['right_dur']}s)", flush=True)
     if summarizer == "neural" and llm_chapters:
         # Pegasus 输出 100% 被 Qwen 覆盖，--llm-chapters 时直接跳过节省 ~30s + ~1GB VRAM
         print(f"[4/4] {chunker_desc}, {len(chunks)} chunks + 抽取式 summary（Qwen 后生 headline）...")

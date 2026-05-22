@@ -160,6 +160,91 @@ def chunk_by_texttile(segments: list[dict], target_chunk_chars: int = 800,
     return chunks
 
 
+def split_oversize_chunks(chunks: list[dict],
+                          max_dur_sec: float = 120.0,
+                          min_split_chars: int = 400) -> tuple[list[dict], list[dict]]:
+    """硬切后处理：把 duration > max_dur_sec 且 text 长度 >= min_split_chars 的
+    chunk 按时间中点（最近 segment 边界）切成 2 份。while loop 反复跑，直到所有
+    chunk 都满足约束或无法再切（segments 数 < 2 / 字符不够）。
+
+    动机：texttile chunker 在 vlog/talk 类视频上不敏感（口语化、关键词稀疏，
+    Jaccard 跳变信号弱），常出现 200s+ 的单 chunk 含多个独立场景。硬切兜底
+    在所有 category 上通用，不依赖 category 标签。
+
+    Args:
+      chunks: chunker 输出，每个 dict 含 {start, end, text, segments[]}
+      max_dur_sec: 触发切刀的时长阈值。120s（2 分钟）够大不误伤教学，够小
+        能把 vlog 的多场景段切散
+      min_split_chars: 触发切刀的字符阈值。短而长（如纯静音/重复段）不切
+    Returns:
+      (new_chunks, split_log) — split_log 是切刀诊断列表
+    """
+    result = list(chunks)
+    log: list[dict] = []
+    # 用 chunk 内容指纹（start 取整 + 字符长度）记 skipped。切完 chunk 会变成两个
+    # 新指纹，所以原指纹自然失效；只有真正不可切的 chunk 才会持续命中 skipped
+    skipped: set[tuple[float, int]] = set()
+
+    def _fp(c: dict) -> tuple[float, int]:
+        return (round((c.get("start") or 0), 2), len(c.get("text", "") or ""))
+
+    # 防御无限循环
+    for _ in range(100):
+        # 找第一个 oversize 且未 skipped 的 chunk
+        target_idx = -1
+        for i, c in enumerate(result):
+            if _fp(c) in skipped:
+                continue
+            dur = (c.get("end", 0) or 0) - (c.get("start", 0) or 0)
+            text = c.get("text", "") or ""
+            segs = c.get("segments", []) or []
+            if dur > max_dur_sec and len(text) >= min_split_chars and len(segs) >= 2:
+                target_idx = i
+                break
+        if target_idx < 0:
+            break
+        c = result[target_idx]
+        segs = c["segments"]
+        # 找最接近时间中点的 segment 边界（i 处切，左边 segs[:i+1]，右边 segs[i+1:]）
+        midpoint = (c["start"] + c["end"]) / 2
+        best_i, best_diff = 0, float("inf")
+        for i in range(len(segs) - 1):
+            boundary = (segs[i].get("end") or 0)
+            diff = abs(boundary - midpoint)
+            if diff < best_diff:
+                best_diff = diff
+                best_i = i
+        left_segs = segs[:best_i + 1]
+        right_segs = segs[best_i + 1:]
+        def _seg_chars(ss): return sum(len((s.get("text") or "").strip()) for s in ss)
+        if _seg_chars(left_segs) < 80 or _seg_chars(right_segs) < 80:
+            log.append({"idx": target_idx, "skipped": True,
+                        "reason": "split too unbalanced",
+                        "dur": round(c["end"] - c["start"], 1)})
+            skipped.add(_fp(c))
+            continue
+        def _build(segs_):
+            text = "\n".join(((s.get("text") or "").strip()) for s in segs_ if (s.get("text") or "").strip())
+            return {
+                "start": segs_[0].get("start"),
+                "end": segs_[-1].get("end"),
+                "text": text,
+                "segments": list(segs_),
+            }
+        left = _build(left_segs)
+        right = _build(right_segs)
+        log.append({
+            "idx": target_idx,
+            "orig_dur": round(c["end"] - c["start"], 1),
+            "orig_chars": len(c.get("text", "")),
+            "split_at": round(segs[best_i].get("end") or 0, 1),
+            "left_dur": round(left["end"] - left["start"], 1),
+            "right_dur": round(right["end"] - right["start"], 1),
+        })
+        result = result[:target_idx] + [left, right] + result[target_idx + 1:]
+    return result, log
+
+
 def _split_sentences(text: str) -> list[str]:
     """按任意中英文标点切句，再把过短的碎片回贴到前一句。
     应对：口语 ASR 转写经常整段只有 ASCII 逗号，没有句号。"""
@@ -362,6 +447,22 @@ _GLOSSARY_STOPWORDS = {
     "another", "other", "others", "whole", "single", "double",
     "definitely", "probably", "maybe", "perhaps", "likely",
 }
+
+
+# 让 jieba.analyse.extract_tags 直接跳过 _GLOSSARY_STOPWORDS 里的虚词/口语词。
+# 之前只在术语表/glossary 阶段过滤，但 chunker (chunk_by_texttile) 的 keyword
+# Jaccard 距离和 chunk-level keywords 都直接用 extract_tags 输出，结果 "这个"
+# "等于" "题目" 等虚词常常占 top-5，p85 keyword 渗漏就源于此。
+# set_stop_words 影响 jieba 全局状态，本项目没有别的 jieba 用户，安全。
+def _init_jieba_stopwords() -> None:
+    import tempfile
+    from pathlib import Path as _P
+    sw_file = _P(tempfile.gettempdir()) / "notegen_jieba_stopwords.txt"
+    sw_file.write_text("\n".join(sorted(_GLOSSARY_STOPWORDS)), encoding="utf-8")
+    jieba.analyse.set_stop_words(str(sw_file))
+
+
+_init_jieba_stopwords()
 
 
 # 英文 keyword 过滤：纯小写 ≤2 字符的 token 不可能是术语（`ll`, `is`, `it` 等）。
