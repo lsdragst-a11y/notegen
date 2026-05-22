@@ -414,7 +414,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         dedupe_asr: bool = True, llm_chapters: bool = False,
         confidence_threshold: float = 0.5,
         lang: str = "auto",
-        vlm_captions: bool = False) -> Path:
+        vlm_captions: bool = False,
+        quality: str = "best") -> Path:
     print(f"[1/4] 准备视频: {source}")
     asr_prompt = None
     meta = None
@@ -424,7 +425,7 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             raise FileNotFoundError(video)
     else:
         meta = fetch_metadata(source)
-        video = download_video(source)
+        video = download_video(source, quality=quality)
         # 保存 metadata 方便后续展示真实标题等
         META_DIR.mkdir(parents=True, exist_ok=True)
         slim_meta = {k: meta.get(k) for k in
@@ -1050,6 +1051,9 @@ def main():
     p.add_argument("--lang", choices=("auto", "zh", "en"), default="auto",
                    help="视频语言：auto 按 meta 启发式判断，"
                         "zh/en 强制（影响 whisper ASR + Qwen prompt + 关键词提取）")
+    p.add_argument("--quality", default="best",
+                   help="下载画质（仅 URL 模式）。'best' 或 'NNNp'（任意 height，如 "
+                        "1080p / 720p / 480p）。ASR/VL caption 不依赖画质，720p 够用。")
     p.add_argument("--vlm-captions", action="store_true",
                    help="--keyframes + --llm-chapters 同时启用时，先调 Qwen2.5-VL "
                         "给每个关键帧生 1 句 caption，喂 segment LLM 做更精准切分。"
@@ -1068,7 +1072,7 @@ def main():
         learning_mode=args.learning_mode, dedupe_asr=args.dedupe_asr,
         confidence_threshold=args.confidence_threshold,
         llm_chapters=args.llm_chapters, lang=args.lang,
-        vlm_captions=args.vlm_captions)
+        vlm_captions=args.vlm_captions, quality=args.quality)
 
 
 if __name__ == "__main__":
