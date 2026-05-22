@@ -11,6 +11,8 @@ env/
 data/raw/*
 data/audio/*
 data/outputs/*
+# B 站 DPAPI 解出来的 cookie，私有 + 易过期，本地缓存不入库
+data/.cookies/
 !data/raw/.gitkeep
 !data/audio/.gitkeep
 !data/outputs/.gitkeep
