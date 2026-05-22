@@ -147,13 +147,53 @@ def transcribe(audio_path: Path | str, model_size: str = "large-v3",
         vad_parameters=dict(min_silence_duration_ms=500),
         initial_prompt=initial_prompt,
         word_timestamps=True,
+        # 切断跨段上下文携带：长视频末尾的 hallucination loop 会让 whisper
+        # 一直生成超出音频末尾的字幕，最终触发 ctranslate2 内部 abort
+        # (STATUS_FATAL_APP_EXIT 0xC0000409)。p78 在 2027s 音频上跑到 2099s 后崩。
+        condition_on_previous_text=False,
+        no_repeat_ngram_size=3,
+        # 2026-05-21 BV1q6ozBmE8z vlog 1542s/1564s 再次 native abort：教学视频
+        # condition_on_previous_text + no_repeat_ngram=3 已不够，vlog 末尾"那么"
+        # "好吃"等高频短词触发的 loop 用 faster-whisper 1.x 官方 hallucination
+        # gate 兜底。
+        hallucination_silence_threshold=2.0,
+        # 默认 2.4。loop 段往往 compression_ratio 极高（同字符高重复 → 高压缩比），
+        # 收紧到 2.0 让 whisper 自身在 fallback 温度阶梯触发时丢弃这些 segment。
+        compression_ratio_threshold=2.0,
     )
 
-    # 总时长（VAD 过滤后）用 info.duration_after_vad；fallback info.duration
-    total_dur = (getattr(info, "duration_after_vad", None) or info.duration or 0.0)
+    # 进度分母用原始 info.duration——faster-whisper segment.end 是原始音频时间轴
+    # （VAD 前），若分母用 duration_after_vad 进度会超 100%（实测长视频偏 1.2~1.5x）
+    total_dur = (info.duration or getattr(info, "duration_after_vad", None) or 0.0)
     last_progress_emit = 0.0  # 上次播报的音频处理位置（s），用于节流
 
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    tag = _tag_for_model(model_size)
+    out_path = OUTPUT_DIR / f"{audio_path.stem}.{tag}.asr.json"
+
+    def _dump(seg_list: list, last_end: float, partial: bool) -> None:
+        """Atomic write 增量 ASR cache。崩了下次 pipeline 跑能拿到已落盘部分。"""
+        payload = {
+            "audio": audio_path.name,
+            "language": info.language,
+            # partial 时 duration 用 last segment end 而非 info.duration，让下游
+            # progress 分母逻辑仍 sensible（虽然 partial 时 chunker 会少处理末段内容）
+            "duration": info.duration if not partial else last_end,
+            "segments": seg_list,
+            "partial": partial,
+        }
+        tmp = out_path.with_suffix(".asr.json.tmp")
+        tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2), encoding="utf-8")
+        tmp.replace(out_path)
+
     seg_list = []
+    last_end = 0.0
+    # 2026-05-21 BV1q6 ASR 第 2 次在 1544s/1564s native abort：ctranslate2 内部
+    # buffer 边界 bug，hallucination_silence_threshold 救不了。Native abort 在
+    # Python 之外，try/finally 抓不住——必须流式增量落盘。每 50 段 atomic write
+    # 一次正式 ASR JSON（带 "partial": True），崩了下次跑 pipeline 看到 cache 跳过 ASR
+    # 阶段直接走下游。代价：一次 ASR 多写 ~30 次小 IO，对 26min vlog 不到 1s 总开销。
+    INCREMENTAL_DUMP_EVERY = 50
     for s in segments:
         words = []
         if s.words:
@@ -180,22 +220,24 @@ def transcribe(audio_path: Path | str, model_size: str = "large-v3",
             "confidence": round(conf, 3) if conf is not None else None,
             "words": words,
         })
+        last_end = s.end
         # 进度播报：每处理 30s 音频或每 20 段汇报一次（server.py 解析这行推 percent）
         # 长视频 ASR 是黑盒 5-10min，没这行用户看不到任何中间状态
         if total_dur > 0 and (s.end - last_progress_emit >= 30 or len(seg_list) % 20 == 0):
             print(f"      [asr] {s.end:.1f}s / {total_dur:.1f}s", flush=True)
             last_progress_emit = s.end
+        # 增量落盘
+        if len(seg_list) % INCREMENTAL_DUMP_EVERY == 0:
+            _dump(seg_list, last_end, partial=True)
 
+    # 正常完成：最终一次性写入 partial=False
     result = {
         "audio": audio_path.name,
         "language": info.language,
         "duration": info.duration,
         "segments": seg_list,
+        "partial": False,
     }
-
-    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    tag = _tag_for_model(model_size)
-    out_path = OUTPUT_DIR / f"{audio_path.stem}.{tag}.asr.json"
     out_path.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
 
     # 显式释放 whisper + CUDA。否则进程退出阶段 ctranslate2 析构偶发触发 Windows
