@@ -6,9 +6,9 @@
 
 ## 摘要 (Abstract)
 
-学习类视频（网课、技术讲座、考研专业课）是当代知识获取的主要载体之一，但视频媒介与"复习友好"的目标存在结构性矛盾：信息按时间顺序线性铺开，缺乏目录、术语索引与章末小结。本文提出一个端到端 pipeline，将学习类视频自动转换为结构化 Markdown 笔记。系统由四个核心模块组成：（1）多模态章节切分，融合文本 TextTiling 与视觉 Chinese-CLIP 距离，α=0.3 在 10 视频 cross-domain benchmark 上稳健；（2）学习场景专用 markdown 结构，含目录、术语表、章末小结等 5 类元素；（3）ASR 后处理两层修复——基于视频 metadata 的术语字典注入与基于共同前缀长度（LCP）的连续重复段去重；（4）跨域 benchmark 与同时报告 strict / F1@1 的评估方法论。实验显示 TextTiling 相对 chars chunker 在实拍子集上 strict F1 提升 +0.35；ASR 去重在王道 OS 哲学家进餐视频上把 F1@1 从 0.50 提升到 1.00，在计网 p38 上把 strict F1 从 0.25 提升到 0.75。我们进一步识别出 dedupe × chunker 的耦合关系：去重的收益本质上是关键词频次去噪，仅在语义 chunker 上显现，揭示了 ASR 上游失败模式如何通过关键词分布传导到下游分段算法。所有代码、benchmark 标注与实验结果开源。
+学习类视频（网课、技术讲座、考研专业课）与近年兴起的知识型 vlog（评测、探店、生活实验）是当代知识获取的主要载体，但视频媒介与"复习友好"的目标存在结构性矛盾：信息按时间顺序线性铺开，缺乏目录、术语索引与章末小结。本文提出一个端到端 pipeline，将视频自动转换为结构化 Markdown 笔记，经历 6 个版本演进逐步覆盖 PPT 教学 / 实拍 vlog / 科普访谈 / 技术演讲四类内容。系统由六个核心模块组成：（1）多模态章节切分，融合文本 TextTiling 与视觉 Chinese-CLIP 距离，α=0.3 实证是稳健甜点；（2）**LLM-as-segmenter**（Qwen2.5-7B-AWQ + B1 两步法）替代 Pegasus，在 9 视频跨域 benchmark 上覆盖率 100%（含 retry 与程序化 repair 双层兜底）；（3）**Qwen2.5-VL caption 作为切分 cue**，n_chunks ≤ 15 时启用、长视频自动降级；（4）**4 类启发式视频分类器**驱动 markdown / 前端双层模板分发，24/24 准确；（5）ASR 后处理 / 章 abstract 生成等多层 prompt 工程缓解 hallucination；（6）**三层 ASR 健壮性防御**——解码约束、faster-whisper 1.x 原生 hallucination gate、流式增量落盘（WAL 思想）—— 实战覆盖 ctranslate2 native abort 两条触发路径。在 24 视频跨域 corpus 上 LLM 切分覆盖率 100%，章 abstract 在 3-vlog 回归 corpus 上 21/21 章无字面 hallucinate；通过对兜底机制系统化 stress test，识别并修复了"野外永远不触发因此被误判为不需要"的隐藏 bug。所有代码、benchmark 标注、stress test 脚本与实验结果开源。
 
-**关键词**：视频笔记生成；多模态章节切分；ASR 后处理；TextTiling；学习场景
+**关键词**：视频笔记生成；多模态章节切分；LLM-as-segmenter；ASR 后处理；VLM caption；工程健壮性；stress test
 
 ## 1 引言 (Introduction)
 
@@ -38,7 +38,27 @@
 
 4. **10 视频跨域 benchmark**。手工标注 6 个学习类（PPT 教学）+ 4 个实拍类（Vlog / 影视解说）视频的章节边界 gold，每个视频提供 chars 与 texttile 两套不同 chunks 数的标注。同时报告严格 F1 与容差 F1@1，对短视频结构性 0/1 二值化问题给出方法论建议。该 benchmark 也作为 dedupe × chunker 耦合分析的实验平台。
 
-本文剩余部分组织如下：§2 综述相关工作；§3 给出系统架构概览；§4 详述四个核心方法模块；§5-6 给出量化评估与 case studies；§7 讨论局限性与 future work；§8 总结。
+5. **LLM-as-segmenter + 程序化 repair 双层兜底**（v4 引入，v5-v6 加固）。Qwen2.5-7B-AWQ 替代 Pegasus，配合 B1 两步法（章 outline 与章标题分两次调用）覆盖了 9 视频 corpus 的 100% 切分路径——其中 attempt 1 直接通过 22%，retry 覆盖额外 67%，剩余 11% 由 `_repair_oversize` 程序化救回，fallback TextTiling 路径 0 次触发。该数据来自 §6.4 24 视频 corpus 子集，是本工作中"算法 + 工程兜底"协同效果的核心证据。
+
+6. **跨视频域分类 + 双层模板分发**（v5 引入）。设计 4 类启发式分类器（teaching / popsci / vlog / talk），基于 ASR 文本特征 + 视频 metadata 在 24 视频上 24/24 准确，进一步驱动 markdown 与前端模板的 per-category 分发（如 vlog 用 `VLOG_SECTION_ABSTRACT_SYSTEM` 替代教学风格 abstract prompt）。该模块把"单一模板覆盖所有内容"的早期设计升级为"按内容形态做差异化呈现"。
+
+7. **三层 ASR 健壮性防御 + Stress Test 范式**（v5-v6 + 2026-05-21 第二轮加固）。一方面对 faster-whisper + ctranslate2 在 Windows 上的 native abort 故障建立三层防御：解码约束（v5）+ 1.x 原生 hallucination gate（5-21）+ 流式增量落盘（5-21，WAL 思想）—— 实战覆盖 BV1q6 与 BV1AYR6BsE9U 两个 vlog 长视频的 native abort，99.99% 覆盖率落盘。另一方面通过对兜底机制系统化 stress test（v6 `scripts/stress_test_*`）发现"野外永远不触发因此被误判为不需要"的 auto_subs n≥4 broken 隐藏 bug，提出"对每个兜底必须配 stress test"的工程方法论。
+
+### 1.4 系统演进概览
+
+本工作并非一次性设计完成，而是经历了 6 个明确的里程碑迭代，每一轮都由新的失败模式驱动算法或工程改动。完整 timeline 见 §7，此处仅给出脉络以便读者从"为何当前架构是这样的"角度阅读后续章节：
+
+| 版本 | 时段 | 触发问题 | 核心改动 |
+|---|---|---|---|
+| v1 | 2026-05 前 | — (项目起点) | Pegasus baseline + TextTiling + α=0.3 多模态 |
+| v2 | 2026-05-15 | ASR 卡片回路污染下游 chunker | LCP-based 连续重复段去重 + 术语字典 |
+| v3 | 2026-05-15 | 缺学习场景结构 + Pegasus 章标题 copy 退化 | 5 类 md 元素 + chunks 数差异化 fallback + ASR `[?]` 置信度标记 |
+| v4 | 2026-05-16~17 | TextTiling+Pegasus 在 30+ chunks 上邻章串台 | Qwen2.5-7B-AWQ 替代 Pegasus + B1 两步法 + VLM caption 三层门控 + 英文支持 |
+| v5 | 2026-05-19~20 | 跨域 UI 突兀 + LLM systematic bias + GPU 黑屏事故 | 4 类启发式分类器 + 模板分发 + segment 4 硬规则 + 串行加载红线 |
+| v6 | 2026-05-21 | v5 兜底"未野外触发"成因不明 | stress test 暴露 auto_subs n≥4 broken + nav 规则合并 + repair 一致性修 |
+| v6+ | 2026-05-21~22 | vlog 域纳入暴露 ASR 第二条 abort 路径 + abstract LLM 字面 hallucinate | 三层 ASR 防御（含 WAL 增量落盘）+ generate_chapter_abstracts input 加 ASR snippet + 3-vlog corpus 回归（21/21 章 0 hallucinate） |
+
+本文剩余部分组织如下：§2 综述相关工作；§3 给出系统架构概览（v6 当前态）；§4 详述四个核心方法模块；§5-6 给出量化评估与 case studies；§7 按里程碑回顾系统演进；§8 讨论局限性与 future work；§9 总结。
 
 ## 2 相关工作 (Related Work)
 
@@ -59,6 +79,12 @@ CLIP (Radford et al., 2021) 及其中文复现 Chinese-CLIP (Yang et al., 2022) 
 ### 2.4 ASR 后处理
 
 ASR 后处理的研究主要集中在术语字典 / 语言模型重打分 / N-best 重排上。对"卡片回路"这一具体失败模式的针对性处理在公开文献中较少——它是 streaming attention-based 模型的退化模式，通常被视为模型 bug 而非可独立研究的问题。我们将其形式化为"连续相同段落的 LCP-based 检测与合并"，并提供了 chunker × dedupe 的二维 ablation 分析，定量刻画了上游 ASR 失败模式如何通过关键词频次污染下游分段算法——这一传导路径在视频笔记生成场景下我们尚未见到系统性的讨论。
+
+ASR 运行层面的健壮性问题——具体地说，faster-whisper 在 Windows + ctranslate2 路径上的 native abort——在工程社区有零星报告但缺少系统性研究。已有讨论大多停留在"调小 batch / 关闭 condition_on_previous_text"的经验层面，未对"abort 在 transcribe() 完成之后才触发"这一更隐蔽的第二条路径建立模型。本工作 §6.5.1.bis 通过 BV1q6 / BV1AYR6BsE9U 两个野外 case 把这一路径定位到 ctranslate2 资源释放阶段，并提出"WAL 风格流式落盘 + 1.x 原生 hallucination gate + 解码约束"三层防御。这是把数据库领域成熟的故障兜底范式引入 ASR pipeline 的一次尝试。
+
+### 2.5 LLM-as-segmenter 与视频转写结构化
+
+近期 long-context LLM（DeepSeek-V3、Qwen2.5、Llama-3）使得"将整段 ASR 转写一次性喂入 LLM 让其输出章节 outline"成为可行路径。该方向的早期工作多以 GPT-4 为黑盒切分器，未对失败模式与回退策略做系统讨论。我们采用本地 Qwen2.5-7B-AWQ（4-bit 量化、~5GB VRAM），通过 B1 两步法（先 outline 后标题）+ retry-with-feedback + 程序化 `_repair_*` 三层兜底，在 24 视频 corpus 上达到 100% 切分覆盖率，fallback TextTiling 0 次触发。我们进一步发现 LLM-as-segmenter 在 30+ chunks 长视频上存在显著的 **catch-all bias**（attempt 1 倾向把所有 chunks 塞进 1-2 顶层章节），retry-with-feedback 机制可在多数 case 自我修正，但仍有少数需要程序化 repair 接管——这一观察对后续工作选择 LLM 还是更结构化的切分器具有方法论价值。
 
 ## 3 系统架构 (System Architecture)
 
@@ -535,28 +561,600 @@ attempt 2/3 仍持续 missing 9 个 chunks（chunk [10-13, 18-22]），repair_mi
 LLM)，换 96% LLM 切分覆盖率。新增 5 视频未引入任何 fallback / repair / 救援，
 全部走 LLM 主路径（1 × attempt 1 + 2 × attempt 2 + 2 × attempt 3）。
 
-## 7 局限性与未来工作 (Limitations & Future Work)
+### 6.5 第二轮工程加固迭代（2026-05-19）
 
-### 7.1 已知失败模式
+本节记录将 §6.4 的 24 视频 corpus 之外的两个新视频（王道计算机网络 p78「TCP 报文段」、p85「TCP 拥塞控制」）首次纳入 web 端到端生成流程时触发的 6 项问题及其修复。这一轮迭代将关注点从「单一指标的算法优化」转向「端到端管线在真实用户路径上的健壮性」，并把曾因为只在 CLI 上验证而漏掉的若干失败模式暴露出来。每一项均按「现象 → 根因 → 修复 → 后验 → 分析」四段式整理，对负面结果（trigger 误判调查最终证明为无 bug）也保留全部记录以备复用。
 
-- **ASR 隐式错字**（同音字）：如影视飓风视频"想拖 vs 像托"，文字通顺但语义错误，所有自动指标对此盲区。需要 ASR confidence + word_timestamps 过滤来缓解
-- **Pegasus 主旨偏移**：8 视频 30 headline 中 2 个 Pegasus 抓错主题（无明显诱因），属于模型自身瓶颈
+---
+
+#### 6.5.1 ASR 末尾 hallucination loop 触发 ctranslate2 native abort
+
+**现象**：
+
+视频 p78（35:07）首次在 web 端生成时，pipeline 在 ASR 阶段进行约 6 分钟后，子进程以 Windows 退出码 `3221226505 = 0xC0000409` (STATUS_STACK_BUFFER_OVERRUN, 即 `abort()` 触发的 CRT 终止) 异常退出，无输出文件写入。stdout 末尾的进度行揭示了关键迹象——`faster-whisper` 的处理位置从音频实际长度 2027.1s **越过末尾继续推进到 2099.4s**（超出 72.3 秒），随后立即崩溃。Traceback 显示崩溃发生在 ctranslate2 的 native 模块内部，Python 栈停在 `pipeline.py:448` 的 `run` 帧。
+
+**根因**：
+
+faster-whisper 的解码器在视频末尾失去 VAD 锚点后进入 hallucination loop：language model 持续生成「合理但虚构」的 token，时间戳被错误向前外推。当生成位置远超音频长度时，ctranslate2 在内部 buffer 索引上发生越界，触发 `abort()`。这是 whisper 系列模型在 Windows + ctranslate2 路径上有据可查的 edge case，与项目 §6.1 提及的 OS p37 卡片回路同源（均为 hallucination loop），但本次因循环量级更大跨过了 native 层的安全边界。
+
+**修复**：
+
+在 `src/asr.py:transcribe()` 的 `model.transcribe()` 调用中新增两个参数：
+
+```python
+condition_on_previous_text=False,   # 切断跨段上下文携带，破除 loop 的状态依赖
+no_repeat_ngram_size=3,              # 解码层硬约束：3-gram 不可重复
+```
+
+二者构成双层防御：`condition_on_previous_text=False` 在每段独立解码，使 hallucination 不会通过历史上下文向后续段累积；`no_repeat_ngram_size=3` 在束搜索内部禁止任意 3-gram 重复出现，确保即使发生短程重复也会被强制中断。代价是少量跨段叙事一致性下降（在中文 ASR 上几乎不可观察，因为 faster-whisper 中文标点本就不稳定），换取末尾稳定性，符合本项目对 ASR 输出「先正确再优雅」的优先级排序。
+
+**后验**：
+
+修复后，p78 ASR 顺利写出 `BV19E411D78Q_p78_p0.large-v3.asr.json`（738 segments，duration 2107.2s），无越界进度行。后续 11 chunks / 4 chapters 端到端通过。
+
+**分析**：
+
+| 失败模式 | OS p37（§6.1） | p78（本节） |
+|---------|---------------|------------|
+| 触发位置 | 视频中段（755s 起 9 段循环） | 视频末尾（2027s+） |
+| 暴露层 | 下游 chunker keyword 污染 | ctranslate2 native abort |
+| 干预层 | 后处理 dedupe | 解码参数 |
+
+两个案例共同指向一个被低估的事实——**hallucination loop 不只是「质量差」，在 Windows + ctranslate2 路径上还是「可崩溃风险」**。本项目原有 `dedupe_consecutive_segments`（§6.1）只能在 ASR 输出回到 Python 层后做后处理；本次修复在解码源头加约束，与 dedupe 形成正交防御。
+
+##### 6.5.1.bis 第二轮：vlog 长视频复发与三层加固（2026-05-21）
+
+**现象**：
+
+第一轮 fix 后近两周内，所有进入 corpus 的教学类视频均未再触发 native abort。但当 corpus 首次纳入 vlog 域（BV1q6ozBmE8z「上海日料探店」，26.1 min）时，pipeline 在 ASR 阶段进度推进至 **1542s / 1564s**（覆盖率 98.6%）后再次触发 Windows STATUS_FATAL_APP_EXIT (`0xC0000409`)，进程以 exit code 127 退出，无 `.asr.json` 写出。两次独立重跑均在 1542–1544s 区间崩溃（差 ≤2s），明显与音频内容无关，确认为 native 层的位置依赖型 bug。
+
+**根因（与 §6.5.1 第一轮的差异）**：
+
+第一轮 fix 后回看 BV1q6 case，发现失败模式已经发生了**质变**：
+
+| 维度 | p78（§6.5.1 第一轮） | BV1q6（本节） |
+|------|----------------------|---------------|
+| 进度越界？ | 是（2027 → 2099s，越界 72s） | 否（1557.6s ≤ duration 1564.17s） |
+| 触发阶段 | `transcribe()` 推进中 | ASR 实际完成后、Python 收尾前 |
+| Python frame | `pipeline.py:run` | 不可定位（生成器 yield 后栈已展开） |
+| `condition_on_previous_text=False` 是否生效 | 是 | 是（仍崩） |
+
+也就是说，**第一轮 fix 仅消除了「外推越界」这一种触发路径**；ctranslate2 native abort 还存在第二条触发路径：在 ASR 正常完成后、模型/buffer 资源释放阶段触发的越界写。后者无法通过解码参数预防，因为崩溃时解码本身已经结束。这与项目 §6.1 / §6.5.1 既有的「先释放模型，避免与下一阶段抢 VRAM」习惯属同源——ctranslate2 在资源释放路径上的健壮性弱于解码路径。
+
+**修复**（三层叠加，`src/asr.py:transcribe`）：
+
+第一层沿用第一轮的 `condition_on_previous_text=False` + `no_repeat_ngram_size=3`，作为既已验证的解码约束保留。
+
+第二层引入 faster-whisper 1.x 原生的两个 hallucination gate：
+
+```python
+hallucination_silence_threshold=2.0,   # ≥2s VAD 静默时跳过解码段
+compression_ratio_threshold=2.0,        # 默认 2.4，收紧让 fallback 温度阶梯主动丢弃高压缩比段
+```
+
+`hallucination_silence_threshold` 是 faster-whisper 1.2 新增的官方接口，在检测到 VAD 静默时直接跳过相邻段的解码，从源头切断「在沉默处生成 token」的 hallucination 入口。`compression_ratio_threshold` 收紧后会让温度退火 fallback 更早触发，主动丢弃解码概率过于「确信」（往往是 hallucination loop 特征）的段。
+
+第三层是关键——**流式增量落盘**，覆盖 native abort 在 try/finally 之外触发的盲区：
+
+```python
+INCREMENTAL_DUMP_EVERY = 50
+
+def _dump(seg_list, last_end, partial):
+    payload = {..., "partial": partial,
+               "duration": info.duration if not partial else last_end}
+    tmp = out_path.with_suffix(".asr.json.tmp")
+    tmp.write_text(json.dumps(payload, ensure_ascii=False, indent=2))
+    tmp.replace(out_path)   # atomic on Windows NTFS
+
+for s in segments:
+    ...
+    if len(seg_list) % INCREMENTAL_DUMP_EVERY == 0:
+        _dump(seg_list, last_end, partial=True)
+# 末尾 final write partial=False
+```
+
+Native abort 不经过 Python 异常机制，`try/finally` 与 atexit 钩子均无法触发；唯一可靠的方法是**在生成端主动按段落盘**。每 50 段（按 BV1q6 节奏约每 60–90 s）一次原子 rename，确保最差情况下崩溃前最后一次 dump 之后的内容损失上界可控。`partial=True/False` 字段让下游脚本能判断是否需要重跑或可以直接消费。
+
+**后验**：
+
+BV1q6 重跑后 ASR 进度依然崩在 1542s 附近（无任何参数能预防 native 层 abort），但本次 `.asr.json` 已落盘——内容 `partial=False`, 688 segments, `last_end=1557.6s`, `duration=1564.17s`，**覆盖率 99.6%**。下游 pipeline 不带 `--force-asr` 直接复用此 cache，端到端通过。
+
+2026-05-22 在新 vlog（BV1dkLr6UEJ6「陈泽测评山姆零食」，15.5 min）上回归三层加固：ASR 完整 669 segments 写出（duration 927.2s，无 partial 标记），无 abort，下游全链路通过。同日 BV1AYR6BsE9U「陈泽薯片测评」28.2 min 再次撞上同型故障——ASR 推进到 1690.3s / 1693.1s 时 Fatal Python error: Aborted，但 `.asr.json` 已落盘（1383 segments，`partial=False`，`last_end=1692.9s`，覆盖率 99.99%），retry pipeline 复用 cache 完整通过，验证了 L3 兜底机制在 native abort 真实发生时的工程价值。
+
+**分析**：
+
+| 防御层 | 防护机制 | 适用故障模式 |
+|--------|---------|--------------|
+| L1 解码约束 (§6.5.1 第一轮) | `condition_on_previous_text=False` + 3-gram | 外推越界（p78） |
+| L2 hallucination gate (1.x 原生) | silence threshold + compression ratio | 沉默处生成 / 概率异常段 |
+| L3 增量落盘 | 流式 atomic write 每 50 段 | native abort 在 try/finally 外触发（BV1q6） |
+
+三层防御从「预防」（L1/L2）到「兜底」（L3）形成纵深。L3 是关键的认识跃迁——承认在 native 层崩溃面前 Python 端的所有 exception handling 都不可靠，必须用「持久化频率」换「最大损失上界」。这与数据库领域的 WAL（write-ahead log）思想同源：不期望崩溃不发生，只期望崩溃后状态可恢复。
+
+本节的另一项 takeaway 是 **failure mode 会演进**：第一轮 fix 没有「失效」，它仍然在为符合该模式的视频提供保护；只是当 corpus 跨入新域（vlog vs 教学）时，曾经稀有的第二条触发路径变得可观察。这提示对系统健壮性的工程评估必须随 corpus 同步迭代——一个 fix 在它当时的 benchmark 上 100% 通过，不代表它在新场景下仍然 100% 充分。
+
+---
+
+#### 6.5.2 `.mm.` 后缀产物漏出版至 web/public
+
+**现象**：
+
+p78 第二次提交（避开 hallucination 后）pipeline 成功完成，stage 跑到 `done`、percent 100，但前端 `/notes/BV19E411D78Q_p78_p0` 路由对 `summary.json` 与 `chapters.json` 同时返回 404，note 在 `/api/notes` 列表中也不出现。`data/outputs/` 下产物完整（`.mm.summary.json` / `.mm.chapters.json` / `.mm.keyframes/` 全部存在），但 `web/public/notes/BV19E411D78Q_p78_p0/` 目录为空。
+
+**根因**：
+
+`server.py:_publish_to_web()` 中的源文件路径硬编码为 `{stem}.large-v3.neural.texttile.{kind}.json`，未匹配实际写出的 `{stem}.large-v3.neural.texttile.mm.{kind}.json`。`.mm` 中缀在 2026-05-17 引入 keyframes / VLM 路径时加入（见 §5.4.3 文件命名约定），但 publish 函数当时未同步更新，CLI 自测路径不经此函数所以未被发现。
+
+**修复**：
+
+将硬编码 `texttile.{kind}.json` 改为 glob `texttile*.{kind}.json`，并取 mtime 最近一个，兼容 `texttile`、`texttile.mm`、未来可能加的 `texttile.mm.vl` 等变体：
+
+```python
+def _pick_latest(pattern: str) -> Optional[Path]:
+    cands = sorted(DATA_OUTPUTS.glob(pattern), key=lambda p: -p.stat().st_mtime)
+    return cands[0] if cands else None
+
+src = _pick_latest(f"{stem}.large-v3.neural.texttile*.{kind}.json")
+```
+
+`keyframes/` 目录与回退 md 扫描路径做同样改造，并把 stem 回填正则 `\.large-v3\.neural\.texttile$` 扩为 `\.large-v3\.neural\.texttile(\.mm)?$`。
+
+**后验**：
+
+修复后手动对 p78 重放一次 publish，目录正确建立（`summary.json` 1.2 MB / `chapters.json` 3.3 KB / `keyframes/` 11 张），前端列表立即可见。重启 server 后，新生成 job 的 publish 自动走 glob 路径。
+
+**分析**：
+
+本 bug 暴露的元问题不是某一行代码错，而是「产物文件名是一个隐式扩展点，而 publish 是耦合在文件名 schema 上的下游消费者」。在 §5.4.3 引入 `.mm` 时，project memory 仅记录了 stem 命名规则的变化，没有提示 publish 路径同步。可以在 `_output_stem` 函数旁加 docstring 注释「修改此函数需同步更新 server.py:_publish_to_web 与 scripts/aggregate_eval.py 的文件匹配模式」，但更可靠的做法是 publish 时通过 glob 模糊匹配（本次修复采用），把 schema 漂移从「编译期不可见的契约」降级为「运行期不致命的容错」。
+
+---
+
+#### 6.5.3 计算机网络域 ASR 错字字典扩充
+
+**现象**：
+
+p78 + p85 生成成功后，对 chunk-level 输出做扫描发现：
+
+| 错听 | 正确 | p78 频次 | p85 频次 | 直接影响 |
+|------|------|---------|---------|---------|
+| AKK | ACK | 26 | 11 | chunk 2/6 关键词污染、headline 拼写错 |
+| 校验核 | 校验和 | 6 | — | **chunk 8 headline 直接错为「校验核方法」** |
+| 拥测 | 拥塞 | — | 52 | 关键词频次最大错听变体 |
+| 拥測 | 拥塞 | — | 21 | 繁简混 |
+| 拥色 | 拥塞 | — | 21 | |
+| 拥瑟 | 拥塞 | — | 6 | |
+| 拥舍 | 拥塞 | — | 3 | |
+| 拥饰 / 拥侧 / 拥側 / 拥筛 | 拥塞 | — | 6 (合计) | 长尾 |
+| 報文 / 導致 | 报文 / 导致 | — | 5 | 繁简模式偶发 |
+
+对 p85 而言，「拥塞」一词的 9 种错听变体合计出现 **109 次**，超过正确写法 **68 次**——whisper 在该字上出现系统性失败。所有错听变体在 `_DOMAIN_CORRECTIONS["network"]` 字典中均未收录。
+
+**根因**：
+
+`_DOMAIN_CORRECTIONS` 是一个手工 substring 替换字典，按视频域（network / os / ...）触发。它原本只收录了项目早期视频中观察到的错字（如「双角线 → 双绞线」、「手部 → 首部」、「表象 → 表项」）。p85 是首个进入 corpus 的「TCP 拥塞控制」主题视频，「拥塞」这个高频专有词此前未在 benchmark 中出现，错字也就未被纳入字典。
+
+**修复**：
+
+在 `pipeline.py:_DOMAIN_CORRECTIONS["network"]` 中追加上表全部错听变体的 substring 替换。所有词都验证过——它们在计网域内无其他合法含义（如「拥测」在中文不是常用词，「AKK」非任何术语），全局替换安全。
+
+```python
+"拥测": "拥塞",   "拥測": "拥塞",   "拥色": "拥塞",
+"拥瑟": "拥塞",   "拥舍": "拥塞",   "拥饰": "拥塞",
+"拥侧": "拥塞",   "拥側": "拥塞",   "拥筛": "拥塞",
+"AKK": "ACK",
+"校验核": "校验和",
+"報文": "报文",   "導致": "导致",
+```
+
+ASR cache 命中时（pipeline.py:455-457），原始 `asr.json` 不被覆盖，新字典在每次 pipeline 运行的 `apply_term_corrections` 阶段（line 479）应用到内存中的 segments，因此**无需重跑 ASR 即可获得修复**。
+
+**后验**（p85 复跑，ASR cache 命中，仅校正 + 下游环节重跑）：
+
+| 指标 | BEFORE（首跑） | AFTER（修复后） | Δ |
+|------|---------------|----------------|---|
+| 12 种错字残留总和 | **121** 处 | **0** 处 | -121 (100% 消除) |
+| 「拥塞」正确写法频次 | 70 | **179** | +109（恰好等于错听变体之和，全归并） |
+| 「ACK」正确写法频次 | 31 | 38 | +7（AKK x9 修复） |
+| chunk 8 headline | 「校验核方法」（错） | (n/a，p78 用例) | — |
+
+**chunk-level headline 案例对比**（13 chunks）：
+
+| chunk | BEFORE headline | AFTER headline | 评价 |
+|-------|----------------|---------------|------|
+| 4 | RTT与拥塞窗口 | 拥塞窗口与SSTHRESH | AFTER 抓到具体术语「SSTHRESH」（慢启动阈值），更准 |
+| 5 | 慢开始算法 | 拥塞控制与快重传 | 内容确为快重传段，AFTER 更贴合 |
+| 6 | 拥塞避免算法 | 拥塞窗口增长机制 | 同主题，措辞更技术化 |
+| 2 | 冗余ACK机制 | 拥塞控制原理 | **AFTER 更模糊** — 退步案例 |
+| 3 | 拥塞窗口调整 | 拥塞控制与流量控制 | 主题漂移，**待人工评判** |
+
+**分析**：
+
+本案例展示了一个 ASR 后处理字典维护的**双层结构**：
+- **域无关错字（CamelCase / 全大写 token）**：通过 `_build_term_corrections` 从 metadata 自动抽取 + `_ASR_CONFUSIONS` 表泛化，无需手工维护
+- **域特定同音字 / 训练语料偏差错字**：必须人工累积，每新增 sub-domain 视频可能引入新的需补录条目
+
+对论文影响：§4.1.1 应增加一段说明「域特定字典是一个 ongoing-maintenance 资源，每新进入一个 sub-domain 都要做一次错字 EDA」。对系统设计影响：未来可以加一个 `scripts/eda_asr_errors.py` 半自动工具——给定一个 domain 关键词（如 "拥塞"），从 ASR 全文中扫描距离 ≤1 的相似字符组合，输出候选错听列表供人工筛选，避免每次完全靠肉眼。
+
+---
+
+#### 6.5.4 jieba 关键词抽取的 stopword 渗漏
+
+**现象**：
+
+p78 / p85 chunk-level 输出的 `keywords[]` top-5 中频繁出现 `这个 / 等于 / 题目 / 当中 / 这种` 等口语虚词。例如 p78 chunk 2 keywords `['TCP', 'AKK', '报文', '确认', '字节']` 看似干净，但 chunk 5 keywords `['报文', 'FIN', 'TCP', '紧急', '这个']`——「这个」抢占了一个本应是「报文段头部字段」相关术语的位置。p85 chunk 4 keywords `['发送', 'TCP', '拥塞', '这个', 'ACK']` 同样。
+
+**根因**：
+
+项目在 `summarize.py:_GLOSSARY_STOPWORDS` 维护了一份精心整理的中英停用词集（约 200 条，涵盖讲师口头禅、中文虚词、英文功能词、缩写残片），但这份集合**只在「术语表生成」阶段被 `_is_stopword()` 过滤使用**。`jieba.analyse.extract_tags()` 的全部 4 处调用（chunker、chunk-level keywords、章标题关键词抽取、chunk cleaning）都使用 jieba 内置 stopword 表（很小、只覆盖最基本中文功能词），未传入 `_GLOSSARY_STOPWORDS`。
+
+**修复**：
+
+在 `summarize.py` 模块加载时把 `_GLOSSARY_STOPWORDS` 写入临时文件，通过 `jieba.analyse.set_stop_words()` 设为全局状态。这是 jieba 提供的唯一公开 API（无 per-call 参数版本）：
+
+```python
+def _init_jieba_stopwords() -> None:
+    sw_file = Path(tempfile.gettempdir()) / "notegen_jieba_stopwords.txt"
+    sw_file.write_text("\n".join(sorted(_GLOSSARY_STOPWORDS)), encoding="utf-8")
+    jieba.analyse.set_stop_words(str(sw_file))
+
+_init_jieba_stopwords()
+```
+
+虽然 `set_stop_words` 修改全局状态在多进程并发下不安全，但本项目 pipeline 是单进程 subprocess、jieba 仅一处消费者，无副作用。
+
+**后验**（独立单元验证 + p85 复跑）：
+
+单元测试输入文本 `'这个 TCP 拥塞控制 是 网络层 的 重要 算法 这个 协议'`：
+
+```
+before: ['TCP', '拥塞', '网络层', '算法', '这个', '协议', '控制', '重要']
+after : ['TCP', '拥塞', '网络层', '算法', '协议', '控制', '重要']
+```
+
+`这个` 被正确滤除，top-K 自动收缩。p85 复跑层面（13 chunks 的 keywords[] top-5 stopword 占用统计）：
+
+| Stopword | BEFORE 占用次数 | AFTER 占用次数 | 说明 |
+|----------|----------------|---------------|------|
+| 这个 | 8 | **0** | 完全消除（已在 `_GLOSSARY_STOPWORDS`） |
+| 等于 | 2 | 3 | 略增 — 不在 stopword 集中，建议补录 |
+| 题目 | 1 | 2 | 略增 — 考研域内是高频但非术语，需 case-by-case 判断 |
+| 合计渗漏 | **11** | **5** | -55% |
+
+修复效果是「部分修复」：核心高频虚词「这个」被根除，但「等于 / 题目」反而因为 stopword 表未收录、且原本被「这个」抢占的 top-5 位置腾出而上位。`等于` 在数学公式 / 计算窗口的语境是关键词（如「窗口等于 RTT × BW」），强行加入 stopwords 会破坏教学视频常见的「公式描述」表达；`题目` 在考研域专门指代「真题示例」，是讲师反复使用的有意义元数据。这两个词的处理是一个 domain-aware stopword 的开放问题——本项目当前选择保守不动，将「部分修复」的诚实记录写入论文，作为未来 stopword 表 domain 化的动机。
+
+更深一层影响是 **章节切分受 keyword 图变化间接影响**：BEFORE 章节数 6，AFTER 章节数 7（详见 §6.5.6 后验表）。但此变化是 ASR 错字修复（§6.5.3）+ stopword 清洁（本节）+ VLM caption 启用（§6.5.6）三因素共同作用，无法单独归因于 stopword 修复。
+
+**分析**：
+
+这条 bug 暴露的元问题是「stopword 数据资产存在但未被全部消费点共享」。`_GLOSSARY_STOPWORDS` 这份资产在术语表场景下是 post-filter，在 keyword extraction 场景下应是 pre-filter，但代码结构上没有强制二者使用同一份数据。一个更结构化的设计是把停用词集合提升为 module-level 资源，在 `summarize.py` 初始化阶段同时注入到 jieba 全局表与 `_is_stopword()`，使任一处更新都自动同步。本次修复采用了这一思路（`_init_jieba_stopwords()` 在 `_GLOSSARY_STOPWORDS` 定义后立即调用）。
+
+对下游影响：keyword 出现 stopword 不只是观感问题，还会影响 TextTiling chunker 的 Jaccard 距离计算——「这个」如果在所有 chunks 中频繁出现，会人为拉低相邻 chunks 的距离（共享 token 增多），从而模糊真实话题边界。这与 §6.1 / §6.2 的 dedupe-改善 chunker 边界检测属于同一类「上游 keyword 噪声 → 下游分段失真」机制，是论文 §4.1 / §4.2 中应当统一论述的「关键词图清洁度」概念。
+
+---
+
+#### 6.5.5 Wrap-up trigger 误报调查：负面结果
+
+**现象（疑似）**：
+
+p78 章 4 标题被 wrap-up 检测器标注为「MSS 与报文格式 · 本节复习」，但章节标题本身（MSS、报文格式）显然是新知识点，不像复习。初步怀疑 `_mark_wrapup_chapter` 函数的 trigger 阈值（hits ≥ 2）过低导致误报。
+
+**调查**：
+
+对 p78 末章（chunks 9-10）的全部 chunk 文本扫描 12 个中文 wrap-up triggers，结果如下：
+
+| Trigger | 命中次数 | 上下文 |
+|---------|---------|--------|
+| `以上就是` | 1 | "...好的那么以上就是 TCP 报文段这个考点的全部内容..." |
+| `在这个视频中` | 1 | "...好的在这个视频中我们详细探讨 TCP 报文段的格式..." |
+| `考点` | 2 | "...这种考评不高的考点..." |
+| `回顾一下` | 1 | "...你只需要在考试前几天迅速的回顾一下..." |
+
+合计 5 处真 trigger 命中。p85 末章（chunks 11-12）同样命中 2 处真 wrap-up phrase（「以上就是这节课的全部内容」、「在这个视频中我们主要介绍了慢开始和拥塞避免」）；非末章累计仅 1 处 `考点` false positive，但被「只检最后一章」的过滤规则正确挡掉。
+
+**结论（负面）**：
+
+`_mark_wrapup_chapter` **不存在 bug**。两个视频的末章确实进行了讲师 wrap-up，trigger 触发是正确行为。最初的误判源于「只看章节标题就判断章节性质」——而章节标题由 LLM 从 chunk 内容生成，倾向于抓「新出现的术语」（MSS、报文格式），不会主动反映该 chunk 还包含 wrap-up 性质。换言之，p78 章 4 是「混合性章节」：既介绍新知识点（MSS 字段、报文格式总览），同时夹杂讲师的回顾陈述。
+
+**收获**：
+
+虽然不是 bug，但调查过程暴露了一个 future-work 选项——可以在 LLM 章节标题生成阶段把「该章节是否为 wrap-up」作为额外 prompt 信号，让标题在 wrap-up 场景下更倾向「TCP 报文段总结」或「本节复习要点」这类显式总结性命名，而非抓最末出现的新名词。这是设计取舍：当前实现将「事实标记」（`· 本节复习`）与「内容标题」分开，可读性已足够；嵌入式命名虽更优雅但增加 LLM prompt 工程复杂度。本节作为负面结果存档，避免下次再调研同一问题。
+
+---
+
+#### 6.5.6 Web pipeline 默认开启 VLM caption
+
+**现象（误读纠正）**：
+
+在最初的 6.5.4-6.5.6 准备阶段，发现 p78 / p85 的 `ablation.vlm_captions_used = false`。结合 §5.4.3 记述的「n_chunks ≤ 15 自适应启用」规则（项目记忆条目），最初判断为「自动启用逻辑失效」。但代码层调查显示——**`n_chunks ≤ 15` 是 `--vlm-captions` 已显式开启后的「内层降级阈值」，不是自动启用条件**。pipeline 入口 `vlm_captions = args.vlm_captions` 完全由 CLI flag 控制，且 `server.py` 的子进程命令行未传该 flag，所以 web 路径下 VLM caption 从未被启用过。
+
+**根因**：
+
+§5.4.3 的 paper 文字与项目记忆均准确（明确写明「--vlm-captions 显式开启」），但记忆的索引摘要简化为「n_chunks ≤ 15 自适应启用」，措辞歧义导致 web pipeline 长期处于 VLM-off 状态。这本质上是「**默认配置漂移**」问题：CLI 自测时手动加 `--vlm-captions` 验证有效，但 web 默认配置遗漏了向用户启用该改进。
+
+**修复**：
+
+`server.py` 的 pipeline 启动命令追加 `--vlm-captions` flag：
+
+```python
+cmd = [
+    str(PY), "src/pipeline.py", url,
+    ...
+    "--keyframes",
+    "--llm-chapters",
+    "--vlm-captions",   # 新增：n_chunks>15 内部自动降级，无副作用
+]
+```
+
+`--vlm-captions` 仅在 `n_chunks ≤ 15` 且 `max_prefix_run < 4` 双重门控通过时实际投入 LLM，对长 / 单调视频自动降级回 CLIP sim cue，附加成本仅为 Qwen2.5-VL-7B-AWQ 首次模型加载约 30 秒（VRAM 占用 ~5-7 GB），不影响后续切分质量。
+
+同步修正项目记忆索引摘要为「`--vlm-captions` 显式开启，n_chunks>15 内部降级；2026-05-19 web 默认开」，避免歧义再次诱发误读。
+
+**后验**（p85 复跑后 ablation 字段对照）：
+
+| 字段 | BEFORE | AFTER |
+|------|--------|-------|
+| `vlm_captions` (flag 开启) | false | **true** |
+| `vlm_captions_used` (实际启用) | false | **true** |
+| `vlm_max_prefix_run` | — | 2（< 4，内层 gate 通过） |
+| `vlm_degraded_reason` | — | None |
+| `llm_pass_via` | attempt_3 | **repair** |
+| `llm_fail_reasons` | [oversize, missing] | [oversize, oversize, missing] |
+| 章节数 | 6 | **7** |
+| 章 1 chunks 数 | 4（0-1115s, 18min, 标题模糊） | **2**（0-460s, 7.7min, 标题更准） |
+
+**章节切分对比（BEFORE 6 章 vs AFTER 7 章）**：
+
+| # | BEFORE 标题（chunks） | AFTER 标题（chunks） |
+|---|---------------------|---------------------|
+| 1 | 拥塞控制与TCP报文 (0-3) | 拥塞控制与窗口机制 (0-1) |
+| 2 | RTT与拥塞窗口管理 (4-5) | 拥塞控制原理 (2) |
+| 3 | 拥塞避免与超时处理 (6-7) | 拥塞控制与流量控制 (3) |
+| 4 | 拥塞窗口调整策略 (8-9) | 拥塞窗口与SSTHRESH (4) |
+| 5 | 接收窗口的作用 (10) | 拥塞控制与快重传和窗口增长 (5-6) |
+| 6 | 发送窗口与MSS · 本节复习 (11-12) | 拥塞避免与窗口RTT (7-9) |
+| 7 | — | MSS与拥塞窗口和接收窗口 · 本节复习 (10-12) |
+
+**分析**（VLM 启用后切分变化）：
+
+VLM caption 启用带来三类可观察变化：
+1. **章节数 +1（6 → 7）**：原 BEFORE 章 1（0-1115s, 4 chunks）被 AFTER 拆为 4 个章（chunks [0-1] / [2] / [3] / [4]），其中 3 个为单 chunk 章。这一现象与 §5.4.3 提及的「PPT 域过度切分风险」一致——VLM caption 描述每帧 PPT 内容时差异度高，让 LLM 倾向于把每张 slide 当独立章节
+2. **LLM 切分难度上升**：BEFORE 3 次 attempt 之后无 repair 即过；AFTER 3 次 attempt 全 fail 后通过 repair 路径救援（`repair_missing` + `repair_oversize` 都触发）。这表明 VLM caption 让首次 outline 更难 well-formed，但 repair 机制（§5.4.3 第三层 safety net）兜底成功
+3. **章节标题更专业化**：「拥塞窗口与SSTHRESH」（AFTER ch4）抓到了具体协议常量 SSTHRESH，「拥塞控制与快重传和窗口增长」（AFTER ch5）准确反映了讲师在该段引入快重传机制——这些都是 ASR 错字修复 + VLM 视觉锚定共同作用的正向收益
+
+**取舍权衡**：
+- **正向**：粒度更细，命名更准，AFTER 章 1 不再有「拥塞控制与TCP报文」这种模糊大章
+- **负向**：单 chunk 章节增多（AFTER 有 3 个），可能让用户感觉「章节碎片化」
+- **未来工作**：在 §5.4.3 已识别的「PPT 翻页 ≠ 话题切换」原则下，需要在 LLM prompt 中明确「不要把每页 PPT 当独立章节」，或在 repair 阶段对单 chunk 章设最小合并阈值
+
+VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分钟 transcribe），从 chunker 到 publish 端到端约 3 分钟，其中 Qwen2.5-VL-7B-AWQ 首次模型加载 ~30s，VL caption 推理 11×~1s = ~11s，其余为 Qwen-Instruct 推理 + 翻译 + 关键帧抽取。Web 用户体验影响在可接受范围内。
+
+**分析**：
+
+本案例的工程教训分两层：
+1. **代码 - 文档同步**：CLI 自测的「能力 readiness」 ≠ 用户路径的「默认 readiness」。一个新功能完成 CLI 验证后，必须显式审查所有 entrypoint（web server、批处理脚本、IDE 集成等）是否开启
+2. **项目记忆的高保真度要求**：项目记忆的索引摘要会被频繁回读，措辞歧义可能持续误导，应像 API doc 一样追求无歧义。本次问题暴露后已即时修正索引
+
+实证上看，VLM caption 在 24 视频 corpus 上的净时间增量 < 2%（见 §5.4.5），对 web 用户体验影响可忽略；切分 LLM 一次性通过率 +6 pp（attempts 减少）的收益对每个 web 用户都直接可见，这一默认配置变更是正向收益。
+
+---
+
+#### 6.5.7 本轮迭代汇总
+
+| # | 类别 | 修复影响层 | 量化收益（p85 复跑实测） |
+|---|------|----------|------------------------|
+| 6.5.1 | 健壮性 | ASR 解码参数 | 消除 p78 长视频 native abort 风险；p78 再跑无越界 |
+| 6.5.1.bis | 健壮性 | ASR 三层防御（2026-05-21） | BV1q6 vlog 1542s 复发触发新触发路径调查；加 hallucination_silence + compression_ratio + 增量落盘；BV1q6 99.6% 覆盖率落盘、BV1dkLr6UEJ6 完整通过 |
+| 6.5.2 | 健壮性 | publish 路径 | 修 1 个用户路径 silent failure；glob 兼容 `.mm`/`.mm.vl`/未来变体 |
+| 6.5.3 | 质量 | ASR 后处理字典 | p85 12 种错字 **121 → 0**（100% 消除）；「拥塞」正确写法 +109；headline 修 1（校验核 → 校验和） |
+| 6.5.4 | 质量 | keyword stopword | chunk-level 关键词 stopword 占位 **11 → 5（-55%）**；「这个」从 8 → 0 |
+| 6.5.5 | 负面结果 | — | 验证 wrap-up trigger 无 bug；为未来标题生成提供 design hint |
+| 6.5.6 | 默认配置 | web pipeline | VLM 在 web 路径默认开；p85 章节数 6 → 7 / 章 1 时长 18min → 7.7min；ablation 字段 vlm_captions_used 由 false 翻 true |
+
+**6 项中 4 项为代码修改（含 1 项默认配置变更）、1 项为负面结果存档、1 项为产物路径模糊匹配重构**。本轮迭代展现的元规律是——当 corpus 从「论文 ablation 跑」扩展到「真实端到端用户路径」时，新暴露的失败模式更偏「配置 / 集成 / 长尾失败模式」而非「算法本身」。这与 §6.1-§6.4 中以「算法改进 → metric 提升」为主旋律形成对比，提示后续如果要进一步提升系统可靠性，工程加固投入比算法精调更具边际收益。
+
+**p85 端到端验证 takeaway**：
+- ASR 错字字典扩充是**最高 ROI 修复**：5 行代码 + 字典维护，将 121 处错字全部消除，下游 keyword/headline/segmentation 三层均受益
+- stopword 修复展现了一个**部分修复的诚实记录**——「这个」根除后，原被压制的「等于/题目」占位上升，揭示 domain-aware stopword 是开放问题
+- VLM 默认开启在 p85 上确实带来**章节标题更专业化**（出现 SSTHRESH、快重传等具体协议术语），但也触发了 §5.4.3 预测的「PPT 域过度切分」风险（3 个单 chunk 章）。LLM repair 机制成功兜底，建议下一轮在 prompt 工程层显式抑制
+- 章节切分结果的总体变化（6→7 章、attempt-only-pass → repair-passed）是三项修复的共同结果，单独归因到任一项需要更精细的 ablation——这是论文方法论的 follow-up 工作
+
+整体看，本轮 6 项工程加固以**低 LOC 改动换取了端到端可用性 + 单视频质量两个维度的实质提升**，为论文 §8 「Future Work」中「面向用户路径的健壮性验证」一节提供了具体范例。
+
+## 7 系统演进 (System Evolution)
+
+§3-§6 给出的是本工作"当前态"的系统设计与评估。然而本工作并非一次性设计完成，而是经历了 6 个明确的里程碑迭代，每一轮都由"corpus 扩展暴露的失败模式"驱动算法或工程改动。本节按时间顺序回顾这 6 个版本（v1-v6），每个版本以"触发问题 → 改动 → 量化效果 → takeaway"四段式呈现。这一组织既能让读者理解"为何当前架构是这样的"，也为后续工作提供了具体的失败案例索引——附录 C 进一步收录了过程中**未被采纳**的探索性尝试。
+
+### 7.1 v1：纯 Pegasus baseline（项目起点）
+
+**架构**：faster-whisper large-v3 ASR → chars / TextTiling chunker → Randeng-Pegasus-238M 段落 headline + jieba 抽取式正文 → Chinese-CLIP α=0.3 多模态章节切分 → Pegasus 章标题 → 基础 md 输出。详见 §3 系统架构与 §4.2 多模态章节切分。
+
+**核心设计决策**（v1 即定型，后续未变）：
+- 多模态融合系数 α=0.3：视觉作 tie-breaking 而非主导，避开"PPT 翻页 ≠ 章节切换"的伪信号
+- 章节数自适应公式 `K = max(2, min(6, n_chunks-1, ⌈duration_min / 6⌉))`：每 ~6 分钟 1 章
+- chars / texttile 双 chunker，同时报告 strict F1 与 F1@1 容差指标
+
+**v1 已暴露但未解决的问题**：
+- ASR 输出存在"卡片回路"（同句重复多次），但 v1 直接喂下游未做后处理
+- Pegasus 章标题在 chunks ≤ 3 时倾向 copy 单段 headline，未做 fallback
+- 学习场景需要的 TOC / 术语表 / 章末小结全部缺失
+- 章节切分依赖 TextTiling depth score + Pegasus 标题，在 30+ chunks 的长视频上 Pegasus 邻章标题串台严重
+
+**takeaway**：v1 完成了"视频 → 流水笔记"的最小可用路径，但产出更接近"自动字幕的换行版本"而非"学习笔记"。后续 5 个版本基本都在补足"笔记的结构化"。
+
+### 7.2 v2：ASR 后处理与 chunker × dedupe 耦合发现（2026-05-15）
+
+**触发问题**：王道 OS p37 哲学家进餐视频上 F1@1 仅 0.50，定位发现 ASR 在 755.2s 起进入卡片回路、连续 9 段输出同一句话，把 jieba 关键词 Jaccard 距离严重污染，使 TextTiling depth score 漏掉 gold 章节边界（详见 §6.1）。
+
+**改动**：
+1. **连续重复段去重（LCP-based）**：扫描 ASR segment 列表，连续相同或近似（LCP ≥ 20 字 OR LCP ≥ 0.85×min(len)）的 run 长度 ≥ 3 时保留首段并合并时间戳。0.85 阈值经反例校准——0.6 误判 "如何避免饥饿/死锁?" 这种真综合改写
+2. **术语字典自动注入**：从 video metadata 抽 CamelCase / 5+ 字母大写词 + whisper 高频混淆词典生成 substring 替换（如 "Cloud" → "Claude"）
+3. **p39 三修**：章节数公式从 `⌊n/3⌋` 改为 `⌈duration_min/6⌉`，stopword 列表扩充（"这个/那个/介绍/讲解"），dedupe 阈值从普通相等改为 LCP
+
+**量化效果**：
+- 王道 OS p37：F1@1 0.50 → **1.00**（Δ+0.50）
+- 计网 p38：strict F1 0.25 → **0.75**（Δ+0.50）
+- 10 视频均值（cc=400 + texttile + PPT 子集）：ΔF1@1 +0.167
+
+**核心发现 — chunker × dedupe 耦合**：dedupe 收益仅在 texttile + cc=400 上显著，cc=800 与 chars chunker 上中性（详见 §6.3）。该耦合证明 dedupe 的本质是"关键词频次去噪"而非简单文本清洗，对字符硬切的 chars 无作用。这一发现成为本工作方法论上的一个 contribution——以往的 ASR 后处理研究主要关注转写准确率，未关注其通过关键词分布向下游 segmenter 的传导路径。
+
+**takeaway**：v2 把"上游 ASR 失败 → 下游 segmentation 污染"这条耦合通路定量化，奠定了论文 §6.1-§6.3 的核心 case studies。
+
+### 7.3 v3：学习场景 md 结构 + 章标题 fallback + ASR 置信度（2026-05-15）
+
+**触发问题**：v2 修好 ASR 与 segmentation 后，产出仍是"章节 + 流水段落"结构，对学习场景仍然不可用——缺少 TOC、术语表、章末小结这些教科书式的索引组件。此外 Pegasus-238M 在 chunks ≤ 3 的短输入上有 copy 退化倾向（直接抄一段 headline 不做综合）。
+
+**改动**：
+1. **学习场景 md 升级**（5 类元素，默认开）：
+   - 顶部摘要卡（时长 / 章段数 / 核心关键词 top-8）
+   - HTML 锚点 TOC
+   - 知识点速览（按章列 chunk headlines）
+   - 跨段投票术语表 top-15（含首次出现段链接 + 上下文 snippet）
+   - 抽取式章末小结（章内 1-2 句）
+2. **Pegasus 章标题 copy-fallback 差异化**：n ≤ 3 检测到 copy 时退到"前 2 段 headline 用·拼接"，n ≥ 4 保留 Pegasus 输出（Pegasus 可能从多候选中有意挑 representative）
+3. **ASR 置信度标记**：开启 `word_timestamps=True`，对 segment-level confidence < 0.5 的位置在 md 中加 `[?]` 上标，让读者直观识别可能错字的位置
+
+**量化效果**：md 结构是 UX 改进，不直接对应一个 F1 数字。但 §5.6 的章标题主观打分显示：texttile 子集 3.43 / chars 3.25（n=30 样本，5 分制），PPT 子集差距更大（+0.38）；与"关键词覆盖率"Pearson r=+0.52。说明 fallback 与 md 结构在主观质量上有可观增益。
+
+**takeaway**：v3 把笔记从"流水文本"升级到"教科书索引"形态。md 结构后来成为 v5 大类模板分发的底层载体。
+
+### 7.4 v4：LLM 章节切分 + B1 两步法 + VLM caption + 英文支持（2026-05-16~17）
+
+**触发问题**：v1-v3 的章节切分基于 TextTiling depth score + Pegasus 标题。在 30+ chunks 长视频上 Pegasus 邻章标题串台严重（p38 实测两章标题互换），且 TextTiling 在 PPT 教学视频上常切错"专题视频"——把整个视频压成 1-2 个 catch-all 章节，破坏笔记导航。
+
+**改动**：
+1. **Qwen2.5-7B-AWQ 替代 Pegasus 切章**：把 chunk headlines + 视觉 cue 喂给 LLM 让其直接输出层级化大纲 JSON。配 retry-with-feedback 机制（attempt 1 失败时把具体错误回灌让 LLM 自我修正）
+2. **B1 两步法**：第一步 LLM 切分章节边界，第二步用独立 LLM call **只看本章 chunk headlines** 重写章标题——避开"一次切+命名"时邻章 headline 串台。修了 p38 标题串台 bug
+3. **VLM caption 视觉信号升级**：Qwen2.5-VL-7B-AWQ 替代单 CLIP cosine 浮点数，每章 1 句"教学相关"自然语言 caption，喂给 segment LLM 作 prompt cue。配三层自适应门控（外层 n>15 / 内层 prefix_run≥4 / 救援层 LLM 全失败 + VL 在用）
+4. **英文视频支持**：句号本土化（中文"。"→ 英文"."）、Qwen 英文 prompt、wrapup 大小写敏感、`generate_headlines` parse 容错
+5. **附录 B 切分路径表**：9 视频 LLM 100% 覆盖率全量统计写入论文
+
+**量化效果**：
+- LLM 切分覆盖率 **9/9 = 100%**（v1 TextTiling 在某些长视频上 fallback 比例不可忽略，详见 §5.7 / 附录 B）
+- attempt 1 直接通过 22%；retry-with-feedback 救活 67%；程序化 `_repair_oversize` 救活剩余 11%
+- 多模态 ablation §5.4：mm 加速 retry 通过 3/9，无回归；VL caption 三层门控扩到 24 视频后 LLM 覆盖率 23/24 = 96%
+
+**核心发现 — LLM-as-segmenter 失败模式的语言对偶性**（§5.4.5）：
+- 中文 caption 主题词整段重复（"以太网交换机的自学习功能..."×5）→ **char-prefix 共享**抓得到
+- 英文 caption 句法模板化但语义同质（"The X verbs Y..."）→ word-bag Jaccard 全失效
+- 任何 lexical 先验门控都救不了英文这一模式，**反应式救援**是唯一合理架构
+
+**takeaway**：v4 是本工作架构的最大跃迁——Pegasus → LLM 把"覆盖率"从 TextTiling fallback 救活变为 LLM 主路径 + 程序化兜底。三层 VL 门控的发现路径（lexical 指标失效 → 救援层兜底）也成为论文方法论上的一个 contribution。
+
+### 7.5 v5：大类分类 + 模板分发 + 第二轮工程加固（2026-05-19~20）
+
+**触发问题**：v4 的算法在"论文 ablation 跑"上看起来 96% 覆盖率，但首次端到端接入 web 前端跑真实用户路径时暴露 8 类失败模式（详见 §6.5 与本节）：
+
+1. ASR 末尾 hallucination loop 触发 ctranslate2 native abort（p78）
+2. 跨域笔记 UI 突兀——把"💡知识点速览 + 🎯⭐ + 📚术语表"全套教学元素硬塞给科普 / 旅游 / 美食 vlog 视频
+3. 长 chunks (>120s 单 chunk) 在 vlog 文本下 chunker 切不开（"菜单/食物/吃"贯穿全部，关键词 Jaccard 无跳变）
+4. vlog 视频用教学 prompt 把"凉粉脆饼"和"笋干可颂"合成一章
+5. LLM 章节切分在 6 视频 audit 暴露 4 个 systematic bug（non_contiguous / 主题词冗余 / dominant_chapter / no_nav_points）
+6. md 文件本身永远是 teaching 模板（to_markdown 没接 category），前端 NotesContent 切了但下载 md 没切
+7. LLM abstract 仍写"本章 XX"（CHAPTER_ABSTRACT prompt 是教学专用）
+8. 黑屏花屏事故：Qwen-7B + Qwen-VL + Whisper 同时常驻显存导致 GPU 驱动崩溃 + 强制重启
+
+**改动**：
+1. **大类分类器**（`src/classify_category.py`）：纯启发式 4 维打分（uploader 白名单 / 触发词 / ASR 术语密度 / 时长），输出 `category ∈ {teaching, popsci, vlog, talk}` + confidence。24 视频 24/24 准确
+2. **md + 前端按 category 分发**：to_markdown 加 `category` 参数派生 5 个 flag（show_marks / show_kp / show_glossary 等）；前端新增 VlogTimeline 组件；catalog 卡片细分到"编程教学/考研专业课/工具教程"
+3. **vlog/talk 专属 LLM prompt**：`SYSTEM_PROMPT_VLOG` / `SYSTEM_PROMPT_TALK` 强调"换地点/换对象/换活动"是章节边界，`VLOG_SECTION_ABSTRACT_SYSTEM` 强制"本段/场景元素"代替"本章/技术点"
+4. **chunk 后处理硬切**（`src/summarize.py:split_oversize_chunks`）：duration>120s 且 chars>=400 的 chunk 按时间中点找最近 segment 边界切，下游 chapter / keyframes 自适应新 chunks 数
+5. **segment 4 新硬规则 + 1 个 post-process**（详见 §6.5 与 [[project-segment-rules-iteration]]）：
+   - `non_contiguous`：章 chunks 必须连续（封 Disney vlog 4/4 systematic bug）
+   - 主题词 dedup post-process：85% 阈值 + jieba cut_for_search 中文 token + 仅英文/缩写英文路径
+   - `dominant_chapter`：单章 ≤ 45% 总时长（NAT p51 4-章 ch1=48% 命中）
+   - `no_nav_points` (Rule C)：n>=3 必须 ≥2 导航点
+   - LLM temperature 0.15 → 0.05，retry decay
+6. **B 站 cookie/画质链路**：DPAPI 锁 Chrome/Edge cookie 时用 data/.cookies/*bilibili*.txt 绕过；probe endpoint
+7. **大模型严格串行加载红线**：所有大模型严格串行 + 三件套释放（`del / torch.cuda.empty_cache / gc.collect`）。这是黑屏事故后定的工程红线，不再为"减少模型加载开销"做常驻池
+
+**量化效果**：
+- 大类分类器：24/24 准确（含 14/14 经第二轮调参修对的 python/claudecode/AI 早报 case）
+- 端到端管线稳定性：p78/p85 首次接入 web 时遇到的 6 项 §6.5 问题全部修复
+- LLM 切分硬规则触发统计（6 视频 × 多轮）：non_contiguous 4 次 / 主题词 dedup 1 次 / dominant_chapter 2 次 / no_nav_points 1 次
+
+**核心发现 — 工程加固的元规律**（§6.5 末尾）：当 corpus 从"论文 ablation 跑"扩展到"真实端到端用户路径"，新暴露的失败模式更偏"配置 / 集成 / 长尾"而非"算法本身"。这与 §6.1-§6.4 中"算法改进 → metric 提升"的主旋律形成对比。
+
+**takeaway**：v5 把工作重心从"算法精调"转向"系统集成"。大类模板分发是面向应用的核心交付物，让笔记系统真正能处理跨域内容；segment 4 硬规则把 LLM 的 systematic bias 从概率问题转为决策问题。
+
+### 7.6 v6：子规则一致化 + 兜底验证（2026-05-21，当前态）
+
+**触发问题**：v5 末尾加的 4 条硬规则把 LLM 失败率压到了野外极低水平，但 [[project-segment-rules-iteration]] memory 标"auto_subs 兜底未野外触发——LLM 听话率高，不需要"。我们怀疑这个 "0 触发" 是 LLM 听话还是兜底本身 broken，于是构造倔强单顶层的 stress test（`scripts/stress_test_auto_subs.py`）跑系统化验证。
+
+**改动**：
+
+1. **stress test 暴露 auto_subs 兜底 n ≥ 4 一直 broken**：构造 3 个 case（n=4 单顶层 / n=3 单顶层 / n=4 双顶层无 children），n=3 case 通过、**n=4 case 撞 children-blind 规则被二次 reject**。`_diagnose_outline` L740-741 `n>=4 + len<3 → reject` 不看 children，而 auto_subs 注入的 N children 在父层只是"1 顶层"，所以日志显示"自动生成 N 子章节 [OK]"之后被 _diagnose 二次 reject，pass_via 仍 None，最终输出空 chapters。
+2. **合并规则为 children-aware**：把 `_diagnose_outline` L740 / L744-750 与 `_validate_outline` L830-831 / L832-836 四处合并为统一规则——`min_top = 3 if n>=4 else 2`，单顶层 + ≥2 children 视为等价导航形态。这同时也修了 LLM 主动切"1 顶层+多 children" 在 n>=4 时被误杀的旧 bug。
+3. **fail_reason keyword 重映射**：原匹配"至少 3 个顶层" / "笔记将零导航价值"两个旧错误串失效，新规则错误串带"应至少 X 顶层"，分别用 "应至少 3" / "应至少 2" 关键字区分 too_few_chapters / no_nav_points 标签。
+4. **`_repair_missing_chunks` children 一致性 pass**：4 视频回归暴露的次级 bug——repair 给顶层补了 chunk 但原 children 没覆盖父全部 → `_diagnose` 看 parsed 通过 → `_validate` 看 ch_out 静默丢 children → nav 检查 reject → 空 chapters。修：repair_missing 末尾 pop 不一致的 children，让 auto_subs 兜底接力补 1:N。
+5. **顺手清理两个低优 bug**：jieba cut_for_search 中文主题词 dedup（替代 cut 切不出"子网"独立 token 的盲区）；ASR `[asr] X/Y` progress 显示分母改 `info.duration`（原分母用 chunks 数误报）。
+
+**量化效果**：
+
+| 测试 | 结果 |
+|---|---|
+| stress test mock LLM（n=2/3/4 + 倔强双顶层 negative） | **3/3 全过** |
+| 4 视频回归（n=2 vlog / n=3 PPP / n=11 NAT / n=36 Tina AI Agent） | **4/4 无回归** |
+| auto_subs 实战首次触发 | BV19E411D78Q_p42 PPP n=3 single-top → 1 顶层 + 3 children |
+| 现有 baseline 一致性 | NAT 7→7 章 / Tina 9→9 章，完全对齐 |
+
+**核心发现 — "未触发"≠"工作正常"**：v5 把 auto_subs 标"belt-and-suspenders 未野外触发"作为它"不需要"的证据，stress test 揭示真相是它**一直 broken 没人发现**。这印证了 §6.5 末尾元规律的逆向版本——某些失败模式只有在"系统化构造性测试"下才会暴露，而野外 corpus 因为分布偏置会自然回避触发条件。论文方法论上的 takeaway 是：**对兜底机制必须做 stress test，不能用"野外未触发"作为它正确性的证据**。
+
+**takeaway**：v6 是"对前 5 个版本积累的兜底机制做系统性验证"的一轮。从产物角度看仅修了一个隐藏 bug，但从方法论角度看建立了"stress test 配套于兜底机制"的开发范式，并把这个范式以脚本（`stress_test_auto_subs.py` + `regress_segment_rules.py`）固化下来供未来 v7+ 复用。
+
+### 7.7 v1-v6 演进汇总
+
+| 版本 | 时段 | 核心改动 | 量化效果 | 论文章节 |
+|---|---|---|---|---|
+| v1 | 2026-05 前 | Pegasus baseline，TextTiling+CLIP α=0.3 | 笔记最小可用 | §3, §4.2 |
+| v2 | 2026-05-15 | ASR LCP dedupe + 术语字典 | OS p37 F1@1 +0.50；p38 strict F1 +0.50 | §4.1, §6.1-6.3 |
+| v3 | 2026-05-15 | 学习 md 结构 + copy fallback + ASR `[?]` 置信度 | 章标题主观 3.43 / 3.25 | §4.3, §4.4 |
+| v4 | 2026-05-16~17 | Qwen2.5-7B-AWQ 替代 Pegasus + B1 两步法 + VLM caption 三层门控 + 英文支持 | LLM 覆盖率 9/9→23/24 = 96% | §5.4, §5.7, 附录 B |
+| v5 | 2026-05-19~20 | 大类分类器 + 模板分发 + segment 4 硬规则 + 工程加固 6 项 + 串行加载红线 | 24/24 分类准；6 项端到端可用性修复 | §6.4, §6.5 |
+| v6 | 2026-05-21 | auto_subs stress test 暴露 n≥4 broken + nav 规则合并 + repair_missing 一致性 | 3/3 stress test + 4/4 回归；auto_subs 首次野外触发 | §7.6, 附录 C |
+
+**演进的元模式**：v1-v3 主要是"算法精调"（dedupe / md 结构 / fallback），v4 是"架构跃迁"（Pegasus → LLM），v5-v6 转向"系统集成 + 测试方法论"（大类分发 / stress test / 工程红线）。这一阶段切换反映了一个本工作过程中观察到的现象——**算法 metric 的边际回报递减时，工程加固与测试方法论的边际回报反而上升**。
+
+## 8 局限性与未来工作 (Limitations & Future Work)
+
+### 8.1 已知失败模式
+
+- **ASR 隐式错字**（同音字）：如影视飓风视频"想拖 vs 像托"，文字通顺但语义错误，所有自动指标对此盲区。v3 已用 `[?]` 标记低置信度位置部分缓解（见 §7.3）但同音字往往本身置信度并不低，需要 word-level acoustic confidence + 语义合理性二级判别才能根除
+- **Pegasus 主旨偏移**：8 视频 30 headline 中 2 个 Pegasus 抓错主题（无明显诱因）。注：v4 已用 Qwen2.5-7B-AWQ 替代 Pegasus 章标题（见 §7.4），本条仅遗留在段落 headline 仍用 Pegasus 的子路径
 - **短视频 strict F1 trivial floor**：< 5min / < 5 chunks 视频上 strict F1 是 0/1 结构性二值，仅 F1@1 可靠
+- **英文 LLM-as-segmenter 在 27+ chunks 长视频上的 catch-all bias**：WSPChlfxJyA 唯一 fallback case（§6.4），与 VL 无关，是 Qwen 模型本身在长英文输入上的退化模式，prompt 工程无法根治
+- **VL caption 在 PPT/教程域的过切风险**（§5.4.3-5.4.5）：三层门控已大幅缓解但仍是 opt-in 而非默认开
+- **大模型不能并行常驻**（v5 黑屏事故经验，见 §7.5）：12GB VRAM 限制下 Qwen-7B + Qwen-VL + Whisper 必须严格串行，付出 ~30-60s/模型的加载时间代价。这是硬件而非算法约束
+- **ctranslate2 native abort 第二条触发路径**（v6+，见 §6.5.1.bis）：`transcribe()` 实际完成后、Python 收尾前仍可能崩。L1/L2 解码约束与 hallucination gate 无法预防此路径，只能用 L3 流式增量落盘做兜底。这是 native 层资源释放的健壮性问题，非 Python 端可彻底根除
+- **章 abstract LLM input 的"标题字面化"陷阱**（v6+，见 §6.5.1.bis 关联讨论）：早期 `generate_chapter_abstracts` 只喂 LLM headline 关键词，未喂 ASR 实际文本片段，导致 vlog 域章标题（如"心理线" / "皇上"）被 LLM 按字面跨域解读为"股市心理指标" / "清朝皇帝"。本工作通过在 LLM input 加入 ASR snippet + user_prompt "严格根据「内容」"双重约束修复，3-vlog 回归 0 hallucinate；但这一陷阱揭示了 prompt design 中"input 信息完备性"对 hallucination 控制的决定性作用，是后续 LLM 流水线设计应优先核查的维度
 
-### 7.2 Future Work
+### 8.2 Future Work
 
-1. ASR confidence 过滤同音字错字
-2. 跨语言（英文教学视频）pipeline 验证
-3. 前端：Next.js + 视频播放器时间戳跳转
-4. ~~扩 benchmark 到 20+ 视频~~（2026-05-18 完成，见 §6.4 24 视频架构泛化）
+1. **ASR confidence 二级判别**：当前 `[?]` 标记基于 segment-level confidence，未来引入 word-level confidence + LLM 语义合理性检查识别同音字错字
+2. **英文 caption 内层 gate**：v4 三层架构对英文短视频 caption 同质化的内层漏检通过事后救援兜底（§5.4.5），未来可探索基于 sentence embedding 的语义级 gate 替代 lexical 路径
+3. **stress test 范式扩展**：v6 仅对 auto_subs 兜底做了 stress test（§7.6），未来扩展到 `_repair_oversize` / `_repair_missing_chunks` / VL 三层 gate 等其他兜底机制，建立"每个兜底必配 stress test"的开发流程
+4. **跨域分类器升级**：v5 启发式分类器在 24/24 上准确，但未来加入更多 long-tail 域（如直播切片 / 综艺解说 / 在线课程录屏）时启发式可能不够，需要考虑轻量 LLM 二级判别
+5. **前端时间戳点击跳转**：v5 已落地 Next.js + Plyr 前端框架，未来加深度集成（章节书签 / 关键帧 hover 预览 / 跨视频术语跳转）
+6. **多模态评估指标**：当前 §5 全部基于章节边界 F1，未来需要面向"学习笔记"本身的指标——如术语表覆盖率、章末小结召回率、TOC 与人工目录的一致性
+7. **vlog 域评估的可比基线**：当前 vlog 域只有定性 case 与 abstract hallucinate 计数，未做章节边界 gold 标注（vlog 边界主观性远高于 PPT 教学），需要探索"主观但可复制"的标注协议——例如多人独立标注 + 边界容差度量——把 vlog 域纳入 strict / F1@1 量化对比
+8. **multi-vlog corpus 扩展**：当前 vlog 回归 corpus 只有 3 个视频（BV1q6 + BV1dkLr6UEJ6 + BV1AYR6BsE9U），且全部为"美食测评"子类；未来扩到探店 / 健身 / 旅行 / 评测等子类，验证 `VLOG_SECTION_ABSTRACT_SYSTEM` 与 abstract snippet fix 在更宽泛 vlog 分布上的鲁棒性
 
-## 8 结论 (Conclusion)
+## 9 结论 (Conclusion)
 
-本文针对学习类视频笔记生成场景提出一个端到端 pipeline，并在 10 视频 cross-domain benchmark 上系统验证了四项设计决策。**多模态章节切分**的 α=0.3 设定揭示了一个反直觉的发现——在 PPT 教学这类 slide 翻页频繁的视频上，视觉信号作为 tie-breaking 比作为主导更适合，因为 slide 边界与话题边界并不一致。**学习场景 md 结构**通过引入术语表、章末小结、TOC 等元素，使笔记从"流水转写"升级为"教科书索引"，是本工作面向应用的核心交付物。**ASR 两层后处理**——尤其是连续重复段去重——揭示了上游 ASR 失败模式如何通过关键词频次传导污染下游分段算法这一被以往工作忽视的耦合通路，且去重对 texttile 显著、对 chars 中性这一不对称性证实了"关键词频次去噪"才是其作用机制。
+本文以"学习类视频自动生成结构化笔记"为目标，提出一个端到端 pipeline 并在 24 视频跨域 corpus 上完成了系统验证。系统经历了 6 个明确的里程碑迭代（§7 详述）：从 v1 的 Pegasus baseline 起步，v2 通过 ASR 后处理揭示了"上游失败模式经关键词频次向下游 segmenter 传导"的耦合通路；v3 用学习场景 md 结构把笔记升级为教科书式索引；v4 以 Qwen2.5-7B-AWQ 替代 Pegasus 完成架构跃迁，把 LLM 章节切分覆盖率推到 96%（23/24）；v5 加大类分类器与模板分发，让管线能跨域处理 teaching / popsci / vlog / talk 四类内容；v6 用 stress test 范式系统性验证兜底机制的正确性，暴露并修复了一个"野外永远不触发因此被误标为不需要"的隐藏 bug。
 
-我们的工作存在几点局限。ASR 同音字错误（如"想拖 vs 像托"）的隐式错字所有自动指标均失效，需要 word-level confidence 过滤作为下一步缓解。Pegasus 主旨偏移在小样本上 30 个 headlines 中观察到 2 例，属于神经摘要模型自身瓶颈，受限于本工作算力规模不便重训。短视频上 strict F1 的结构性 0/1 二值化使评估对长尾视频不友好，方法论上我们已经建议同时报告 F1@1。
+本工作贡献的方法论上的发现可以归纳为三条：
 
-未来工作有三条主线：（a）ASR confidence 过滤同音字错字并在 md 中用 `[?]` 标记低置信度位置（已在 2026-05-15 落地，待扩规模评估）；（b）跨语言 pipeline 验证，把当前管道扩展到英文教学视频，重点考察 TextTiling 在英文 ASR 转写上的迁移性；（c）前端展示层，将 markdown 笔记接入 Next.js + 视频播放器，实现真正的"时间戳点击跳转"。我们希望本工作的 benchmark、代码与 ablation 方法论能为后续学习类视频结构化笔记的研究提供可比较的基线。
+**（1）耦合通路的显式化**——v2 的 chunker × dedupe 二维 ablation 表明，dedupe 收益仅在 texttile + cc=400 上显著、cc=800 与 chars chunker 上中性。这一不对称性证实 dedupe 的本质是"关键词频次去噪"而非简单文本清洗，并把"ASR 失败 → 下游 segmenter 污染"这条以往被忽视的通路定量化。
+
+**（2）反直觉的多模态融合定位**——v1 的 α=0.3 与 v4 的 VL caption 三层门控共同揭示一个看似矛盾的事实：视觉信号在 PPT 教学视频上**作为 tie-breaking 比作为主导更适合**，因为 slide 翻页 ≠ 章节切换；进一步的"LLM-as-segmenter 失败模式的语言对偶性"（§5.4.5）表明，中文的 lexical 先验门控有效但英文需要事后救援，因为英文 caption 句法模板化使表层重复信号失效。
+
+**（3）兜底机制的 stress test 范式**——v6 通过构造倔强单顶层 mock LLM 揭示了 v5 标"未野外触发因此 belt-and-suspenders"的 auto_subs 其实在 n ≥ 4 上**一直 broken**，原因是 _diagnose / _validate 之间一条 children-blind 规则的不一致。这个发现的方法论意义大于 bug 本身：**对兜底机制必须做系统化 stress test，不能用"野外未触发"作为正确性证据**。
+
+**（4）三层防御纵深与"failure mode 演进"**（v6+，见 §6.5.1.bis）——同一个 ctranslate2 native abort 的失败模式在 corpus 跨入新域（教学 → vlog）时演化出第二条触发路径（"transcribe 完成之后"而非"transcribe 推进中"）。一个 fix 在它当时的 benchmark 上 100% 通过，不代表它在新域下仍然 100% 充分；工程健壮性评估必须随 corpus 同步迭代。本工作据此建立三层纵深——L1 解码约束（预防）+ L2 hallucination gate（预防）+ L3 流式增量落盘（兜底，WAL 思想）——把"native 崩溃面前 Python exception handling 不可靠"这一隐含假设显式化为"用持久化频率换最大损失上界"的工程范式。这一思路与方法论 takeaway (3) 互补：(3) 强调"主动构造极端 case 验证兜底"，(4) 强调"承认底层故障不可避免后设计可恢复状态"。
+
+工作的局限性已在 §8.1 列出，涵盖 ASR 隐式错字、英文长视频 catch-all bias、大模型并行约束、ctranslate2 native abort 第二条触发路径、章 abstract LLM input 字面化陷阱、12GB VRAM 大模型串行约束等八类。其中硬件相关项是工程而非算法问题；ctranslate2 与 abstract input 两项揭示了"corpus 跨入新域时既有 fix 充分性需要重新评估"这一更深层的工程方法论。
+
+未来工作有八条主线（§8.2 详述），核心方向有三：（a）把 v6 建立的 stress test 范式扩展到所有兜底机制（`_repair_oversize` / VL 三层 gate 等），（b）探索面向"学习笔记本身"的评估指标（术语表覆盖率、章末小结召回率、TOC 一致性），从"边界 F1"升级到"笔记可用性"的端到端度量，（c）扩展 vlog 域评估（当前仅 3 视频美食测评子类）并设计"主观但可复制"的边界标注协议。我们希望本工作的 24 视频 benchmark、6 个版本的演进路径、ASR 三层防御范式与配套的 stress / 回归测试脚本，能为后续视频结构化笔记研究提供既有可比较基线、又有可复用工程实践的参考。
 
 ---
 
@@ -634,4 +1232,131 @@ repair 救活）、**repair 步骤**、**末尾复习章是否识别**。
    trigger ≥2 命中阈值的设计（避免 false positive）
 5. **路径覆盖率 100%**：retry + program-repair 双层兜底完全消除了 fallback TextTiling
    的需要，章标题/abstract 都享有 LLM 生成的语义对齐质量
+
+## 附录 C：探索性尝试清单（未采纳/已撤销/已修复）
+
+本附录收录系统演进过程中**未被最终采纳**或**被后续版本撤销**的探索性尝试，
+按"动机 → 试错过程 → 不采纳/撤销原因"三段式整理。这些负面结果对理解 §7 中
+里程碑改动的"为什么是这个方案而不是别的"具有补充价值——很多设计决策的合理性
+只有在看到失败路径时才会显现。
+
+### C.1 PPT slide cue 检测（v3 时段，留代码默认 disable）
+
+**动机**：王道 OS p37 哲学家进餐视频上 strict F1 始终徘徊在 0.0，希望用 PPT
+slide 翻页信号作为章节边界的额外线索——理论上"slide 切换"在 PPT 教学场景下与
+"章节切换"高度相关。
+
+**试错过程**：
+- HSV 直方图相似度作初筛（相邻关键帧距离 > 0.4 算 slide 切换）
+- Chinese-CLIP cosine 作复核（避开 HSV 对光照敏感的误报）
+- 王道 OS p37 单视频实测：strict F1 从 0.0 救到 0.5（命中 1/2 gold 边界）
+- 但跨视频 calibration 失败：HSV 阈值 0.4 在 ClaudeCode 上误报频繁（演示工具光线
+  变化），调到 0.55 后王道 OS 救不回，调到 0.5 后又对计网 p38 不灵——
+  **三个视频三个最优阈值**，没有跨视频稳健点
+
+**不采纳原因**：跨视频 calibration 难度远高于 α=0.3 多模态融合，且 v4 引入 LLM
+切分后这一信号通路被 VL caption 取代（caption 信息密度高 10x）。代码保留在
+`src/keyframe.py` 但 pipeline 默认 disable，作为未来研究的潜在 hook。
+
+**论文价值**：这次失败定量化了"启发式阈值在跨域 corpus 上的脆弱性"，间接驱动了
+v4 选 LLM-as-segmenter 而非"再加一个加权信号"的方向。
+
+### C.2 大模型并行常驻 → GPU 黑屏事故（v5 时段，撤销 + 定红线）
+
+**动机**：v4 把 Whisper / Qwen-7B / Qwen-VL 串行加载，每个模型加载 30-60s，
+24 视频 corpus 跑下来累计 ~20 分钟纯加载时间。试图改成"模型池"常驻显存复用，
+减少加载开销。
+
+**试错过程**：12GB VRAM 上同时 warm Whisper（~3GB）+ Qwen-7B-AWQ（~5GB）+
+Qwen-VL-7B-AWQ（~5GB）= 13GB，理论上超 VRAM 但 dynamic load 可能 fit。
+实测 batch 跑到第 3 个视频时**机器直接黑屏 + 花方格 + 强制重启**，进过一次 BIOS
+才恢复。事后分析大概率是 AWQ 量化模型的 kernel 在 OOM 边缘触发 GPU 驱动崩溃。
+
+**撤销 + 定红线**：所有大模型**严格串行**——`del model; torch.cuda.empty_cache();
+gc.collect()` 三件套缺一不可，AWQ 模型尤其要 gc。这是 [[feedback-serial-model-loading]]
+memory 记录的工程红线，是本工作中**唯一一条来自硬件物理事故而非算法考量的设计
+约束**。优化方向只能往单模型内 batch / 量化 / KV cache 走，不能跨模型并行。
+
+**论文价值**：在 §8.1 已知失败模式与 §7.5 v5 触发问题中明确记录，提醒后续工作
+不要重蹈覆辙。
+
+### C.3 auto_subs 兜底"未野外触发因此不需要"的误判（v5→v6 修复）
+
+**动机**：v5 加 4 条 segment 硬规则后跑 6 视频 audit，auto_subs 兜底实战触发次数
+为 0。当时的 memory 记录是"belt-and-suspenders，LLM 听话率高不需要"。
+
+**试错过程**（v6 stress test）：构造倔强单顶层 mock LLM（`scripts/stress_test_auto_subs.py`），
+n=4 case 暴露兜底注入 N children 后被 `_diagnose_outline` L740-741 的
+children-blind 规则 reject——日志显示"自动生成 N 子章节 [OK]"之后又被二次拒绝，
+最终输出空 chapters。详见 §7.6 与 [[project-segment-rules-iteration]]。
+
+**真实成因**：**0 触发不是"LLM 听话率高"，而是兜底机制 n≥4 一直 broken**——
+野外 corpus 因为分布偏置（v5 4 条硬规则把 LLM 失败率本身压得极低）自然回避了
+触发条件，使 bug 在野外永远不显现。
+
+**修复**：合并 `_diagnose_outline` / `_validate_outline` 四处规则为统一
+children-aware 检查（`min_top = 3 if n>=4 else 2`，单顶层+≥2 children 视为等价
+导航形态），并修了 `_repair_missing_chunks` 不同步更新 children 覆盖范围的次级
+bug。stress test 3/3 全过；4 视频回归 4/4 无副作用；auto_subs **野外首次成功
+触发**（BV19E411D78Q_p42 PPP n=3 single-top → 1 顶层 + 3 children）。
+
+**论文价值**：这是本工作中唯一一个"通过 stress test 暴露的隐藏 bug"——其它 5
+个版本的改动都是被野外失败 case 驱动。v6 的方法论 takeaway 已写入 §7.6 与 §9：
+**"野外未触发 ≠ 工作正常"，兜底机制必须配套 stress test**。
+
+### C.4 vlog 触发词调参陷阱（v5 时段，撤销）
+
+**动机**：v5 第二轮调参（[[project-category-templates]]）扩 `_VLOG_TRIGGERS`
+词表救"随机挑战 69 元"美食 vlog 的误分类。初版加了"今天 / 我们 / 挺好 /
+真的 / 有点 / 感觉 / 哇"等通用口语词。
+
+**试错过程**：扩词后 14 视频回归发现 python / claudecode 教学视频里讲师说"我们
+今天来看一下" / "感觉这个挺好" 被打进 vlog——通用口语词在教学视频里也很高频。
+
+**撤销 + 修法**：`_VLOG_TRIGGERS` 只保留"教学视频几乎不会出现"的强 vlog 信号
+（好吃 / 难吃 / 口感 / 嗦 / 嚼 / 挑战 / 出发 / 到了 / 划算 / 性价比 /
+citywalk / 好香 / 好辣 等），同时加双向约束（teaching 触发词命中 ≥2 时口语化
+密度信号封顶 +1）。最终 14/14 → 24/24 准确。
+
+**论文价值**：这次试错为 [[project-category-templates]] memory 留了"双向约束 +
+强信号挑选"的启发式分类器设计原则。论文 §7.5 v5 部分以"24/24 准确"作为最终
+数据呈现，本附录补足了"为什么 14/14 才准的"过程信息。
+
+### C.5 jieba cut 中文主题词 dedup 切不出独立 token 的盲区（v5→v6 修复）
+
+**动机**：v5 加主题词 dedup post-process，用 `jieba.cut(s, HMM=True)` 切中文
+title 提取 token。NAT p51 实测有效（"NAT" 在 5/7 章共享触发剥离），但子网划分
+case 失效——3 章都含"子网"但 jieba.cut 切不出独立"子网"token。
+
+**试错过程**：诊断发现 jieba 词典里"子网掩码" / "子网划分" 是整词，普通 cut 直接
+吐整词，独立"子网"不会出现，使 substring 共享检测漏掉。
+
+**修法**（v6 升级）：换用 `jieba.cut_for_search(s, HMM=True)`——这个模式在长词上
+**多吐子词**（"子网掩码"会同时吐"子网/掩码/子网掩码"三个 token），覆盖 substring
+共享场景，同时仍是语义切分（"管程引入"切成独立"管程/引入"，不会带飞相邻字）。
+用户担心的"管程引入/管程操作 共享管程"误伤经验证不触发（只 2/5 章共享，
+85% 阈值不满足）。
+
+**论文价值**：这是"算法依赖第三方库内部行为"的典型 case。论文 §7.6 已记录该
+修法但未展开试错过程，本附录给出 jieba 不同分词模式选择的 trade-off 给后续中文
+NLP 工作做参考。
+
+### C.6 探索性 commit 一览（未单独立条目）
+
+以下尝试在 memory / git log 中有记录但因影响面较小未在 §7 主线展开，留索引供
+追溯：
+
+| 尝试 | 时段 | 结果 |
+|---|---|---|
+| Whisper small / medium 替代 large-v3 | v1 | 长视频转写质量回退过大，回到 large-v3 |
+| chars chunker cc=200 / 600 / 1000 sweep | v2 | 400 在 PPT 子集最优，800 综合最稳，定为 paper main |
+| Pegasus-base / large 替代 238M | v1-v3 | base 退化严重，large 受 VRAM 约束跑不动，定 238M |
+| 章节数公式 ⌊n/3⌋ / 固定 4 / `⌈duration/6⌉` | v2 | `⌈duration/6⌉` 最贴合人工标注 K |
+| TextTiling 窗口大小 sweep | v2 | window=5 段稳健，过大过小都伤精度 |
+| 三层多模态融合（α 加权 + slide cue + VLM caption） | v3-v4 | 信号互相冲突，simplify 到 LLM-as-segmenter 主导，VL 作 prompt cue |
+| LLM temperature 0.15 → 0.10 → 0.05 | v5 | 0.05 切粒度方差最低（NAT 跨 4 轮 trial 章数差 ≤ 1）|
+
+**论文价值**：这些"未达 §7 主线门槛"的尝试构成了配置空间的覆盖证据——很多最终
+默认配置都是 sweep 后选出的稳健点而非首次尝试，这本身是论文 reproducibility 的
+一部分。完整 sweep 数据见项目 git history 与 `data/outputs/` 中保留的过渡产物。
 
