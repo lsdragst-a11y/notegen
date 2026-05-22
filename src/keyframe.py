@@ -36,10 +36,11 @@ def load_clip(model_dir: Path | str = DEFAULT_CLIP_DIR,
     dtype = dtype or (torch.float16 if device == "cuda" else torch.float32)
     print(f"      [clip] loading from {model_dir} (device={device}, dtype={dtype}) ...")
     processor = ChineseCLIPProcessor.from_pretrained(str(model_dir))
-    # transformers 4.46 在 model.safetensors 缺 __metadata__ 时会 NPE，
-    # 模型目录里同时有 pytorch_model.bin，退回 .bin 路径绕过
+    # transformers 4.49+ 因 CVE-2025-32434 禁用 torch<2.6 的 torch.load
+    # （我们 torch 锁 2.3.1 因 autoawq 0.2.6 kernel 依赖），所以必须走
+    # safetensors。4.46 那条 __metadata__ NPE 在 4.49 已修。
     model = ChineseCLIPModel.from_pretrained(
-        str(model_dir), torch_dtype=dtype, use_safetensors=False,
+        str(model_dir), torch_dtype=dtype,
     ).to(device)
     model.eval()
     _CACHE[key] = (model, processor, device, dtype)
