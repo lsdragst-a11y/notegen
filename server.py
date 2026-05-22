@@ -22,7 +22,7 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, File, Form, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
@@ -52,11 +52,32 @@ def _estimate_pipeline_seconds(video_duration_sec: float) -> int:
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
+    allow_origins=[
+        "http://localhost:3000", "http://127.0.0.1:3000",
+        "http://localhost:3001", "http://127.0.0.1:3001",
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+def _probe_duration(video_path: Path) -> float:
+    """用 ffprobe 探本地视频时长（秒）。失败返回 0。"""
+    try:
+        ffmpeg_bin = shutil.which("ffmpeg")
+        if ffmpeg_bin:
+            ffprobe = str(Path(ffmpeg_bin).with_name("ffprobe.exe"))
+        else:
+            ffprobe = "ffprobe"
+        r = subprocess.run(
+            [ffprobe, "-v", "error", "-show_entries", "format=duration",
+             "-of", "default=noprint_wrappers=1:nokey=1", str(video_path)],
+            capture_output=True, text=True, timeout=15,
+        )
+        return float((r.stdout or "").strip() or 0)
+    except Exception:
+        return 0.0
 
 # ============ Job state（in-memory，重启丢失，dev 用够了）============
 _jobs: dict[str, dict] = {}
@@ -86,35 +107,68 @@ def _adaptive_chunk_chars(video_duration_sec: float) -> int:
     return 800
 
 
-def _run_pipeline(job_id: str, url: str):
-    """后台线程：subprocess 跑 pipeline.py，解析 stdout 推进度。"""
+_QUALITY_RE = re.compile(r"^(?:best|\d{2,4}p)$")
+
+
+def _normalize_quality(q: Optional[str]) -> str:
+    """白名单：'best' or 'NNNp'（任意整 NNN）；非法 → 'best'。"""
+    if not q:
+        return "best"
+    s = q.strip().lower()
+    return s if _QUALITY_RE.match(s) else "best"
+
+
+def _run_pipeline(job_id: str, source: str, *,
+                  is_local: bool = False,
+                  local_meta: Optional[dict] = None,
+                  quality: str = "best"):
+    """后台线程：subprocess 跑 pipeline.py，解析 stdout 推进度。
+    URL 模式：source 是视频链接，先 fetch_metadata 拿 duration。
+    Local 模式：source 是 data/raw 下的视频文件绝对路径，duration 已经在
+                upload 阶段 ffprobe 出来写进 local_meta，直接复用。"""
     chunk_chars = 800  # 默认；探测到 duration 后会按 _adaptive_chunk_chars 调整
 
-    # Step 0: 先 fetch metadata 拿 duration 算预估时间 + 选择 chunk_chars
+    # Step 0: 拿 duration 估时间 + 选 chunk_chars
     try:
-        from download import fetch_metadata  # noqa
-        _emit(job_id, stage="探测", percent=1, msg="读取视频元信息（标题/时长）")
-        meta = fetch_metadata(url)
-        dur = float(meta.get("duration") or 0)
-        if dur > 0:
-            chunk_chars = _adaptive_chunk_chars(dur)
-            est = _estimate_pipeline_seconds(dur)
-            _emit(job_id, stage="探测", percent=3,
-                  msg=f"视频 {dur/60:.1f} min · 预计 {est/60:.1f} min · 切分粒度 cc={chunk_chars}",
-                  video_duration=dur, est_total_sec=est,
-                  video_title=meta.get("title") or "")
+        if is_local:
+            dur = float((local_meta or {}).get("duration") or 0)
+            title = (local_meta or {}).get("title") or ""
+            _emit(job_id, stage="探测", percent=1,
+                  msg=f"本地视频：{title or Path(source).name}")
+            if dur > 0:
+                chunk_chars = _adaptive_chunk_chars(dur)
+                est = _estimate_pipeline_seconds(dur)
+                _emit(job_id, stage="探测", percent=3,
+                      msg=f"视频 {dur/60:.1f} min · 预计 {est/60:.1f} min · 切分粒度 cc={chunk_chars}",
+                      video_duration=dur, est_total_sec=est, video_title=title)
+        else:
+            from download import fetch_metadata  # noqa
+            _emit(job_id, stage="探测", percent=1, msg="读取视频元信息（标题/时长）")
+            meta = fetch_metadata(source)
+            dur = float(meta.get("duration") or 0)
+            if dur > 0:
+                chunk_chars = _adaptive_chunk_chars(dur)
+                est = _estimate_pipeline_seconds(dur)
+                _emit(job_id, stage="探测", percent=3,
+                      msg=f"视频 {dur/60:.1f} min · 预计 {est/60:.1f} min · 切分粒度 cc={chunk_chars}",
+                      video_duration=dur, est_total_sec=est,
+                      video_title=meta.get("title") or "")
     except Exception as e:
         _emit(job_id, stage="探测", percent=2, msg=f"元信息读取失败（不影响）：{e}")
 
     cmd = [
-        str(PY), "src/pipeline.py", url,
+        str(PY), "src/pipeline.py", source,
+        *(["--local"] if is_local else []),
         "--chunker", "texttile",
         "--chunk-chars", str(chunk_chars),
         "--chapters",
         "--summarizer", "neural",
         "--keyframes",
         "--llm-chapters",  # Qwen2.5-7B-AWQ 层级章节，~5GB VRAM；失败自动 fallback TextTiling
+        "--vlm-captions",  # Qwen2.5-VL-7B-AWQ 视觉描述给 LLM 切分提供 cue；n_chunks>15 内部自动降级
     ]
+    if not is_local and quality and quality != "best":
+        cmd += ["--quality", quality]
     env = {**os.environ, "PYTHONIOENCODING": "utf-8", "PYTHONUNBUFFERED": "1"}
     _emit(job_id, stage="启动", percent=4, msg="启动 pipeline 子进程")
     try:
@@ -209,11 +263,11 @@ def _run_pipeline(job_id: str, url: str):
     if not md_path:
         with _jobs_lock:
             job_started = _jobs[job_id].get("created", time.time() - 3600)
-        candidates = [p for p in DATA_OUTPUTS.glob("*.large-v3.neural.texttile.md")
+        candidates = [p for p in DATA_OUTPUTS.glob("*.large-v3.neural.texttile*.md")
                       if p.stat().st_mtime >= job_started - 30]
         if candidates:
             candidates.sort(key=lambda p: -p.stat().st_mtime)
-            md_path = re.sub(r"\.large-v3\.neural\.texttile$", "", candidates[0].stem)
+            md_path = re.sub(r"\.large-v3\.neural\.texttile(\.mm)?$", "", candidates[0].stem)
             _emit(job_id, stage="收尾", percent=98,
                   msg=f"pipeline 进程异常退出但输出文件完整（{md_path}），尝试 publish")
 
@@ -238,16 +292,27 @@ def _run_pipeline(job_id: str, url: str):
 
 def _publish_to_web(stem: str) -> str:
     """把 data/outputs/{stem}.* + data/raw/{stem}.mp4 copy 到 web/public。
-    short_id = stem（直接用 BV 号 stem）。"""
+    short_id = stem（直接用 BV 号 stem）。
+
+    pipeline 输出文件名有 .mm 变体（多模态视觉 cue 启用时），用 glob 兼容：
+      {stem}.large-v3.neural.texttile.summary.json
+      {stem}.large-v3.neural.texttile.mm.summary.json
+    最近写入的优先（防止旧产物覆盖新的）。
+    """
     NOTES_DIR.mkdir(parents=True, exist_ok=True)
     VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
     short_id = stem  # 直接 stem
     note_dir = NOTES_DIR / short_id
     note_dir.mkdir(parents=True, exist_ok=True)
 
+    def _pick_latest(pattern: str) -> Optional[Path]:
+        cands = sorted(DATA_OUTPUTS.glob(pattern), key=lambda p: -p.stat().st_mtime)
+        return cands[0] if cands else None
+
     for kind in ("summary", "chapters"):
-        src = DATA_OUTPUTS / f"{stem}.large-v3.neural.texttile.{kind}.json"
-        if src.exists():
+        # 同名 .mm 与非 .mm 都收，取最新一个
+        src = _pick_latest(f"{stem}.large-v3.neural.texttile*.{kind}.json")
+        if src:
             shutil.copy(src, note_dir / f"{kind}.json")
 
     # meta 用 raw/<stem 去掉 .fXXXXX>.meta.json
@@ -258,8 +323,12 @@ def _publish_to_web(stem: str) -> str:
 
     # keyframes：Windows 上 dev server 监视器偶尔锁 keyframes 目录导致 rmtree 失败；
     # 用文件级 overwrite-copy 避免 dir-level lock。若目标多出文件不算问题（chunks 不变）
-    kf_src = DATA_OUTPUTS / f"{stem}.large-v3.neural.texttile.keyframes"
-    if kf_src.exists():
+    kf_candidates = sorted(
+        [p for p in DATA_OUTPUTS.glob(f"{stem}.large-v3.neural.texttile*.keyframes") if p.is_dir()],
+        key=lambda p: -p.stat().st_mtime,
+    )
+    kf_src = kf_candidates[0] if kf_candidates else None
+    if kf_src:
         kf_dst = note_dir / "keyframes"
         kf_dst.mkdir(parents=True, exist_ok=True)
         for f in kf_src.iterdir():
@@ -282,6 +351,21 @@ def _publish_to_web(stem: str) -> str:
 # ============ HTTP endpoints ============
 class GenerateReq(BaseModel):
     url: str
+    quality: Optional[str] = "best"
+
+
+class ProbeReq(BaseModel):
+    url: str
+
+
+@app.post("/api/probe")
+def probe(req: ProbeReq):
+    """探测 URL 可下的画质 list + 元信息。前端 URL 提交前先调一次让用户选。"""
+    url = (req.url or "").strip()
+    if not url:
+        raise HTTPException(400, "url is required")
+    from download import probe_qualities  # lazy 避免循环 import
+    return probe_qualities(url)
 
 
 @app.post("/api/generate")
@@ -289,14 +373,85 @@ def generate(req: GenerateReq):
     url = (req.url or "").strip()
     if not url:
         raise HTTPException(400, "url is required")
+    quality = _normalize_quality(req.quality)
     job_id = uuid.uuid4().hex[:12]
     with _jobs_lock:
         _jobs[job_id] = {
             "id": job_id, "url": url, "stage": "queued", "percent": 0,
             "msg": "排队中", "events": [], "log": [], "created": time.time(),
         }
-    threading.Thread(target=_run_pipeline, args=(job_id, url), daemon=True).start()
+    threading.Thread(
+        target=_run_pipeline,
+        args=(job_id, url),
+        kwargs={"is_local": False, "quality": quality},
+        daemon=True,
+    ).start()
     return {"job_id": job_id}
+
+
+_ALLOWED_VIDEO_EXTS = {".mp4", ".mkv", ".mov", ".avi", ".webm", ".flv", ".m4v", ".ts"}
+
+
+@app.post("/api/upload")
+async def upload(
+    file: UploadFile = File(...),
+    title: Optional[str] = Form(None),
+    uploader: Optional[str] = Form(None),
+):
+    """接收本地视频文件，存到 data/raw/local_<id>.mp4 + 写 meta.json，
+    然后启 pipeline (--local) 后台 job。返回 { job_id }，前端继续用
+    /api/jobs/{job_id}/events 跟进度，跟 URL 模式完全一致。"""
+    if not file.filename:
+        raise HTTPException(400, "no filename")
+    ext = Path(file.filename).suffix.lower()
+    if ext and ext not in _ALLOWED_VIDEO_EXTS:
+        raise HTTPException(400, f"unsupported video format: {ext}")
+    # 落盘 — pipeline 期望 mp4 后缀，非 mp4 时 ffmpeg 可以读但 publish 链路
+    # 会按 .mp4 名复制；这里强制写为 .mp4 后缀让下游一致（ffmpeg 会按容器实际解码）
+    DATA_RAW.mkdir(parents=True, exist_ok=True)
+    safe_id = f"local_{uuid.uuid4().hex[:10]}"
+    dest = DATA_RAW / f"{safe_id}.mp4"
+    try:
+        with dest.open("wb") as f:
+            while True:
+                chunk = await file.read(4 * 1024 * 1024)
+                if not chunk:
+                    break
+                f.write(chunk)
+    except Exception as e:
+        # 落盘失败把残文件清掉
+        try: dest.unlink(missing_ok=True)
+        except Exception: pass
+        raise HTTPException(500, f"upload write failed: {e}")
+    # ffprobe 拿时长（失败也无所谓，pipeline 会自己跑出 ASR duration）
+    dur = _probe_duration(dest)
+    display_title = (title or "").strip() or Path(file.filename).stem
+    display_uploader = (uploader or "").strip() or "本地上传"
+    meta = {
+        "id": safe_id,
+        "title": display_title,
+        "uploader": display_uploader,
+        "duration": dur,
+        "webpage_url": "",
+        "description": f"本地上传文件：{file.filename}",
+    }
+    (DATA_RAW / f"{safe_id}.meta.json").write_text(
+        json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8",
+    )
+    job_id = uuid.uuid4().hex[:12]
+    with _jobs_lock:
+        _jobs[job_id] = {
+            "id": job_id, "url": str(dest), "stage": "queued", "percent": 0,
+            "msg": "排队中（本地上传）", "events": [], "log": [], "created": time.time(),
+        }
+    threading.Thread(
+        target=_run_pipeline,
+        args=(job_id, str(dest)),
+        kwargs={"is_local": True, "local_meta": meta},
+        daemon=True,
+    ).start()
+    return {"job_id": job_id, "filename": file.filename,
+            "duration": dur, "stored_as": dest.name}
 
 
 @app.get("/api/jobs/{job_id}")

@@ -71,7 +71,7 @@ function ChapterTimeline({
   highlight?: Set<number>;
 }) {
   return (
-    <div className="relative h-10 rounded-md bg-[var(--surface-2)] border border-[var(--border)] overflow-hidden">
+    <div className="relative h-10 rounded-md bg-[var(--bg-muted)] border border-[var(--border)] overflow-hidden">
       {chapters.map((c, i) => {
         const left = (c.start / duration) * 100;
         const w = ((c.end - c.start) / duration) * 100;
@@ -142,7 +142,7 @@ export default function MMAblationPage() {
       <>
         <FluidBG />
         <NavBar />
-        <div className="p-8 text-[var(--text-2)]">加载中…</div>
+        <div className="p-8 text-[var(--fg-secondary)]">加载中…</div>
       </>
     );
   }
@@ -158,7 +158,7 @@ export default function MMAblationPage() {
           <h1 className="text-3xl font-semibold tracking-tight">
             多模态切分 ablation
           </h1>
-          <p className="text-[var(--text-2)] max-w-3xl leading-relaxed">
+          <p className="text-[var(--fg-secondary)] max-w-3xl leading-relaxed">
             对比同一视频在<strong>纯文本</strong>和 <strong>+视觉信号 (CLIP cosine 相似度)</strong>
             两种路径下的 Qwen 章节切分结果。视觉信号不再做线性加权，而是格式化成
             自然语言 cue 喂给 LLM 作 tie-breaker。
@@ -202,10 +202,10 @@ export default function MMAblationPage() {
 
         {/* 主表 */}
         <section className="rounded-xl border border-[var(--border)] overflow-hidden">
-          <div className="px-4 py-3 border-b border-[var(--border)] bg-[var(--surface-2)]
+          <div className="px-4 py-3 border-b border-[var(--border)] bg-[var(--bg-muted)]
                           flex items-center justify-between">
             <h2 className="text-sm font-medium">9 视频对比 · 点击展开时间轴</h2>
-            <span className="text-xs text-[var(--text-2)]">
+            <span className="text-xs text-[var(--fg-secondary)]">
               attempt 1 = LLM 一次过 | repair = 程序化兜底救活
             </span>
           </div>
@@ -220,28 +220,28 @@ export default function MMAblationPage() {
                   <button
                     onClick={() => setExpanded(isOpen ? null : v.stem)}
                     className="w-full px-4 py-3 grid grid-cols-12 items-center gap-3
-                               hover:bg-[var(--surface-2)] transition-colors text-left"
+                               hover:bg-[var(--bg-muted)] transition-colors text-left"
                   >
                     <div className="col-span-12 md:col-span-4 min-w-0">
                       <div className="text-sm font-medium truncate">{v.title}</div>
-                      <div className="text-xs text-[var(--text-2)] mt-0.5">
+                      <div className="text-xs text-[var(--fg-secondary)] mt-0.5">
                         {v.lang === "en" ? "🇬🇧 " : "🇨🇳 "}
                         {fmtDuration(v.duration)} · {v.n_chunks} segments
                       </div>
                     </div>
                     <div className="col-span-6 md:col-span-3 text-xs">
-                      <div className="text-[var(--text-2)] mb-0.5">纯文本</div>
+                      <div className="text-[var(--fg-secondary)] mb-0.5">纯文本</div>
                       <div className="font-medium">
                         {v.txt.n_chapters} 章 · <PassChip {...txtPass} />
                       </div>
                     </div>
                     <div className="col-span-6 md:col-span-3 text-xs">
-                      <div className="text-[var(--text-2)] mb-0.5">+视觉信号</div>
+                      <div className="text-[var(--fg-secondary)] mb-0.5">+视觉信号</div>
                       <div className="font-medium">
                         {v.mm.n_chapters} 章{" "}
                         <span className={
                           vd.dN > 0 ? "text-amber-500" :
-                          vd.dN < 0 ? "text-sky-500" : "text-[var(--text-2)]"
+                          vd.dN < 0 ? "text-sky-500" : "text-[var(--fg-secondary)]"
                         }>
                           ({vd.dN > 0 ? "+" : ""}{vd.dN})
                         </span>
@@ -249,7 +249,7 @@ export default function MMAblationPage() {
                       </div>
                     </div>
                     <div className="col-span-12 md:col-span-2 text-right text-xs">
-                      <span className="text-[var(--text-2)]">边界差 </span>
+                      <span className="text-[var(--fg-secondary)]">边界差 </span>
                       <span className="font-medium">{vd.boundaryDiff}</span>
                       {vd.mmFaster && (
                         <span className="ml-2 inline-flex items-center gap-0.5
@@ -260,10 +260,10 @@ export default function MMAblationPage() {
                     </div>
                   </button>
                   {isOpen && (
-                    <div className="px-4 pb-5 bg-[var(--surface)] space-y-3 border-t
+                    <div className="px-4 pb-5 bg-[var(--bg-elevated)] space-y-3 border-t
                                     border-[var(--border)]">
                       <div className="pt-3">
-                        <div className="text-xs text-[var(--text-2)] mb-1.5">
+                        <div className="text-xs text-[var(--fg-secondary)] mb-1.5">
                           纯文本路径（{v.txt.n_chapters} 章）
                         </div>
                         <ChapterTimeline
@@ -272,7 +272,7 @@ export default function MMAblationPage() {
                         />
                       </div>
                       <div>
-                        <div className="text-xs text-[var(--text-2)] mb-1.5">
+                        <div className="text-xs text-[var(--fg-secondary)] mb-1.5">
                           +视觉信号路径（{v.mm.n_chapters} 章{vd.dN !== 0 &&
                             `，相对 ${vd.dN > 0 ? "切更细" : "合并更粗"}`}）
                         </div>
@@ -291,10 +291,10 @@ export default function MMAblationPage() {
         </section>
 
         {/* 结论 */}
-        <section className="rounded-xl border border-[var(--border)] p-5 bg-[var(--surface-2)]
+        <section className="rounded-xl border border-[var(--border)] p-5 bg-[var(--bg-muted)]
                             text-sm leading-relaxed space-y-2">
           <h2 className="font-semibold">论文 §5.4 结论</h2>
-          <p className="text-[var(--text-2)]">
+          <p className="text-[var(--fg-secondary)]">
             视觉信号 <strong>确实进入 LLM 决策</strong>（9/9 边界差异）。在文本主题
             模糊的视频上，视觉 cue 能<strong>加速 retry 通过</strong>
             （计网 p44 3→2、OS 哲学家 2→1、AI Agents 英文 2→1）。
@@ -302,9 +302,9 @@ export default function MMAblationPage() {
             （vs 纯文本 19 章）<strong>过度切分</strong>，
             1 个视频（Tina Huang 编程教程）mm 路径反而触发 <strong>fallback</strong>。
           </p>
-          <p className="text-[var(--text-2)]">
+          <p className="text-[var(--fg-secondary)]">
             因此论文采纳的<strong>默认配置是纯文本 LLM 切分</strong>，
-            <code className="px-1.5 py-0.5 rounded bg-[var(--surface)] text-xs">--keyframes</code>
+            <code className="px-1.5 py-0.5 rounded bg-[var(--bg-elevated)] text-xs">--keyframes</code>
             作为 opt-in 的 ablation 工具：实拍视频域可能受益；PPT 域风险大。
           </p>
         </section>
@@ -329,11 +329,11 @@ function SummaryCard({
     "ring-[var(--border)]";
   return (
     <div className={`rounded-xl ring-1 ${ring} p-3.5 backdrop-blur-sm`}>
-      <div className="flex items-center gap-1.5 text-xs text-[var(--text-2)] mb-1">
+      <div className="flex items-center gap-1.5 text-xs text-[var(--fg-secondary)] mb-1">
         {icon}{label}
       </div>
       <div className="text-2xl font-semibold tracking-tight">{value}</div>
-      {sub && <div className="text-[11px] text-[var(--text-2)] mt-0.5">{sub}</div>}
+      {sub && <div className="text-[11px] text-[var(--fg-secondary)] mt-0.5">{sub}</div>}
     </div>
   );
 }
@@ -376,7 +376,7 @@ function Insight({
     bits.push("两路结果接近，视觉信号微调了边界但未影响整体结构");
   }
   return (
-    <div className="text-xs text-[var(--text-2)] pt-1 space-y-1">
+    <div className="text-xs text-[var(--fg-secondary)] pt-1 space-y-1">
       {bits.map((b, i) => (
         <div key={i} className="flex gap-1.5">
           <span className="text-[var(--accent)]">▸</span>

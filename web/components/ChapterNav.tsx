@@ -1,5 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
+import { useEffect, useRef } from "react";
 import type { Chapter } from "@/lib/types";
 import { formatTime } from "@/lib/notes";
 import { useLang, pickByLang } from "./LangContext";
@@ -19,8 +20,15 @@ const CHAPTER_COLORS = ["#0a84ff", "#bf5af2", "#30d158", "#ff9f0a", "#ff375f", "
  */
 export default function ChapterNav({ chapters, currentIdx, currentTime, onSeek }: Props) {
   const { lang } = useLang();
+  const activeRef = useRef<HTMLButtonElement>(null);
+  // active chip 自动滚入视口居中，避免最后一章 chip 时长被容器右边沿切掉
+  useEffect(() => {
+    activeRef.current?.scrollIntoView({ block: "nearest", inline: "center", behavior: "smooth" });
+  }, [currentIdx]);
   return (
-    <div className="flex gap-2 overflow-x-auto pb-2 -mb-2 -mx-1 px-1">
+    // pb-2 给 active chip shadow 留呼吸空间；不再用 -mb-2 抵消，否则下方
+    // ChapterDetailCard 跟 chip 行视觉粘连（截图重叠问题）
+    <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
       {chapters.map((ch, i) => {
         const active = i === currentIdx;
         const color = CHAPTER_COLORS[i % CHAPTER_COLORS.length];
@@ -30,6 +38,7 @@ export default function ChapterNav({ chapters, currentIdx, currentTime, onSeek }
         return (
           <motion.button
             key={i}
+            ref={active ? activeRef : undefined}
             onClick={() => onSeek(ch.start)}
             whileTap={{ scale: 0.97 }}
             whileHover={{ y: -1 }}

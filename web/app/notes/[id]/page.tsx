@@ -6,6 +6,7 @@ import NavBar from "@/components/NavBar";
 import VideoPlayer, { VideoPlayerHandle } from "@/components/VideoPlayer";
 import ChapterNav from "@/components/ChapterNav";
 import NotesContent from "@/components/NotesContent";
+import ChapterDetailCard from "@/components/ChapterDetailCard";
 import Spotlight from "@/components/Spotlight";
 import MiniPlayer from "@/components/MiniPlayer";
 import { fetchNote, formatTime, buildGlossary } from "@/lib/notes";
@@ -96,8 +97,60 @@ export default function NoteDetailPage({ params }: PageProps) {
   }
   if (!bundle) {
     return (
-      <main className="min-h-screen flex items-center justify-center text-sm text-[var(--fg-tertiary)]">
-        加载中…
+      <main className="min-h-screen pb-24">
+        <NavBar>
+          <div className="flex items-center gap-2 min-w-0">
+            <Link href="/"
+                  className="inline-flex items-center gap-1 text-xs text-[var(--fg-tertiary)]
+                             hover:text-[var(--fg)] transition-colors shrink-0">
+              <ArrowLeft size={12} /> 返回
+            </Link>
+            <span className="text-[var(--fg-tertiary)] shrink-0">·</span>
+            <span className="text-sm text-[var(--fg-tertiary)] truncate">加载中…</span>
+          </div>
+        </NavBar>
+        <div className="max-w-7xl mx-auto px-6 mt-6 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] gap-6 animate-pulse">
+          <div className="space-y-3">
+            <div className="apple-card aspect-video bg-[var(--bg-muted)]" />
+            <div className="flex gap-2 overflow-hidden">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="h-9 w-32 rounded-2xl bg-[var(--bg-muted)] shrink-0" />
+              ))}
+            </div>
+            <div className="apple-card p-5 space-y-3">
+              <div className="h-4 w-2/3 rounded bg-[var(--bg-muted)]" />
+              <div className="h-3 w-full rounded bg-[var(--bg-muted)]" />
+              <div className="h-3 w-5/6 rounded bg-[var(--bg-muted)]" />
+              <div className="h-1 w-full rounded bg-[var(--bg-muted)]" />
+            </div>
+          </div>
+          <div className="space-y-6">
+            <div className="apple-card p-6 space-y-3">
+              <div className="h-6 w-3/4 rounded bg-[var(--bg-muted)]" />
+              <div className="h-4 w-1/2 rounded bg-[var(--bg-muted)]" />
+              <div className="flex gap-2 pt-2">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="h-6 w-16 rounded-full bg-[var(--bg-muted)]" />
+                ))}
+              </div>
+            </div>
+            <div>
+              <div className="h-5 w-32 rounded bg-[var(--bg-muted)] mb-3" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                {Array.from({ length: 4 }).map((_, i) => (
+                  <div key={i} className="apple-card p-4 flex gap-3">
+                    <div className="w-20 h-14 rounded-lg bg-[var(--bg-muted)] shrink-0" />
+                    <div className="flex-1 space-y-2">
+                      <div className="h-3 w-1/3 rounded bg-[var(--bg-muted)]" />
+                      <div className="h-4 w-5/6 rounded bg-[var(--bg-muted)]" />
+                      <div className="h-3 w-full rounded bg-[var(--bg-muted)]" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
       </main>
     );
   }
@@ -151,13 +204,22 @@ export default function NoteDetailPage({ params }: PageProps) {
             />
           )}
           {bundle.chapters.length > 0 && currentChapter >= 0 && (
-            <div className="text-xs text-[var(--fg-tertiary)] flex items-center gap-2 px-1">
+            <div className="lg:hidden text-xs text-[var(--fg-tertiary)] flex items-center gap-2 px-1">
               <span className="tabular-nums">{formatTime(currentTime)}</span>
               <span>·</span>
               <span className="truncate">
                 {lang === "en" ? "Ch" : "第"} {currentChapter + 1}{lang === "en" ? "" : " 章"} · {pickByLang(bundle.chapters[currentChapter], "title", lang)}
               </span>
             </div>
+          )}
+          {bundle.chapters.length > 0 && (
+            <ChapterDetailCard
+              chapters={bundle.chapters}
+              currentIdx={currentChapter}
+              currentTime={currentTime}
+              summary={bundle.summary}
+              onSeek={seek}
+            />
           )}
         </div>
 
@@ -170,6 +232,7 @@ export default function NoteDetailPage({ params }: PageProps) {
             chapters={bundle.chapters}
             currentTime={currentTime}
             onSeek={seek}
+            category={bundle.meta?.category}
           />
         </div>
       </div>

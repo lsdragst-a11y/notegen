@@ -1,14 +1,14 @@
 import type {
   CatalogItem, Chapter, ChaptersFile, Chunk, NoteMeta, Mark
 } from "./types";
-import { API_BASE } from "./api";
-
 const PUBLIC_BASE = ""; // 同源，public/ 静态文件用绝对路径 /notes/... 即可
 
-/** 优先 fetch backend /api/notes（动态枚举，含新生成的笔记），失败退化到 static catalog.json */
+/** 优先 Next 同源 /api/notes（Node 端 fs 枚举 public/notes/，dev/prod 都在线）；
+ *  失败再 fallback 到 build-time 写好的 static catalog.json（兜底，可能 stale）。
+ *  注意：FastAPI 那个 /api/notes 不再被前端调，避免 backend 不开时少视频。 */
 export async function fetchCatalog(): Promise<CatalogItem[]> {
   try {
-    const r = await fetch(`${API_BASE}/api/notes`, { cache: "no-store" });
+    const r = await fetch("/api/notes", { cache: "no-store" });
     if (r.ok) return await r.json();
   } catch {}
   const r = await fetch(`${PUBLIC_BASE}/notes/catalog.json`, { cache: "no-store" });

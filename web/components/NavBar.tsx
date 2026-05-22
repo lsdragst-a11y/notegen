@@ -28,9 +28,9 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
         )}
         <Link
           href="/mm-ablation"
-          className="hidden sm:inline-flex items-center gap-1.5 text-xs text-[var(--text-2)]
-                     hover:text-[var(--text)] transition-colors px-2.5 py-1.5 rounded-md
-                     hover:bg-[var(--surface-2)]"
+          className="hidden sm:inline-flex items-center gap-1.5 text-xs text-[var(--fg-secondary)]
+                     hover:text-[var(--fg)] transition-colors px-2.5 py-1.5 rounded-md
+                     hover:bg-[var(--bg-muted)]"
           title="多模态切分 ablation 实验对比"
         >
           <Layers size={13} />

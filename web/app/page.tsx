@@ -1,15 +1,26 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Video, BookOpen, Layers, Hash, Clock, Sparkles, Loader2, Trash2 } from "lucide-react";
+import { ArrowRight, Video, BookOpen, Layers, Hash, Clock, Sparkles, Loader2, Trash2, Link2, FolderUp, X, FileVideo, Search, LockOpen, Lock } from "lucide-react";
 import NavBar from "@/components/NavBar";
 import FluidBG from "@/components/FluidBG";
 import ParticleBG from "@/components/ParticleBG";
 import { fetchCatalog, formatDuration } from "@/lib/notes";
-import { postGenerate, deleteNote } from "@/lib/api";
+import { postGenerate, postProbe, postUpload, deleteNote,
+         type DownloadQuality, type ProbeResult } from "@/lib/api";
 import type { CatalogItem } from "@/lib/types";
+
+type SubmitMode = "url" | "file";
+const ACCEPT_EXTS = ".mp4,.mkv,.mov,.avi,.webm,.flv,.m4v,.ts";
+
+function formatBytes(n: number): string {
+  if (n < 1024) return `${n} B`;
+  if (n < 1024 * 1024) return `${(n / 1024).toFixed(1)} KB`;
+  if (n < 1024 * 1024 * 1024) return `${(n / 1024 / 1024).toFixed(1)} MB`;
+  return `${(n / 1024 / 1024 / 1024).toFixed(2)} GB`;
+}
 
 export default function LandingPage() {
   const router = useRouter();
@@ -20,10 +31,46 @@ export default function LandingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [confirmDel, setConfirmDel] = useState<CatalogItem | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [mode, setMode] = useState<SubmitMode>("url");
+  const [file, setFile] = useState<File | null>(null);
+  const [fileTitle, setFileTitle] = useState("");
+  const [uploadPct, setUploadPct] = useState<number | null>(null);
+  const [dragging, setDragging] = useState(false);
+  const [probing, setProbing] = useState(false);
+  const [probed, setProbed] = useState<ProbeResult | null>(null);
+  const [quality, setQuality] = useState<DownloadQuality>("best");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     fetchCatalog().then(setCatalog).catch(console.error).finally(() => setLoading(false));
   }, []);
+
+  // 探测完成后：1 个可选 → 自动选；>1 个可选 → 默认最高
+  function pickDefaultQuality(p: ProbeResult) {
+    if (!p.heights || p.heights.length === 0) return "best";
+    return `${p.heights[0]}p`;
+  }
+
+  async function handleProbe() {
+    const trimmed = url.trim();
+    if (!trimmed) { setHint("先粘贴一个视频链接"); return; }
+    setHint(null);
+    setProbing(true);
+    setProbed(null);
+    try {
+      const r = await postProbe(trimmed);
+      if (!r.ok) {
+        setHint(`查询失败：${r.error || "未知"}`);
+      } else {
+        setProbed(r);
+        setQuality(pickDefaultQuality(r));
+      }
+    } catch (e) {
+      setHint(`查询失败：${String(e)}。后端 (python server.py) 是否启动？`);
+    } finally {
+      setProbing(false);
+    }
+  }
 
   async function handleDelete() {
     if (!confirmDel) return;
@@ -41,21 +88,46 @@ export default function LandingPage() {
 
   async function handleSubmit() {
     const trimmed = url.trim();
-    if (!trimmed) {
-      setHint("先粘贴一个 B 站视频链接");
-      return;
-    }
-    // 每次都提交 backend 真跑——pipeline 内部 ASR cache 会跳过最慢的转写步骤，
-    // 同 URL 重提交只跑 Pegasus + CLIP（几分钟），保证用户预期"点击=真生成"。
-    // 已有 demo 想直接看不重跑，可以从下方卡片点击。
+    if (!trimmed) { setHint("先粘贴一个视频链接"); return; }
+    if (!probed) { setHint("先点查询看可用画质"); return; }
     setHint(null);
     setSubmitting(true);
     try {
-      const { job_id } = await postGenerate(trimmed);
+      const { job_id } = await postGenerate(trimmed, quality);
       router.push(`/generate?job=${job_id}`);
     } catch (e) {
       setSubmitting(false);
       setHint(`提交失败：${String(e)}。后端 (python server.py) 是否启动？`);
+    }
+  }
+
+  function pickFile(f: File | null | undefined) {
+    if (!f) return;
+    const ext = "." + f.name.split(".").pop()?.toLowerCase();
+    if (!ACCEPT_EXTS.split(",").includes(ext)) {
+      setHint(`不支持的格式 ${ext}。允许：${ACCEPT_EXTS}`);
+      return;
+    }
+    setFile(f);
+    setFileTitle(f.name.replace(/\.[^.]+$/, ""));
+    setHint(null);
+  }
+
+  async function handleSubmitFile() {
+    if (!file) { setHint("先选一个视频文件"); return; }
+    setHint(null);
+    setSubmitting(true);
+    setUploadPct(0);
+    try {
+      const { job_id } = await postUpload(file, {
+        title: fileTitle.trim() || undefined,
+        onProgress: f => setUploadPct(f),
+      });
+      router.push(`/generate?job=${job_id}`);
+    } catch (e) {
+      setSubmitting(false);
+      setUploadPct(null);
+      setHint(`上传失败：${String(e)}。后端 (python server.py) 是否启动？`);
     }
   }
 
@@ -86,32 +158,283 @@ export default function LandingPage() {
           transition={{ delay: 0.12, type: "spring", stiffness: 160, damping: 22 }}
           className="mt-10 max-w-xl mx-auto"
         >
-          <div className="glass rounded-full pl-5 pr-2 py-2 flex items-center gap-2 shadow-[var(--shadow-sm)]
-                          hover:shadow-[var(--shadow-md)] transition-shadow">
-            <Video size={16} className="text-[var(--fg-tertiary)] shrink-0" />
-            <input
-              type="text"
-              placeholder="粘贴 B 站视频链接"
-              value={url}
-              onChange={(e) => { setUrl(e.target.value); setHint(null); }}
-              onKeyDown={(e) => { if (e.key === "Enter") handleSubmit(); }}
-              className="flex-1 bg-transparent outline-none text-sm placeholder:text-[var(--fg-tertiary)]"
-            />
-            <button onClick={handleSubmit}
-                    disabled={submitting}
-                    className="apple-button text-sm flex items-center gap-1">
-              {submitting ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" />
-                  提交中
-                </>
-              ) : (
-                <>
-                  生成笔记 <ArrowRight size={14} />
-                </>
-              )}
-            </button>
+          {/* segmented control: URL vs 本地 */}
+          <div className="flex justify-center mb-3">
+            <div className="inline-flex p-1 rounded-full bg-[var(--bg-muted)] border border-[var(--border)] relative">
+              {(["url", "file"] as const).map(m => {
+                const active = mode === m;
+                return (
+                  <button
+                    key={m}
+                    onClick={() => { setMode(m); setHint(null); }}
+                    className={`relative z-10 px-3.5 py-1.5 rounded-full text-xs font-medium
+                                inline-flex items-center gap-1.5 transition-colors
+                                ${active ? "text-[var(--fg)]" : "text-[var(--fg-tertiary)] hover:text-[var(--fg-secondary)]"}`}
+                  >
+                    {active && (
+                      <motion.span
+                        layoutId="mode-pill"
+                        className="absolute inset-0 -z-10 rounded-full bg-[var(--bg-elevated)] shadow-[var(--shadow-sm)] border border-[var(--border)]"
+                        transition={{ type: "spring", stiffness: 380, damping: 32 }}
+                      />
+                    )}
+                    {m === "url"
+                      ? <><Link2 size={12} /> 粘贴链接</>
+                      : <><FolderUp size={12} /> 本地文件</>}
+                  </button>
+                );
+              })}
+            </div>
           </div>
+
+          <AnimatePresence mode="wait" initial={false}>
+            {mode === "url" ? (
+              <motion.div
+                key="url"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                className="glass rounded-full pl-5 pr-2 py-2 flex items-center gap-2 shadow-[var(--shadow-sm)]
+                            hover:shadow-[var(--shadow-md)] transition-shadow"
+              >
+                <Video size={16} className="text-[var(--fg-tertiary)] shrink-0" />
+                <input
+                  type="text"
+                  placeholder="粘贴 B 站 / YouTube 视频链接"
+                  value={url}
+                  onChange={(e) => {
+                    setUrl(e.target.value);
+                    setHint(null);
+                    setProbed(null);  // URL 变了，旧 probe 失效
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key !== "Enter") return;
+                    probed ? handleSubmit() : handleProbe();
+                  }}
+                  className="flex-1 bg-transparent outline-none text-sm placeholder:text-[var(--fg-tertiary)] min-w-0"
+                />
+                {!probed ? (
+                  <button onClick={handleProbe}
+                          disabled={probing}
+                          className="apple-button text-sm flex items-center gap-1 shrink-0">
+                    {probing ? (
+                      <><Loader2 size={14} className="animate-spin" />查询中</>
+                    ) : (
+                      <><Search size={14} /> 查询</>
+                    )}
+                  </button>
+                ) : (
+                  <button onClick={handleSubmit}
+                          disabled={submitting}
+                          className="apple-button text-sm flex items-center gap-1 shrink-0">
+                    {submitting ? (
+                      <><Loader2 size={14} className="animate-spin" />提交中</>
+                    ) : (
+                      <>生成笔记 <ArrowRight size={14} /></>
+                    )}
+                  </button>
+                )}
+              </motion.div>
+            ) : (
+              <motion.div
+                key="file"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.18 }}
+                className="space-y-3"
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept={ACCEPT_EXTS}
+                  className="hidden"
+                  onChange={e => pickFile(e.target.files?.[0])}
+                />
+                {!file ? (
+                  <button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    onDragOver={e => { e.preventDefault(); setDragging(true); }}
+                    onDragLeave={() => setDragging(false)}
+                    onDrop={e => {
+                      e.preventDefault();
+                      setDragging(false);
+                      pickFile(e.dataTransfer.files?.[0]);
+                    }}
+                    className={`w-full rounded-2xl px-6 py-9 flex flex-col items-center justify-center gap-2
+                                border-2 border-dashed transition-all
+                                ${dragging
+                                  ? "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_8%,transparent)]"
+                                  : "border-[var(--border)] bg-[var(--bg-elevated)] hover:border-[var(--fg-tertiary)] hover:bg-[var(--bg-muted)]"}`}
+                  >
+                    <FolderUp size={22} className={dragging ? "text-[var(--accent)]" : "text-[var(--fg-tertiary)]"} />
+                    <div className="text-sm font-medium text-[var(--fg)]">
+                      {dragging ? "松开以放入" : "点击选择或拖入视频文件"}
+                    </div>
+                    <div className="text-[11px] text-[var(--fg-tertiary)]">
+                      支持 mp4 / mkv / mov / avi / webm / flv / m4v / ts
+                    </div>
+                  </button>
+                ) : (
+                  <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)]
+                                  shadow-[var(--shadow-sm)] p-4 space-y-3">
+                    <div className="flex items-center gap-3">
+                      <span className="w-9 h-9 rounded-xl bg-[var(--bg-muted)] inline-flex items-center
+                                       justify-center text-[var(--accent)] shrink-0">
+                        <FileVideo size={16} />
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-sm font-medium truncate">{file.name}</div>
+                        <div className="text-[11px] text-[var(--fg-tertiary)] tabular-nums">
+                          {formatBytes(file.size)}
+                        </div>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => { setFile(null); setFileTitle(""); setUploadPct(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
+                        disabled={submitting}
+                        className="w-7 h-7 rounded-full bg-[var(--bg-muted)] text-[var(--fg-tertiary)]
+                                   hover:bg-[var(--border)] hover:text-[var(--fg)] inline-flex items-center
+                                   justify-center transition-colors disabled:opacity-40"
+                        title="移除"
+                      >
+                        <X size={13} />
+                      </button>
+                    </div>
+                    <input
+                      type="text"
+                      placeholder="视频标题（可选，留空用文件名）"
+                      value={fileTitle}
+                      onChange={e => setFileTitle(e.target.value)}
+                      className="w-full bg-[var(--bg-muted)] border border-[var(--border)] rounded-xl
+                                 px-3 py-2 text-sm outline-none placeholder:text-[var(--fg-tertiary)]
+                                 focus:border-[var(--accent)] transition-colors"
+                    />
+                    {uploadPct !== null && uploadPct < 1 && (
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-[10.5px] text-[var(--fg-tertiary)] tabular-nums">
+                          <span>上传中</span>
+                          <span>{Math.round(uploadPct * 100)}%</span>
+                        </div>
+                        <div className="h-1 rounded-full bg-[var(--bg-muted)] overflow-hidden">
+                          <div className="h-full bg-[var(--accent)] transition-[width] duration-150"
+                               style={{ width: `${uploadPct * 100}%` }} />
+                        </div>
+                      </div>
+                    )}
+                    <button
+                      onClick={handleSubmitFile}
+                      disabled={submitting}
+                      className="apple-button w-full text-sm inline-flex items-center justify-center gap-1.5"
+                    >
+                      {submitting ? (
+                        uploadPct !== null && uploadPct < 1
+                          ? <><Loader2 size={14} className="animate-spin" />上传 {Math.round(uploadPct * 100)}%</>
+                          : <><Loader2 size={14} className="animate-spin" />处理中</>
+                      ) : (
+                        <>生成笔记 <ArrowRight size={14} /></>
+                      )}
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {mode === "url" && probed && probed.ok && (
+              <motion.div
+                key="probed"
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -6 }}
+                transition={{ duration: 0.2 }}
+                className="mt-4 rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)]
+                           shadow-[var(--shadow-sm)] p-4 space-y-3"
+              >
+                <div className="flex items-start gap-3">
+                  <span className="w-9 h-9 rounded-xl bg-[var(--bg-muted)] inline-flex items-center
+                                   justify-center text-[var(--accent)] shrink-0">
+                    <Video size={16} />
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <div className="text-sm font-medium truncate">
+                      {probed.title || "（无标题）"}
+                    </div>
+                    <div className="text-[11px] text-[var(--fg-tertiary)] flex items-center gap-2 flex-wrap mt-0.5">
+                      {probed.uploader && <span className="truncate max-w-[20ch]">{probed.uploader}</span>}
+                      {probed.uploader && probed.duration > 0 && <span>·</span>}
+                      {probed.duration > 0 && (
+                        <span className="tabular-nums inline-flex items-center gap-0.5">
+                          <Clock size={10} /> {formatDuration(probed.duration)}
+                        </span>
+                      )}
+                      <span>·</span>
+                      {probed.cookie_status === "ok" ? (
+                        <span className="inline-flex items-center gap-0.5 text-emerald-600 dark:text-emerald-400">
+                          <LockOpen size={10} /> 已登录
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-0.5 text-amber-600 dark:text-amber-400"
+                              title="未登录 cookie，画质受限。Firefox 登录或导 cookies.txt 到 data/.cookies/">
+                          <Lock size={10} /> 未登录
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {probed.heights.length > 1 ? (
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-[11px] text-[var(--fg-tertiary)] shrink-0">下载画质</span>
+                    <div
+                      className="inline-flex items-center rounded-full bg-[var(--bg-muted)] p-0.5 gap-0.5"
+                      role="radiogroup"
+                      aria-label="下载画质"
+                    >
+                      {probed.heights.map(h => {
+                        const v = `${h}p`;
+                        const active = quality === v;
+                        return (
+                          <button
+                            key={h}
+                            type="button"
+                            onClick={() => setQuality(v)}
+                            role="radio"
+                            aria-checked={active}
+                            className={`px-3 h-7 rounded-full text-[11px] font-medium tabular-nums
+                                        inline-flex items-center justify-center transition-colors
+                                        ${active
+                                          ? "bg-[var(--bg-elevated)] text-[var(--fg)] shadow-[var(--shadow-sm)] border border-[var(--border)]"
+                                          : "text-[var(--fg-tertiary)] hover:text-[var(--fg-secondary)]"}`}
+                          >
+                            {v}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {probed.cookie_status === "missing" && (
+                      <span className="text-[10.5px] text-[var(--fg-tertiary)]">
+                        登录后会有更高画质
+                      </span>
+                    )}
+                  </div>
+                ) : probed.heights.length === 1 ? (
+                  <div className="text-[11px] text-[var(--fg-tertiary)]">
+                    只有 1 种画质可下：<span className="text-[var(--fg)] font-medium">{probed.heights[0]}p</span>
+                    {probed.cookie_status === "missing" && "（未登录，更高画质需 cookie）"}
+                  </div>
+                ) : (
+                  <div className="text-[11px] text-amber-600 dark:text-amber-400">
+                    没探到可下视频流，可能 URL 错或视频已下架
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
+
           <AnimatePresence>
             {hint && (
               <motion.p

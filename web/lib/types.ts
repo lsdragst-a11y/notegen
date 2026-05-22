@@ -51,6 +51,8 @@ export interface ChaptersFile {
   ablation?: Record<string, unknown>;
 }
 
+export type Category = "teaching" | "popsci" | "vlog" | "talk";
+
 export interface NoteMeta {
   id: string;
   title: string;
@@ -58,6 +60,8 @@ export interface NoteMeta {
   duration?: number;
   webpage_url?: string;
   description?: string;
+  category?: Category;
+  category_confidence?: "high" | "medium" | "low";
 }
 
 export interface CatalogItem {
