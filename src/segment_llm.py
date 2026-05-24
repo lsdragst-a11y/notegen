@@ -1649,8 +1649,54 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
                 titles[i] = f"{titles[i]} ({i+1})"
         print(f"      [llm-chapter-title] H2 去重: {len(dups)} 章重复 → 加关键词后缀",
               flush=True)
+    # I6: 通用模板标题检测 — 若 title 的所有 ≥2 中文 token 都是 generic 词，
+    # 从本章 chunks 关键词找最高频的特定词作前缀注入
+    # p64 实测 "版本与总结" 全 generic → 应改成 "OSPF版本与总结"
+    n_injected = 0
+    for i, t in enumerate(titles):
+        toks = _extract_zh_topic_tokens(t)
+        if not toks:
+            continue
+        specific = toks - _GENERIC_TITLE_TOKENS
+        if specific:
+            continue  # 已有特定 token，跳过
+        # 全 generic 标题：从本章 chunks keywords 找最高频 specific 词
+        ch_chunks = chapters[i].get("chunks", [])
+        kws_count: dict[str, int] = {}
+        for idx in ch_chunks:
+            if idx >= len(chunks):
+                continue
+            for kw in (chunks[idx].get("keywords") or []):
+                kw = str(kw).strip()
+                if len(kw) < 2:
+                    continue
+                if kw in _GENERIC_TITLE_TOKENS:
+                    continue
+                # 跳过已在标题里出现的词
+                if kw in t:
+                    continue
+                kws_count[kw] = kws_count.get(kw, 0) + 1
+        if kws_count:
+            top_kw = max(kws_count.items(), key=lambda x: (-x[1], -len(x[0])))[0]
+            titles[i] = f"{top_kw}{t}"
+            n_injected += 1
+    if n_injected:
+        print(f"      [llm-chapter-title] I6 注入特定词: {n_injected} 章原标题全 generic",
+              flush=True)
     print(f"      [llm-chapter-title] refined {K} chapter titles", flush=True)
     return titles
+
+
+# I6: 章标题里"零信息"通用 token 集——单独出现时无信息量，需要特定词锚定
+# 注意：保留"算法/协议/原理/系统"等领域词；只剔除真"无信息"虚名词
+_GENERIC_TITLE_TOKENS: set[str] = {
+    "总结", "复习", "回顾", "概览", "介绍", "概念", "基础", "应用",
+    "背景", "工作", "流程", "详解", "分析", "机制", "方法", "技术",
+    "知识", "内容", "讲解", "学习", "概述", "课程", "本章", "本节",
+    "实例", "例子", "举例", "示例", "练习", "题目", "案例", "拓展",
+    "扩展", "进阶", "深入", "细节", "要点", "重点", "难点", "版本",
+    "发展", "起源", "现状", "未来", "展望",
+}
 
 
 def _parse_titles_array(raw: str, K: int) -> Optional[list]:
