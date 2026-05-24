@@ -19,6 +19,7 @@
 from __future__ import annotations
 
 import gc
+import hashlib
 import json
 import os
 import re
@@ -1006,10 +1007,29 @@ def segment_hierarchical(chunks: list[dict],
                  "vlog": "vlog 实拍视频", "talk": "时评/资讯视频"}.get(category, "视频")
     # vlog/talk 的单顶层上限更小（3 而非 5），retry 提示词要同步
     chunks_per_top_cap = 4 if category in ("vlog", "talk") else 5
+    # 算术 hint：长视频（n > 10）建议顶层数 ≈ ceil(n/cap)
+    # 注意：这是"建议"不是"硬约束"——硬约束会让 LLM 为凑数选非连续 chunks（p57 实测 ch1=[0,3,17,18]）
+    min_tops_arith = -(-n // chunks_per_top_cap)  # ceil division
+    arith_clause = ""
+    if n > 10:
+        arith_clause = (
+            f"\n**算术参考**：{n} 段 / 单顶层 ≤ {chunks_per_top_cap}，"
+            f"顶层数典型在 **{min_tops_arith}-{min(6, min_tops_arith+2)}** 之间。"
+            f"主题更细可超，但每章必须是**连续区间**——宁可少 1 章也不要为凑数跳着选 chunks。\n"
+        )
     user_prompt = (
         f"{cat_label}共 {n} 个原子段（chunk_idx 0~{n-1}）：\n\n"
         f"{chunk_text}\n"
         f"{visual_block}\n"
+        f"{arith_clause}"
+        f"**自检清单**（输出前 mentally verify，每条都过才允许输出）：\n"
+        f"1. 顶层数 ∈ [3, 6]\n"
+        f"2. 每个顶层 chunks 数 ≤ {chunks_per_top_cap}（最易踩；主题集中也必须拆）\n"
+        f"3. **每个顶层的 chunks 必须是连续区间 [a, a+1, ..., b]**——禁止跳跃式选取\n"
+        f"   ✗ 反例：`\"chunks\": [0, 3, 17, 18]` 不连续，等于把别章 chunks 也抢了\n"
+        f"   ✓ 正例：`\"chunks\": [0, 1, 2, 3]` 连续区间\n"
+        f"4. 所有 chunk_idx 拼起来正好覆盖 0~{n-1}（无漏无重）\n"
+        f"5. 章标题是名词短语，且只引用本章 chunks 出现过的概念\n\n"
         "请按要求输出层级化大纲 JSON。"
     )
     model, tok = load_model(model_id)
@@ -1018,18 +1038,29 @@ def segment_hierarchical(chunks: list[dict],
         {"role": "user", "content": user_prompt},
     ]
     import torch
+    # C2: 从 chunks 内容派生 base_seed → 同视频跨次运行的 segmenter 输出一致；
+    # 每 attempt 用 base_seed + attempt，retry 仍能采到不同样本。
+    # 用 first chunk 的 start/text + n_chunks 作 hash 源，足够区分视频又无需 BV_id。
+    _seed_src = f"{n}|{chunks[0].get('start', 0):.2f}|{(chunks[0].get('text') or '')[:30]}"
+    base_seed = int(hashlib.md5(_seed_src.encode("utf-8")).hexdigest()[:8], 16)
     last_raw: Optional[str] = None
     last_err: Optional[str] = None
     parsed: Optional[dict] = None
     ok = False
+    # B3: 长视频（n>15）retry 预算砍到 1（attempt 1 失败再给 1 次机会就进 repair）
+    # 主题集中长视频上 attempt 2-3 反向过拟合无收益；省时间。
+    long_video = n > 15
+    effective_retries = min(max_retries, 1) if long_video else max_retries
     # 元数据：供 pipeline 写入 ablation，论文附录 B 表用
     meta: dict = {
         "attempts_used": 0,        # 实际跑了几次 attempt（不算 repair）
         "pass_via": None,          # "attempt_1/2/3" or "repair"
         "repair_used": [],         # 实际执行的 repair 步骤
         "fail_reasons": [],        # 每次 attempt 失败原因（短）
+        "base_seed": base_seed,    # C2：记录种子方便复现
+        "long_video_short_circuit": False,  # B3：是否触发 attempt 1 oversize 早退
     }
-    for attempt in range(max_retries + 1):
+    for attempt in range(effective_retries + 1):
         if attempt == 0:
             messages = base_messages
             temp = 0.05  # 2026-05-20 起从 0.15 降到 0.05 减切粒度方差
@@ -1046,8 +1077,13 @@ def segment_hierarchical(chunks: list[dict],
             temp = max(0.02, 0.05 - 0.01 * attempt)
         text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
         inputs = tok(text, return_tensors="pt").to(model.device)
-        print(f"      [llm] attempt {attempt+1}/{max_retries+1} generate "
-              f"(input {inputs['input_ids'].shape[1]} tokens, temp={temp}) ...", flush=True)
+        print(f"      [llm] attempt {attempt+1}/{effective_retries+1} generate "
+              f"(input {inputs['input_ids'].shape[1]} tokens, temp={temp}, "
+              f"seed={base_seed + attempt}) ...", flush=True)
+        # C2: 每 attempt 用 (base_seed + attempt) 让同视频可复现 + attempt 间多样
+        torch.manual_seed(base_seed + attempt)
+        if torch.cuda.is_available():
+            torch.cuda.manual_seed_all(base_seed + attempt)
         with torch.no_grad():
             out = model.generate(
                 **inputs,
@@ -1104,6 +1140,14 @@ def segment_hierarchical(chunks: list[dict],
         else:
             meta["fail_reasons"].append("other")
         print(f"      [llm] attempt {attempt+1} failed: {err}", flush=True)
+        # B3: 长视频 attempt 1 oversize（LLM 归并大章）— retry 反向过拟合无收益，
+        # 直接 break 让 _repair_oversize 拆 catch-all 顶层。
+        if (long_video and attempt == 0
+                and meta["fail_reasons"][-1] == "oversize"):
+            meta["long_video_short_circuit"] = True
+            print(f"      [llm] n={n} > 15 attempt 1 oversize → 跳 retry, "
+                  f"_repair_oversize 接管", flush=True)
+            break
     if not ok and parsed is not None:
         # 最后一次努力：程序化修复
         # Step 1：把漏的 chunk 并入时间最近顶层（_repair_missing_chunks）
@@ -1151,7 +1195,7 @@ def segment_hierarchical(chunks: list[dict],
                 else:
                     print(f"      [llm] auto-subs 兜底失败: {err2}", flush=True)
     if not ok or parsed is None:
-        print(f"      [llm] all {max_retries+1} attempts + repair failed (last: {last_err})",
+        print(f"      [llm] all {effective_retries+1} attempts + repair failed (last: {last_err})",
               flush=True)
         # 返回 _meta 让 caller 写到 ablation 里（虽然没出 chapters），便于事后
         # 在论文附录 B 表里准确显示 "LLM 跑了 N 次 attempt 失败 → fallback"
@@ -1450,23 +1494,48 @@ def _parse_titles_array(raw: str, K: int) -> Optional[list]:
     1. 标准单个 JSON 数组 `["a", "b", "c"]`
     2. fenced code block `​```json\n[...]```​`
     3. 多个独立小数组连写 `["a"]\n["b"]\n["c"]` — 拍平合并
+    4. dict 包裹 `{"headlines": [...]}` / `{"chapters": [...]}` — 提取首个 list 值
+
+    所有数组比对均容忍 len > K：截前 K 个返回。
+    （case study p57: LLM 在主题集中视频上倾向输出 K+m 条重复 headline，
+    直接 reject 会触发 retry 浪费 LLM 调用。）
     """
+    def _accept(arr) -> Optional[list]:
+        if not isinstance(arr, list):
+            return None
+        if len(arr) == K:
+            return arr
+        if len(arr) > K:
+            return arr[:K]
+        return None
     # 1. fenced code
     m = re.search(r"```(?:json)?\s*(\[.*?\])\s*```", raw, re.DOTALL)
     if m:
         try:
-            arr = json.loads(m.group(1))
-            if isinstance(arr, list) and len(arr) == K:
-                return arr
+            got = _accept(json.loads(m.group(1)))
+            if got is not None:
+                return got
         except json.JSONDecodeError:
             pass
     # 2. first [ to last ] (standard greedy)
     l, r = raw.find("["), raw.rfind("]")
     if l >= 0 and r > l:
         try:
-            arr = json.loads(raw[l:r + 1])
-            if isinstance(arr, list) and len(arr) == K:
-                return arr
+            got = _accept(json.loads(raw[l:r + 1]))
+            if got is not None:
+                return got
+        except json.JSONDecodeError:
+            pass
+    # 2.5. dict-wrapped (`{"headlines": [...]}` 之类）— 提首个 list 字段
+    lb, rb = raw.find("{"), raw.rfind("}")
+    if lb >= 0 and rb > lb:
+        try:
+            obj = json.loads(raw[lb:rb + 1])
+            if isinstance(obj, dict):
+                for v in obj.values():
+                    got = _accept(v)
+                    if got is not None:
+                        return got
         except json.JSONDecodeError:
             pass
     # 3a. 多候选数组：Qwen 偶尔输出 N 个完整 K-元素数组（"alternatives"），
@@ -1481,11 +1550,13 @@ def _parse_titles_array(raw: str, K: int) -> Optional[list]:
         except json.JSONDecodeError:
             continue
     for p in pieces:
-        if len(p) == K:
-            return p
+        got = _accept(p)
+        if got is not None:
+            return got
     flat = [x for p in pieces for x in p]
-    if len(flat) == K:
-        return flat
+    got = _accept(flat)
+    if got is not None:
+        return got
     # 4. 救命兜底：抓所有 `"..."` 双引号字符串，凑 K 个就接受
     # 触发场景：英文长 list（34 chunks）max_new_tokens 不够时 JSON 数组未闭合
     # （末尾停在 "Agent Bui...` 不收 `]`），上面 3 级都失败。此时已生成的 quoted
@@ -1897,7 +1968,15 @@ CHAPTER_RECAP_SYSTEM = """你是教学视频的**复习要点**生成助手。�
 3. **复习导向**：是"X 是什么/为什么/怎么做"的具体可考点，不是空泛概括
 4. **基于本章实际内容**（chunks 的 headline / 内容）——不要从章标题字面猜测
 5. **每条单独成行，以 "- " 开头**
-6. 用名词性短句，不带句末标点（不要 ?!。）
+6. **必须含谓词结构（命题 / 定义 / 因果 / 步骤）**，禁止纯名词短语
+   - ✗ 反例（**绝对不要**）：`- 路由算法与协议` `- 距离向量算法` `- OSPF 路由算法`
+     （只是名词短语，无法被学生用来自测——这种"标签式 bullet"判 0 分）
+   - ✓ 正例：`- 距离向量算法靠相邻路由器交换距离信息收敛，存在 count-to-infinity`
+     `- OSPF 用链路状态广播全网拓扑，由 Dijkstra 算出最短路径`
+   - 命题模板：`X 是 Y / X 用 Y / X 因为 Y 所以 Z / X 的步骤：A→B→C`
+7. **跨章去重**：本章 bullet 的核心名词若已在其他章 bullet 出现，
+   必须从更细的子机制 / 对比 / 步骤角度切入；不要让 N 章里都挂同一个名词短语
+8. 不带句末标点（不要 ?!。）
 
 ## 输出格式（绝对硬约束，违反直接重试）
 
@@ -1978,10 +2057,16 @@ def generate_chapter_recaps(chapters: list[dict],
         f"(原词: {', '.join(sorted(all_drops))})——recap 里**不要**写 [?]，"
         f"也**不要**尝试还原原词。\n"
         if any_drop else "")
+    chapter_titles = [ch.get("title", "") or f"章 {i+1}" for i, ch in enumerate(chapters)]
+    titles_clause = (
+        f"\n本视频章标题（避免不同章 recap 用同一名词短语，必要时用子机制/对比/步骤区分）：\n"
+        f"  " + " / ".join(chapter_titles) + "\n")
     user_prompt = (f"共 {K} 章，按顺序为每章生成 3-5 条复习要点 bullet list。\n"
                    f"**输出数组必须有 {K} 个元素**——每章对应一个独立的 recap "
                    f"字符串，禁止合并章。\n"
-                   f"{drop_clause}\n{body}\n\n"
+                   f"**每条 bullet 必须含谓词**（命题/定义/因果/步骤），"
+                   f"禁止纯名词短语如 `- 距离向量算法`——这种零信息 bullet 会被判 0 分，整批重试。\n"
+                   f"{titles_clause}{drop_clause}\n{body}\n\n"
                    f"输出 JSON 数组（必须 {K} 个元素，每个元素是含 \\n 的多行 "
                    f"bullet 字符串）：")
     model, tok = load_model(model_id)
@@ -2006,7 +2091,33 @@ def generate_chapter_recaps(chapters: list[dict],
         print(f"      [llm-chapter-recap] parse failed, raw: {raw[:250]}", flush=True)
         return None
     recaps = [str(s).strip().strip('"').strip("'") for s in arr]
-    print(f"      [llm-chapter-recap] generated {K} chapter recaps", flush=True)
+    # 质量信号：纯名词 bullet 占比 + 跨章重复 token 数。仅日志，不重试。
+    _verb_re = re.compile(r"[是有为用因含算包通过基于实现完成需要导致由属于即定义"
+                          r"分类构成转换组成发送接收处理执行解决依赖支持决定影响"
+                          r"is|are|use|need|must|can|do|make|form|run|return|cause|"
+                          r"depend|provide|require|produce|result]", re.IGNORECASE)
+    n_label, all_bullets, per_ch_nouns = 0, 0, []
+    for r in recaps:
+        nouns_in_ch: set[str] = set()
+        for line in r.split("\n"):
+            b = line.strip().lstrip("-•* ").strip()
+            if not b:
+                continue
+            all_bullets += 1
+            if not _verb_re.search(b):
+                n_label += 1
+            # 简单名词抽取：≥2 字连续 CJK / ≥3 字母连续英文
+            for tok_m in re.finditer(r"[一-鿿]{2,}|[A-Za-z]{3,}", b):
+                nouns_in_ch.add(tok_m.group(0))
+        per_ch_nouns.append(nouns_in_ch)
+    cross_dup = 0
+    for i in range(len(per_ch_nouns)):
+        for j in range(i+1, len(per_ch_nouns)):
+            cross_dup += len(per_ch_nouns[i] & per_ch_nouns[j])
+    label_rate = (n_label / all_bullets) if all_bullets else 0.0
+    print(f"      [llm-chapter-recap] generated {K} chapter recaps "
+          f"(label-style bullets: {n_label}/{all_bullets} = {label_rate:.0%}, "
+          f"cross-chapter dup tokens: {cross_dup})", flush=True)
     return recaps
 
 
@@ -2261,6 +2372,8 @@ chunk 原文是中文则 headline 用中文（如 "管程引入原因"）。**�
 4. 修正 ASR 同音字错误（如"双脚线"→"双绞线"、"真的结束"→"帧的结束字段"等）
 5. 不带句末标点（不要 ? ! 。等）
 6. 严格输出 JSON 数组，**长度必须等于输入段数**，按顺序对应
+   （主题集中视频上禁止重复输出"距离向量算法/距离向量算法原理/距离向量算法解释"
+   这种近义条目把数组撑超长——超出的会被丢弃，等于浪费 token 还会让后续条目错位）
 7. 不要任何 markdown 标记、解释或前言"""
 
 
@@ -2334,9 +2447,24 @@ def generate_headlines(chunks: list[dict],
     raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
     arr = _parse_titles_array(raw, n)
     if arr is None:
-        print(f"      [llm-headline-gen] parse failed, raw len={len(raw)}, "
-              f"head: {raw[:200]} ... tail: {raw[-100:]}", flush=True)
-        return None
+        # D2: headlines-only pad 兜底——抓 raw 里所有 quoted 字符串，覆盖率 ≥ 90%
+        # 就 pad 空串到 n 接受。仅 headlines 用：下游 chunk 没 headline 时退化
+        # 到 chunk text + keywords，整体笔记仍可读；recap/abstract/quiz 不能容忍漏。
+        quoted = re.findall(r'"([^"\n]+)"', raw)
+        quoted = [q for q in quoted
+                  if len(q) >= 2 and q not in
+                  {"title", "chunks", "chapters", "headline", "abstract",
+                   "json", "type"}]
+        threshold = max(1, int(n * 0.9))
+        if len(quoted) >= threshold:
+            padded = quoted[:n] + [""] * max(0, n - len(quoted))
+            print(f"      [llm-headline-gen] parse failed strict, "
+                  f"D2 pad fallback: {len(quoted)}/{n} quoted → pad to {n}", flush=True)
+            arr = padded
+        else:
+            print(f"      [llm-headline-gen] parse failed, raw len={len(raw)}, "
+                  f"head: {raw[:200]} ... tail: {raw[-100:]}", flush=True)
+            return None
     titles = [str(s).strip().strip('"').strip("'") for s in arr]
     n_truncated = sum(1 for t in titles if not t)
     if n_truncated:
