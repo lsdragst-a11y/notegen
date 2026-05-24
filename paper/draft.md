@@ -57,8 +57,9 @@
 | v5 | 2026-05-19~20 | 跨域 UI 突兀 + LLM systematic bias + GPU 黑屏事故 | 4 类启发式分类器 + 模板分发 + segment 4 硬规则 + 串行加载红线 |
 | v6 | 2026-05-21 | v5 兜底"未野外触发"成因不明 | stress test 暴露 auto_subs n≥4 broken + nav 规则合并 + repair 一致性修 |
 | v6+ | 2026-05-21~22 | vlog 域纳入暴露 ASR 第二条 abort 路径 + abstract LLM 字面 hallucinate | 三层 ASR 防御（含 WAL 增量落盘）+ generate_chapter_abstracts input 加 ASR snippet + 3-vlog corpus 回归（21/21 章 0 hallucinate） |
+| v7 | 2026-05-24 | 章标题"主题词锚点" prompt 规则被压 + 中层 gate (generic_ratio) 早期被弃 | 章标题 Python 端 jieba 校准 + drop hint（烟台/电源 ASR 错字 100% 出标题）；中层 gate 扩英文动词词典 + 阈值 0.65 重生（FwOTs 救援 → 先验降级） |
 
-本文剩余部分组织如下：§2 综述相关工作；§3 给出系统架构概览（v6 当前态）；§4 详述四个核心方法模块；§5-6 给出量化评估与 case studies；§7 按里程碑回顾系统演进；§8 讨论局限性与 future work；§9 总结。
+本文剩余部分组织如下：§2 综述相关工作；§3 给出系统架构概览（v7 当前态）；§4 详述四个核心方法模块；§5-6 给出量化评估与 case studies；§7 按里程碑回顾系统演进；§8 讨论局限性与 future work；§9 总结。
 
 ## 2 相关工作 (Related Work)
 
@@ -274,11 +275,17 @@ prompt cue。同 9 视频三路对比（完整表见 paper/mm_ablation.md）：
 1. **Jaccard 相邻 caption 字面相似度** → BV1S6kQBNEJq 实测 0.08，**没抓到问题**
    （字面 unique 不等于视觉有切分区分度）
 2. **Generic teaching word ratio**（"讲师/讨论/讲解/介绍/explains/discusses"
-   等）→ BV1S6kQBNEJq 0.36，仍低于经验阈值 0.50，**漏判**
-3. **最终采纳两层结构阈值**：
+   等）→ 初版词典（5 中文 + 5 英文）+ 阈值 0.50，BV1S6kQBNEJq 0.36，**漏判**；
+   早期暂时搁置
+3. **2026-05-17 采纳两层结构阈值**：
    - **外层 n_chunks > 15**：长视频整体语义密度低，画面 pattern 单一
    - **内层 prefix-run 同质化**：n_chunks ≤ 15 但出现 ≥4 个共享 10 字前缀的连续
      caption 且剩余 chunks ≥ 3 时也降级
+4. **2026-05-24 中层 generic_ratio 重生**：扩 corpus 后 FwOTs4UxQS4 AI Agent
+   英文教程 caption 持续以 "The presenter / video / diagram explains..." 模板
+   起句，generic_ratio=0.82。扩展英文动词词典（动作类 +ing/-s 形态 + 角色/载体
+   类 instructor/diagram/slide）+ 阈值收紧到 0.65 后纳入作为**中层 gate**，
+   覆盖原本只能由救援层兜底的 case，attempt 数从 #3 + 救援 retry 降到 #2。
 
 复杂的 content-based heuristic 不稳，简单的 length-based 反而最 robust——这是
 本工作的一个意外发现：**对 LLM-as-segmenter 而言，决定视觉信号是否有益的关键不
@@ -293,15 +300,18 @@ caption 同样高度同质（max_prefix_run=4）但 n=5 仅 1 个"其它"chunk�
 天然合法，因此保留 VL 增益。**触发条件 `max_prefix_run ≥ 4 且 (n - run) ≥ 3`**
 唯一精确命中 p44，不误伤 OS p37 — 重跑 p44 加门控后 attempt 2 一次过、零 repair。
 
-**最终配置**：`--vlm-captions` 默认 disable；启用时两层自适应：
+**最终配置**：`--vlm-captions` 默认 disable；启用时三层自适应（2026-05-24 加中层后）：
 1. 外层 `n_chunks > 15` → 降级 (4/9 案例)
-2. 内层 `max_prefix_run ≥ 4 且 (n - run) ≥ 3` → 降级 (1/9 案例，即 p44)
+2. 中层 `generic_ratio ≥ 0.65` → 降级（FwOTs 英文教程 0.82 命中，2026-05-24 加）
+3. 内层 `max_prefix_run ≥ 4 且 (n - run) ≥ 3` → 降级 (1/9 案例，即 p44)
 
-三个 ablation 字段：`vlm_captions`（用户开了 flag）、`vlm_captions_used`
-（实际是否用了 caption）、`vlm_degraded_reason`（降级原因）。9 视频 ablation
-实测：**4 used / 5 downgraded（外层 4 + 内层 1）**；启用且切更细的 1/4（OS
-哲学家进餐）；降级避开过度切分风险的最显著反转是 EH5jx5qPabU（32 → 9 章），
-最显著局部回归修复是 p44（3 次 attempts → 1 次 attempt + 0 repairs）。
+四个 ablation 字段：`vlm_captions`（用户开了 flag）、`vlm_captions_used`
+（实际是否用了 caption）、`vlm_generic_ratio`（中层 gate 诊断指标）、
+`vlm_degraded_reason`（降级原因，三层之一或 `rescue_after_llm_fail`）。
+9 视频 ablation 实测：**4 used / 5 downgraded（外层 4 + 内层 1）**；启用且
+切更细的 1/4（OS 哲学家进餐）；降级避开过度切分风险的最显著反转是
+EH5jx5qPabU（32 → 9 章），最显著局部回归修复是 p44（3 次 attempts → 1 次
+attempt + 0 repairs）。中层 gate 的命中案例见 §5.4.4 FwOTs 跨语言验证。
 
 #### 5.4.4 跨语言泛化验证 + VL 救援第三层
 
@@ -330,19 +340,28 @@ FwOTs 重跑实测：第一轮 VL 3 次 overlap/missing 失败 + repair 失败 �
 WSPChlfxJyA 救援不触发（VL 已被外层降级未使用）——验证救援机制只针对 VL 引入的
 失败，不会误触发于 VL 无关的 catch-all。
 
-**完整三层架构**：
+**完整四层架构**（2026-05-24 加中层 gate 后）：
 1. **外层** `n_chunks > 15` 先验降级——粗粒度防过度切分（4/9 中文 + 1/3 英文）
-2. **内层** `max_prefix_run ≥ 4 且 (n - run) ≥ 3` 先验降级——caption 高度同质引发漏 chunks（1/9 中文，p44；英文漏检）
-3. **救援** LLM 全失败后事后降级——内层漏检的英文 case 兜底（1/3 英文，FwOTs）
+2. **中层** `generic_ratio ≥ 0.65` 先验降级——caption 多为通用动词/角色词无区分度
+   （FwOTs 英文教程 generic=0.82 命中，2026-05-24 加，替换原救援层的英文兜底）
+3. **内层** `max_prefix_run ≥ 4 且 (n - run) ≥ 3` 先验降级——caption 高度同质
+   引发漏 chunks（1/9 中文，p44；中文 friendly，英文不触发）
+4. **救援** LLM 全失败后事后降级——加中层后 corpus 0 触发，保留作为未知失败
+   模式的安全网
 
 新增 ablation 字段 `vl_rescue_used`，区分"先验门控降级"vs"事后救援降级"
 （`vlm_degraded_reason='rescue_after_llm_fail'`）。
 
 **跨语言验证结论**：
-- 中文：两层先验门控 9/9 准确（包括 1 次内层捕获 p44）
-- 英文：外层正确触发于长视频；内层漏检短视频语义同构 case；救援层兜底
-- 三层架构能识别"VL 是不是凶手"——救援层不会拯救与 VL 无关的失败
+- 中文：先验门控 9/9 准确（包括 1 次内层捕获 p44）
+- 英文：外层正确触发于长视频；内层 char-prefix 在英文上不鲁棒（冠词起句导致
+  首词变化大）；FwOTs 英文 case 先经历救援层兜底，2026-05-24 中层 gate
+  （generic_ratio）纳入后改为先验降级，attempt 数 #3→#2
+- 四层架构能识别"VL 是不是凶手"——救援层不会拯救与 VL 无关的失败
   （WSPChlfxJyA 的 catch-all 是 [[english-support]] 中 Qwen-EN bias 的独立问题）
+- **方法论意义**：早期被弃的 heuristic（generic_ratio）经扩 corpus + 扩词典 +
+  调阈值后可重生作为先验 gate；救援层即便降为 0 触发的安全网仍有价值——它
+  提供"VL 在用但 LLM 全失败"这一显式 ablation 信号供后续 heuristic 迭代
 
 #### 5.4.5 扩样本验证：20 视频架构泛化
 
@@ -475,7 +494,7 @@ faster-whisper 在 755.2s 起进入卡片回路，连续 9 段输出相同句子
 §5.4.3 至 §5.4.5 的 VL caption + 三层自适应架构在以下 24 视频 corpus 上做了完整
 验证（21 中文 + 3 英文，时长 4 min 到 40 min，覆盖王道 OS/计网考研、AI Agent
 教程、Vibe Coding、Notebook LM、AI 工具应用、美食 vlog、英语播客等 8 个子域）。
-最后 5 行为 2026-05-18 新增的扩 corpus 案例，进一步验证三层 gate 在更宽分布下的
+最后 5 行为 2026-05-18 新增的扩 corpus 案例，进一步验证四层 gate（含 2026-05-24 新加中层）在更宽分布下的
 稳健性。数据由 `scripts/aggregate_eval.py --mode section6-4` 自动从所有
 `*.mm.vl.chapters.json` 聚合，扩 corpus 时一键刷表（手填易错，曾误计为 25 视频）。
 
@@ -498,7 +517,7 @@ faster-whisper 在 755.2s 起进入卡片回路，连续 9 段输出相同句子
 | Tina p02 | 21 | 6 | 外层 gate | #2 | |
 | Tina AI Agent | 36 | 9 | 外层 gate | repair | |
 | EH5jx5qPabU (en) | 34 | 9 | 外层 gate | #2 | 英文长视频，外层避开 slide flip 误判 |
-| FwOTs4UxQS4 (en) | 11 | 6 | **救援** | #2 | 内层漏检 → 事后救援唯一命中 case |
+| FwOTs4UxQS4 (en) | 11 | 6 | **中层 gate** | #2 | generic_ratio=0.82，2026-05-24 加中层 gate 后由先验降级；原救援层 case 退化为 0 触发安全网 |
 | WSPChlfxJyA (en) | 27 | (fb) 12 | 外层 gate | fb | **唯一 fallback**：与 VL 无关，Qwen-EN catch-all |
 | BV1C8L36jEYN (新, 美食 vlog) | 2 | 2 | used | #1 | 短视频边界，n_chunks=2 无需 gate |
 | BV1pB5T6hEWW p1 (新, 英语播客) | 10 | 3 | used | #2 | ASR 后验校正 lang→en，Qwen 改用 en prompt 切粗粒度 |
@@ -514,8 +533,9 @@ faster-whisper 在 755.2s 起进入卡片回路，连续 9 段输出相同句子
 | 一次过 (attempt 1) | 8/24 |
 | Retry-with-feedback (attempt 2-3) | 12/24 |
 | Programmatic repair (promote/missing/oversize) | 3/24 |
-| 救援触发 | 1/24 |
+| 救援触发 | 0/24（加中层 gate 后退化为安全网；原 1/24 由中层先验降级覆盖） |
 | 外层 gate 降级 | 6/24 |
+| 中层 gate 降级 | 1/24（FwOTs，2026-05-24 新增） |
 | 内层 gate 降级 | 2/24 |
 | Fallback TextTiling | 1/24 |
 
@@ -530,16 +550,28 @@ p44 calibration 时担心的"过拟合单 case"在新增的网络 p47 上得到�
 attempt 2 一次过、零 repair。这是 heuristic 不依赖 calibration sample 的关键
 泛化证据。
 
-**(b) 救援层唯一命中 — FwOTs**
+**(b) 中层 gate 唯一命中 — FwOTs（原救援层 case，2026-05-24 升级）**
 
-FwOTs (n=11 英文) 是三层架构中唯一触发救援的 case。原因：英文 caption 5-8
-（"The presenter explains... / The video explains... / The diagram illustrates...
-/ The process involves..."）句法模板化但内容同质（都讲"compiling/summarizing/
+FwOTs (n=11 英文 AI Agent 教程) 早期在两层 gate（外层 + 内层）下漏检：英文 caption
+5-8（"The presenter explains... / The video explains... / The diagram illustrates...
+/ The process involves..."）句法模板化但内容同质（都讲 "compiling/summarizing/
 posts"），LLM 在 word-bag 之上的语义层做主题归并漏 chunks。三种 lexical 指标
 （char-prefix、char-Jaccard@.7、word-Jaccard@.2）的 max consecutive run 均不足以
-触发先验降级——任何 lexical heuristic 都救不了。事后救援检测到"VL 用了但 3
-attempts + repair 全失败"后自动 retry 不带 caption，从原 fallback TextTiling 5
-章救回 LLM 6 章。
+触发先验降级——任何 lexical heuristic 都救不了。
+
+**第一版方案（2026-05-19）**：救援层兜底——LLM 全失败 + VL 在用时 retry 不带
+caption，FwOTs 从原 fallback TextTiling 5 章救回 LLM 6 章。
+
+**第二版方案（2026-05-24）**：把 §5.4.3 早期被 0.50 阈值漏判的 generic_ratio 指标
+扩英文词典（动作动词 +ing/-s 形态 + 角色/载体类 instructor/diagram/slide）+
+收紧阈值到 0.65 后纳入作为**中层 gate**。FwOTs caption generic_ratio=0.82 直接触发
+先验降级，attempt #2 一次过、无需救援 retry。原救援层降为 corpus 0 触发的安全网。
+
+**架构演进意义**：FwOTs 同时验证了 (1) 单一 lexical 指标对跨语言不鲁棒
+（char-prefix 中文有效英文无效）；(2) 早期被弃的 heuristic（generic_ratio）在
+扩 corpus + 词典 + 调阈值后可重生；(3) 救援层作为安全网即便 0 触发也有价值——
+它的存在迫使开发者显式标注"VL 在用但 LLM 全失败"这一信号，为后续 heuristic
+迭代提供 ablation 点。
 
 **(c) 三层架构外的失败 — WSPChlfxJyA**
 
@@ -552,14 +584,16 @@ attempt 2/3 仍持续 missing 9 个 chunks（chunk [10-13, 18-22]），repair_mi
 凶手"——救援层不触发于该 case（VL 已被外层降级），避免了浪费 retry budget 在
 错误方向上。
 
-**采纳的默认配置**（写入 src/pipeline.py 三层）：
+**采纳的默认配置**（写入 src/pipeline.py 四层，2026-05-24 加中层后）：
 1. 外层 `n_chunks > 15` → caption 不喂 LLM
-2. 内层 `max_prefix_run ≥ 4 且 (n - run) ≥ 3` → caption 不喂 LLM
-3. 救援：LLM 3 attempts + repair 全失败 + VL 在用 → 自动一次 retry without caption
+2. 中层 `generic_ratio ≥ 0.65` → caption 不喂 LLM
+3. 内层 `max_prefix_run ≥ 4 且 (n - run) ≥ 3` → caption 不喂 LLM
+4. 救援：LLM 3 attempts + repair 全失败 + VL 在用 → 自动一次 retry without caption
 
-24 视频实测净时间增量 < 2% (6 视频先验降级节省 ~caption 时间，1 视频救援增 ~10s
-LLM)，换 96% LLM 切分覆盖率。新增 5 视频未引入任何 fallback / repair / 救援，
-全部走 LLM 主路径（1 × attempt 1 + 2 × attempt 2 + 2 × attempt 3）。
+24 视频实测净时间增量 < 2% (6 视频外层 + 1 视频中层先验降级节省 ~caption 时间)，
+换 96% LLM 切分覆盖率。中层 gate 接管原唯一救援 case（FwOTs），救援层退化为
+corpus 0 触发的安全网。新增 5 视频未引入任何 fallback / repair / 救援，全部走
+LLM 主路径（1 × attempt 1 + 2 × attempt 2 + 2 × attempt 3）。
 
 ### 6.5 第二轮工程加固迭代（2026-05-19）
 
@@ -1024,21 +1058,24 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 **改动**：
 1. **Qwen2.5-7B-AWQ 替代 Pegasus 切章**：把 chunk headlines + 视觉 cue 喂给 LLM 让其直接输出层级化大纲 JSON。配 retry-with-feedback 机制（attempt 1 失败时把具体错误回灌让 LLM 自我修正）
 2. **B1 两步法**：第一步 LLM 切分章节边界，第二步用独立 LLM call **只看本章 chunk headlines** 重写章标题——避开"一次切+命名"时邻章 headline 串台。修了 p38 标题串台 bug
-3. **VLM caption 视觉信号升级**：Qwen2.5-VL-7B-AWQ 替代单 CLIP cosine 浮点数，每章 1 句"教学相关"自然语言 caption，喂给 segment LLM 作 prompt cue。配三层自适应门控（外层 n>15 / 内层 prefix_run≥4 / 救援层 LLM 全失败 + VL 在用）
+3. **VLM caption 视觉信号升级**：Qwen2.5-VL-7B-AWQ 替代单 CLIP cosine 浮点数，每章 1 句"教学相关"自然语言 caption，喂给 segment LLM 作 prompt cue。配四层自适应门控（外层 n>15 / 中层 generic_ratio≥0.65 / 内层 prefix_run≥4 / 救援层 LLM 全失败 + VL 在用，最后一层加中层后退化为 0 触发安全网）
 4. **英文视频支持**：句号本土化（中文"。"→ 英文"."）、Qwen 英文 prompt、wrapup 大小写敏感、`generate_headlines` parse 容错
 5. **附录 B 切分路径表**：9 视频 LLM 100% 覆盖率全量统计写入论文
 
 **量化效果**：
 - LLM 切分覆盖率 **9/9 = 100%**（v1 TextTiling 在某些长视频上 fallback 比例不可忽略，详见 §5.7 / 附录 B）
 - attempt 1 直接通过 22%；retry-with-feedback 救活 67%；程序化 `_repair_oversize` 救活剩余 11%
-- 多模态 ablation §5.4：mm 加速 retry 通过 3/9，无回归；VL caption 三层门控扩到 24 视频后 LLM 覆盖率 23/24 = 96%
+- 多模态 ablation §5.4：mm 加速 retry 通过 3/9，无回归；VL caption 四层门控扩到 24 视频后 LLM 覆盖率 23/24 = 96%（中层 gate 2026-05-24 加入，接管原唯一救援 case FwOTs）
 
 **核心发现 — LLM-as-segmenter 失败模式的语言对偶性**（§5.4.5）：
-- 中文 caption 主题词整段重复（"以太网交换机的自学习功能..."×5）→ **char-prefix 共享**抓得到
-- 英文 caption 句法模板化但语义同质（"The X verbs Y..."）→ word-bag Jaccard 全失效
-- 任何 lexical 先验门控都救不了英文这一模式，**反应式救援**是唯一合理架构
+- 中文 caption 主题词整段重复（"以太网交换机的自学习功能..."×5）→ **char-prefix 共享**抓得到（内层 gate）
+- 英文 caption 句法模板化但语义同质（"The X verbs Y..."）→ char-prefix 失效但
+  **generic 动词词频**有强信号（中层 gate，FwOTs 0.82）
+- 早期判定"任何 lexical 先验门控都救不了英文"过于悲观——扩 corpus + 扩词典 +
+  调阈值后 generic_ratio 可作为英文友好的中层 gate。救援层从唯一可行架构降级
+  为安全网，仍保留以应对未知失败模式（2026-05-24 重新评估）
 
-**takeaway**：v4 是本工作架构的最大跃迁——Pegasus → LLM 把"覆盖率"从 TextTiling fallback 救活变为 LLM 主路径 + 程序化兜底。三层 VL 门控的发现路径（lexical 指标失效 → 救援层兜底）也成为论文方法论上的一个 contribution。
+**takeaway**：v4 是本工作架构的最大跃迁——Pegasus → LLM 把"覆盖率"从 TextTiling fallback 救活变为 LLM 主路径 + 程序化兜底。四层 VL 门控（外层/中层/内层/救援）的发现路径——lexical 指标失效 → 救援层兜底 → 扩词典重生为先验 gate——也成为论文方法论上的一个 contribution。
 
 ### 7.5 v5：大类分类 + 模板分发 + 第二轮工程加固（2026-05-19~20）
 
@@ -1111,8 +1148,10 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 | v4 | 2026-05-16~17 | Qwen2.5-7B-AWQ 替代 Pegasus + B1 两步法 + VLM caption 三层门控 + 英文支持 | LLM 覆盖率 9/9→23/24 = 96% | §5.4, §5.7, 附录 B |
 | v5 | 2026-05-19~20 | 大类分类器 + 模板分发 + segment 4 硬规则 + 工程加固 6 项 + 串行加载红线 | 24/24 分类准；6 项端到端可用性修复 | §6.4, §6.5 |
 | v6 | 2026-05-21 | auto_subs stress test 暴露 n≥4 broken + nav 规则合并 + repair_missing 一致性 | 3/3 stress test + 4/4 回归；auto_subs 首次野外触发 | §7.6, 附录 C |
+| v6+ | 2026-05-22 | autoawq Windows 安装陷阱全链路打通（torch DLL/datasets shim） | transformers 4.49 + autoawq 0.2.6 + Qwen2.5-VL 全 OK | §6.5.x |
+| v7 | 2026-05-24 | VL caption 中层 gate (generic_ratio≥0.65) 重生 + 章标题 Python 端校准 (jieba + drop hint) | FwOTs 救援 → 中层先验降级；vlog 域 ASR 错字（烟台/电源）不再漏入章标题 | §5.4.3-4, §6.4 |
 
-**演进的元模式**：v1-v3 主要是"算法精调"（dedupe / md 结构 / fallback），v4 是"架构跃迁"（Pegasus → LLM），v5-v6 转向"系统集成 + 测试方法论"（大类分发 / stress test / 工程红线）。这一阶段切换反映了一个本工作过程中观察到的现象——**算法 metric 的边际回报递减时，工程加固与测试方法论的边际回报反而上升**。
+**演进的元模式**：v1-v3 主要是"算法精调"（dedupe / md 结构 / fallback），v4 是"架构跃迁"（Pegasus → LLM），v5-v6 转向"系统集成 + 测试方法论"（大类分发 / stress test / 工程红线），v7 体现"早期被弃 heuristic 可重生 + prompt 规则冲突时把判定搬 Python"两条新方法论。这一阶段切换反映了一个本工作过程中观察到的现象——**算法 metric 的边际回报递减时，工程加固与测试方法论的边际回报反而上升**。
 
 ## 8 局限性与未来工作 (Limitations & Future Work)
 
@@ -1122,7 +1161,7 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 - **Pegasus 主旨偏移**：8 视频 30 headline 中 2 个 Pegasus 抓错主题（无明显诱因）。注：v4 已用 Qwen2.5-7B-AWQ 替代 Pegasus 章标题（见 §7.4），本条仅遗留在段落 headline 仍用 Pegasus 的子路径
 - **短视频 strict F1 trivial floor**：< 5min / < 5 chunks 视频上 strict F1 是 0/1 结构性二值，仅 F1@1 可靠
 - **英文 LLM-as-segmenter 在 27+ chunks 长视频上的 catch-all bias**：WSPChlfxJyA 唯一 fallback case（§6.4），与 VL 无关，是 Qwen 模型本身在长英文输入上的退化模式，prompt 工程无法根治
-- **VL caption 在 PPT/教程域的过切风险**（§5.4.3-5.4.5）：三层门控已大幅缓解但仍是 opt-in 而非默认开
+- **VL caption 在 PPT/教程域的过切风险**（§5.4.3-5.4.5）：四层门控已大幅缓解但仍是 opt-in 而非默认开
 - **大模型不能并行常驻**（v5 黑屏事故经验，见 §7.5）：12GB VRAM 限制下 Qwen-7B + Qwen-VL + Whisper 必须严格串行，付出 ~30-60s/模型的加载时间代价。这是硬件而非算法约束
 - **ctranslate2 native abort 第二条触发路径**（v6+，见 §6.5.1.bis）：`transcribe()` 实际完成后、Python 收尾前仍可能崩。L1/L2 解码约束与 hallucination gate 无法预防此路径，只能用 L3 流式增量落盘做兜底。这是 native 层资源释放的健壮性问题，非 Python 端可彻底根除
 - **章 abstract LLM input 的"标题字面化"陷阱**（v6+，见 §6.5.1.bis 关联讨论）：早期 `generate_chapter_abstracts` 只喂 LLM headline 关键词，未喂 ASR 实际文本片段，导致 vlog 域章标题（如"心理线" / "皇上"）被 LLM 按字面跨域解读为"股市心理指标" / "清朝皇帝"。本工作通过在 LLM input 加入 ASR snippet + user_prompt "严格根据「内容」"双重约束修复，3-vlog 回归 0 hallucinate；但这一陷阱揭示了 prompt design 中"input 信息完备性"对 hallucination 控制的决定性作用，是后续 LLM 流水线设计应优先核查的维度
@@ -1131,7 +1170,7 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 
 1. **ASR confidence 二级判别**：当前 `[?]` 标记基于 segment-level confidence，未来引入 word-level confidence + LLM 语义合理性检查识别同音字错字
 2. **英文 caption 内层 gate**：v4 三层架构对英文短视频 caption 同质化的内层漏检通过事后救援兜底（§5.4.5），未来可探索基于 sentence embedding 的语义级 gate 替代 lexical 路径
-3. **stress test 范式扩展**：v6 仅对 auto_subs 兜底做了 stress test（§7.6），未来扩展到 `_repair_oversize` / `_repair_missing_chunks` / VL 三层 gate 等其他兜底机制，建立"每个兜底必配 stress test"的开发流程
+3. **stress test 范式扩展**：v6 仅对 auto_subs 兜底做了 stress test（§7.6），未来扩展到 `_repair_oversize` / `_repair_missing_chunks` / VL 四层 gate 等其他兜底机制，建立"每个兜底必配 stress test"的开发流程
 4. **跨域分类器升级**：v5 启发式分类器在 24/24 上准确，但未来加入更多 long-tail 域（如直播切片 / 综艺解说 / 在线课程录屏）时启发式可能不够，需要考虑轻量 LLM 二级判别
 5. **前端时间戳点击跳转**：v5 已落地 Next.js + Plyr 前端框架，未来加深度集成（章节书签 / 关键帧 hover 预览 / 跨视频术语跳转）
 6. **多模态评估指标**：当前 §5 全部基于章节边界 F1，未来需要面向"学习笔记"本身的指标——如术语表覆盖率、章末小结召回率、TOC 与人工目录的一致性
@@ -1146,7 +1185,7 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 
 **（1）耦合通路的显式化**——v2 的 chunker × dedupe 二维 ablation 表明，dedupe 收益仅在 texttile + cc=400 上显著、cc=800 与 chars chunker 上中性。这一不对称性证实 dedupe 的本质是"关键词频次去噪"而非简单文本清洗，并把"ASR 失败 → 下游 segmenter 污染"这条以往被忽视的通路定量化。
 
-**（2）反直觉的多模态融合定位**——v1 的 α=0.3 与 v4 的 VL caption 三层门控共同揭示一个看似矛盾的事实：视觉信号在 PPT 教学视频上**作为 tie-breaking 比作为主导更适合**，因为 slide 翻页 ≠ 章节切换；进一步的"LLM-as-segmenter 失败模式的语言对偶性"（§5.4.5）表明，中文的 lexical 先验门控有效但英文需要事后救援，因为英文 caption 句法模板化使表层重复信号失效。
+**（2）反直觉的多模态融合定位**——v1 的 α=0.3 与 v4-v7 的 VL caption 四层门控共同揭示一个看似矛盾的事实：视觉信号在 PPT 教学视频上**作为 tie-breaking 比作为主导更适合**，因为 slide 翻页 ≠ 章节切换；进一步的"LLM-as-segmenter 失败模式的语言对偶性"（§5.4.5）表明，中文的 lexical 先验门控（char-prefix 内层）有效但英文需要不同信号——v4-v5 一度认为英文只能靠事后救援，v7 把早期被弃的 generic_ratio heuristic 扩词典 + 调阈值后纳入作为中层 gate，证明"早期被弃的 heuristic 可在扩 corpus 后重生"也是一条值得论文方法论上提的发现路径。
 
 **（3）兜底机制的 stress test 范式**——v6 通过构造倔强单顶层 mock LLM 揭示了 v5 标"未野外触发因此 belt-and-suspenders"的 auto_subs 其实在 n ≥ 4 上**一直 broken**，原因是 _diagnose / _validate 之间一条 children-blind 规则的不一致。这个发现的方法论意义大于 bug 本身：**对兜底机制必须做系统化 stress test，不能用"野外未触发"作为正确性证据**。
 

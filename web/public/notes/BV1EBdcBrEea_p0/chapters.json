@@ -1,0 +1,97 @@
+{
+  "chapters": [
+    {
+      "title": "810显卡",
+      "start": 0.0,
+      "end": 242.74,
+      "indices": [
+        0,
+        1,
+        2
+      ],
+      "abstract": "本段展示了影驰金属大师 2666 显卡及影驰 1TB 硬盘，讨论了购买 6500X7 显卡的失误。",
+      "title_zh": "810显卡",
+      "title_en": "810 Graphics Card",
+      "abstract_zh": "本段展示了影驰金属大师 2666 显卡及影驰 1TB 硬盘，讨论了购买 6500X7 显卡的失误。",
+      "abstract_en": "This section showcases the GIGABYTE Metal Master 2666 graphics card and the GIGABYTE 1TB hard drive, discussing the mistake of purchasing the 6500X7 graphics card."
+    },
+    {
+      "title": "5600显卡",
+      "start": 242.74,
+      "end": 366.62,
+      "indices": [
+        3
+      ],
+      "abstract": "本段描述了烟台显卡的价格，指出即使测试完也不值 1600 元，仅值几十元。",
+      "title_zh": "5600显卡",
+      "title_en": "5600 Graphics Card",
+      "abstract_zh": "本段描述了烟台显卡的价格，指出即使测试完也不值 1600 元，仅值几十元。",
+      "abstract_en": "This section describes the prices of graphics cards in Yantai, noting that even after testing, they are not worth 1600 yuan but only a few dozen yuan."
+    },
+    {
+      "title": "3070显卡",
+      "start": 366.94,
+      "end": 484.86,
+      "indices": [
+        4
+      ],
+      "abstract": "本段探讨了 3070 显卡的价值，认为其售价应为 9000 元，但实际价值不到 1000 元。",
+      "title_zh": "3070显卡",
+      "title_en": "3070 Graphics Card",
+      "abstract_zh": "本段探讨了 3070 显卡的价值，认为其售价应为 9000 元，但实际价值不到 1000 元。",
+      "abstract_en": "This section explores the value of the 3070 graphics card, suggesting it should be priced at 9000 yuan but is actually worth less than 1000 yuan."
+    },
+    {
+      "title": "1000块钱",
+      "start": 488.08,
+      "end": 716.26,
+      "indices": [
+        5
+      ],
+      "abstract": "本段涉及京东牌 1500 元电脑配件，讨论 2080 显卡的实际价值，认为其远低于 1500 元。",
+      "title_zh": "1000块钱",
+      "title_en": "1000 Yuan",
+      "abstract_zh": "本段涉及京东牌 1500 元电脑配件，讨论 2080 显卡的实际价值，认为其远低于 1500 元。",
+      "abstract_en": "This section covers JD brand computer components priced at 1500 yuan, discussing the actual value of the 2080 graphics card, which is much lower than 1500 yuan."
+    },
+    {
+      "title": "X79与580",
+      "start": 716.58,
+      "end": 946.48,
+      "indices": [
+        6,
+        7
+      ],
+      "abstract": "本段介绍了 X79 主板和 RX580 显卡，同时提到了 580 显卡的价格，并讨论了不同品牌的选择。",
+      "title_zh": "X79与580",
+      "title_en": "X79 and 580",
+      "abstract_zh": "本段介绍了 X79 主板和 RX580 显卡，同时提到了 580 显卡的价格，并讨论了不同品牌的选择。",
+      "abstract_en": "This section introduces the X79 motherboard and the RX580 graphics card, mentioning the price of the 580 graphics card and discussing different brand choices."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "over_segmented"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 947.768875,
+    "n_chunks": 8,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 1,
+    "vlm_generic_ratio": 0.625,
+    "vlm_degraded_reason": null,
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": false
+  }
+}
