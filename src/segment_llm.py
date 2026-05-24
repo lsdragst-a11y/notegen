@@ -733,6 +733,15 @@ def _dedupe_common_topic_token(titles: list[str]) -> list[str]:
         if not new or not re.search(r"[\w一-鿿]", new):
             new = orig
         out.append(new)
+    # H1: 剥后过短守卫 — 若 ≥1/3 章标题 < 4 字（"路由"/"通告与数据库"这种），
+    # 说明被剥的 token 不是 "NAT与IP/NAT功能" 模板冗余前缀而是 OSPF/链路状态
+    # 类真主题词；整批回退原标题。p65 实测"链路状态"被错杀
+    too_short_threshold = max(1, n // 3)
+    n_too_short = sum(1 for t in out if len(t) < 4)
+    if n_too_short >= too_short_threshold:
+        print(f"      [title-dedup] 剥 {strip} 后 {n_too_short}/{n} 章标题 < 4 字，"
+              f"判定为真主题词被错剥，回退原标题", flush=True)
+        return titles
     if any(out[i] != titles[i] for i in range(n)):
         print(f"      [title-dedup] 剥离主题词 {strip} 自 {n} 章标题", flush=True)
     return out
@@ -1976,7 +1985,13 @@ CHAPTER_RECAP_SYSTEM = """你是教学视频的**复习要点**生成助手。�
    - 命题模板：`X 是 Y / X 用 Y / X 因为 Y 所以 Z / X 的步骤：A→B→C`
 7. **跨章去重**：本章 bullet 的核心名词若已在其他章 bullet 出现，
    必须从更细的子机制 / 对比 / 步骤角度切入；不要让 N 章里都挂同一个名词短语
-8. 不带句末标点（不要 ?!。）
+8. **禁跨域 hallucination**：bullet 的术语必须来自本章 chunks 实际出现的内容，
+   禁止编入本章未涉及的概念
+   - ✗ 反例（计网视频）："- 距离向量算法通过P-V操作同步" —— P-V 操作是 OS
+     信号量术语，路由算法根本没有；LLM 看到"同步/收敛"就跨域联想，必须挡
+   - ✗ 反例（OS 视频）："- 进程调度依赖 TCP 三次握手" —— TCP 是计网术语
+   - ✓ 正确做法：如果不确定某术语本章是否真讲过，就不要写
+9. 不带句末标点（不要 ?!。）
 
 ## 输出格式（绝对硬约束，违反直接重试）
 

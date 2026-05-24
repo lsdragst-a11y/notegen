@@ -552,11 +552,18 @@ def build_glossary(summaries: list[dict], top_k: int = 15,
         min_df = 2 if len(summaries) >= 8 else 1
     df: dict[str, int] = {}
     first_idx: dict[str, int] = {}
+    # G2: 例子标识符 (R1/R23/Net1/AS65000) 不是术语，是讲师举例的占位名
+    # p65 实测术语表里 R1/R23/Net1 上榜挤掉真正术语
+    # 规则：1-2 字符大写前缀 + 数字 (R1/R23/AS65000) 或 Net + 数字 (Net0/Net1)
+    # 保留：IPv4/HTTP2/RFC1918/SHA256/BGP4 等 ≥3 字母前缀的真术语
+    _example_label_re = re.compile(r"^[A-Z]{1,2}\d+$|^Net\d+$")
     for i, item in enumerate(summaries):
         for kw in set(item.get("keywords", []) or []):
             if len(kw) < 2 or _is_stopword(kw):
                 continue
             if _is_short_english_filler(kw):
+                continue
+            if _example_label_re.match(kw):
                 continue
             df[kw] = df.get(kw, 0) + 1
             first_idx.setdefault(kw, i)
