@@ -520,15 +520,22 @@ def _promote_oversized(outline: dict, max_chunks_per_top: int = 5) -> dict:
 
 
 def _repair_oversize(parsed: dict, chunks: list[dict],
-                      max_chunks_per_top: int = 5) -> dict:
+                      max_chunks_per_top: int = 5,
+                      example_chunks: Optional[set[int]] = None) -> dict:
     """把 chunks > max 的 catch-all 顶层程序化拆成 ≤ max 的子段。
     用 chunks 间 keyword Jaccard 距离找内部最大跳变拆点；keyword 信息不全时
     均分兜底。新增子段命名 "{orig title} (Pt N)"。
+
+    I4-b: example_chunks（题目段 idx 集合）若提供，在 example/非 example 边界
+    人为加大 gap 距离（+1.0），让拆点优先落在那里。p57 实测题目段 11-13 被
+    catch-all 后 repair_oversize 按 Jaccard 切到 [10-14]，I4-b 后会强制把
+    边界 10|11 和 13|14 拆开。
 
     Motivation: Qwen 在英文 30+ chunks 视频上有 catch-all bias（[[project-english-video-support]]
     经验），prompt 工程无法根治；retry-with-feedback 也常不收敛。`_promote_oversized`
     只能救"有 children"的 case，没 children 的 catch-all 需要这个程序化兜底。
     """
+    example_chunks = example_chunks or set()
     new_chapters = []
     for ch in parsed.get("chapters", []):
         chs = sorted(set(c for c in (ch.get("chunks") or []) if isinstance(c, int)))
@@ -548,19 +555,60 @@ def _repair_oversize(parsed: dict, chunks: list[dict],
             ka = set(chunks[ai].get("keywords") or [])
             kb = set(chunks[bi].get("keywords") or [])
             jac = len(ka & kb) / len(ka | kb) if (ka and kb) else 0.0
-            gaps.append((i, 1.0 - jac))
+            d = 1.0 - jac
+            # I4-b: 例题/非例题边界加大 gap 让拆点优先落到这里
+            a_is_ex = ai in example_chunks
+            b_is_ex = bi in example_chunks
+            if a_is_ex != b_is_ex:
+                d += 1.0  # >1 远大于任何 Jaccard 距离
+            gaps.append((i, d))
         # 取 top n_parts-1 个最大间隙做拆点（间隙序号 = 拆点在 chs[i] 后）
-        split_after = sorted([g[0] for g in sorted(gaps, key=lambda x: -x[1])[:n_parts - 1]])
-        parts: list[list[int]] = []
-        start = 0
-        for sa in split_after:
-            parts.append(chs[start:sa + 1])
-            start = sa + 1
-        parts.append(chs[start:])
-        # 校验：拆完仍有 > max 的部分（语义拆点不均），fallback 均分
+        # I4-b: 例题边界 (d ≥ 1.0 因为 +1.0 加成) 作必选 split
+        required = {i for i, d in gaps if d >= 1.0}
+        # 剩余按 Jaccard 距离从大到小排，凑 n_parts-1 个
+        remaining_gaps = sorted([g for g in gaps if g[0] not in required],
+                                key=lambda x: -x[1])
+        n_extra = max(0, n_parts - 1 - len(required))
+        selected = set(required) | {g[0] for g in remaining_gaps[:n_extra]}
+        # 若结果仍有 part > max，迭代补 split：在最大的 oversize part 里加
+        # Jaccard 顶 gap，直到所有 part ≤ max 或 split 用尽
+        def _make_parts(selected_splits: set[int]) -> list[list[int]]:
+            ss = sorted(selected_splits)
+            out: list[list[int]] = []
+            start_i = 0
+            for sa in ss:
+                out.append(chs[start_i:sa + 1])
+                start_i = sa + 1
+            out.append(chs[start_i:])
+            return out
+        safety = len(chs)
+        while safety > 0:
+            safety -= 1
+            parts = _make_parts(selected)
+            oversize = [(pi, p) for pi, p in enumerate(parts) if len(p) > max_chunks_per_top]
+            if not oversize:
+                break
+            # 在最大的 oversize part 里找 Jaccard 顶 gap
+            pi, biggest_part = max(oversize, key=lambda x: len(x[1]))
+            part_start, part_end = biggest_part[0], biggest_part[-1]
+            candidates = [(gi, d) for gi, d in gaps
+                          if gi not in selected
+                          and part_start <= chs[gi] < part_end]
+            if not candidates:
+                break
+            best_gi = max(candidates, key=lambda x: x[1])[0]
+            selected.add(best_gi)
+        parts = _make_parts(selected)
+        # 兜底：若仍有 oversize（极少见），均分该 part 内部
         if any(len(p) > max_chunks_per_top for p in parts):
-            parts = [chs[i:i + max_chunks_per_top]
-                     for i in range(0, len(chs), max_chunks_per_top)]
+            new_parts: list[list[int]] = []
+            for p in parts:
+                if len(p) <= max_chunks_per_top:
+                    new_parts.append(p)
+                else:
+                    for i in range(0, len(p), max_chunks_per_top):
+                        new_parts.append(p[i:i + max_chunks_per_top])
+            parts = new_parts
         for pi, p in enumerate(parts, 1):
             new_chapters.append({
                 "title": f"{title} (Pt {pi})" if len(parts) > 1 else title,
@@ -569,6 +617,35 @@ def _repair_oversize(parsed: dict, chunks: list[dict],
         print(f"      [repair-oversize] '{title}' {len(chs)} chunks -> "
               f"{len(parts)} parts {[len(p) for p in parts]}", flush=True)
     return {"chapters": new_chapters}
+
+
+# I4: 例题段识别。教学视频（特别王道考研）每集 30-40% 时间讲题，"原理段"
+# 跟"例题段"语义跳跃大，LLM 倾向把它们混到一章 → 章主题混杂。
+# Python 端用正则信号识别例题 chunk，让 segmenter 把它们独立成章。
+_EXAMPLE_SIGNALS = [
+    re.compile(r"选项\s*[ABCDＡ-Ｄ]"),
+    re.compile(r"[ABCDＡ-Ｄ]\s*选项"),
+    re.compile(r"答案\s*[选是为]"),
+    re.compile(r"这[一]?道题|本题|这一题"),
+    re.compile(r"^题\s*[\d一二三四五]+|^第\s*[\d一二三四五]+\s*题"),
+    re.compile(r"题目.{0,8}[解分讲]"),
+    # 数值答案模式（"距离 X 等于数字"）
+    re.compile(r"(?:距离|长度|开销|代价|权重|总值)[^。]{0,15}(?:等于|是|为)\s*[0-9]"),
+    # 路径选择题特征（"从 X 走" + 数值）
+    re.compile(r"从[A-Z][^。]{0,12}走[^。]{0,15}[0-9]+"),
+]
+
+
+def _detect_example_chunks(chunks: list[dict]) -> list[int]:
+    """识别哪些 chunk 是题目/例题讲解段（≥2 个信号 hit 即认定）。
+    返回 chunk_idx 列表（升序）。"""
+    out: list[int] = []
+    for i, c in enumerate(chunks):
+        text = c.get("text", "") or ""
+        hits = sum(1 for pat in _EXAMPLE_SIGNALS if pat.search(text))
+        if hits >= 2:
+            out.append(i)
+    return out
 
 
 def _repair_too_few_chapters(parsed: dict, chunks: list[dict],
@@ -607,8 +684,11 @@ def _repair_too_few_chapters(parsed: dict, chunks: list[dict],
                 best_dist = dist
                 best_gap_idx = gi
         left, right = chs[:best_gap_idx + 1], chs[best_gap_idx + 1:]
-        new_left = {"title": f"{title} (Pt 1)", "chunks": left}
-        new_right = {"title": f"{title} (Pt 2)", "chunks": right}
+        # I2: 拆出的姊妹章用 _split_pair_id 标记，refine_chapter_titles 据此
+        # 强制差异化命名（避免 "X与Y" / "X与Z" 都共享 X 主题词）
+        pair_id = f"split_{i}_{len(chapters)}"
+        new_left = {"title": f"{title} (Pt 1)", "chunks": left, "_split_pair_id": pair_id}
+        new_right = {"title": f"{title} (Pt 2)", "chunks": right, "_split_pair_id": pair_id}
         chapters = chapters[:i] + [new_left, new_right] + chapters[i + 1:]
         print(f"      [repair-too-few] '{title}' {len(chs)} chunks -> "
               f"split @ {best_gap_idx} ({len(left)}+{len(right)}) for ≥{min_required} 顶层",
@@ -922,6 +1002,9 @@ def _validate_outline(outline: dict, n_chunks: int,
             return None
         seen.extend(chs)
         ch_out = {"title": str(ch["title"]).strip(), "chunks": chs}
+        # I2: 保留 _split_pair_id 让 refine_chapter_titles 给姊妹章差异命名
+        if ch.get("_split_pair_id"):
+            ch_out["_split_pair_id"] = ch["_split_pair_id"]
         # 校验 children
         children = ch.get("children")
         if isinstance(children, list) and children:
@@ -1071,11 +1154,37 @@ def segment_hierarchical(chunks: list[dict],
             f"顶层数典型在 **{min_tops_arith}-{min(6, min_tops_arith+2)}** 之间。"
             f"主题更细可超，但每章必须是**连续区间**——宁可少 1 章也不要为凑数跳着选 chunks。\n"
         )
+    # I4: 教学视频例题段识别 — 让 segmenter 把题目讲解段独立成章
+    example_clause = ""
+    example_set: set[int] = set()  # I4-b: 给 _repair_oversize 用，强制例题边界拆
+    if category in ("teaching", "popsci"):
+        example_idxs = _detect_example_chunks(chunks)
+        example_set = set(example_idxs)
+        if len(example_idxs) >= 2:
+            # 取连续 run（合并相邻的例题 chunks 作单一例题章）
+            runs: list[list[int]] = []
+            for idx in example_idxs:
+                if runs and idx == runs[-1][-1] + 1:
+                    runs[-1].append(idx)
+                else:
+                    runs.append([idx])
+            # 只把 ≥2 chunks 的 run 当真例题段（孤立 1 chunk 不强制独立）
+            example_runs = [r for r in runs if len(r) >= 2]
+            if example_runs:
+                run_strs = [f"chunks [{','.join(str(i) for i in r)}]" for r in example_runs]
+                example_clause = (
+                    f"\n**例题段约束**：识别到以下 chunks 含题目/选项/数值答案讲解信号——\n"
+                    f"  {' / '.join(run_strs)}\n"
+                    f"这些段是\"题目讲解\"（≠ 原理讲解），**必须独立成章或归到一个\"练习\n"
+                    f"题\"章**，禁止跟原理段混到一章里。章标题用\"...例题\"/\"...练习\"/\n"
+                    f"\"...题目讲解\"等明确区分。\n"
+                )
     user_prompt = (
         f"{cat_label}共 {n} 个原子段（chunk_idx 0~{n-1}）：\n\n"
         f"{chunk_text}\n"
         f"{visual_block}\n"
         f"{arith_clause}"
+        f"{example_clause}"
         f"**自检清单**（输出前 mentally verify，每条都过才允许输出）：\n"
         f"1. 顶层数 ∈ [3, 6]\n"
         f"2. 每个顶层 chunks 数 ≤ {chunks_per_top_cap}（最易踩；主题集中也必须拆）\n"
@@ -1213,7 +1322,9 @@ def segment_hierarchical(chunks: list[dict],
             meta["repair_used"].append("repair_missing")
             repaired = _promote_oversized(repaired, max_chunks_per_top=chunks_per_top_cap)
             before_oversize_chs = [len(c.get("chunks") or []) for c in repaired.get("chapters", [])]
-            repaired = _repair_oversize(repaired, chunks, max_chunks_per_top=chunks_per_top_cap)
+            repaired = _repair_oversize(repaired, chunks,
+                                         max_chunks_per_top=chunks_per_top_cap,
+                                         example_chunks=example_set)
             after_oversize_chs = [len(c.get("chunks") or []) for c in repaired.get("chapters", [])]
             if before_oversize_chs != after_oversize_chs:
                 meta["repair_used"].append("repair_oversize")
@@ -1533,8 +1644,29 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
         "进入任何章/片段标题。若该段所有关键名词都被标禁，则该段不能单独主导\n"
         "命名，必须借同章其他段或共同高频词抽象。\n"
         if any_drop else "")
+    # I2: 检测 _split_pair_id（_repair_too_few_chapters 产生的姊妹章）
+    # 给 LLM 强提示：这些姊妹章必须用不同核心名词命名
+    pair_map: dict[str, list[int]] = {}
+    for ci, ch in enumerate(chapters):
+        pid = ch.get("_split_pair_id")
+        if pid:
+            pair_map.setdefault(pid, []).append(ci + 1)
+    sibling_clause = ""
+    if pair_map:
+        sibling_lines = []
+        for pid, sib_chs in pair_map.items():
+            if len(sib_chs) >= 2:
+                sib_str = " / ".join(f"第 {x} 章" for x in sib_chs)
+                sibling_lines.append(f"  - {sib_str}")
+        if sibling_lines:
+            sibling_clause = (
+                "\n⚠️ **姊妹章差异命名硬约束**：以下章节原本是 LLM 切分时归为 1 章被\n"
+                "Python 程序化拆开的，**必须用完全不重叠的核心名词命名**——禁止\n"
+                "两章都用同一个主题词（如不要 ch1=\"距离向量与自治\" + ch3=\"分层\n"
+                "次路由与自治\" 都共享\"自治\"）。每章用本章 chunks 独有的关键词锚定：\n"
+                + "\n".join(sibling_lines) + "\n")
     user_prompt = (f"共 {K} 章/片段，请按顺序命名。\n"
-                   f"{drop_clause}\n"
+                   f"{drop_clause}{sibling_clause}\n"
                    f"{body}\n\n"
                    f"输出 JSON 数组（必须 {K} 个元素）：")
     model, tok = load_model(model_id)
