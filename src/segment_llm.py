@@ -571,6 +571,51 @@ def _repair_oversize(parsed: dict, chunks: list[dict],
     return {"chapters": new_chapters}
 
 
+def _repair_too_few_chapters(parsed: dict, chunks: list[dict],
+                              min_required: int = 3,
+                              max_chunks_per_top: int = 5) -> dict:
+    """LLM 输出 < min_required 顶层时（典型：n=9 视频 LLM 出 2 章）程序化拆分
+    最大章节直到顶层数 ≥ min_required。每次拆分用 Jaccard 最小间隙点切。
+
+    Motivation: _repair_oversize 只拆 > max_chunks_per_top 的章，不补章数。
+    n=9 视频 LLM 倾向 5+4 两章都不超 cap，但违反 ≥3 顶层。这个 repair 接管。
+    """
+    chapters = list(parsed.get("chapters") or [])
+    safety = 8  # 兜底防死循环
+    while len(chapters) < min_required and safety > 0:
+        safety -= 1
+        # 找 chunks 数最多的可拆章（≥2 chunks 才能拆）
+        splittable = [(i, ch) for i, ch in enumerate(chapters)
+                      if len(ch.get("chunks") or []) >= 2 and not (ch.get("children") or [])]
+        if not splittable:
+            break
+        i, ch = max(splittable, key=lambda x: len(x[1].get("chunks") or []))
+        chs = sorted(set(c for c in ch["chunks"] if isinstance(c, int)))
+        if len(chs) < 2:
+            break
+        title = ch.get("title", "") or "Section"
+        # 找 Jaccard 最大距离间隙作拆点（中间附近优先）
+        best_gap_idx, best_dist = len(chs) // 2 - 1, -1.0
+        for gi in range(len(chs) - 1):
+            ai, bi = chs[gi], chs[gi + 1]
+            if ai >= len(chunks) or bi >= len(chunks):
+                continue
+            ka = set(chunks[ai].get("keywords") or [])
+            kb = set(chunks[bi].get("keywords") or [])
+            dist = 1.0 - (len(ka & kb) / len(ka | kb) if (ka and kb) else 0.0)
+            if dist > best_dist:
+                best_dist = dist
+                best_gap_idx = gi
+        left, right = chs[:best_gap_idx + 1], chs[best_gap_idx + 1:]
+        new_left = {"title": f"{title} (Pt 1)", "chunks": left}
+        new_right = {"title": f"{title} (Pt 2)", "chunks": right}
+        chapters = chapters[:i] + [new_left, new_right] + chapters[i + 1:]
+        print(f"      [repair-too-few] '{title}' {len(chs)} chunks -> "
+              f"split @ {best_gap_idx} ({len(left)}+{len(right)}) for ≥{min_required} 顶层",
+              flush=True)
+    return {"chapters": chapters}
+
+
 def _repair_missing_chunks(parsed: dict, n_chunks: int) -> Optional[dict]:
     """把漏的 chunk_idx 加到时间最近的顶层（左邻优先）。
 
@@ -1172,6 +1217,19 @@ def segment_hierarchical(chunks: list[dict],
             after_oversize_chs = [len(c.get("chunks") or []) for c in repaired.get("chapters", [])]
             if before_oversize_chs != after_oversize_chs:
                 meta["repair_used"].append("repair_oversize")
+            # Step 2b: 若仍 < 3 顶层（vlog/talk: < 2），程序化拆最大章
+            # p58 实测：n=9 LLM 出 2 章 (4+5)，两章都不超 cap → _repair_oversize
+            # 无效，但仍违反 ≥3 顶层。_repair_too_few_chapters 接管。
+            min_required = 2 if category in ("vlog", "talk") else 3
+            top_count_before = len(repaired.get("chapters") or [])
+            if top_count_before < min_required:
+                repaired = _repair_too_few_chapters(
+                    repaired, chunks,
+                    min_required=min_required,
+                    max_chunks_per_top=chunks_per_top_cap,
+                )
+                if len(repaired.get("chapters") or []) > top_count_before:
+                    meta["repair_used"].append("repair_too_few")
             err = _diagnose_outline(repaired, n, category=category)
             if err is None:
                 parsed = repaired
