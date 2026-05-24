@@ -993,6 +993,12 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         def _slim_ch(ch: dict) -> dict:
             s = {"title": ch["title"], "start": ch["start"], "end": ch["end"],
                  "indices": ch["indices"], "abstract": ch.get("abstract", "")}
+            # 学习类专属 (teaching/popsci)：LLM 生成的章末复习要点 + 自测题
+            # 序列化保留，供 chapters.json 下游使用（web 渲染、aggregate_eval）
+            if ch.get("recap"):
+                s["recap"] = ch["recap"]
+            if ch.get("quiz"):
+                s["quiz"] = ch["quiz"]
             # 双语字段（pipeline 末段 translate_bilingual 填的；缺也兼容老 schema）
             for k in ("title_zh", "title_en", "abstract_zh", "abstract_en"):
                 if ch.get(k):
