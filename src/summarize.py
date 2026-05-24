@@ -844,10 +844,20 @@ def to_markdown(summaries: list[dict], title: str = "网课笔记",
                     confidence_threshold=confidence_threshold,
                     show_marks=show_marks))
             if show_chapter_recap:
-                recap_texts = [summaries[i].get("text", "") for i in ch["indices"]]
-                recap = chapter_recap(recap_texts, max_sentences=2, lang=lang)
-                if recap:
-                    lines.append(f"> **本章小结**：{recap}\n")
+                # LLM 生成的 recap（3-5 条 bullet markdown）优先；缺时 fallback 抽取式
+                llm_recap = ch.get("recap")
+                if llm_recap:
+                    lines.append("> **📝 本章复习要点**：\n>")
+                    for ln in llm_recap.split("\n"):
+                        ln = ln.strip()
+                        if ln:
+                            lines.append(f"> {ln}")
+                    lines.append("")
+                else:
+                    recap_texts = [summaries[i].get("text", "") for i in ch["indices"]]
+                    recap = chapter_recap(recap_texts, max_sentences=2, lang=lang)
+                    if recap:
+                        lines.append(f"> **本章小结**：{recap}\n")
     else:
         for i, item in enumerate(summaries, 1):
             lines.extend(_format_item(item, i, depth=2,

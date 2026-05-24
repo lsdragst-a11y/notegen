@@ -404,6 +404,32 @@ def _apply_chapter_abstracts(chapter_list: list, llm_chapters: bool,
             sub["abstract"] = summarize_chapter(sub["chunks"])
 
 
+def _apply_chapter_recaps(chapter_list: list, llm_chapters: bool,
+                          lang: str = "zh",
+                          category: str = "teaching") -> None:
+    """给每章填 `recap` 字段（3-5 条 markdown bullet 复习要点）。
+
+    仅对 teaching / popsci 类视频生成（vlog/talk 上 recap 无意义）。
+    失败/关闭时不填，summarize.to_markdown 会 fallback 到抽取式 chapter_recap。
+    """
+    if not llm_chapters:
+        return
+    if category in ("vlog", "talk"):
+        return
+    try:
+        from segment_llm import generate_chapter_recaps
+        recaps = generate_chapter_recaps(chapter_list, lang=lang)
+    except Exception as e:
+        print(f"      [llm-chapter-recap] 异常：{e}，回退抽取式 recap",
+              flush=True)
+        return
+    if recaps and len(recaps) == len(chapter_list):
+        for ch, rc in zip(chapter_list, recaps):
+            ch["recap"] = rc
+            first_line = rc.split("\n", 1)[0][:60]
+            print(f"      [chapter recap] L1 -> {first_line}", flush=True)
+
+
 def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         model_size: str = "large-v3", target_ratio: float = 0.25,
         force_asr: bool = False, summarizer: str = "extractive",
@@ -791,6 +817,9 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             if summarizer == "neural":
                 _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang,
                                                           category=inferred_category)
+                # 章末复习要点（learning 类专属，3-5 条 bullet markdown）
+                _apply_chapter_recaps(chapter_list, llm_chapters, lang=resolved_lang,
+                                                          category=inferred_category)
             _mark_wrapup_chapter(chapter_list, lang=resolved_lang)
 
     if chapter_list is None and chapters is not None and chapters != 0:
@@ -862,6 +891,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         # 章节级 abstractive 概述（仅 neural 模式）
         if summarizer == "neural" and chapter_list:
             _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang,
+                                                          category=inferred_category)
+            _apply_chapter_recaps(chapter_list, llm_chapters, lang=resolved_lang,
                                                           category=inferred_category)
         _mark_wrapup_chapter(chapter_list, lang=resolved_lang)
         mm_bounds = [ch["indices"][0] for ch in chapter_list[1:]]
