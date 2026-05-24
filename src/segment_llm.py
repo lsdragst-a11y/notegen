@@ -1816,24 +1816,44 @@ def generate_chapter_abstracts(chapters: list[dict],
     # 长视频 K>=10 时收紧 snippet 长度防 context 超额。
     snippet_max = 200 if K <= 8 else 120
     lines = []
+    any_drop = False
+    all_drops: set[str] = set()
     for ci, ch in enumerate(chapters):
         title = ch.get("title", "")
         lines.append(f"[第 {ci+1} {unit_word}" + (f": {title}" if title else "") + "]")
         for sub_c in ch.get("chunks", []):
             hl = (sub_c.get("headline") or "").strip()
-            if hl:
-                lines.append(f"  - {hl}")
+            kws = sub_c.get("keywords") or []
+            text = sub_c.get("text", "") or ""
+            cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
+            # 标题校准结果：headline 里的 ASR 错字直接从 headline 字面 mask 掉
+            # （drop 词替换成 [?]），让 LLM 看不到原词。比单纯 prompt 警告稳得多
+            hl_display = hl
+            for w in cal["drop"]:
+                hl_display = hl_display.replace(w, "[?]")
+                all_drops.add(w)
+                any_drop = True
+            if hl_display:
+                lines.append(f"  - {hl_display}")
             snippet = (sub_c.get("summary") or sub_c.get("text") or "").strip()
             if snippet:
-                # 去换行 + 截断；snippet 比 headline 信息密度高 10x，是关键防 hallucinate 的上下文
                 snippet = re.sub(r"\s+", " ", snippet)[:snippet_max]
+                # snippet 里同 mask：保留上下文但屏蔽 ASR 错字字面
+                for w in cal["drop"]:
+                    snippet = snippet.replace(w, "[?]")
                 lines.append(f"    内容: {snippet}")
     body = "\n".join(lines)
+    drop_clause = (
+        f"\n⚠️ 文本中的 [?] 是 Python 校准过的 ASR 错字 mask "
+        f"(原词: {', '.join(sorted(all_drops))})——abstract 里**不要**写 [?]，"
+        f"也**不要**尝试还原原词；用「内容」里实际描述的概念替代。\n"
+        if any_drop else "")
     user_prompt = (f"共 {K} {unit_word}，请基于每{unit_word}下"
                    f"「内容」字段中的实际转写文本生成 1-2 句简介。"
                    f"**严格根据「内容」实际讲的事情写**——"
                    f"不要从{unit_word}标题字面猜测含义，"
-                   f"不要写「内容」里没出现的概念或场景。\n\n{body}\n\n"
+                   f"不要写「内容」里没出现的概念或场景。"
+                   f"{drop_clause}\n{body}\n\n"
                    f"输出 JSON 数组（必须 {K} 个元素）：")
     model, tok = load_model(model_id)
     messages = [
@@ -1859,6 +1879,135 @@ def generate_chapter_abstracts(chapters: list[dict],
     abstracts = [str(s).strip().strip('"').strip("'") for s in arr]
     print(f"      [llm-chapter-abstract] generated {K} chapter abstracts", flush=True)
     return abstracts
+
+
+CHAPTER_RECAP_SYSTEM = """你是教学视频的**复习要点**生成助手。给定一章的内容，\
+生成 3-5 条复习要点，专门为期末/考研复习场景设计。
+
+**⚠️ 输出语言匹配输入**：段内容是英文则要点用英文，中文则用中文。**不要翻译**。
+
+## 与 abstract 的区别
+- abstract 是"本章讲了什么"的概括（1-2 句陈述句）
+- recap 是"学完本章要能复述什么"的可考点（3-5 条 bullet）
+- 不要重复 abstract 已经说过的话——要更细、可考的知识点
+
+## 要求
+1. **3-5 条 / 章**：少于 3 条信息不够，多于 5 条复习过载
+2. **每条 10-30 字（中文）或 5-15 词（英文）**：精炼但完整
+3. **复习导向**：是"X 是什么/为什么/怎么做"的具体可考点，不是空泛概括
+4. **基于本章实际内容**（chunks 的 headline / 内容）——不要从章标题字面猜测
+5. **每条单独成行，以 "- " 开头**
+6. 用名词性短句，不带句末标点（不要 ?!。）
+
+## 输出格式（绝对硬约束，违反直接重试）
+
+**输入有 K 章 → 输出 JSON 数组必须 K 个元素**（每个元素 = 该章独立 recap 字符串，含 `\\n` 分隔的多行 bullet）。
+
+**绝对禁止**：
+- ✗ 把多章 recap 合并成一个字符串（哪怕章主题相近）
+- ✗ 输出多个 `[...]` 数组连写
+- ✗ markdown fence (```​json) 包裹
+
+每个 chapter 都要在数组里独占一个元素，**即便该章只有 1 个 chunk**也单独输出一个 recap。
+
+示例（输入 **3** 章——注意输出数组有 **3** 个元素，一一对应）：
+输入：
+[第 1 章: 进程与线程基础]
+  - 进程概念  | 内容: 进程是程序的一次执行，是 OS 资源分配的基本单位...
+  - 线程引入  | 内容: 线程是 CPU 调度的基本单位，同一进程内线程共享地址空间...
+[第 2 章: 信号量与 PV 操作]
+  - 信号量定义  | 内容: 信号量是一个整型变量，配合 PV 操作实现进程同步...
+  - PV 操作  | 内容: P 操作 = wait = -1；V 操作 = signal = +1，必须原子执行...
+[第 3 章: 死锁条件]
+  - 死锁四必要条件  | 内容: 互斥、占有等待、不剥夺、循环等待...
+
+输出（3 个元素，按章顺序）：
+[
+  "- 进程是 OS 资源分配单位，含 PCB 描述\\n- 线程是 CPU 调度单位，同进程线程共享地址空间\\n- 上下文切换：进程开销 > 线程开销",
+  "- 信号量是整型变量，配 PV 实现同步互斥\\n- P 操作：sem-- 若负则阻塞\\n- V 操作：sem++ 若不正则唤醒\\n- PV 必须原子，否则失去互斥保证",
+  "- 死锁四必要条件：互斥、占有等待、不剥夺、循环等待\\n- 缺任一条件死锁即不能成立\\n- 预防死锁 = 破坏其中一个条件"
+]"""
+
+
+def generate_chapter_recaps(chapters: list[dict],
+                            model_id: str = _DEFAULT_MODEL,
+                            max_new_tokens: Optional[int] = None,
+                            lang: str = "zh") -> Optional[list[str]]:
+    """学习类章末复习要点（3-5 条 bullet list）。
+    chapters 需含 chunks 列表（每个 chunk 含 headline + summary/text）。
+
+    返回与 chapters 等长字符串列表（每个字符串是多行 bullet markdown）；
+    失败返回 None，caller 应 fallback 到抽取式 chapter_recap。
+
+    与 generate_chapter_abstracts 的区别：abstract 是 prose 概括（1-2 句），
+    recap 是 bullet 复习点（3-5 条），用于学习/考研场景。仅对 teaching/popsci
+    类视频生成，vlog/talk 略过（recap 概念在 vlog 上无意义）。"""
+    if not chapters:
+        return None
+    K = len(chapters)
+    if max_new_tokens is None:
+        max_new_tokens = max(800, 220 * K)
+    snippet_max = 200 if K <= 8 else 120
+    lines = []
+    any_drop = False
+    all_drops: set[str] = set()
+    for ci, ch in enumerate(chapters):
+        title = ch.get("title", "")
+        lines.append(f"[第 {ci+1} 章" + (f": {title}" if title else "") + "]")
+        for sub_c in ch.get("chunks", []):
+            hl = (sub_c.get("headline") or "").strip()
+            kws = sub_c.get("keywords") or []
+            text = sub_c.get("text", "") or ""
+            cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
+            hl_display = hl
+            for w in cal["drop"]:
+                hl_display = hl_display.replace(w, "[?]")
+                all_drops.add(w)
+                any_drop = True
+            if hl_display:
+                lines.append(f"  - {hl_display}")
+            snippet = (sub_c.get("summary") or sub_c.get("text") or "").strip()
+            if snippet:
+                snippet = re.sub(r"\s+", " ", snippet)[:snippet_max]
+                for w in cal["drop"]:
+                    snippet = snippet.replace(w, "[?]")
+                lines.append(f"    内容: {snippet}")
+    body = "\n".join(lines)
+    drop_clause = (
+        f"\n⚠️ 文本中的 [?] 是 Python 校准过的 ASR 错字 mask"
+        f"(原词: {', '.join(sorted(all_drops))})——recap 里**不要**写 [?]，"
+        f"也**不要**尝试还原原词。\n"
+        if any_drop else "")
+    user_prompt = (f"共 {K} 章，按顺序为每章生成 3-5 条复习要点 bullet list。\n"
+                   f"**输出数组必须有 {K} 个元素**——每章对应一个独立的 recap "
+                   f"字符串，禁止合并章。\n"
+                   f"{drop_clause}\n{body}\n\n"
+                   f"输出 JSON 数组（必须 {K} 个元素，每个元素是含 \\n 的多行 "
+                   f"bullet 字符串）：")
+    model, tok = load_model(model_id)
+    messages = [
+        {"role": "system", "content": _system_with_lang(CHAPTER_RECAP_SYSTEM, lang, "recap")},
+        {"role": "user", "content": user_prompt},
+    ]
+    text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    import torch
+    inputs = tok(text, return_tensors="pt").to(model.device)
+    print(f"      [llm-chapter-recap] generate for {K} chapters "
+          f"(input {inputs['input_ids'].shape[1]} tokens) ...", flush=True)
+    with torch.no_grad():
+        out = model.generate(
+            **inputs, max_new_tokens=max_new_tokens, do_sample=True,
+            temperature=0.25, top_p=0.9, pad_token_id=tok.eos_token_id,
+        )
+    gen_ids = out[0][inputs["input_ids"].shape[1]:]
+    raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
+    arr = _parse_titles_array(raw, K)
+    if arr is None:
+        print(f"      [llm-chapter-recap] parse failed, raw: {raw[:250]}", flush=True)
+        return None
+    recaps = [str(s).strip().strip('"').strip("'") for s in arr]
+    print(f"      [llm-chapter-recap] generated {K} chapter recaps", flush=True)
+    return recaps
 
 
 GENERATE_HEADLINES_SYSTEM = """你是教学视频笔记的标题生成助手。给定若干段视频内容\
