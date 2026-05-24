@@ -2304,6 +2304,33 @@ def generate_chapter_recaps(chapters: list[dict],
     raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
     arr = _parse_titles_array(raw, K)
     if arr is None:
+        # I7: recap parse 失败兜底——LLM 偶尔把 K 章的 bullets 全合并到 1 个
+        # 字符串元素返回 (p81 实测)。检测：JSON parse 出 1-元素 array + 内含
+        # ≥K 个 `\n- ` bullets → 按 bullet 切成 K 段，每段作为该章 recap
+        try:
+            l, r = raw.find("["), raw.rfind("]")
+            if l >= 0 and r > l:
+                raw_arr = json.loads(raw[l:r + 1])
+                if isinstance(raw_arr, list) and len(raw_arr) == 1:
+                    single = str(raw_arr[0])
+                    bullets = re.split(r"\n\s*-\s+", single)
+                    # 第一个元素可能不带 dash 前缀，补齐
+                    bullets = [b.strip().lstrip("- ").strip() for b in bullets if b.strip()]
+                    if len(bullets) >= K:
+                        # 平均分配 bullets 到 K 章
+                        per = max(1, len(bullets) // K)
+                        recaps_split: list[str] = []
+                        for i in range(K):
+                            start_i = i * per
+                            end_i = (i + 1) * per if i < K - 1 else len(bullets)
+                            chunk_bullets = bullets[start_i:end_i]
+                            recaps_split.append("\n".join(f"- {b}" for b in chunk_bullets))
+                        print(f"      [llm-chapter-recap] I7 fallback split: "
+                              f"1 元素含 {len(bullets)} bullets → {K} 章", flush=True)
+                        arr = recaps_split
+        except (json.JSONDecodeError, ValueError):
+            pass
+    if arr is None:
         print(f"      [llm-chapter-recap] parse failed, raw: {raw[:250]}", flush=True)
         return None
     recaps = [str(s).strip().strip('"').strip("'") for s in arr]
