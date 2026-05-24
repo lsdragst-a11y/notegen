@@ -1289,6 +1289,16 @@ TITLE_CHAPTER_SYSTEM = """你是教学视频章节命名助手。给定若干章
 错误输出："变长子网划分与IP资源" ✗（漏定常子网划分）
 正确输出："定常与变长子网划分" ✓（次主题 IP 资源进 abstract，不进标题）
 
+## 唯一性硬约束（违反整批重写）
+
+**K 个章节必须输出 K 个完全不同的章标题**——即使所有章都围绕同一主题（如 OSPF
+路由协议每章都讲"链路状态"），也必须找到本章独有的子机制 / 步骤 / 对象 / 视角
+来区分。
+
+✗ 反例（**绝对不要**）："链路状态与路由" 重复 3 次填 ch1-ch3
+✓ 正例：[第 1 章 链路状态与最短路径, 第 2 章 区域边界与主干, 第 3 章 LSDB 同步,
+        第 4 章 路由表生成]——每章用不同的子概念锚点
+
 ## 输出格式（必须严格遵守）
 
 **整个输出是 ONE JSON 数组**，长度等于输入章数。**不要**分成多个 `[...]` 数组。
@@ -1494,6 +1504,36 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
         print(f"      [llm-chapter-title] parse failed, raw: {raw[:250]}", flush=True)
         return None
     titles = [str(s).strip().strip('"').strip("'") for s in arr]
+    # H2: Python 端去重兜底——若 K 个 title 有重复（主题集中视频 LLM 易出
+    # "链路状态与路由" × 3），用每章 chunks 的关键词差异化
+    seen: dict[str, int] = {}
+    dups: list[int] = []
+    for i, t in enumerate(titles):
+        if t in seen:
+            dups.append(i)
+        seen[t] = seen.get(t, 0) + 1
+    if dups:
+        for i in dups:
+            ch_chunks = chapters[i].get("chunks", [])
+            # 取本章 chunks 的关键词，找首个 not-yet-used 的 ≥2 字关键词作 suffix
+            suffix = ""
+            used_words = set()
+            for t in titles:
+                for ch_zh in re.findall(r"[一-鿿]{2,}", t):
+                    used_words.add(ch_zh)
+            for idx in ch_chunks:
+                if idx >= len(chunks): continue
+                for kw in (chunks[idx].get("keywords") or []):
+                    if len(kw) >= 2 and kw not in used_words:
+                        suffix = kw
+                        break
+                if suffix: break
+            if suffix:
+                titles[i] = f"{titles[i]} · {suffix}"
+            else:
+                titles[i] = f"{titles[i]} ({i+1})"
+        print(f"      [llm-chapter-title] H2 去重: {len(dups)} 章重复 → 加关键词后缀",
+              flush=True)
     print(f"      [llm-chapter-title] refined {K} chapter titles", flush=True)
     return titles
 

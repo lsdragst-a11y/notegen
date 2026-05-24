@@ -449,6 +449,24 @@ _GLOSSARY_STOPWORDS = {
 }
 
 
+# G4 (2026-05-24): 仅术语表过滤 generic 名词，**不喂给 jieba**。原因：jieba
+# stopwords 同时影响 chunker keyword Jaccard → chunk 边界 → C2 派生 seed →
+# segmenter LLM 输出（实测 p65 把 "信息/节点" 加进 jieba stopwords 后章数
+# 从 4 跳到 7 + non_contiguous fail + fallback）。所以这些 generic 词只在
+# `_is_stopword`（用于 glossary 候选过滤）时合并，jieba.analyse.extract_tags
+# 仍用原 _GLOSSARY_STOPWORDS。
+# 保留原则：领域专属术语（路由/链路/协议/报文/帧/包/端口/网关/进程/线程）
+# 不在此列；只剔除跨域通用的"信息系统类"虚名词。
+_GLOSSARY_EXTRA_NOISE = {
+    "信息", "节点", "状态", "系统", "网络", "数据", "方法", "规则", "作用",
+    "特点", "功能", "工作", "过程", "方式", "方面", "类型", "形式", "结构",
+    "关系", "操作", "部分", "内容", "范围", "概念", "原理", "区域", "主干",
+    "情况", "条件", "环境", "对象", "对比", "目的", "目标", "结果", "效果",
+    "属性", "性质", "特征",
+    "一台",  # p65 "我们说自治系统内的每一台路由器" → jieba 抽 "一台" 作 keyword
+}
+
+
 # 让 jieba.analyse.extract_tags 直接跳过 _GLOSSARY_STOPWORDS 里的虚词/口语词。
 # 之前只在术语表/glossary 阶段过滤，但 chunker (chunk_by_texttile) 的 keyword
 # Jaccard 距离和 chunk-level keywords 都直接用 extract_tags 输出，结果 "这个"
@@ -481,10 +499,12 @@ _GLOSSARY_STOPWORDS_LOWER: set[str] = set()  # lazy init，避免 import 时序�
 
 
 def _is_stopword(kw: str) -> bool:
-    """大小写不敏感匹配 _GLOSSARY_STOPWORDS。"""
+    """大小写不敏感匹配 _GLOSSARY_STOPWORDS ∪ _GLOSSARY_EXTRA_NOISE。
+    EXTRA_NOISE 只在术语表过滤生效，不喂给 jieba 全局 stopwords（避免影响 chunker）。"""
     global _GLOSSARY_STOPWORDS_LOWER
     if not _GLOSSARY_STOPWORDS_LOWER:
         _GLOSSARY_STOPWORDS_LOWER = {s.lower() for s in _GLOSSARY_STOPWORDS}
+        _GLOSSARY_STOPWORDS_LOWER |= {s.lower() for s in _GLOSSARY_EXTRA_NOISE}
     return kw.lower() in _GLOSSARY_STOPWORDS_LOWER
 
 
