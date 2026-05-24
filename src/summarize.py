@@ -772,6 +772,46 @@ def _format_knowledge_points(summaries: list[dict],
     return lines
 
 
+def _format_chapter_quiz(quiz: dict) -> list[str]:
+    """章末自测题 → markdown 折叠块。
+
+    每题用 <details> 折叠答案。**不**用 blockquote 包裹（部分 markdown
+    渲染器不支持 blockquote 内嵌 HTML），独立 section 风格更兼容。
+    输入 quiz = {"questions": [{"type": "mc"|"tf", ...}, ...]}。
+    """
+    questions = quiz.get("questions", []) if quiz else []
+    if not questions:
+        return []
+    lines = ["**🎓 本章自测**\n"]
+    for qi, q in enumerate(questions, 1):
+        qtype = q.get("type")
+        qtext = q.get("q", "")
+        expl = q.get("explanation", "")
+        if qtype == "mc":
+            opts = q.get("options", [])
+            ai = q.get("answer_idx", 0)
+            ans_letter = "ABCD"[ai] if 0 <= ai < 4 else "?"
+            ans_text = opts[ai] if 0 <= ai < len(opts) else ""
+            lines.append(
+                f"<details>\n<summary><b>Q{qi}（选择）.</b> {qtext}</summary>\n")
+            for oi, opt in enumerate(opts):
+                lines.append(f"- {'ABCD'[oi]}. {opt}")
+            lines.append(f"\n**答案**：{ans_letter}. {ans_text}")
+            if expl:
+                lines.append(f"\n**解析**：{expl}")
+            lines.append("</details>\n")
+        elif qtype == "tf":
+            ans = q.get("answer")
+            ans_str = "对 ✓" if ans else "错 ✗"
+            lines.append(
+                f"<details>\n<summary><b>Q{qi}（判断）.</b> {qtext}</summary>\n")
+            lines.append(f"**答案**：{ans_str}")
+            if expl:
+                lines.append(f"\n**解析**：{expl}")
+            lines.append("</details>\n")
+    return lines
+
+
 def _format_glossary(summaries: list[dict]) -> list[str]:
     glossary = build_glossary(summaries, top_k=15)
     if not glossary:
@@ -858,6 +898,10 @@ def to_markdown(summaries: list[dict], title: str = "网课笔记",
                     recap = chapter_recap(recap_texts, max_sentences=2, lang=lang)
                     if recap:
                         lines.append(f"> **本章小结**：{recap}\n")
+                # 章末自测题（仅 learning 类有 ch['quiz']；vlog/talk 不生成）
+                quiz = ch.get("quiz")
+                if quiz:
+                    lines.extend(_format_chapter_quiz(quiz))
     else:
         for i, item in enumerate(summaries, 1):
             lines.extend(_format_item(item, i, depth=2,

@@ -2010,6 +2010,243 @@ def generate_chapter_recaps(chapters: list[dict],
     return recaps
 
 
+CHAPTER_QUIZ_SYSTEM = """你是教学视频的**自测题**生成助手。给定一章的内容，\
+为该章生成 2-3 道复习自测题，专门为学生学完本章后自测理解程度设计。
+
+**⚠️ 输出语言匹配输入**：段内容是英文则题目用英文，中文则用中文。**不要翻译**。
+
+## 与 abstract / recap 的区别
+- abstract: "本章讲了什么"概括
+- recap: "学完本章要复述什么"知识点 bullet
+- quiz: "学完本章能否回答这个问题"——主动召回测试
+
+## 题目要求
+1. **每章 2-3 道**：考察本章 2-3 个核心可考点
+2. **题型混合**：选择题(mc, 4 选项) + 判断题(tf, 对/错)，至少 1 道选择题
+3. **基于本章实际内容**：不要从章标题字面猜，必须来自 chunks 的实际内容
+4. **答案唯一明确**：避免模糊选项；判断题必须有明确对/错
+5. **解析 1 句话**：说明为什么对，引用本章具体概念
+6. **难度适中**：考点级（不是死记硬背，也不是 trick question）
+
+## 输出格式（绝对硬约束）
+
+**输入有 K 章 → 输出 JSON 数组必须 K 个元素**，每个元素是该章的题目对象：
+```
+{
+  "questions": [
+    {
+      "type": "mc",
+      "q": "题干",
+      "options": ["A 选项", "B 选项", "C 选项", "D 选项"],
+      "answer_idx": 1,
+      "explanation": "1 句解析"
+    },
+    {
+      "type": "tf",
+      "q": "命题",
+      "answer": true,
+      "explanation": "1 句解析"
+    }
+  ]
+}
+```
+
+**绝对禁止**：
+- ✗ 合并多章 quiz 成一个对象
+- ✗ 输出多个 `[...]` 数组连写
+- ✗ markdown fence (```) 包裹
+- ✗ answer_idx 用 1-indexed (必须 0-indexed: A=0, B=1, C=2, D=3)
+- ✗ options 数量不是 4
+
+示例（输入 2 章）：
+
+输入：
+[第 1 章: 进程与线程基础]
+  - 进程概念  | 内容: 进程是程序的一次执行，是 OS 资源分配的基本单位...
+  - 线程引入  | 内容: 线程是 CPU 调度的基本单位，同进程内线程共享地址空间...
+[第 2 章: 死锁四必要条件]
+  - 死锁条件  | 内容: 互斥、占有等待、不剥夺、循环等待...
+
+输出：
+[
+  {
+    "questions": [
+      {
+        "type": "mc",
+        "q": "操作系统中资源分配的基本单位是？",
+        "options": ["线程", "进程", "寄存器", "CPU"],
+        "answer_idx": 1,
+        "explanation": "进程是 OS 资源分配的基本单位，线程是 CPU 调度单位"
+      },
+      {
+        "type": "tf",
+        "q": "同一进程内的多个线程共享地址空间",
+        "answer": true,
+        "explanation": "线程共享所属进程的地址空间，区别于进程间隔离"
+      }
+    ]
+  },
+  {
+    "questions": [
+      {
+        "type": "mc",
+        "q": "下列哪个不是死锁的必要条件？",
+        "options": ["互斥", "占有等待", "可剥夺", "循环等待"],
+        "answer_idx": 2,
+        "explanation": "死锁要求资源不可剥夺；可剥夺反而能破坏死锁"
+      },
+      {
+        "type": "tf",
+        "q": "只要满足互斥条件就一定发生死锁",
+        "answer": false,
+        "explanation": "互斥只是必要条件之一，需四个条件同时满足"
+      }
+    ]
+  }
+]"""
+
+
+def _parse_quiz_array(raw: str, K: int) -> Optional[list]:
+    """quiz 输出是 JSON 数组，每元素含 questions 子数组。比 _parse_titles_array
+    多一层结构校验。"""
+    import re as _re
+    # 容忍 fenced code
+    m = _re.search(r"```(?:json)?\s*(\[.*?\])\s*```", raw, _re.DOTALL)
+    if m:
+        try:
+            arr = json.loads(m.group(1))
+            if isinstance(arr, list) and len(arr) == K:
+                return arr
+        except json.JSONDecodeError:
+            pass
+    l, r = raw.find("["), raw.rfind("]")
+    if l >= 0 and r > l:
+        try:
+            arr = json.loads(raw[l:r + 1])
+            if isinstance(arr, list) and len(arr) == K:
+                return arr
+        except json.JSONDecodeError:
+            pass
+    return None
+
+
+def _validate_quiz_item(item: dict) -> bool:
+    """单道题字段校验。失败的题在后处理被 drop（不让整章 fail）。"""
+    if not isinstance(item, dict):
+        return False
+    t = item.get("type")
+    q = item.get("q") or item.get("question")
+    expl = item.get("explanation") or item.get("explain") or ""
+    if not q:
+        return False
+    if t == "mc":
+        opts = item.get("options")
+        ai = item.get("answer_idx")
+        if not (isinstance(opts, list) and len(opts) == 4
+                and isinstance(ai, int) and 0 <= ai < 4):
+            return False
+    elif t == "tf":
+        a = item.get("answer")
+        if not isinstance(a, bool):
+            return False
+    else:
+        return False
+    item["q"] = q
+    item["explanation"] = expl
+    return True
+
+
+def generate_chapter_quizzes(chapters: list[dict],
+                             model_id: str = _DEFAULT_MODEL,
+                             max_new_tokens: Optional[int] = None,
+                             lang: str = "zh") -> Optional[list[dict]]:
+    """学习类章末自测题（2-3 题 / 章，选择 + 判断混合）。
+
+    返回与 chapters 等长 list of dict，每个 dict 含 'questions': [...]；
+    失败返回 None；teaching/popsci 类调用，vlog/talk 不调用。
+
+    每道题在解析时通过 _validate_quiz_item 字段校验，失败的单题被 drop
+    而不让整章 fail；若某章所有题都失败，该章 questions=[]（caller 决定
+    是否丢弃整章 quiz）。"""
+    if not chapters:
+        return None
+    K = len(chapters)
+    if max_new_tokens is None:
+        max_new_tokens = max(1000, 300 * K)
+    snippet_max = 200 if K <= 8 else 120
+    lines = []
+    any_drop = False
+    all_drops: set[str] = set()
+    for ci, ch in enumerate(chapters):
+        title = ch.get("title", "")
+        lines.append(f"[第 {ci+1} 章" + (f": {title}" if title else "") + "]")
+        for sub_c in ch.get("chunks", []):
+            hl = (sub_c.get("headline") or "").strip()
+            kws = sub_c.get("keywords") or []
+            text = sub_c.get("text", "") or ""
+            cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
+            hl_display = hl
+            for w in cal["drop"]:
+                hl_display = hl_display.replace(w, "[?]")
+                all_drops.add(w)
+                any_drop = True
+            if hl_display:
+                lines.append(f"  - {hl_display}")
+            snippet = (sub_c.get("summary") or sub_c.get("text") or "").strip()
+            if snippet:
+                snippet = re.sub(r"\s+", " ", snippet)[:snippet_max]
+                for w in cal["drop"]:
+                    snippet = snippet.replace(w, "[?]")
+                lines.append(f"    内容: {snippet}")
+    body = "\n".join(lines)
+    drop_clause = (
+        f"\n⚠️ 文本中的 [?] 是 ASR 错字 mask "
+        f"(原词: {', '.join(sorted(all_drops))})——题目和解析里**不要**写 [?]，"
+        f"也**不要**尝试还原原词。\n"
+        if any_drop else "")
+    user_prompt = (f"共 {K} 章，按顺序为每章生成 2-3 道自测题。\n"
+                   f"**输出数组必须有 {K} 个元素**——每章对应一个 questions "
+                   f"对象，禁止合并章。\n"
+                   f"{drop_clause}\n{body}\n\n"
+                   f"输出 JSON 数组（必须 {K} 个元素）：")
+    model, tok = load_model(model_id)
+    messages = [
+        {"role": "system", "content": CHAPTER_QUIZ_SYSTEM},
+        {"role": "user", "content": user_prompt},
+    ]
+    text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    import torch
+    inputs = tok(text, return_tensors="pt").to(model.device)
+    print(f"      [llm-chapter-quiz] generate for {K} chapters "
+          f"(input {inputs['input_ids'].shape[1]} tokens) ...", flush=True)
+    with torch.no_grad():
+        out = model.generate(
+            **inputs, max_new_tokens=max_new_tokens, do_sample=True,
+            temperature=0.3, top_p=0.9, pad_token_id=tok.eos_token_id,
+        )
+    gen_ids = out[0][inputs["input_ids"].shape[1]:]
+    raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
+    arr = _parse_quiz_array(raw, K)
+    if arr is None:
+        print(f"      [llm-chapter-quiz] parse failed, raw: {raw[:250]}", flush=True)
+        return None
+    # 单题校验 + 清洗
+    result = []
+    total_kept, total_drop = 0, 0
+    for ch_obj in arr:
+        if not isinstance(ch_obj, dict):
+            result.append({"questions": []})
+            continue
+        qs_raw = ch_obj.get("questions") or []
+        qs_clean = [q for q in qs_raw if _validate_quiz_item(q)]
+        total_kept += len(qs_clean)
+        total_drop += len(qs_raw) - len(qs_clean)
+        result.append({"questions": qs_clean})
+    print(f"      [llm-chapter-quiz] generated {K} chapters, "
+          f"{total_kept} questions kept, {total_drop} dropped", flush=True)
+    return result
+
+
 GENERATE_HEADLINES_SYSTEM = """你是教学视频笔记的标题生成助手。给定若干段视频内容\
 （每段有原文摘录），为每段生成简洁的小标题。
 

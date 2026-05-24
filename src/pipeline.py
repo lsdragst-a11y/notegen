@@ -430,6 +430,31 @@ def _apply_chapter_recaps(chapter_list: list, llm_chapters: bool,
             print(f"      [chapter recap] L1 -> {first_line}", flush=True)
 
 
+def _apply_chapter_quizzes(chapter_list: list, llm_chapters: bool,
+                           lang: str = "zh",
+                           category: str = "teaching") -> None:
+    """给每章填 `quiz` 字段（2-3 道自测题 dict 列表）。
+
+    仅对 teaching / popsci 类视频生成（vlog/talk 上 quiz 概念无意义）。
+    失败/关闭时不填，summarize.to_markdown 见 quiz=None 跳过 quiz 区块。
+    """
+    if not llm_chapters:
+        return
+    if category in ("vlog", "talk"):
+        return
+    try:
+        from segment_llm import generate_chapter_quizzes
+        quizzes = generate_chapter_quizzes(chapter_list, lang=lang)
+    except Exception as e:
+        print(f"      [llm-chapter-quiz] 异常：{e}，跳过 quiz", flush=True)
+        return
+    if quizzes and len(quizzes) == len(chapter_list):
+        for ch, qz in zip(chapter_list, quizzes):
+            ch["quiz"] = qz  # {"questions": [...]}
+            nq = len(qz.get("questions", []))
+            print(f"      [chapter quiz] {nq} questions", flush=True)
+
+
 def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         model_size: str = "large-v3", target_ratio: float = 0.25,
         force_asr: bool = False, summarizer: str = "extractive",
@@ -820,6 +845,9 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
                 # 章末复习要点（learning 类专属，3-5 条 bullet markdown）
                 _apply_chapter_recaps(chapter_list, llm_chapters, lang=resolved_lang,
                                                           category=inferred_category)
+                # 章末自测题（learning 类专属，2-3 道选择/判断）
+                _apply_chapter_quizzes(chapter_list, llm_chapters, lang=resolved_lang,
+                                                          category=inferred_category)
             _mark_wrapup_chapter(chapter_list, lang=resolved_lang)
 
     if chapter_list is None and chapters is not None and chapters != 0:
@@ -893,6 +921,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang,
                                                           category=inferred_category)
             _apply_chapter_recaps(chapter_list, llm_chapters, lang=resolved_lang,
+                                                          category=inferred_category)
+            _apply_chapter_quizzes(chapter_list, llm_chapters, lang=resolved_lang,
                                                           category=inferred_category)
         _mark_wrapup_chapter(chapter_list, lang=resolved_lang)
         mm_bounds = [ch["indices"][0] for ch in chapter_list[1:]]
