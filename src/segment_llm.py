@@ -196,17 +196,20 @@ chunk_idx from 0 to n-1. DO NOT stop after 2-3 chapters.""",
 **Input headlines are in ENGLISH.** Output every chapter title in English (3-7 word noun phrase).
 DO NOT translate to Chinese. DO NOT write 中文 in any element of the JSON array.
 
-Concrete English example:
+Concrete English example (each item has headline + top keywords):
 Input:
 [Chapter 1]
-  - What an AI Agent Is
-  - Agent vs Automation
+  - 段标题: What an AI Agent Is  | 高频词: agent / autonomy / reasoning / planning
+  - 段标题: Agent vs Automation  | 高频词: automation / rule-based / agent / difference
 [Chapter 2]
-  - Choosing an LLM Provider
-  - API Key Setup
+  - 段标题: Choosing an LLM Provider  | 高频词: provider / OpenAI / Anthropic / API
+  - 段标题: API Key Setup  | 高频词: API / key / setup / environment
 
 Output:
-["AI Agent Fundamentals", "LLM Provider and API Setup"]""",
+["AI Agent Fundamentals", "LLM Provider and API Setup"]
+
+If a headline word does not appear in any chunk's keywords for that chapter,
+treat it as an ASR mishearing or topic drift — drop it from the title.""",
     "abstract": """
 
 # ====== LANGUAGE OVERRIDE: ENGLISH ======
@@ -1189,17 +1192,36 @@ def segment_hierarchical(chunks: list[dict],
 
 
 TITLE_CHAPTER_SYSTEM = """你是教学视频章节命名助手。给定若干章节，每章含若干\
-连续段标题，为每章生成一个 6-14 字（中文）或 3-7 词（英文）的章标题。
+连续段（每段两行：段标题 + 高频词），为每章生成一个 6-14 字（中文）或 3-7 词\
+（英文）的章标题。
 
 **⚠️ 输出语言匹配输入**：段标题是英文则章标题用英文（如 "AI Agent Tooling"），\
 段标题是中文则章标题用中文（如 "管程引入与基本特征"）。**不要翻译**。
 
-约束：
-1. **标题关键词必须在本章段标题里出现过**——绝对不要借用其他章的关键词
+## Step 1 — 命名前必做：段标题校准（防 ASR 错字 / 标题漂移）
+
+"段标题"由上游 LLM 从一句口语生成，**可能含 ASR 错字或漂移**（实际段内容跟\
+"高频词"才对得上）。所以**第一步是校准每个段标题**：
+
+1. 扫"段标题"里的每个名词
+2. 看该名词是否在**本段"高频词"列表**里出现（或近义、同字根、同型号）
+3. **若名词没出现 → 是 ASR 错字 / 漂移，从命名候选里剔除，禁止原样进入章标题**
+4. 命名时改用"高频词"里实际出现的概念
+
+校准示例（教学场景较少触发，主要用于 ASR 极差时）：
+  段标题: 烟台显卡  | 高频词: 块钱 / 一千 / 英瑞 / 一套
+  → "烟台" 不在高频词 → 剔除（ASR 错字）；命名候选只剩"显卡 + 询价"
+
+## Step 2 — 命名规则
+
+1. **标题关键词必须在"已校准段标题"或"高频词"里出现过**——绝对不要借用其他章
 2. 名词短语，不带动词 / 疑问 / 句末标点
-3. **强制并列检查**：若本章有 ≥2 个 chunks，检查段标题是否包含 ≥2 个并列子主题
-   （如"定常子网划分" + "变长子网划分"，"直通交换" + "存储转发"）。命中并列时
-   **标题必须用 "X 与 Y" / "X 和 Y" 包含全部并列主题，不允许只挑一个写**。
+3. **强制并列检查**（仅对校准通过的段适用）：若本章有 ≥2 个 chunks，检查
+   **校准后**的段标题是否包含 ≥2 个并列子主题（如"定常子网划分" + "变长子网\
+   划分"，"直通交换" + "存储转发"）。命中并列时**标题必须用 "X 与 Y" / "X 和 Y"\
+   包含全部并列主题，不允许只挑一个写**。
+   **校准失败的段绝不进入 "X 与 Y" 拼接** ——这种情况只用通过校准的那段，或两\
+   段共同高频词抽象命名。
 4. 单段成章时，标题可与该段标题相近但略上升抽象层。**绝对不要**把单段成章错用
    为"开场介绍 / 结尾感想 / 收尾总结"等通用模板——如果段标题已描述具体对象/事件
    （如"酸菜牛肉面"、"大理石质感菜品"），章标题就用其本身或其变体
@@ -1218,16 +1240,16 @@ TITLE_CHAPTER_SYSTEM = """你是教学视频章节命名助手。给定若干章
 
 **整个输出是 ONE JSON 数组**，长度等于输入章数。**不要**分成多个 `[...]` 数组。
 
-示例（输入 3 章）：
+示例（输入 3 章；每段含"段标题"+"高频词"）：
 输入：
 [第 1 章]
-  - 进程概念
-  - 线程引入
+  - 段标题: 进程概念  | 高频词: 进程 / PCB / 调度 / 上下文
+  - 段标题: 线程引入  | 高频词: 线程 / 轻量 / TCB / 用户态
 [第 2 章]
-  - 信号量定义
-  - PV 操作
+  - 段标题: 信号量定义  | 高频词: 信号量 / 临界区 / wait / signal
+  - 段标题: PV 操作  | 高频词: P / V / 原子 / 互斥
 [第 3 章]
-  - 死锁条件
+  - 段标题: 死锁条件  | 高频词: 死锁 / 互斥 / 占有等待 / 不剥夺
 
 输出：
 ["进程与线程基础", "信号量与PV操作", "死锁产生条件"]
@@ -1237,43 +1259,122 @@ TITLE_CHAPTER_SYSTEM = """你是教学视频章节命名助手。给定若干章
 
 # vlog/talk 专属章标题 prompt — 避开 "X 与 Y 与 Z" 拼接机械感
 TITLE_CHAPTER_VLOG_SYSTEM = """你是 vlog / 实拍视频的片段命名助手。给定若干"片段"\
-（每个片段含若干连续段标题），为每个片段生成一个 4-12 字的中文片段标题。
+（每段含"段标题 + 高频词"两行），为每个片段生成一个 4-12 字的中文片段标题。
 
 **⚠️ 输出语言匹配输入**：段标题英文则片段标题用英文，中文则用中文。**不要翻译**。
 
-## vlog 命名约束
+## Step 1 — 命名前必做：段标题校准（防 ASR 错字 / 标题漂移）
 
-1. **片段标题必须从本片段段标题里的词汇出现**——不要借用前后邻片段主题
-2. 名词或动名词短语，不带句末标点，不用疑问
-3. **单段成片段**：直接用该段标题，或略加抽象（如"酸菜牛肉面"→保留；"开头"类\
-   通用词需替换为该段实际内容）
-4. **2 段成片段**：若两段是同一主题大类，用上位词（如"鸽子腿 + 价格"→"鸽子腿\
-   评价"）；若是真并列概念才用"X 与 Y"
-5. **3+ 段成片段（关键差异）**：**禁止使用"X 与 Y 与 Z"三连拼接**——这种标题\
-   机械感强、不便检索。应抽象出**共同上位概念**：
-   - 多个菜品 → "海鲜评测" / "刺身系列" / "主食与汤品"
-   - 多个评测维度 → "评测维度详谈" / "细节点评" / "口感与价格"
-   - 多个店 → "店家对比" / "横评" / "选择"
-6. 不带数字序号（如"第一道菜"）；vlog 笔记的导航靠片段顺序，不靠数字
-7. 强调**可读性 + 检索关键词**——读者扫描标题时能秒懂这段讲了什么
+"段标题"由上游 LLM 从一句口语生成，**可能含 ASR 错字或漂移**（实际段内容跟"高频词"\
+才对得上）。所以**第一步是校准每个段标题**：
 
-## 反例与正例
+1. 扫"段标题"里的每个名词
+2. 看该名词是否在**本段"高频词"列表**里出现（或近义、同字根、同型号）
+3. **若名词没出现 → 它是 ASR 错字 / 漂移，从命名候选里剔除，禁止原样进入片段标题**
+4. 命名时改用"高频词"里实际出现的概念
 
-反例（X 与 Y 与 Z 拼接）：
-- "安全与小麻烦与蚝虾" ✗ → 改 "蚝虾品质评测" ✓
-- "蚝虾与自助筛选与及格" ✗ → 改 "蚝虾选购标准" ✓
-- "手余伤与可望存在" ✗ → 改 "店家不足总评" ✓
+校准示例 1：
+  段标题: 烟台显卡  | 高频词: 块钱 / 一千 / 英瑞 / 一套
+  校准过程：
+    - "烟台" 不在高频词 → 剔除（应为 ASR 错字 "验台/验代"）
+    - "显卡" 是类目泛指，跟高频词"英瑞/块钱"的"显卡询价"语义一致 → 可保留
+  → 候选命名词：显卡 + 询价/价格
 
-正例（单段直接用 / 2 段抽象 / 3+ 段上位概念）：
-- 1 段「鸽子腿」 → "鸽子腿评价"
-- 2 段「眼周按摩 / 护眼仪」 → "护眼产品介绍"
-- 3 段「新鲜度 / 虾壳 / 肚脂」 → "鲜度判断维度"
-- 4 段「卡时间 / 心理线 / 卡心理预期 / 自助餐心理」 → "自助餐心理学"
+校准示例 2：
+  段标题: 电源配件  | 高频词: X79 / 580 / 配件 / 双路 / 半个
+  校准过程：
+    - "电源" 不在高频词（与 X79/580 不一致）→ 剔除（漂移）
+    - "配件" 在高频词 → 保留
+  → 候选命名词：X79 / 580 / 配件 / 双路
+
+## Step 2 — 命名规则
+
+1. 用名词或动名词短语，不带句末标点 / 疑问 / 数字序号（如"第一道菜"）
+2. **单段成片段**：用"已校准段标题"或基于其抽象（如"酸菜牛肉面"→保留）
+3. **2 段成片段**：
+   - 优先**用上位词**统一两段（如"鸽子腿 + 价格"→"鸽子腿评价"）
+   - **校准失败的段绝不进入 "X 与 Y" 拼接** ——这种情况只有两个出路：①用通过\
+     校准的那段命名 ②用两段共同高频词抽象命名
+   - 只有两段**都通过校准且确为真并列概念**时才可用"X 与 Y"
+4. **3+ 段成片段**：禁止"X 与 Y 与 Z" 三连拼接，抽象出**共同上位概念**：
+   - 多个菜品 → "海鲜评测" / "刺身系列"
+   - 多个评测维度 → "细节点评" / "口感与价格"
+   - 多个店 → "店家对比" / "横评"
+5. **可读性 + 检索关键词** —— 读者扫一眼能秒懂这段讲了什么
+
+## 完整校准+命名正例（输入 → 校准 → 输出）
+
+输入：
+[片段 1]
+  - 段标题: 烟台显卡  | 高频词: 块钱 / 一千 / 英瑞 / 一套
+  - 段标题: 3070显卡  | 高频词: 1000 / 块钱 / 内存 / 9000
+
+校准：
+  段 1："烟台"不在高频词 → 剔除；"显卡"为类目可保留 → 候选：显卡/询价
+  段 2："3070"在高频词 → 保留；"显卡"保留 → 候选：3070/显卡
+共同主题：显卡 + 价格询问 → 标题"显卡询价对比"
+**错例**："烟台显卡与3070显卡" ✗（"烟台"未通过校准，绝不能进标题）
+
+输入：
+[片段 1]
+  - 段标题: 电源配件  | 高频词: X79 / 580 / 配件 / 双路 / 半个
+  - 段标题: 580显卡  | 高频词: 1000 / 块钱 / 580 / 10 / R7X / 750Ti
+
+校准：
+  段 1："电源"不在高频词 → 剔除；"配件"在高频词 → 候选：X79/580/配件
+  段 2："580""750Ti""R7X"在高频词 → 保留 → 候选：580/750Ti/R7X 显卡
+共同主题：杂牌老显卡组合 → 标题"X79与580显卡配件"
+**错例**："电源配件与580显卡" ✗（"电源"未通过校准）
+
+## 拼接机械感反例
+
+- "安全与小麻烦与蚝虾" ✗ → "蚝虾品质评测" ✓
+- "蚝虾与自助筛选与及格" ✗ → "蚝虾选购标准" ✓
 
 ## 输出格式
 
 **整个输出是 ONE JSON 数组**，长度等于输入片段数，元素是字符串。
-**不要**分成多个 `[...]` 数组、不要 markdown 标记。"""
+**不要**分成多个 `[...]` 数组、不要 markdown 标记，**不要输出校准过程**——\
+校准在你脑里做，只输出最终标题数组。"""
+
+
+_HEADLINE_DROP_TEXT_HITS = 3  # noun 在 chunk text 出现 ≥ 该次数即视为"段内主题"
+                              # （即便不在 top-K kw 也保留），低于则视为 ASR 错字/漂移
+
+
+def _calibrate_headline_words(headline: str, keywords: list,
+                              text: str) -> dict:
+    """Python 端 Step 1 校准：从 headline 里挑出名词，逐个验证是否在 keywords
+    或 chunk text 里有支撑。返回 {ok, drop} 两个名词列表。
+
+    drop 里的词将作为 "已识别 ASR 错字" 显式传给 LLM，模型不再自己做这一步。
+    """
+    import jieba.posseg as pseg
+    kw_set = set(str(k) for k in keywords)
+    ok, drop = [], []
+    seen = set()
+    for w, flag in pseg.cut(headline):
+        if w in seen or len(w) < 2:
+            continue
+        seen.add(w)
+        # ASCII 数字 / 英文（型号 X79/580/3070/R7X 等）不参与校验：
+        # 即便不在 top-K kw 里，这类型号也是 chunker 从文本里有意识保留的，
+        # 误 drop 反而损失关键信息
+        if w.isascii():
+            ok.append(w)
+            continue
+        # 只校验名词：jieba pos 含 n*/nz；m(数词) 多为 ASCII 已在上面跳过
+        if not (flag.startswith("n") or flag in ("nz",)):
+            continue
+        # 严格匹配 + 子串匹配 + 高频词全字符串包含
+        in_kw = (w in kw_set
+                 or any(w in k or k in w for k in kw_set))
+        in_text = text.count(w) >= _HEADLINE_DROP_TEXT_HITS if text else False
+        if in_kw or in_text:
+            ok.append(w)
+        else:
+            drop.append(w)
+    return {"ok": ok, "drop": drop}
 
 
 def refine_chapter_titles(outline: dict, chunks: list[dict],
@@ -1290,13 +1391,30 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
         return None
     K = len(chapters)
     lines = []
+    any_drop = False
     for ci, ch in enumerate(chapters):
         lines.append(f"[第 {ci+1} 章]")
         for idx in ch["chunks"]:
-            hl = chunks[idx].get("headline") or chunks[idx].get("text", "")[:30]
-            lines.append(f"  - {hl}")
+            c = chunks[idx]
+            hl = c.get("headline") or c.get("text", "")[:30]
+            kws = c.get("keywords") or []
+            text = c.get("text", "") or ""
+            kws_str = " / ".join(str(k) for k in kws[:5]) if kws else "(无)"
+            cal = _calibrate_headline_words(hl, kws, text)
+            line = f"  - 段标题: {hl}  | 高频词: {kws_str}"
+            if cal["drop"]:
+                any_drop = True
+                line += f"  | ⚠️ 已识别 ASR 错字 (禁用): {', '.join(cal['drop'])}"
+            lines.append(line)
     body = "\n".join(lines)
-    user_prompt = (f"共 {K} 章，请按顺序为每章生成标题：\n\n{body}\n\n"
+    drop_clause = (
+        "\n⚠️ 标注了「已识别 ASR 错字」的词是 Python 校准过的，**绝对禁止**\n"
+        "进入任何章/片段标题。若该段所有关键名词都被标禁，则该段不能单独主导\n"
+        "命名，必须借同章其他段或共同高频词抽象。\n"
+        if any_drop else "")
+    user_prompt = (f"共 {K} 章/片段，请按顺序命名。\n"
+                   f"{drop_clause}\n"
+                   f"{body}\n\n"
                    f"输出 JSON 数组（必须 {K} 个元素）：")
     model, tok = load_model(model_id)
     # vlog/talk 用专属 prompt 避开 "X 与 Y 与 Z" 拼接
