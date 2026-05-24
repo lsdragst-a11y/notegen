@@ -845,6 +845,19 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
     except Exception as e:
         print(f"      [category-early] 分类异常：{e}，按 teaching 走", flush=True)
 
+    # I4-d: chunk 级例题标记 — 教学/科普类视频跑 Python 正则识别题目讲解段，
+    # 把 is_example=True 写到 chunk dict，md 渲染时加 📝 例题 badge
+    # 不改 chapter 切分结构，保留 LLM 的大段判断
+    if summaries and inferred_category in ("teaching", "popsci"):
+        from segment_llm import _detect_example_chunks
+        ex_idxs = _detect_example_chunks(summaries)
+        for i in ex_idxs:
+            if 0 <= i < len(summaries):
+                summaries[i]["is_example"] = True
+        if ex_idxs:
+            print(f"      [example] 识别例题段 {len(ex_idxs)} 个 chunks: {ex_idxs}",
+                  flush=True)
+
     # ===== LLM 层级章节切分（替代 TextTiling 章节路径）=====
     if llm_chapters:
         print("[chapters] LLM 层级章节切分（Qwen2.5-7B-AWQ）...", flush=True)

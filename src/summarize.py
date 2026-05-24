@@ -691,6 +691,9 @@ def chunk_marks(item: dict, min_count: int = 4,
         marks.append("⭐")
     if detect_difficulty(item):
         marks.append("🎯")
+    # I4-d: 例题段标记（pipeline.py 在 _detect_example_chunks 后写入 is_example）
+    if item.get("is_example"):
+        marks.append("📝 例题")
     return marks
 
 

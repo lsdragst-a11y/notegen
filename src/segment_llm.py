@@ -520,22 +520,15 @@ def _promote_oversized(outline: dict, max_chunks_per_top: int = 5) -> dict:
 
 
 def _repair_oversize(parsed: dict, chunks: list[dict],
-                      max_chunks_per_top: int = 5,
-                      example_chunks: Optional[set[int]] = None) -> dict:
+                      max_chunks_per_top: int = 5) -> dict:
     """把 chunks > max 的 catch-all 顶层程序化拆成 ≤ max 的子段。
     用 chunks 间 keyword Jaccard 距离找内部最大跳变拆点；keyword 信息不全时
     均分兜底。新增子段命名 "{orig title} (Pt N)"。
-
-    I4-b: example_chunks（题目段 idx 集合）若提供，在 example/非 example 边界
-    人为加大 gap 距离（+1.0），让拆点优先落在那里。p57 实测题目段 11-13 被
-    catch-all 后 repair_oversize 按 Jaccard 切到 [10-14]，I4-b 后会强制把
-    边界 10|11 和 13|14 拆开。
 
     Motivation: Qwen 在英文 30+ chunks 视频上有 catch-all bias（[[project-english-video-support]]
     经验），prompt 工程无法根治；retry-with-feedback 也常不收敛。`_promote_oversized`
     只能救"有 children"的 case，没 children 的 catch-all 需要这个程序化兜底。
     """
-    example_chunks = example_chunks or set()
     new_chapters = []
     for ch in parsed.get("chapters", []):
         chs = sorted(set(c for c in (ch.get("chunks") or []) if isinstance(c, int)))
@@ -555,60 +548,19 @@ def _repair_oversize(parsed: dict, chunks: list[dict],
             ka = set(chunks[ai].get("keywords") or [])
             kb = set(chunks[bi].get("keywords") or [])
             jac = len(ka & kb) / len(ka | kb) if (ka and kb) else 0.0
-            d = 1.0 - jac
-            # I4-b: 例题/非例题边界加大 gap 让拆点优先落到这里
-            a_is_ex = ai in example_chunks
-            b_is_ex = bi in example_chunks
-            if a_is_ex != b_is_ex:
-                d += 1.0  # >1 远大于任何 Jaccard 距离
-            gaps.append((i, d))
+            gaps.append((i, 1.0 - jac))
         # 取 top n_parts-1 个最大间隙做拆点（间隙序号 = 拆点在 chs[i] 后）
-        # I4-b: 例题边界 (d ≥ 1.0 因为 +1.0 加成) 作必选 split
-        required = {i for i, d in gaps if d >= 1.0}
-        # 剩余按 Jaccard 距离从大到小排，凑 n_parts-1 个
-        remaining_gaps = sorted([g for g in gaps if g[0] not in required],
-                                key=lambda x: -x[1])
-        n_extra = max(0, n_parts - 1 - len(required))
-        selected = set(required) | {g[0] for g in remaining_gaps[:n_extra]}
-        # 若结果仍有 part > max，迭代补 split：在最大的 oversize part 里加
-        # Jaccard 顶 gap，直到所有 part ≤ max 或 split 用尽
-        def _make_parts(selected_splits: set[int]) -> list[list[int]]:
-            ss = sorted(selected_splits)
-            out: list[list[int]] = []
-            start_i = 0
-            for sa in ss:
-                out.append(chs[start_i:sa + 1])
-                start_i = sa + 1
-            out.append(chs[start_i:])
-            return out
-        safety = len(chs)
-        while safety > 0:
-            safety -= 1
-            parts = _make_parts(selected)
-            oversize = [(pi, p) for pi, p in enumerate(parts) if len(p) > max_chunks_per_top]
-            if not oversize:
-                break
-            # 在最大的 oversize part 里找 Jaccard 顶 gap
-            pi, biggest_part = max(oversize, key=lambda x: len(x[1]))
-            part_start, part_end = biggest_part[0], biggest_part[-1]
-            candidates = [(gi, d) for gi, d in gaps
-                          if gi not in selected
-                          and part_start <= chs[gi] < part_end]
-            if not candidates:
-                break
-            best_gi = max(candidates, key=lambda x: x[1])[0]
-            selected.add(best_gi)
-        parts = _make_parts(selected)
-        # 兜底：若仍有 oversize（极少见），均分该 part 内部
+        split_after = sorted([g[0] for g in sorted(gaps, key=lambda x: -x[1])[:n_parts - 1]])
+        parts: list[list[int]] = []
+        start = 0
+        for sa in split_after:
+            parts.append(chs[start:sa + 1])
+            start = sa + 1
+        parts.append(chs[start:])
+        # 校验：拆完仍有 > max 的部分（语义拆点不均），fallback 均分
         if any(len(p) > max_chunks_per_top for p in parts):
-            new_parts: list[list[int]] = []
-            for p in parts:
-                if len(p) <= max_chunks_per_top:
-                    new_parts.append(p)
-                else:
-                    for i in range(0, len(p), max_chunks_per_top):
-                        new_parts.append(p[i:i + max_chunks_per_top])
-            parts = new_parts
+            parts = [chs[i:i + max_chunks_per_top]
+                     for i in range(0, len(chs), max_chunks_per_top)]
         for pi, p in enumerate(parts, 1):
             new_chapters.append({
                 "title": f"{title} (Pt {pi})" if len(parts) > 1 else title,
@@ -1154,37 +1106,11 @@ def segment_hierarchical(chunks: list[dict],
             f"顶层数典型在 **{min_tops_arith}-{min(6, min_tops_arith+2)}** 之间。"
             f"主题更细可超，但每章必须是**连续区间**——宁可少 1 章也不要为凑数跳着选 chunks。\n"
         )
-    # I4: 教学视频例题段识别 — 让 segmenter 把题目讲解段独立成章
-    example_clause = ""
-    example_set: set[int] = set()  # I4-b: 给 _repair_oversize 用，强制例题边界拆
-    if category in ("teaching", "popsci"):
-        example_idxs = _detect_example_chunks(chunks)
-        example_set = set(example_idxs)
-        if len(example_idxs) >= 2:
-            # 取连续 run（合并相邻的例题 chunks 作单一例题章）
-            runs: list[list[int]] = []
-            for idx in example_idxs:
-                if runs and idx == runs[-1][-1] + 1:
-                    runs[-1].append(idx)
-                else:
-                    runs.append([idx])
-            # 只把 ≥2 chunks 的 run 当真例题段（孤立 1 chunk 不强制独立）
-            example_runs = [r for r in runs if len(r) >= 2]
-            if example_runs:
-                run_strs = [f"chunks [{','.join(str(i) for i in r)}]" for r in example_runs]
-                example_clause = (
-                    f"\n**例题段约束**：识别到以下 chunks 含题目/选项/数值答案讲解信号——\n"
-                    f"  {' / '.join(run_strs)}\n"
-                    f"这些段是\"题目讲解\"（≠ 原理讲解），**必须独立成章或归到一个\"练习\n"
-                    f"题\"章**，禁止跟原理段混到一章里。章标题用\"...例题\"/\"...练习\"/\n"
-                    f"\"...题目讲解\"等明确区分。\n"
-                )
     user_prompt = (
         f"{cat_label}共 {n} 个原子段（chunk_idx 0~{n-1}）：\n\n"
         f"{chunk_text}\n"
         f"{visual_block}\n"
         f"{arith_clause}"
-        f"{example_clause}"
         f"**自检清单**（输出前 mentally verify，每条都过才允许输出）：\n"
         f"1. 顶层数 ∈ [3, 6]\n"
         f"2. 每个顶层 chunks 数 ≤ {chunks_per_top_cap}（最易踩；主题集中也必须拆）\n"
@@ -1323,8 +1249,7 @@ def segment_hierarchical(chunks: list[dict],
             repaired = _promote_oversized(repaired, max_chunks_per_top=chunks_per_top_cap)
             before_oversize_chs = [len(c.get("chunks") or []) for c in repaired.get("chapters", [])]
             repaired = _repair_oversize(repaired, chunks,
-                                         max_chunks_per_top=chunks_per_top_cap,
-                                         example_chunks=example_set)
+                                         max_chunks_per_top=chunks_per_top_cap)
             after_oversize_chs = [len(c.get("chunks") or []) for c in repaired.get("chapters", [])]
             if before_oversize_chs != after_oversize_chs:
                 meta["repair_used"].append("repair_oversize")
