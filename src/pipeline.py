@@ -625,11 +625,15 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
     # VRAM 占用与 Qwen2.5-7B-Instruct-AWQ 相近，跑完会 free_vl_model() 让 instruct 加载回来。
     visual_captions_for_llm = None
     vl_max_prefix_run = None  # 二次门控诊断指标
+    vl_generic_ratio = None   # 通用动词占比，三层门控的中层指标
     vl_degraded_reason = None
-    # 自适应规则（两层）：
+    # 自适应规则（三层）：
     # 外层 - n_chunks ≤ 15：短/动态视频画面信息密度高，caption 切更细（OS p37 实测）
     # 外层 - n_chunks > 15：长视频画面 pattern 单一，caption 反诱发 catch-all（BV1S6kQBNEJq）
-    # 内层 - caption 前缀长 run 检测：即使外层通过，若 captions 出现 ≥4 个共享 10 字
+    # 中层 - generic_ratio ≥ 阈值：caption 多为"讲师/讨论/演示/explains"等通用动词，
+    #        前缀不同但语义都是"画面在讲 X"，LLM 易合并漏 chunks（BV1S6kQBNEJq AI Agent
+    #        教程实测高 generic_ratio + vl-rescue 命中）；提前抓住可省一次 LLM attempt
+    # 内层 - caption 前缀长 run 检测：即使前两层通过，若 captions 出现 ≥4 个共享 10 字
     #        前缀的连续 run 且剩余 chunks ≥ 3（p44 实测 5/9 chunks 共享"以太网交换机
     #        的自学习功能"），LLM 误以为"同主题需合并"漏 chunks；OS p37 max_run=4
     #        但 n-run=1 不触发内层，保留增益
@@ -637,6 +641,7 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
     CAPTION_PREFIX_K = 10
     CAPTION_PREFIX_RUN_MIN = 4
     CAPTION_OTHER_MIN = 3
+    CAPTION_GENERIC_MAX = 0.65  # generic 动词占比 ≥ 此值 → 降级
     if vlm_captions and keyframes and summaries:
         try:
             from caption_vl import caption_keyframes, caption_redundancy, free_vl_model
@@ -665,12 +670,21 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             print(f"      [vl-cap] n_cap={n_cap}, jaccard_mean={jaccard:.2f}, "
                   f"generic_ratio={generic:.2f}, max_prefix_run={best}/{len(captions)}",
                   flush=True)
+            # 记录 generic_ratio 供 ablation/§5.4 用
+            vl_generic_ratio = generic
             # 外层判定：n_chunks 阈值
             if len(summaries) > CAPTION_MAX_CHUNKS:
                 vl_degraded_reason = "n_chunks_gt_15"
                 print(f"      [vl-cap] n_chunks={len(summaries)} > "
                       f"{CAPTION_MAX_CHUNKS} → 长视频画面 pattern 易让 LLM catch-all，"
                       f"降级回 CLIP sim cue", flush=True)
+                visual_captions_for_llm = None
+            # 中层判定：generic_ratio（通用动词占比）
+            elif generic >= CAPTION_GENERIC_MAX:
+                vl_degraded_reason = "generic_ratio_high"
+                print(f"      [vl-cap] generic_ratio={generic:.2f} ≥ "
+                      f"{CAPTION_GENERIC_MAX} → caption 多为'讲师讲解/演示'通用句式无"
+                      f"区分度，LLM 易 catch-all，降级回 CLIP sim cue", flush=True)
                 visual_captions_for_llm = None
             # 内层判定：前缀长 run + 剩余 chunks
             elif (best >= CAPTION_PREFIX_RUN_MIN
@@ -684,7 +698,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             else:
                 visual_captions_for_llm = captions
                 print(f"      [vl-cap] n_chunks={len(summaries)} ≤ "
-                      f"{CAPTION_MAX_CHUNKS} 且 prefix_run={best} 不退化 → "
+                      f"{CAPTION_MAX_CHUNKS}, generic_ratio={generic:.2f} < "
+                      f"{CAPTION_GENERIC_MAX}, prefix_run={best} 不退化 → "
                       f"caption 用作切分主信号", flush=True)
         except Exception as e:
             print(f"      [vl-cap] 异常：{e}（跳过 caption，回退 sim cue）", flush=True)
@@ -940,6 +955,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         # 二次门控诊断
         if vlm_captions:
             ablation["vlm_max_prefix_run"] = vl_max_prefix_run
+            ablation["vlm_generic_ratio"] = (
+                round(vl_generic_ratio, 3) if vl_generic_ratio is not None else None)
             ablation["vlm_degraded_reason"] = vl_degraded_reason
         ablation["n_chapters"] = len(chapter_list)
         ablation["max_chunks_per_chapter"] = max(len(c["indices"]) for c in chapter_list)

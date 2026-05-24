@@ -105,6 +105,7 @@ def collect_records(include_legacy: bool = False,
             "vl_used": bool(ablation.get("vlm_captions_used", False)),
             "vl_degraded_reason": ablation.get("vlm_degraded_reason"),
             "vl_max_prefix_run": ablation.get("vlm_max_prefix_run"),
+            "vl_generic_ratio": ablation.get("vlm_generic_ratio"),
             "vl_rescue": bool(seg_meta.get("vl_rescue_used", False)),
             "boundaries": boundaries,
         })
@@ -173,6 +174,11 @@ def render_mm_compare(records: list[dict]) -> str:
                     pref_run = vr.get("vl_max_prefix_run")
                     adaptive = (f"downgrade→sim (prefix_run={pref_run}/{tr['n_chunks']}"
                                 f" 同质化)")
+                elif reason == "generic_ratio_high":
+                    gr = vr.get("vl_generic_ratio")
+                    adaptive = (f"downgrade→sim (generic_ratio="
+                                f"{gr:.2f} 通用句式)" if gr is not None
+                                else "downgrade→sim (generic_ratio 高)")
                 elif reason == "n_chunks_gt_15" or tr['n_chunks'] > 15:
                     adaptive = f"downgrade→sim (n_chunks={tr['n_chunks']} > 15)"
                 else:
@@ -198,11 +204,14 @@ def render_mm_compare(records: list[dict]) -> str:
             return r
         return "n_chunks_gt_15" if (t and t["n_chunks"] > 15) else "unknown"
     n_dg_chunks = sum(1 for _, p in paired if _dg_reason(p) == "n_chunks_gt_15")
+    n_dg_generic = sum(1 for _, p in paired if _dg_reason(p) == "generic_ratio_high")
     n_dg_prefix = sum(1 for _, p in paired if _dg_reason(p) == "prefix_run_degenerate")
     lines.append(f"- 跑了三路对比的视频：{len([p for p in paired if 'mm.vl' in p[1]])}/{len(paired)}")
     lines.append(f"- VL 自适应实际启用 caption：{n_vl_actually_used}")
     lines.append(f"- VL 自适应降级回 sim cue：{n_vl_downgraded}"
-                 f"（外层 n_chunks>15: {n_dg_chunks}，内层 prefix_run 同质化: {n_dg_prefix}）")
+                 f"（外层 n_chunks>15: {n_dg_chunks}，"
+                 f"中层 generic_ratio: {n_dg_generic}，"
+                 f"内层 prefix_run 同质化: {n_dg_prefix}）")
     lines.append(f"- VL caption 启用且切更细（vs mm）：{n_vl_helped}/{n_vl_actually_used}")
     lines.append("")
     lines.append("**字段说明**: `章/att/通过` = 章数 / LLM attempts / 通过方式 "
@@ -287,6 +296,8 @@ def render_section_6_4(records: list[dict]) -> str:
         reason = r.get("vl_degraded_reason")
         if reason == "prefix_run_degenerate":
             return "**内层 gate**"
+        if reason == "generic_ratio_high":
+            return "**中层 gate**"
         if reason == "n_chunks_gt_15" or r["n_chunks"] > 15:
             return "外层 gate"
         return f"degrade ({reason or '?'})"
@@ -333,6 +344,8 @@ def render_section_6_4(records: list[dict]) -> str:
                   and (r.get("vl_degraded_reason") == "n_chunks_gt_15"
                        or r["n_chunks"] > 15)
                   and not r["vl_rescue"])
+    n_middle = sum(1 for r in vl_records
+                   if r.get("vl_degraded_reason") == "generic_ratio_high")
     n_inner = sum(1 for r in vl_records
                   if r.get("vl_degraded_reason") == "prefix_run_degenerate")
     n_fb = sum(1 for r in vl_records if r["fallback"])
@@ -348,6 +361,7 @@ def render_section_6_4(records: list[dict]) -> str:
     lines.append(f"| Programmatic repair | {n_repair}/{n} |")
     lines.append(f"| 救援触发 | {n_rescue}/{n} |")
     lines.append(f"| 外层 gate 降级 | {n_outer}/{n} |")
+    lines.append(f"| 中层 gate 降级 | {n_middle}/{n} |")
     lines.append(f"| 内层 gate 降级 | {n_inner}/{n} |")
     lines.append(f"| Fallback TextTiling | {n_fb}/{n} |")
     return "\n".join(lines)

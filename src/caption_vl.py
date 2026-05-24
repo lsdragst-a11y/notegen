@@ -169,10 +169,15 @@ _GENERIC_TEACHING_WORDS = {
     # 中文
     "讲师", "讲解", "讨论", "介绍", "解释", "分析", "说明", "演示",
     "解读", "阐述", "描述", "提到", "强调", "展示", "举例",
-    # 英文
-    "explains", "discusses", "introduces", "demonstrates", "talks",
+    # 英文 - 动作类（教学场景常用动词）
+    "explains", "explaining", "discusses", "discussing",
+    "introduces", "demonstrates", "talks",
+    "showing", "shows", "describing",
+    "illustrates", "illustrating", "depicts", "depicting",
+    "displays", "displaying", "presents", "presenting",
+    # 英文 - 角色 / 内容载体类（不收 frame/image/screen，避免 framework/imagery 误匹配）
     "presenter", "speaker", "instructor", "lecturer",
-    "showing", "explaining", "describing", "discussing",
+    "diagram", "slide", "video",
 }
 
 
