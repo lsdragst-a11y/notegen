@@ -2666,6 +2666,25 @@ chunk 原文是中文则 headline 用中文（如 "管程引入原因"）。**�
 7. 不要任何 markdown 标记、解释或前言"""
 
 
+def _local_headline_fallback(chunk: dict, max_len: int = 12) -> str:
+    """LLM headline 失败时的本地兜底：用 chunk top-keyword 或 text 首句前 N 字。
+    质量低于 LLM 但**不错位**——比"D2 末尾 pad 空串导致下游 abstract/recap
+    串台"安全。BV19E411D78Q_p93 实测：22 chunks LLM 漏中间 1 个 → D2 pad
+    末尾 → chunk14-19 整体错位 1 位 → ch3 recap "URL组成: 传输时延"完全串台。
+    """
+    kws = chunk.get("keywords") or []
+    if kws:
+        kw = str(kws[0]).strip()
+        if 2 <= len(kw) <= max_len:
+            return kw
+    text = (chunk.get("text") or "").strip().replace("\n", " ")
+    for sep in ["。", "?", "!", "，", ","]:
+        idx = text.find(sep)
+        if 4 <= idx <= max_len:
+            return text[:idx]
+    return text[:max_len] if text else "（章节）"
+
+
 def generate_headlines(chunks: list[dict],
                       model_id: str = _DEFAULT_MODEL,
                       max_new_tokens: Optional[int] = None,
@@ -2746,10 +2765,37 @@ def generate_headlines(chunks: list[dict],
                    "json", "type"}]
         threshold = max(1, int(n * 0.9))
         if len(quoted) >= threshold:
-            padded = quoted[:n] + [""] * max(0, n - len(quoted))
-            print(f"      [llm-headline-gen] parse failed strict, "
-                  f"D2 pad fallback: {len(quoted)}/{n} quoted → pad to {n}", flush=True)
-            arr = padded
+            # **J4** 长 list (n>15) 上 D2 末尾 pad 不可信：LLM 漏的若是
+            # 中间某个 chunk（非末尾），按顺序 pad 会让所有后续 headline
+            # 错位 1 位 → ch{x} headline 实际是 ch{x+1} 内容 → 下游 recap
+            # 句式"label: 内容"完全串台（BV19E411D78Q_p93 ch3 实测案例）。
+            # 修：n>15 先 retry 一次更严格 temp，再失败本地 fallback 杜绝错位。
+            if n > 15:
+                print(f"      [llm-headline-gen] strict parse fail, n={n}>15 → "
+                      f"retry @ temp=0.05 (D2 pad 顺序在长 list 不可信)",
+                      flush=True)
+                with torch.no_grad():
+                    out2 = model.generate(
+                        **inputs, max_new_tokens=max_new_tokens,
+                        do_sample=True, temperature=0.05, top_p=0.85,
+                        pad_token_id=tok.eos_token_id,
+                    )
+                raw2 = tok.decode(
+                    out2[0][inputs["input_ids"].shape[1]:],
+                    skip_special_tokens=True).strip()
+                arr = _parse_titles_array(raw2, n)
+                if arr is None:
+                    print(f"      [llm-headline-gen] retry strict 仍失败 → "
+                          f"整批本地 fallback (keyword/text 首句), "
+                          f"杜绝下游错位", flush=True)
+                    arr = [_local_headline_fallback(c) for c in chunks]
+            else:
+                # n ≤ 15: 短 list LLM 漏中间罕见，pad 末尾顺序基本可信
+                padded = quoted[:n] + [""] * max(0, n - len(quoted))
+                print(f"      [llm-headline-gen] parse failed strict, "
+                      f"D2 pad fallback: {len(quoted)}/{n} quoted → "
+                      f"pad to {n}", flush=True)
+                arr = padded
         else:
             print(f"      [llm-headline-gen] parse failed, raw len={len(raw)}, "
                   f"head: {raw[:200]} ... tail: {raw[-100:]}", flush=True)
