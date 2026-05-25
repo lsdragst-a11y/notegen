@@ -1729,6 +1729,7 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
     if n_injected:
         print(f"      [llm-chapter-title] I6 注入特定词: {n_injected} 章原标题全 generic",
               flush=True)
+    titles = [_strip_qmask(t) for t in titles]
     print(f"      [llm-chapter-title] refined {K} chapter titles", flush=True)
     return titles
 
@@ -2203,7 +2204,7 @@ def generate_chapter_abstracts(chapters: list[dict],
     if arr is None:
         print(f"      [llm-chapter-abstract] parse failed, raw: {raw[:250]}", flush=True)
         return None
-    abstracts = [str(s).strip().strip('"').strip("'") for s in arr]
+    abstracts = [_strip_qmask(str(s).strip().strip('"').strip("'")) for s in arr]
     print(f"      [llm-chapter-abstract] generated {K} chapter abstracts", flush=True)
     return abstracts
 
@@ -2379,7 +2380,7 @@ def generate_chapter_recaps(chapters: list[dict],
     if arr is None:
         print(f"      [llm-chapter-recap] parse failed, raw: {raw[:250]}", flush=True)
         return None
-    recaps = [str(s).strip().strip('"').strip("'") for s in arr]
+    recaps = [_strip_qmask(str(s).strip().strip('"').strip("'")) for s in arr]
     # 质量信号：纯名词 bullet 占比 + 跨章重复 token 数。仅日志，不重试。
     _verb_re = re.compile(r"[是有为用因含算包通过基于实现完成需要导致由属于即定义"
                           r"分类构成转换组成发送接收处理执行解决依赖支持决定影响"
@@ -2639,6 +2640,14 @@ def generate_chapter_quizzes(chapters: list[dict],
             continue
         qs_raw = ch_obj.get("questions") or []
         qs_clean = [q for q in qs_raw if _validate_quiz_item(q)]
+        # J5: quiz 字段 [?] strip
+        for q in qs_clean:
+            for f in ("q", "explanation"):
+                if isinstance(q.get(f), str):
+                    q[f] = _strip_qmask(q[f])
+            if isinstance(q.get("options"), list):
+                q["options"] = [_strip_qmask(o) if isinstance(o, str) else o
+                                for o in q["options"]]
         total_kept += len(qs_clean)
         total_drop += len(qs_raw) - len(qs_clean)
         result.append({"questions": qs_clean})
@@ -2664,6 +2673,27 @@ chunk 原文是中文则 headline 用中文（如 "管程引入原因"）。**�
    （主题集中视频上禁止重复输出"距离向量算法/距离向量算法原理/距离向量算法解释"
    这种近义条目把数组撑超长——超出的会被丢弃，等于浪费 token 还会让后续条目错位）
 7. 不要任何 markdown 标记、解释或前言"""
+
+
+def _strip_qmask(text: str) -> str:
+    """**J5** 移除 user-facing 文本里的 `[?]` 字面（_calibrate_headline_words
+    drop 词在 user_prompt 里以 [?] 出现，LLM 偶尔违反"不要写 [?]"约束把字
+    面复制到 abstract/recap/quiz 输出 → web 展示 "[?] 标记是设备状态..."）。
+
+    策略：直接删 `[?]`，清理多余空白和"残留前导标点"。
+
+    BV1BE411D7ii_p66 实测：ch1/ch2 recap 出 "- [?] 标记是设备..."、
+    "- [?] 请求涉及..."。
+    """
+    if not text or "[?]" not in text:
+        return text
+    out = text.replace("[?]", "")
+    out = re.sub(r"[ \t]{2,}", " ", out)
+    # 行首 `-` `*` 后的多余空格收齐
+    out = re.sub(r"(^|\n)([-*•])\s+\s+", r"\1\2 ", out)
+    # bullet 内容若以标点开头（如 ", "/": "）清掉
+    out = re.sub(r"(^|\n)([-*•])\s+[，,、：:。]\s*", r"\1\2 ", out)
+    return out.strip()
 
 
 def _local_headline_fallback(chunk: dict, max_len: int = 12) -> str:
