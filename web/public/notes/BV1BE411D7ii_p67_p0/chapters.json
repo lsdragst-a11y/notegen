@@ -1,0 +1,210 @@
+{
+  "chapters": [
+    {
+      "title": "IO与程序查询",
+      "start": 0.62,
+      "end": 322.95,
+      "indices": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "abstract": "本章介绍IO系统的组成及三种IO方式，重点讲解程序查询方式下CPU如何管理和外设的数据传输流程。",
+      "recap": "- IO方式分为程序查询、中断、DMA，程序查询需不断检查外设状态\n- 程序查询方式中，CPU重复查询外设状态直到数据准备好\n- 中断方式改进了程序查询，CPU通过中断请求确认外设状态\n- DMA方式中，CPU在数据传输过程中暂停，外设直接与内存交互",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在IO系统中，哪一种方式不需要CPU不断地重复查询外设的状态？",
+            "options": [
+              "程序查询",
+              "中断",
+              "DMA",
+              "直接存储器访问"
+            ],
+            "answer_idx": 1,
+            "explanation": "中断方式通过中断请求来通知CPU，无需CPU持续查询"
+          },
+          {
+            "type": "tf",
+            "q": "程序查询方式下，CPU的工作是有实质性的进展的。",
+            "answer": false,
+            "explanation": "程序查询方式下，CPU只是不断查询外设状态，没有实质进展"
+          }
+        ]
+      },
+      "title_zh": "IO与程序查询",
+      "title_en": "I/O and Program Inquiry",
+      "abstract_zh": "本章介绍IO系统的组成及三种IO方式，重点讲解程序查询方式下CPU如何管理和外设的数据传输流程。",
+      "abstract_en": "This chapter introduces the components of an I/O system and three I/O methods, focusing on how CPU manages data transfer with peripherals during program query."
+    },
+    {
+      "title": "查询过程详解",
+      "start": 322.95,
+      "end": 402.04,
+      "indices": [
+        4
+      ],
+      "abstract": "本章详细解析查询过程，指出CPU执行简单任务但效率低下，强调接口设计简化的重要性。",
+      "recap": "- 查询过程由CPU执行，简单但效率低，因CPU需重复查询外设状态\n- 查询过程耗时，影响CPU性能，需优化查询策略",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "查询过程由哪个组件执行？",
+            "options": [
+              "CPU",
+              "IO接口",
+              "外设",
+              "寄存器"
+            ],
+            "answer_idx": 0,
+            "explanation": "查询过程由CPU执行，IO接口仅完成简单任务"
+          }
+        ]
+      },
+      "title_zh": "查询过程详解",
+      "title_en": "Detailed Explanation of the Inquiry Process",
+      "abstract_zh": "本章详细解析查询过程，指出CPU执行简单任务但效率低下，强调接口设计简化的重要性。",
+      "abstract_en": "This section details the query process, highlighting that while CPU handles simple tasks efficiently, interface design simplification is crucial."
+    },
+    {
+      "title": "接口结构与数据传输",
+      "start": 404.28,
+      "end": 598.18,
+      "indices": [
+        5,
+        6
+      ],
+      "abstract": "本章解析接口结构与数据传输限制，重点在于数据如何存放在寄存器中并通过CPU传递。",
+      "recap": "- 接口结构包含状态寄存器，CPU通过程序控制数据传输\n- 数据传输限制在CPU寄存器中，影响IO系统性能",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "数据传输时，数据被暂时存放在哪里？",
+            "options": [
+              "外设",
+              "IO接口",
+              "CPU寄存器",
+              "内存"
+            ],
+            "answer_idx": 2,
+            "explanation": "数据传输时，数据被暂存于CPU寄存器"
+          },
+          {
+            "type": "tf",
+            "q": "使用程序查询方式的IO系统中，数据传输不会占用CPU。",
+            "answer": false,
+            "explanation": "程序查询方式下，数据传输仍需CPU持续查询"
+          }
+        ]
+      },
+      "title_zh": "接口结构与数据传输",
+      "title_en": "Interface Structure and Data Transfer",
+      "abstract_zh": "本章解析接口结构与数据传输限制，重点在于数据如何存放在寄存器中并通过CPU传递。",
+      "abstract_en": "This chapter analyzes interface structure and data transmission limitations, emphasizing how data is stored in registers and passed through the CPU."
+    },
+    {
+      "title": "时钟周期与硬盘查询",
+      "start": 598.64,
+      "end": 925.61,
+      "indices": [
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章计算时钟周期与硬盘查询时间，分析每秒查询次数及所需时间，评估对CPU性能的影响。",
+      "recap": "- 计算时钟周期，每秒查询硬盘次数为2^19次，每次查询耗时2000纳秒\n- 硬盘查询所需时钟周期数占CPU总周期比例",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "每秒需要查询硬盘多少次？",
+            "options": [
+              "10次",
+              "20次",
+              "50次",
+              "100次"
+            ],
+            "answer_idx": 2,
+            "explanation": "根据时钟周期计算，每秒查询硬盘50次"
+          },
+          {
+            "type": "tf",
+            "q": "查询鼠标所需的时间远少于查询硬盘。",
+            "answer": true,
+            "explanation": "鼠标查询所需时间较短，影响较小"
+          }
+        ]
+      },
+      "title_zh": "时钟周期与硬盘查询",
+      "title_en": "Clock Cycle and Hard Disk Inquiry",
+      "abstract_zh": "本章计算时钟周期与硬盘查询时间，分析每秒查询次数及所需时间，评估对CPU性能的影响。",
+      "abstract_en": "This chapter calculates clock cycles and disk query times, analyzing query frequency and required time, assessing its impact on CPU performance."
+    },
+    {
+      "title": "程序查询管理与接口电路",
+      "start": 926.28,
+      "end": 1048.96,
+      "indices": [
+        10,
+        11
+      ],
+      "abstract": "本章讨论程序查询管理方式对CPU的占用情况，解释接口电路如何实现数据传输及对CPU的影响。",
+      "recap": "- 程序查询管理对CPU占用大，CPU无实质进展\n- 接口电路理解：数据传输发生在CPU计算器和IO接口缓冲器之间",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在CPU遇到IO指令时，哪种方式对CPU的占用较大？",
+            "options": [
+              "程序查询",
+              "中断",
+              "DMA",
+              "直接存储器访问"
+            ],
+            "answer_idx": 0,
+            "explanation": "程序查询方式下，CPU持续执行程序查询，占用较大"
+          },
+          {
+            "type": "tf",
+            "q": "接口电路中的数据传送发生在CPU计算器和IO接口的数字缓冲计数器之间。",
+            "answer": true,
+            "explanation": "接口电路中的数据传送确实发生在这两个组件之间"
+          }
+        ]
+      },
+      "title_zh": "程序查询管理与接口电路",
+      "title_en": "Program Inquiry Management and Interface Circuit",
+      "abstract_zh": "本章讨论程序查询管理方式对CPU的占用情况，解释接口电路如何实现数据传输及对CPU的影响。",
+      "abstract_en": "This chapter discusses the CPU usage during program query management, explaining how interface circuits facilitate data transfer and affect CPU."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "dominant_chapter"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 1052.864,
+    "n_chunks": 12,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 3,
+    "vlm_generic_ratio": 0.583,
+    "vlm_degraded_reason": null,
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 4,
+    "has_wrapup": false
+  }
+}

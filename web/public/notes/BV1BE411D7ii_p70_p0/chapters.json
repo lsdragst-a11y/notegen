@@ -1,0 +1,192 @@
+{
+  "chapters": [
+    {
+      "title": "传输方式与特点",
+      "start": 0.88,
+      "end": 463.4,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章介绍DMA传输方式及其特点，重点讲解DMA控制器的功能和DMA传输的具体步骤。",
+      "recap": "- DMA控制器负责主存访问，不需CPU干预\n- DMA传送需接收请求并向CPU申请总线使用权\n- DMA与中断对比：中断通知CPU数据传输结束\n- DMA传输优先级高于中断，确保高效数据传输",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "DMA控制器的主要作用是什么？",
+            "options": [
+              "管理内存",
+              "控制外设",
+              "控制主存访问",
+              "管理中断"
+            ],
+            "answer_idx": 2,
+            "explanation": "DMA控制器专门负责控制主存的访问，而不是管理内存、控制外设或管理中断"
+          },
+          {
+            "type": "tf",
+            "q": "DMA控制器能够自主访问主存，无需CPU干预。",
+            "answer": true,
+            "explanation": "DMA控制器的设计目的是能够自主访问主存，实现高效的数据传输"
+          }
+        ]
+      },
+      "title_zh": "传输方式与特点",
+      "title_en": "Transmission Methods and Characteristics",
+      "abstract_zh": "本章介绍DMA传输方式及其特点，重点讲解DMA控制器的功能和DMA传输的具体步骤。",
+      "abstract_en": "This chapter introduces DMA transfer methods and their characteristics, focusing on the functions of the DMA controller and the specific steps of DMA transfer."
+    },
+    {
+      "title": "系统总线与优先级",
+      "start": 464.16,
+      "end": 847.58,
+      "indices": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章讨论系统总线与DMA传输优先级，详细说明DMA请求信号流程及与中断请求的交互。",
+      "recap": "- DMA传输优先级高于中断，确保高效数据传输\n- DMA请求信号写入控制单元，触发总线请求\n- DMA占用CPU时间，通过中断通知传输结束",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "DMA传输过程中，CPU主要负责什么？",
+            "options": [
+              "发送DMA请求",
+              "控制总线",
+              "处理中断",
+              "发起数据传输"
+            ],
+            "answer_idx": 2,
+            "explanation": "CPU主要负责处理中断，响应DMA请求，而不是直接发送DMA请求、控制总线或发起数据传输"
+          },
+          {
+            "type": "tf",
+            "q": "DMA控制器在传输过程中会占用CPU的时间。",
+            "answer": false,
+            "explanation": "DMA控制器通过中断机制告知CPU传输结束，不会占用CPU时间"
+          }
+        ]
+      },
+      "title_zh": "系统总线与优先级",
+      "title_en": "System Bus and Priority",
+      "abstract_zh": "本章讨论系统总线与DMA传输优先级，详细说明DMA请求信号流程及与中断请求的交互。",
+      "abstract_en": "This chapter discusses system buses and DMA transfer priorities, detailing the flow of DMA request signals and their interaction with interrupt requests."
+    },
+    {
+      "title": "控制器组成与传输原理",
+      "start": 848.74,
+      "end": 1250.46,
+      "indices": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "abstract": "本章阐述控制器组成与传输原理，重点分析DMA传输过程中CPU与DMA控制器的协作机制。",
+      "recap": "- DMA控制器组成包括传输接口，负责数据传输\n- DMA传输原理：CPU让出周期给DMA访问主存\n- DMA传输冲突：CPU暂停工作，DMA优先访问主存",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在DMA传输过程中，CPU和DMA控制器可能存在的冲突是什么？",
+            "options": [
+              "内存访问冲突",
+              "外设控制冲突",
+              "中断优先级冲突",
+              "数据传输速度冲突"
+            ],
+            "answer_idx": 0,
+            "explanation": "在DMA传输过程中，CPU和DMA控制器可能存在的冲突是内存访问冲突"
+          },
+          {
+            "type": "tf",
+            "q": "DMA传输过程中，DMA控制器可以优先访问主存。",
+            "answer": true,
+            "explanation": "DMA控制器在传输过程中可以优先访问主存，确保高效的数据传输"
+          }
+        ]
+      },
+      "title_zh": "控制器组成与传输原理",
+      "title_en": "Controller Composition and Transmission Principles",
+      "abstract_zh": "本章阐述控制器组成与传输原理，重点分析DMA传输过程中CPU与DMA控制器的协作机制。",
+      "abstract_en": "This chapter explains the composition and transmission principles of controllers, focusing on the collaboration mechanism between the CPU and DMA controller during DMA transfers."
+    },
+    {
+      "title": "传输优化与占用",
+      "start": 1250.46,
+      "end": 1673.82,
+      "indices": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "abstract": "本章探讨传输优化与占用问题，计算DMA传输速率及每次传输占用CPU的时间比例。",
+      "recap": "- DMA传输优先级高，中断优先级低\n- 数据传输率计算：每秒中断次数=0.5兆字节/32位\n- DMA占用CPU时间，每秒25%占用率",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "当DMA传输过程中，CPU需要处理多少次中断？",
+            "options": [
+              "500次",
+              "1000次",
+              "2500次",
+              "5000次"
+            ],
+            "answer_idx": 1,
+            "explanation": "假设每秒传输5兆字节，每次传输需要1000次中断，因此每秒需要处理1000次中断"
+          },
+          {
+            "type": "tf",
+            "q": "DMA传输过程中，每次中断占用CPU的时间约为500个时钟周期。",
+            "answer": true,
+            "explanation": "每次中断确实需要大约500个时钟周期来处理，这影响了CPU的效率"
+          }
+        ]
+      },
+      "title_zh": "传输优化与占用",
+      "title_en": "Transmission Optimization and Occupancy",
+      "abstract_zh": "本章探讨传输优化与占用问题，计算DMA传输速率及每次传输占用CPU的时间比例。",
+      "abstract_en": "This chapter explores transmission optimization and occupancy issues, calculating the DMA transfer rate and the proportion of CPU time occupied per transfer."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_oversize"
+      ],
+      "llm_fail_reasons": [
+        "oversize"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 1676.6506875,
+    "n_chunks": 20,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 3,
+    "vlm_generic_ratio": 0.65,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
+  }
+}
