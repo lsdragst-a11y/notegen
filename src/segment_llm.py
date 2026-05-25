@@ -1595,6 +1595,16 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
     K = len(chapters)
     lines = []
     any_drop = False
+    # J7: 检测"chunker 给一章内所有 chunks 生成相同 headline"模式（如 p68 ch3-ch6
+    # 共 20 chunks 全部 headline="中断服务程序"），此时必须靠 ASR snippet 给 LLM
+    # 看到本章真实内容差异，否则 LLM 只能从 headline+kw 拼"X详解/X执行/X恢复"雷同串。
+    n_dup_chs = sum(
+        1 for ch in chapters
+        if len(ch.get("chunks") or []) >= 2
+        and len({(chunks[i].get("headline") or "").strip()
+                 for i in ch["chunks"] if i < len(chunks)}) <= 1
+    )
+    any_dup_headlines = n_dup_chs >= 1
     for ci, ch in enumerate(chapters):
         lines.append(f"[第 {ci+1} 章]")
         for idx in ch["chunks"]:
@@ -1609,6 +1619,12 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
                 any_drop = True
                 line += f"  | ⚠️ 已识别 ASR 错字 (禁用): {', '.join(cal['drop'])}"
             lines.append(line)
+            # J7: 喂 ASR snippet——优先抽取式 summary，fallback text 前 120 字。
+            # 仿 abstract 的 J 修法（[[project-abstract-snippet-fix]]）。
+            snippet = (c.get("summary") or "").strip() or text[:120].strip()
+            if snippet:
+                snippet = snippet[:120].replace("\n", " ")
+                lines.append(f"    内容: {snippet}")
     body = "\n".join(lines)
     drop_clause = (
         "\n⚠️ 标注了「已识别 ASR 错字」的词是 Python 校准过的，**绝对禁止**\n"
@@ -1636,8 +1652,23 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
                 "两章都用同一个主题词（如不要 ch1=\"距离向量与自治\" + ch3=\"分层\n"
                 "次路由与自治\" 都共享\"自治\"）。每章用本章 chunks 独有的关键词锚定：\n"
                 + "\n".join(sibling_lines) + "\n")
+    # J7: 当 ≥1 章内 chunks headlines 完全相同（chunker 同主题视频后半段塌成
+    # 同一 headline），段标题给不出区分信号，必须强制 LLM 看「内容」行抽差异
+    dup_headline_clause = (
+        "\n⚠️ **同标题段内容差异命名硬约束**：本批输入里有 "
+        f"{n_dup_chs} 章内所有段标题完全相同（chunker 对同主题后半段塌成同一\n"
+        "headline）。这些章节**绝对不能**用\"段标题\"作为章标题词根——必须从\n"
+        "**「内容」行（ASR 摘要）**抽出本章独有的子机制 / 步骤 / 对象 /\n"
+        "实例对象，再拼章标题。共享前缀（如多章都以\"服务程序X\"/\"中断X\"开头）\n"
+        "是失败模式，每章必须用不重叠的核心名词锚定。\n"
+        if any_dup_headlines else "")
+    prefix_clause = (
+        "\n⚠️ **共享前缀禁令**：K 个章标题里**禁止 ≥3 个**共享同一个 ≥2 字前缀\n"
+        "（如不允许 ch3=\"服务程序详解\" + ch4=\"服务程序执行\" + ch5=\"服务程序恢复\"）。\n"
+        "若同主题被切成多章，必须用各章「内容」行里的独有概念（如 PC 保存 / \n"
+        "向量地址 / 多重屏蔽 / 微秒例题）锚定，避免前缀雷同。\n")
     user_prompt = (f"共 {K} 章/片段，请按顺序命名。\n"
-                   f"{drop_clause}{sibling_clause}\n"
+                   f"{drop_clause}{sibling_clause}{dup_headline_clause}{prefix_clause}\n"
                    f"{body}\n\n"
                    f"输出 JSON 数组（必须 {K} 个元素）：")
     model, tok = load_model(model_id)
@@ -1729,8 +1760,112 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
     if n_injected:
         print(f"      [llm-chapter-title] I6 注入特定词: {n_injected} 章原标题全 generic",
               flush=True)
+    # J7-C: 共享前缀兜底——LLM 即使被 prefix_clause 提示也可能出"X详解/X执行/X恢复"
+    # 这种 ≥3 章共享 ≥2 字前缀模式。Python 端检测后用各章独有 keyword 替换前缀部分，
+    # 让标题真正聚焦本章子主题。Why: p68 J6 重跑后 ch3-ch6 全 "服务程序X" 雷同。
+    titles = _split_shared_prefix_titles(titles, chapters, chunks)
     titles = [_strip_qmask(t) for t in titles]
     print(f"      [llm-chapter-title] refined {K} chapter titles", flush=True)
+    return titles
+
+
+def _split_shared_prefix_titles(titles: list[str], chapters: list[dict],
+                                chunks: list[dict],
+                                min_share: int = 3,
+                                min_prefix_len: int = 2) -> list[str]:
+    """J7-C: 若 ≥min_share 章共享 ≥min_prefix_len 字中文前缀，从各章独有 keyword 重写。
+
+    与 H2 互补：H2 处理完全相同 title，J7-C 处理共享前缀但后缀不同的模式
+    （p68 "服务程序详解/执行/恢复/应用" × 4）。
+    """
+    if len(titles) < min_share:
+        return titles
+    # 找共享前缀：从最长开始试，找最大命中
+    def cn_prefix(s: str) -> str:
+        out = []
+        for ch in s:
+            if "一" <= ch <= "鿿":
+                out.append(ch)
+            else:
+                break
+        return "".join(out)
+    prefixes = [cn_prefix(t) for t in titles]
+    # 按 prefix[0:n] 桶集合，n 从 max 往下试
+    max_len = max((len(p) for p in prefixes), default=0)
+    hit_prefix = ""
+    hit_indices: list[int] = []
+    for n in range(max_len, min_prefix_len - 1, -1):
+        bucket: dict[str, list[int]] = {}
+        for i, p in enumerate(prefixes):
+            if len(p) >= n:
+                bucket.setdefault(p[:n], []).append(i)
+        for pref, idxs in bucket.items():
+            if len(idxs) >= min_share:
+                hit_prefix, hit_indices = pref, idxs
+                break
+        if hit_prefix:
+            break
+    if not hit_prefix:
+        return titles
+    # 算每章独有 keywords：在本章 chunks 出现，且不在 hit_indices 里其他章出现
+    other_kws: set[str] = set()
+    for j in hit_indices:
+        pass  # 占位
+    per_ch_kws: dict[int, list[tuple[str, int]]] = {}
+    for j in hit_indices:
+        ch_chunks = chapters[j].get("chunks", [])
+        counts: dict[str, int] = {}
+        for idx in ch_chunks:
+            if idx >= len(chunks):
+                continue
+            for kw in (chunks[idx].get("keywords") or []):
+                kw = str(kw).strip()
+                # 跳过 1 字、共享前缀字、含 ASCII 噪声、generic
+                if len(kw) < 2:
+                    continue
+                if kw in hit_prefix or hit_prefix in kw:
+                    continue
+                if kw in _GENERIC_TITLE_TOKENS:
+                    continue
+                counts[kw] = counts.get(kw, 0) + 1
+        per_ch_kws[j] = sorted(counts.items(), key=lambda x: (-x[1], -len(x[0])))
+    # 各章独有 = 本章 top-N 里 不在其他 hit 章 top-N 里
+    used: set[str] = set()
+    n_rewritten = 0
+    for j in hit_indices:
+        cands = per_ch_kws.get(j, [])
+        # other_set: 别的 hit 章的 top-5 kws
+        other_set = set()
+        for k, kws in per_ch_kws.items():
+            if k == j: continue
+            for w, _ in kws[:5]:
+                other_set.add(w)
+        unique_kw = None
+        for w, c in cands:
+            if w in used:
+                continue
+            if w in other_set:
+                continue
+            unique_kw = w
+            break
+        if not unique_kw:
+            # 退而求其次：本章 top kw（即使别章也有，但 used 没占）
+            for w, c in cands:
+                if w not in used:
+                    unique_kw = w
+                    break
+        if not unique_kw:
+            continue
+        used.add(unique_kw)
+        # 重写：用 "独有词 + 共享前缀" 作为新标题（共享前缀仍有意义，前置具体词锚定）
+        # 例：服务程序详解 → PC保存与服务程序、12H向量与服务程序、多重屏蔽与服务程序
+        # 若原标题里 hit_prefix 后还有内容（如"详解"），保留 hit_prefix 不带尾巴
+        titles[j] = f"{unique_kw}与{hit_prefix}"
+        n_rewritten += 1
+    if n_rewritten:
+        print(f"      [llm-chapter-title] J7-C 共享前缀拆解: prefix={hit_prefix!r} "
+              f"hit={len(hit_indices)} 章, 重写 {n_rewritten} 个标题",
+              flush=True)
     return titles
 
 
@@ -1743,6 +1878,8 @@ _GENERIC_TITLE_TOKENS: set[str] = {
     "实例", "例子", "举例", "示例", "练习", "题目", "案例", "拓展",
     "扩展", "进阶", "深入", "细节", "要点", "重点", "难点", "版本",
     "发展", "起源", "现状", "未来", "展望",
+    # J7-C: 口语化连接词/无信息高频词，避免 chunker 关键词漏出当标题主词
+    "对应", "这些", "那些", "叫做", "哪些", "返回", "执行", "恢复",
 }
 
 
