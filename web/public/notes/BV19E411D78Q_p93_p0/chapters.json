@@ -1,7 +1,7 @@
 {
   "chapters": [
     {
-      "title": "万维网实例与网页元素",
+      "title": "网页元素与HTML结构",
       "start": 0.3,
       "end": 445.07,
       "indices": [
@@ -11,37 +11,37 @@
         3,
         4
       ],
-      "abstract": "本章通过一个网站实例介绍网页元素组成，重点讲解HTML文件如何被浏览器渲染成最终显示的内容。",
-      "recap": "- 万维网实例：制作了一个网站实例，下载根目录\n- 网页元素组成：HTML文件引用图片、视频等元素\n- HTML文件解析：浏览器渲染HTML文件，显示图像\n- 浏览器渲染：根据HTML文件和引用元素渲染页面\n- HTML解析：浏览器解析HTML文件，引用根目录和视频",
+      "abstract": "本章通过实例讲解网页元素组成及HTML结构，重点在于浏览器如何渲染HTML文件中的内容。",
+      "recap": "- 万维网实例：创建一个网站实例，包括HTML文件和引用的网页元素\n- HTML文件组成：包含文字、图片、视频等元素，浏览器渲染成可视页面\n- 浏览器渲染过程：解析HTML文件，显示网页元素如图片和视频\n- HTML解析：浏览器解析HTML文件，引用文件如图片和视频\n- 浏览器与服务器交互：通过DNS查询服务器IP，构建HTTP请求响应",
       "quiz": {
         "questions": [
           {
             "type": "mc",
-            "q": "在万维网实例中，HTML文件的主要作用是什么？",
+            "q": "在一个简单的网页中，HTML文件的主要作用是什么？",
             "options": [
-              "渲染网页元素",
-              "存储视频文件",
-              "保存图片文件",
-              "记录音频文件"
+              "定义网页的样式",
+              "描述网页元素的布局",
+              "指定网页元素的路径",
+              "渲染网页元素到屏幕"
             ],
-            "answer_idx": 0,
-            "explanation": "HTML文件负责将网页元素渲染成最终显示的图像"
+            "answer_idx": 3,
+            "explanation": "HTML文件描述了网页元素的结构和内容，浏览器会根据HTML文件渲染网页元素到屏幕"
           },
           {
             "type": "tf",
-            "q": "浏览器会根据HTML文件中的引用直接加载所有网页元素。",
-            "answer": true,
-            "explanation": "浏览器会根据HTML文件及其引用的元素来加载网页"
+            "q": "浏览器渲染网页元素时不会考虑HTML文件中的标签。",
+            "answer": false,
+            "explanation": "浏览器会根据HTML文件中的标签来渲染网页元素"
           }
         ]
       },
-      "title_zh": "万维网实例与网页元素",
-      "title_en": "Examples of the World Wide Web and Web Elements",
-      "abstract_zh": "本章通过一个网站实例介绍网页元素组成，重点讲解HTML文件如何被浏览器渲染成最终显示的内容。",
-      "abstract_en": "This chapter introduces web page elements through a website example, focusing on how HTML files are rendered by browsers."
+      "title_zh": "网页元素与HTML结构",
+      "title_en": "Web elements and HTML structure",
+      "abstract_zh": "本章通过实例讲解网页元素组成及HTML结构，重点在于浏览器如何渲染HTML文件中的内容。",
+      "abstract_en": "This chapter explains web element composition and HTML structure through examples, focusing on how browsers render HTML content."
     },
     {
-      "title": "持续与非持续连接方式",
+      "title": "浏览器与服务器交互",
       "start": 445.07,
       "end": 927.23,
       "indices": [
@@ -51,37 +51,37 @@
         8,
         9
       ],
-      "abstract": "本章详细对比持续与非持续连接方式，包括DNS请求和响应过程及TCP连接的建立与断开。",
-      "recap": "- 持续连接：通过DNS查询IP地址\n- 非持续连接：DNS响应IP地址，浏览器接收响应\n- TCP连接：携带HTTP请求报文\n- HTTP请求响应：携带HTML文件，浏览器解析HTML",
+      "abstract": "本章详细介绍了浏览器与服务器的交互过程，包括DNS查询和HTTP请求响应机制。",
+      "recap": "- DNS查询位置：使用3w.dl.com域名，通过DNS服务器解析IP地址\n- 与服务器交互：浏览器发送HTTP请求，服务器返回响应报文\n- HTTP请求响应：构造HTTP请求报文，服务器响应报文携带HTML文件\n- 持续连接：建立TCP连接，发送HTTP请求，接收响应报文\n- 非持续连接：发送多个HTTP请求，每个请求携带一个文件",
       "quiz": {
         "questions": [
           {
             "type": "mc",
-            "q": "持续连接方式中，浏览器发送HTTP请求报文后会发生什么？",
+            "q": "在浏览器与服务器交互的过程中，DNS服务器的作用是什么？",
             "options": [
-              "关闭TCP连接",
-              "等待服务器响应",
-              "重新建立TCP连接",
-              "发送新的HTTP请求"
+              "直接向服务器发送请求",
+              "解析域名到IP地址",
+              "存储服务器数据",
+              "转发HTTP请求"
             ],
             "answer_idx": 1,
-            "explanation": "持续连接方式下，浏览器会等待服务器响应"
+            "explanation": "DNS服务器解析域名到IP地址，以便浏览器能够找到正确的服务器"
           },
           {
             "type": "tf",
-            "q": "非持续连接方式中，每次HTTP请求都需要重新建立TCP连接。",
+            "q": "浏览器通过DNS服务器查询到IP地址后，可以直接访问服务器。",
             "answer": true,
-            "explanation": "非持续连接方式每次请求都需要重新建立TCP连接"
+            "explanation": "浏览器通过DNS服务器查询到IP地址后，可以直接访问服务器"
           }
         ]
       },
-      "title_zh": "持续与非持续连接方式",
-      "title_en": "Continuous vs Non-Continuous Connection Methods",
-      "abstract_zh": "本章详细对比持续与非持续连接方式，包括DNS请求和响应过程及TCP连接的建立与断开。",
-      "abstract_en": "This section details the differences between persistent and non-persistent connections, including DNS requests and responses, as well as TCP connection establishment and termination."
+      "title_zh": "浏览器与服务器交互",
+      "title_en": "Browser interaction with the server",
+      "abstract_zh": "本章详细介绍了浏览器与服务器的交互过程，包括DNS查询和HTTP请求响应机制。",
+      "abstract_en": "This chapter details the interaction between browsers and servers, including DNS queries and HTTP request-response mechanisms."
     },
     {
-      "title": "连接流程详解",
+      "title": "HTTP请求与响应",
       "start": 927.23,
       "end": 1402.01,
       "indices": [
@@ -91,37 +91,37 @@
         13,
         14
       ],
-      "abstract": "本章详解连接流程，包括非持续连接和持续连接的工作方式，以及并行TCP连接的机制。",
-      "recap": "- 非持续连接：三次HTTP请求或响应\n- 持续连接：建立TCP连接，断开后再建立\n- HTTP请求方式：持续连结后断开连接\n- 并行TCP连接：发送三个HTTP请求，携带文件\n- 握手过程：两次握手建立连接，至少两倍RTT时间",
+      "abstract": "本章探讨HTTP请求与响应的具体流程，区分持续连接与非持续连接两种模式。",
+      "recap": "- TCP连接建立：三次握手建立连接，发送HTTP请求\n- HTTP请求发送：通过TCP连接发送HTTP请求，请求服务器资源\n- 响应携带：响应报文携带HTML文件，浏览器解析显示\n- 非持续连接：三次HTTP请求，每个请求携带一个文件\n- 持续连接：两次握手建立连接，发送HTTP请求",
       "quiz": {
         "questions": [
           {
             "type": "mc",
-            "q": "非持续连接方式中，三次HTTP请求是如何处理的？",
+            "q": "在HTTP请求与响应中，持续连接与非持续连接的主要区别是什么？",
             "options": [
-              "连续发送三次请求",
-              "并发发送三次请求",
-              "依次发送三次请求",
-              "仅发送一次请求"
+              "持续连接需要建立多个TCP连接",
+              "非持续连接不需要建立TCP连接",
+              "持续连接每次请求都需要重新建立连接",
+              "非持续连接每次请求都会保持连接"
             ],
-            "answer_idx": 2,
-            "explanation": "非持续连接方式中，三次请求依次发送"
+            "answer_idx": 3,
+            "explanation": "持续连接每次请求都会保持连接，而非持续连接每次请求都需要重新建立连接"
           },
           {
             "type": "tf",
-            "q": "持续连接方式中，TCP连接会在每次请求后保持打开状态。",
-            "answer": true,
-            "explanation": "持续连接方式中，TCP连接保持打开状态直到关闭"
+            "q": "持续连接方式下，浏览器会在收到HTML文件后立即断开TCP连接。",
+            "answer": false,
+            "explanation": "持续连接方式下，浏览器不会立即断开TCP连接，而是继续处理后续请求"
           }
         ]
       },
-      "title_zh": "连接流程详解",
-      "title_en": "Detailed Explanation of the Connection Process",
-      "abstract_zh": "本章详解连接流程，包括非持续连接和持续连接的工作方式，以及并行TCP连接的机制。",
-      "abstract_en": "This chapter explains the connection process, including the working methods of non-persistent and persistent connections, as well as the mechanism of parallel TCP connections."
+      "title_zh": "HTTP请求与响应",
+      "title_en": "HTTP requests and responses",
+      "abstract_zh": "本章探讨HTTP请求与响应的具体流程，区分持续连接与非持续连接两种模式。",
+      "abstract_en": "This chapter explores the specific flow of HTTP requests and responses, distinguishing between persistent and non-persistent connections."
     },
     {
-      "title": "HTTP协议与请求参数",
+      "title": "TCP连接与HTTP响应",
       "start": 1402.01,
       "end": 1881.15,
       "indices": [
@@ -131,71 +131,71 @@
         18,
         19
       ],
-      "abstract": "本章介绍HTTP协议与请求参数，包括URL组成、B站首页访问及HTTP请求方式，重点在于HTTP响应报文的处理。",
-      "recap": "- URL组成：传输时延、TCP报文段\n- B站首页访问：请求报文体积小，响应报文携带文件\n- HTTP请求：请求服务器资源，万维网分布式存储\n- HTTP响应：响应报文携带文件，多个TCP链接并行",
+      "abstract": "本章进一步解释TCP连接与HTTP响应的关系，强调并行TCP连接的效率。",
+      "recap": "- HTTP响应携带：携带HTML文件，浏览器解析显示\n- 并行TCP连接：并发建立多个TCP连接，提高下载速度\n- URL组成：万维网上的资源定位符，包含协议、域名和路径\n- URL访问：通过URL访问万维网资源，指定服务器域名和路径\n- HTTP协议版本：介绍HTTP 1.0和后续版本的特点",
       "quiz": {
         "questions": [
           {
             "type": "mc",
-            "q": "HTTP请求参数中，URL的组成部分包括哪些？",
+            "q": "在TCP连接与HTTP响应中，HTTP响应报文如何携带文件？",
             "options": [
-              "协议",
-              "服务器域名",
-              "路径",
-              "文件名"
+              "通过HTTP响应报文携带文件",
+              "通过TCP报文段携带文件",
+              "通过HTTP请求报文携带文件",
+              "通过URL携带文件"
             ],
-            "answer_idx": 0,
-            "explanation": "URL由协议、服务器域名、路径和文件名组成"
+            "answer_idx": 1,
+            "explanation": "HTTP响应报文通过TCP报文段携带文件"
           },
           {
             "type": "tf",
-            "q": "HTTP响应报文中，体积最大的部分通常是HTML文件。",
+            "q": "非持续连接方式下，浏览器会连续发送三个HTTP请求。",
             "answer": true,
-            "explanation": "HTTP响应报文中，HTML文件通常体积最大"
+            "explanation": "非持续连接方式下，浏览器会连续发送三个HTTP请求"
           }
         ]
       },
-      "title_zh": "HTTP协议与请求参数",
-      "title_en": "HTTP Protocol and Request Parameters",
-      "abstract_zh": "本章介绍HTTP协议与请求参数，包括URL组成、B站首页访问及HTTP请求方式，重点在于HTTP响应报文的处理。",
-      "abstract_en": "This chapter covers the HTTP protocol and request parameters, including URL composition, visiting Bilibili's homepage, and HTTP request methods, with a focus on handling HTTP response messages."
+      "title_zh": "TCP连接与HTTP响应",
+      "title_en": "TCP connections and HTTP responses",
+      "abstract_zh": "本章进一步解释TCP连接与HTTP响应的关系，强调并行TCP连接的效率。",
+      "abstract_en": "This chapter further explains the relationship between TCP connections and HTTP responses, emphasizing the efficiency of parallel TCP connections."
     },
     {
-      "title": "HTTP协议概述",
+      "title": "HTTP协议版本与总结",
       "start": 1881.15,
       "end": 2051.28,
       "indices": [
         20,
         21
       ],
-      "abstract": "本章概述HTTP协议，解释其工作流程及版本，重点在于URL统一资源定位符的构成。",
-      "recap": "- URL构成：域名、应用层协议\n- HTTP协议：超文本传输协议，分析工作流程\n- URL定位：唯一指向万维网上特定资源\n- HTTP协议版本：1.0版本，课程内容总结",
+      "abstract": "本章总结HTTP协议的不同版本，并解释URL的构成及其在万维网中的作用。",
+      "recap": "- HTTP协议：超文本传输协议，用于Web资源传输\n- URL统一资源定位符：指定万维网资源的位置\n- HTTP 1.0版本：介绍基本请求和响应流程\n- 总结：回顾HTTP协议工作流程和版本特点",
       "quiz": {
         "questions": [
           {
             "type": "mc",
-            "q": "HTTP协议概述中，URL统一资源定位符如何构成？",
+            "q": "在HTTP协议版本与总结中，URL的组成部分是什么？",
             "options": [
-              "协议://域名/路径/文件名",
-              "域名://协议/路径/文件名",
-              "路径://协议/域名/文件名",
-              "文件名://协议/域名/路径"
+              "协议、域名、路径",
+              "协议、域名、端口",
+              "协议、域名、参数",
+              "协议、域名、文件名"
             ],
             "answer_idx": 0,
-            "explanation": "URL由协议、域名、路径和文件名构成"
+            "explanation": "URL的组成部分包括协议、域名和路径"
           },
           {
             "type": "tf",
-            "q": "HTTP协议1.0版本的工作流程与当前版本完全不同。",
+            "q": "HTTP协议的1.0版本被称为Pro Max Ultra版。",
             "answer": false,
-            "explanation": "HTTP协议1.0版本的工作流程与当前版本基本相同"
+            "explanation": "HTTP协议的1.0版本并没有被称为Pro Max Ultra版"
           }
         ]
       },
-      "title_zh": "HTTP协议概述",
-      "title_en": "Overview of the HTTP Protocol",
-      "abstract_zh": "本章概述HTTP协议，解释其工作流程及版本，重点在于URL统一资源定位符的构成。",
-      "abstract_en": "This chapter provides an overview of the HTTP protocol, explaining its workflow and versions, with a focus on the structure of URL uniform resource locators."
+      "title_zh": "HTTP协议版本与总结",
+      "title_en": "HTTP protocol versions and summary",
+      "abstract_zh": "本章总结HTTP协议的不同版本，并解释URL的构成及其在万维网中的作用。",
+      "abstract_en": "This chapter summarizes different versions of the HTTP protocol and explains the structure of URLs and their role in the World Wide Web."
     }
   ],
   "ablation": {
