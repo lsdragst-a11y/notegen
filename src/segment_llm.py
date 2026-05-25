@@ -1772,13 +1772,18 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
 def _split_shared_prefix_titles(titles: list[str], chapters: list[dict],
                                 chunks: list[dict],
                                 min_share: int = 3,
-                                min_prefix_len: int = 2) -> list[str]:
+                                min_prefix_len: int = 2,
+                                max_share_ratio: float = 0.7) -> list[str]:
     """J7-C: 若 ≥min_share 章共享 ≥min_prefix_len 字中文前缀，从各章独有 keyword 重写。
 
     与 H2 互补：H2 处理完全相同 title，J7-C 处理共享前缀但后缀不同的模式
     （p68 "服务程序详解/执行/恢复/应用" × 4）。
+
+    max_share_ratio: 若 hit_indices/K ≥ 此比例，视为视频整体主题词（如整集都讲
+    "中断"），不拆。仅在少数章共享前缀时触发（p68 4/7=0.57 触发；6/7=0.86 不触发）。
     """
-    if len(titles) < min_share:
+    K = len(titles)
+    if K < min_share:
         return titles
     # 找共享前缀：从最长开始试，找最大命中
     def cn_prefix(s: str) -> str:
@@ -1807,10 +1812,21 @@ def _split_shared_prefix_titles(titles: list[str], chapters: list[dict],
             break
     if not hit_prefix:
         return titles
-    # 算每章独有 keywords：在本章 chunks 出现，且不在 hit_indices 里其他章出现
-    other_kws: set[str] = set()
+    # 视频整体主题守门：≥70% 章共享前缀 = 主题词（如整集讲"中断"），不拆
+    if len(hit_indices) / K >= max_share_ratio:
+        print(f"      [llm-chapter-title] J7-C 跳过: prefix={hit_prefix!r} "
+              f"hit={len(hit_indices)}/{K} 章 ≥ {max_share_ratio:.0%} 视为视频主题",
+              flush=True)
+        return titles
+    # 收集所有 hit 章 chunks 的低 prob 字，构成 ASR 错字过滤集——避免选中
+    # "屁屁"(屏蔽)/"地坝"(地址) 这种错字 kw 进章标题
+    bad_chars: set[str] = set()
     for j in hit_indices:
-        pass  # 占位
+        for idx in chapters[j].get("chunks", []):
+            if idx >= len(chunks):
+                continue
+            bad_chars |= _collect_low_prob_chars(chunks[idx], threshold=0.5)
+    # 算每章独有 keywords
     per_ch_kws: dict[int, list[tuple[str, int]]] = {}
     for j in hit_indices:
         ch_chunks = chapters[j].get("chunks", [])
@@ -1820,12 +1836,14 @@ def _split_shared_prefix_titles(titles: list[str], chapters: list[dict],
                 continue
             for kw in (chunks[idx].get("keywords") or []):
                 kw = str(kw).strip()
-                # 跳过 1 字、共享前缀字、含 ASCII 噪声、generic
+                # 跳过 1 字、共享前缀字、generic、ASR 错字
                 if len(kw) < 2:
                     continue
                 if kw in hit_prefix or hit_prefix in kw:
                     continue
                 if kw in _GENERIC_TITLE_TOKENS:
+                    continue
+                if any(c in bad_chars for c in kw if not c.isascii()):
                     continue
                 counts[kw] = counts.get(kw, 0) + 1
         per_ch_kws[j] = sorted(counts.items(), key=lambda x: (-x[1], -len(x[0])))
