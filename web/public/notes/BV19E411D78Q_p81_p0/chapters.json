@@ -1,0 +1,228 @@
+{
+  "chapters": [
+    {
+      "title": "TCP流量控制与首部字段",
+      "start": 0.08,
+      "end": 120.17,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍TCP流量控制与首部字段，重点讲解流量控制机制如何通过数据接收方告知发送方以确保数据传输的可靠性。",
+      "recap": "- TCP流量控制确保数据可靠传输，通过调整接收窗口大小\n- TCP首部字段包括序号、确认号等，用于流量控制和确认\n- TCP确认与重传机制通过ACK反馈确保数据传输可靠性\n- TCP三次握手通过ACK确认建立连接\n- TCP接收窗口大小反映接收方数据处理能力",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "为什么TCP可靠传输与流量控制需要数据的接收方和发送方相互配合？",
+            "options": [
+              "因为流量控制不需要数据的接收方参与",
+              "因为数据的接收方和发送方需要共同协作以确保数据的可靠传输",
+              "因为数据的发送方不需要任何反馈",
+              "因为数据的接收方只需要接收数据"
+            ],
+            "answer_idx": 1,
+            "explanation": "流量控制需要接收方反馈拥塞情况，确保数据可靠传输"
+          },
+          {
+            "type": "tf",
+            "q": "TCP首部字段中的ACK字段表示确认号。",
+            "answer": true,
+            "explanation": "ACK字段确实表示确认号，用于确认已接收的数据序列号"
+          }
+        ]
+      },
+      "title_zh": "TCP流量控制与首部字段",
+      "title_en": "TCP Flow Control and Header Fields",
+      "abstract_zh": "本章介绍TCP流量控制与首部字段，重点讲解流量控制机制如何通过数据接收方告知发送方以确保数据传输的可靠性。",
+      "abstract_en": "This chapter introduces TCP flow control and header fields, focusing on how flow control mechanisms ensure reliable data transmission through feedback from the receiver to the sender."
+    },
+    {
+      "title": "TCP确认与重传机制",
+      "start": 120.67,
+      "end": 441.23,
+      "indices": [
+        2,
+        3,
+        4,
+        5
+      ],
+      "abstract": "本章详细解析TCP确认与重传机制，重点在于窗口大小及其作用，解释接收窗口如何反映接收方的数据处理能力。",
+      "recap": "- TCP确认与重传机制通过ACK反馈确保数据传输可靠性\n- TCP窗口大小反映接收方数据处理能力，ACK=0表示接收窗口满\n- TCP三次握手通过ACK=1确认建立连接\n- TCP接收窗口大小通过ACK反馈更新\n- TCP确认与重传机制确保数据传输可靠性",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "TCP确认与重传机制中，接收窗口的大小反映了什么？",
+            "options": [
+              "接收方的网络带宽",
+              "接收方的硬件性能",
+              "接收方的接收数据能力",
+              "接收方的网络延迟"
+            ],
+            "answer_idx": 2,
+            "explanation": "接收窗口大小反映了接收方的接收数据能力"
+          },
+          {
+            "type": "tf",
+            "q": "当ACK等于1时，表示接收方收到了所有前序数据。",
+            "answer": false,
+            "explanation": "ACK等于1仅表示接收方收到了最后一个数据包，而非所有前序数据"
+          }
+        ]
+      },
+      "title_zh": "TCP确认与重传机制",
+      "title_en": "TCP Acknowledgment and Retransmission Mechanisms",
+      "abstract_zh": "本章详细解析TCP确认与重传机制，重点在于窗口大小及其作用，解释接收窗口如何反映接收方的数据处理能力。",
+      "abstract_en": "This chapter thoroughly analyzes TCP acknowledgment and retransmission mechanisms, emphasizing the role of window size and how it reflects the receiver's data processing capacity."
+    },
+    {
+      "title": "TCP窗口与进程视角",
+      "start": 441.23,
+      "end": 808.94,
+      "indices": [
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "abstract": "本章从进程视角探讨TCP窗口与相关操作，强调接收窗口大小如何影响数据接收能力和TCP连接的建立过程。",
+      "recap": "- TCP进程视角理解接收窗口大小对数据处理能力的影响\n- TCP与操作系统交互通过socket对象\n- socket创建需指定IP和端口号\n- TCP发送与接收窗口限制数据传输量\n- TCP接收缓冲区用于存储接收到的数据",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "TCP进程视角中，客户进程如何告知服务器进程其接收窗口大小？",
+            "options": [
+              "通过发送数据",
+              "通过ACK字段",
+              "通过握手报文",
+              "通过TCP首部字段"
+            ],
+            "answer_idx": 2,
+            "explanation": "通过握手报文中的窗口字段告知接收窗口大小"
+          },
+          {
+            "type": "tf",
+            "q": "接收窗口大小为8意味着接收方可以接收8个字节的数据。",
+            "answer": true,
+            "explanation": "接收窗口大小直接反映了接收方的数据接收能力"
+          }
+        ]
+      },
+      "title_zh": "TCP窗口与进程视角",
+      "title_en": "TCP Window and Process Perspective",
+      "abstract_zh": "本章从进程视角探讨TCP窗口与相关操作，强调接收窗口大小如何影响数据接收能力和TCP连接的建立过程。",
+      "abstract_en": "This chapter explores TCP windows and related operations from a process perspective, highlighting how the size of the receive window impacts data reception and the establishment of TCP connections."
+    },
+    {
+      "title": "发送与接收窗口",
+      "start": 808.94,
+      "end": 1177.8,
+      "indices": [
+        11,
+        12,
+        13,
+        14,
+        15
+      ],
+      "abstract": "本章讨论发送与接收窗口的应用，重点在于数据传输过程中如何利用窗口机制优化数据发送与接收效率。",
+      "recap": "- 发送窗口与接收窗口限制数据传输量\n- 数据发送前需确认接收窗口大小\n- 接收窗口大小限制数据接收量\n- socket对象用于TCP传输\n- TCP连接建立通过握手过程",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "发送窗口与接收窗口中，发送窗口的大小不能超过什么？",
+            "options": [
+              "发送缓冲区大小",
+              "接收缓冲区大小",
+              "接收窗口大小",
+              "发送数据量"
+            ],
+            "answer_idx": 2,
+            "explanation": "发送窗口的大小不能超过接收窗口大小，以避免数据积压"
+          },
+          {
+            "type": "tf",
+            "q": "发送窗口大小为600意味着发送方可以发送600个字节的数据。",
+            "answer": false,
+            "explanation": "发送窗口大小为600意味着发送方可以发送的数据序列号范围，而非字节数"
+          }
+        ]
+      },
+      "title_zh": "发送与接收窗口",
+      "title_en": "Sending and Receiving Windows",
+      "abstract_zh": "本章讨论发送与接收窗口的应用，重点在于数据传输过程中如何利用窗口机制优化数据发送与接收效率。",
+      "abstract_en": "This chapter discusses the application of send and receive windows, focusing on how window mechanisms optimize data transmission efficiency during the transfer process."
+    },
+    {
+      "title": "数据传输与连接建立",
+      "start": 1178.52,
+      "end": 1563.77,
+      "indices": [
+        16,
+        17,
+        18,
+        19,
+        20
+      ],
+      "abstract": "本章总结数据传输与连接建立的过程，强调TCP传输的底层原理及其在不同连接中的应用。",
+      "recap": "- 数据传输通过send函数指定目标socket对象\n- TCP传输将数据发送至指定socket对象\n- TCP数据传输过程涉及发送缓冲区和接收缓冲区\n- TCP传输确保数据从客户端传到服务器\n- TCP传输底层原理支持多个TCP连接",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "数据传输过程中，发送方如何指定数据要发到哪个socket对象？",
+            "options": [
+              "通过数据包中的IP地址",
+              "通过数据包中的端口号",
+              "通过调用send函数时指定socket对象",
+              "通过数据包中的序列号"
+            ],
+            "answer_idx": 2,
+            "explanation": "通过调用send函数时指定socket对象来指定数据要发到哪个socket对象"
+          },
+          {
+            "type": "tf",
+            "q": "TCP传输过程中，操作系统负责将数据交给接收缓冲区。",
+            "answer": true,
+            "explanation": "操作系统负责将接收到的数据交给接收缓冲区处理"
+          }
+        ]
+      },
+      "title_zh": "数据传输与连接建立",
+      "title_en": "Data Transfer and Connection Establishment",
+      "abstract_zh": "本章总结数据传输与连接建立的过程，强调TCP传输的底层原理及其在不同连接中的应用。",
+      "abstract_en": "This chapter summarizes the process of data transmission and connection establishment, emphasizing the underlying principles of TCP transmission and their application in various connections."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_oversize"
+      ],
+      "llm_fail_reasons": [
+        "oversize"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 1565.056,
+    "n_chunks": 21,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 7,
+    "vlm_generic_ratio": 0.429,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
+  }
+}
