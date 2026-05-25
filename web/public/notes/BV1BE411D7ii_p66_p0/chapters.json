@@ -1,0 +1,220 @@
+{
+  "chapters": [
+    {
+      "title": "IO接口与设备控制器",
+      "start": 1.46,
+      "end": 341.89,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章介绍IO接口的基本概念及其组成部分，重点讲解数据传输格式和数据缓冲功能，解释接口如何与设备控制器协同工作。",
+      "recap": "- IO接口是主机与外部设备间的数据传输通道\n- 设备控制器负责数据转换与状态反馈\n- 数据传输格式需支持数据状态反馈\n- 数据缓冲功能包括存储地址与发送命令\n- 传送功能包括状态反馈与数据传输",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "关于IO接口，以下描述正确的是？",
+            "options": [
+              "接口是主机和外设之间的通信联络",
+              "接口只能用于数据传输",
+              "接口不能反馈主机的状态",
+              "接口仅用于控制命令"
+            ],
+            "answer_idx": 0,
+            "explanation": "接口是主机和外设之间的通信联络，包括数据传输、状态反馈等功能"
+          },
+          {
+            "type": "tf",
+            "q": "数据传输格式需要进行格式转换，并反馈设备状态。",
+            "answer": true,
+            "explanation": "数据传输格式确实需要进行格式转换，并反馈设备状态"
+          }
+        ]
+      },
+      "title_zh": "IO接口与设备控制器",
+      "title_en": "I/O Interfaces and Device Controllers",
+      "abstract_zh": "本章介绍IO接口的基本概念及其组成部分，重点讲解数据传输格式和数据缓冲功能，解释接口如何与设备控制器协同工作。",
+      "abstract_en": "This chapter introduces basic concepts of IO interfaces and their components, focusing on data transfer formats and buffer functions, explaining how interfaces work with device controllers."
+    },
+    {
+      "title": "数据传输与内部接口",
+      "start": 342.79,
+      "end": 709.58,
+      "indices": [
+        5,
+        6,
+        7,
+        8
+      ],
+      "abstract": "本章探讨数据传输与内部接口的细节，包括标记和内部接口的结构，以及如何通过外部接口连接和控制设备。",
+      "recap": "- 标记是设备状态的二进制标志\n- 内部接口用于连接主机内部组件\n- 外部接头连接通过命令线发送控制命令\n- 传送涉及请求信号的发送与接收\n- 标记涉及状态标记的存储与发送",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "触发器与寄存器的主要区别在于？",
+            "options": [
+              "触发器可以存储多位二进制数据",
+              "触发器只能存储一位二进制数据",
+              "触发器不能响应CPU的请求",
+              "触发器没有状态反馈功能"
+            ],
+            "answer_idx": 1,
+            "explanation": "触发器只能存储一位二进制数据，而寄存器可以存储多位二进制数据"
+          },
+          {
+            "type": "tf",
+            "q": "CPU通过地址线定位到IO接口，可以直接访问其中的寄存器。",
+            "answer": true,
+            "explanation": "CPU通过地址线定位到IO接口，可以访问其中的寄存器"
+          }
+        ]
+      },
+      "title_zh": "数据传输与内部接口",
+      "title_en": "Data Transfer and Internal Interfaces",
+      "abstract_zh": "本章探讨数据传输与内部接口的细节，包括标记和内部接口的结构，以及如何通过外部接口连接和控制设备。",
+      "abstract_en": "This chapter delves into details of data transmission and internal interfaces, including tags and the structure of internal interfaces, and how external interfaces connect and control devices."
+    },
+    {
+      "title": "请求信号与统一编址",
+      "start": 710.14,
+      "end": 987.76,
+      "indices": [
+        9,
+        10,
+        11,
+        12
+      ],
+      "abstract": "本章详细说明请求信号与统一编址的过程，重点在于如何通过统一地址线访问IO设备和主存，以及编址映射的具体实现。",
+      "recap": "- 请求涉及数据传输的接口状态\n- 统一编址使接口和主存共享地址线\n- 编址将地址分配给IO和存储器\n- 映射将地址映射到IO和存储器",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "统一编址时，CPU访问的是？",
+            "options": [
+              "主存单元",
+              "IO设备",
+              "寄存器",
+              "地址线"
+            ],
+            "answer_idx": 0,
+            "explanation": "统一编址时，CPU访问的是主存单元"
+          },
+          {
+            "type": "tf",
+            "q": "IO地址和存储器地址可以重叠。",
+            "answer": false,
+            "explanation": "IO地址和存储器地址不可以重叠，否则会导致冲突"
+          }
+        ]
+      },
+      "title_zh": "请求信号与统一编址",
+      "title_en": "Request Signals and Unified Addressing",
+      "abstract_zh": "本章详细说明请求信号与统一编址的过程，重点在于如何通过统一地址线访问IO设备和主存，以及编址映射的具体实现。",
+      "abstract_en": "This chapter explains the process of request signals and unified addressing, focusing on accessing IO devices and main memory via unified address lines and the specific implementation of address mapping."
+    },
+    {
+      "title": "指令访问与接口类型",
+      "start": 987.76,
+      "end": 1312.52,
+      "indices": [
+        13,
+        14,
+        15,
+        16
+      ],
+      "abstract": "本章分析指令访问与接口类型，介绍不同类型的IO接口，如可编程接口和DMA接口，并讨论它们的工作方式。",
+      "recap": "- 指令访问通过地址段访问外设\n- 涉及指令访问的优缺点分析\n- 可编程接口通过专用指令控制\n- 连接涉及接口类型的分类\n- 连接涉及接口与主机的连接方式",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "指令访问方案的优点是什么？",
+            "options": [
+              "可以访问更多的主存单元",
+              "减少主存单元数量",
+              "占用更多的主存空间",
+              "简化控制逻辑"
+            ],
+            "answer_idx": 0,
+            "explanation": "指令访问方案可以访问更多的主存单元"
+          },
+          {
+            "type": "tf",
+            "q": "使用IO总线的系统中，地址线用于区分内存和IO设备。",
+            "answer": true,
+            "explanation": "使用IO总线的系统中，地址线确实用于区分内存和IO设备"
+          }
+        ]
+      },
+      "title_zh": "指令访问与接口类型",
+      "title_en": "Instruction Access and Interface Types",
+      "abstract_zh": "本章分析指令访问与接口类型，介绍不同类型的IO接口，如可编程接口和DMA接口，并讨论它们的工作方式。",
+      "abstract_en": "This chapter analyzes instruction access and interface types, introducing different IO interfaces such as programmable interfaces and DMA interfaces, and discussing their operational methods."
+    },
+    {
+      "title": "地址编码与总线连接",
+      "start": 1312.52,
+      "end": 1400.62,
+      "indices": [
+        17
+      ],
+      "abstract": "本章阐述地址编码与总线连接的技术，重点在于如何通过专门的IO指令访问设备，并解释总线连接的机制。",
+      "recap": "- 地址编码反映IO设备的工作状态\n- 可以通过专门的IO指令访问IO设备\n- 涉及总线连接的不同方式\n- 涉及总线连接的地址分配",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在地址编码与总线连接中，要访问IO设备需要使用？",
+            "options": [
+              "专用的IO指令",
+              "存储器指令",
+              "通用的CPU指令",
+              "特殊的寄存器"
+            ],
+            "answer_idx": 0,
+            "explanation": "在地址编码与总线连接中，要访问IO设备需要使用专用的IO指令"
+          },
+          {
+            "type": "tf",
+            "q": "单独的IO总线情况下，访问IO设备需要使用专门的IO指令。",
+            "answer": true,
+            "explanation": "单独的IO总线情况下，访问IO设备确实需要使用专门的IO指令"
+          }
+        ]
+      },
+      "title_zh": "地址编码与总线连接",
+      "title_en": "Address Coding and Bus Connections",
+      "abstract_zh": "本章阐述地址编码与总线连接的技术，重点在于如何通过专门的IO指令访问设备，并解释总线连接的机制。",
+      "abstract_en": "This chapter discusses address encoding and bus connections, focusing on accessing devices through specialized IO instructions and explaining the mechanisms of bus connections."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 1403.2213125,
+    "n_chunks": 18,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 5,
+    "vlm_generic_ratio": 0.056,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
+  }
+}

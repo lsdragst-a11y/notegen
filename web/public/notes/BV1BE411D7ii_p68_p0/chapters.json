@@ -1,0 +1,309 @@
+{
+  "chapters": [
+    {
+      "title": "机制与CPU中断",
+      "start": 1.36,
+      "end": 364.88,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章介绍中断机制及其在CPU中断中的应用，重点讲解如何利用中断机制解放CPU，执行中断服务程序。",
+      "recap": "- 中断机制用于控制IO数据传送，CPU中断请求是信号，中断服务程序运行特定程序\n- 中断服务程序在多个请求中选择响应，中段请求标记CPU检测中断源\n- 内中段来自CPU和存储，外中段来自IO设备，可分为资源中段和强迫中段\n- 中断响应需满足无更紧迫任务，中段请求分为内中段和外中段\n- 中断处理包括查询外中段，响应中断，设置优先级，查询程序检测中断请求",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "中断服务程序是指什么？",
+            "options": [
+              "用于处理外部中断请求的程序",
+              "用于处理内部中断请求的程序",
+              "用于执行特定任务的程序",
+              "用于处理CPU中断请求的程序"
+            ],
+            "answer_idx": 0,
+            "explanation": "中断服务程序专门用于处理中断请求，通常包括处理外部中断（如I/O设备）和内部中断（如内存错误）"
+          },
+          {
+            "type": "tf",
+            "q": "CPU在执行指令时可能会收到中断请求，此时CPU会暂停当前指令的执行。",
+            "answer": true,
+            "explanation": "中断请求打断正在执行的指令，CPU会暂停当前操作以响应中断"
+          }
+        ]
+      },
+      "title_zh": "机制与CPU中断",
+      "title_en": "Interrupt Mechanism and CPU Interrupts",
+      "abstract_zh": "本章介绍中断机制及其在CPU中断中的应用，重点讲解如何利用中断机制解放CPU，执行中断服务程序。",
+      "abstract_en": "This chapter introduces interrupt mechanisms and their application in CPU interrupts, focusing on how to use interrupt mechanisms to free up the CPU and execute interrupt service routines."
+    },
+    {
+      "title": "中断响应与指令",
+      "start": 364.88,
+      "end": 772.54,
+      "indices": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章详细解释中断响应与指令之间的关系，特别介绍了中断指令和软件中断的具体实现。",
+      "recap": "- 中断响应查证中断，响应中断需满足无更紧迫任务，中断请求分为内中段和外中段\n- 中断处理周期包括中断查证，响应中断，设置优先级，查询程序检测中断请求\n- 中断指令执行结果发生中断，典型如陷阱指令，软件中断，外中断通过标志位决定响应",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "外中断源可以分为哪两类？",
+            "options": [
+              "I/O设备中断和内存中断",
+              "I/O设备中断和CPU中断",
+              "内存中断和CPU中断",
+              "I/O设备中断和外部设备中断"
+            ],
+            "answer_idx": 0,
+            "explanation": "外中断源分为I/O设备中断和内存中断，其中I/O设备中断是常见的外中断源"
+          },
+          {
+            "type": "tf",
+            "q": "内中断的发生与当前执行的指令有关。",
+            "answer": true,
+            "explanation": "内中断的发生与当前执行的指令有关，如除法溢出等"
+          }
+        ]
+      },
+      "title_zh": "中断响应与指令",
+      "title_en": "Interrupt Response and Instructions",
+      "abstract_zh": "本章详细解释中断响应与指令之间的关系，特别介绍了中断指令和软件中断的具体实现。",
+      "abstract_en": "This chapter explains the relationship between interrupt responses and instructions, particularly detailing the implementation of interrupt instructions and software interrupts."
+    },
+    {
+      "title": "中断处理与请求",
+      "start": 773.04,
+      "end": 1190.8,
+      "indices": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "abstract": "本章探讨中断处理与请求的流程，强调如何响应中断请求并设置中断优先级，确保关键中断得到及时响应。",
+      "recap": "- 每条指令后CPU查询外中段，中断响应需满足无更紧迫任务，中断请求分为内中段和外中段\n- 中断处理周期包括中断查证，响应中断，设置优先级，查询程序检测中断请求\n- 中断服务程序入口地址存入向量地址，向量地址指向中断向量，中断向量指向中断服务程序",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "中断响应的三个条件是什么？",
+            "options": [
+              "无更高优先级中断、允许中断、当前指令执行完毕",
+              "无更高优先级中断、允许中断、当前指令执行未完成",
+              "有更高优先级中断、不允许中断、当前指令执行完毕",
+              "有更高优先级中断、不允许中断、当前指令执行未完成"
+            ],
+            "answer_idx": 0,
+            "explanation": "中断响应的三个条件是无更高优先级中断、允许中断、当前指令执行完毕"
+          },
+          {
+            "type": "tf",
+            "q": "中断请求信号会在每条指令执行结束后发送。",
+            "answer": false,
+            "explanation": "中断请求信号并非在每条指令执行结束后发送，而是根据具体硬件设计和需求触发"
+          }
+        ]
+      },
+      "title_zh": "中断处理与请求",
+      "title_en": "Interrupt Handling and Requests",
+      "abstract_zh": "本章探讨中断处理与请求的流程，强调如何响应中断请求并设置中断优先级，确保关键中断得到及时响应。",
+      "abstract_en": "This chapter explores the flow of interrupt handling and requests, emphasizing how to respond to interrupt requests and set interrupt priorities to ensure critical interrupts are promptly handled."
+    },
+    {
+      "title": "PC与服务程序",
+      "start": 1190.8,
+      "end": 1515.53,
+      "indices": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "abstract": "本章讨论PC与中断服务程序的关系，重点在于如何保存和恢复PC内容，确保中断服务程序的顺利执行。",
+      "recap": "- 中断服务程序修改PC内容，保存PC，中断引指令关中断，保存PC，中断服务程序入口地址存入向量地址\n- 中断服务程序保存通用寄存器和状态寄存器内容，中段返回指令完成中断处理过程",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "中断服务程序的入口地址如何确定？",
+            "options": [
+              "通过查询程序确定",
+              "通过中断向量表确定",
+              "通过中断请求信号确定",
+              "通过CPU状态寄存器确定"
+            ],
+            "answer_idx": 1,
+            "explanation": "中断服务程序的入口地址通过中断向量表确定"
+          },
+          {
+            "type": "tf",
+            "q": "中断服务程序的入口地址是固定的。",
+            "answer": false,
+            "explanation": "中断服务程序的入口地址是动态确定的，依赖于中断向量表的具体实现"
+          }
+        ]
+      },
+      "title_zh": "PC与服务程序",
+      "title_en": "PC and Service Programs",
+      "abstract_zh": "本章讨论PC与中断服务程序的关系，重点在于如何保存和恢复PC内容，确保中断服务程序的顺利执行。",
+      "abstract_en": "This chapter discusses the relationship between PCs and interrupt service routines, focusing on how to save and restore PC content to ensure the smooth execution of interrupt service routines."
+    },
+    {
+      "title": "向量与中段处理",
+      "start": 1515.53,
+      "end": 1935.8,
+      "indices": [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "abstract": "本章阐述中断向量与中断处理的过程，重点介绍中断向量地址及其在中断处理中的作用。",
+      "recap": "- 多重中断处理区别于单重，服劳结束后恢复现场，返回主程序，多重中断执行服务程序前关闭中段\n- 屏蔽技术管理优先级，屏蔽字配置每个中断源，屏蔽字取反后传递，屏蔽字确保高优先级中断不受低优先级影响",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "中断处理过程中，PC的内容如何保存？",
+            "options": [
+              "通过中断引指令保存",
+              "通过中断服务程序保存",
+              "通过中断向量表保存",
+              "通过中断请求信号保存"
+            ],
+            "answer_idx": 0,
+            "explanation": "中断处理过程中，PC的内容通过中断引指令保存"
+          },
+          {
+            "type": "tf",
+            "q": "中断处理过程中，CPU的状态寄存器内容不需要保存。",
+            "answer": false,
+            "explanation": "中断处理过程中，CPU的状态寄存器内容也需要保存，以便后续恢复"
+          }
+        ]
+      },
+      "title_zh": "向量与中段处理",
+      "title_en": "Vectors and Interrupt Handling",
+      "abstract_zh": "本章阐述中断向量与中断处理的过程，重点介绍中断向量地址及其在中断处理中的作用。",
+      "abstract_en": "This chapter explains interrupt vectors and the process of interrupt handling, highlighting the role of interrupt vector addresses in interrupt processing."
+    },
+    {
+      "title": "多重中断与现场恢复",
+      "start": 1935.8,
+      "end": 2308.71,
+      "indices": [
+        25,
+        26,
+        27,
+        28,
+        29
+      ],
+      "abstract": "本章介绍多重中断与现场恢复的技术，重点讲解多重中断的处理过程及屏蔽技术的应用。",
+      "recap": "- 多层中断响应后屏蔽字传到位置，屏蔽字对应中断元，屏蔽字确保中断元不受低优先级中断影响\n- 中断服务程序执行时间20微秒，中断系统处理过程包括中断引指令，单重和多重中断，程序执行轨迹",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "多重中断处理过程中，屏蔽技术的作用是什么？",
+            "options": [
+              "阻止所有中断请求",
+              "仅阻止优先级低于当前中断的请求",
+              "仅阻止优先级高于当前中断的请求",
+              "仅阻止特定中断源的请求"
+            ],
+            "answer_idx": 3,
+            "explanation": "多重中断处理过程中，屏蔽技术仅阻止特定中断源的请求"
+          },
+          {
+            "type": "tf",
+            "q": "屏蔽技术可以完全阻止所有中断请求。",
+            "answer": false,
+            "explanation": "屏蔽技术不能完全阻止所有中断请求，只能阻止优先级低于当前中断的请求"
+          }
+        ]
+      },
+      "title_zh": "多重中断与现场恢复",
+      "title_en": "Multiple Interrupts and Context Restoration",
+      "abstract_zh": "本章介绍多重中断与现场恢复的技术，重点讲解多重中断的处理过程及屏蔽技术的应用。",
+      "abstract_en": "This chapter introduces techniques for handling multiple interrupts and restoring the scene, focusing on the process of handling multiple interrupts and the application of masking techniques."
+    },
+    {
+      "title": "中断管理与微秒",
+      "start": 2308.71,
+      "end": 2759.34,
+      "indices": [
+        30,
+        31,
+        32,
+        33,
+        34
+      ],
+      "abstract": "本章讨论中断管理和微秒时间的概念，重点在于如何计算中断服务程序的执行时间和中断响应的延迟。",
+      "recap": "- 中断服务程序执行时间20微秒，中断系统处理过程包括中断引指令，单重和多重中断，程序执行轨迹，中断机制涉及中断引指令，优先级管理，中断服务程序执行时间",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "假设中断服务程序执行时间为20微秒，在5微秒时收到中断请求，那么中断服务程序还需要执行多少微秒才能结束？",
+            "options": [
+              "15微秒",
+              "20微秒",
+              "25微秒",
+              "30微秒"
+            ],
+            "answer_idx": 0,
+            "explanation": "中断服务程序还需要执行15微秒才能结束，因为在5微秒时已经开始执行20微秒"
+          },
+          {
+            "type": "tf",
+            "q": "中断服务程序的执行时间不受其他中断的影响。",
+            "answer": true,
+            "explanation": "中断服务程序的执行时间不受其他中断的影响，除非被更高优先级的中断打断"
+          }
+        ]
+      },
+      "title_zh": "中断管理与微秒",
+      "title_en": "Interrupt Management and Microseconds",
+      "abstract_zh": "本章讨论中断管理和微秒时间的概念，重点在于如何计算中断服务程序的执行时间和中断响应的延迟。",
+      "abstract_en": "This chapter discusses concepts of interrupt management and microseconds, focusing on how to calculate the execution time of interrupt service routines and the delay in interrupt response."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "missing"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 2761.92,
+    "n_chunks": 35,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 3,
+    "vlm_generic_ratio": 0.257,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 7,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
+  }
+}
