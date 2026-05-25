@@ -1,0 +1,232 @@
+{
+  "chapters": [
+    {
+      "title": "邮件传输协议基础",
+      "start": 0.05,
+      "end": 518.79,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章介绍SMTP和POP3的基础知识，重点讲解用户代理如何通过邮件服务器发送和接收邮件。",
+      "recap": "- SMTP和POP3是古老的邮件传输协议\n- 用户代理通过SMTP发送邮件到服务器\n- 邮件服务器用SMTP接收邮件\n- [?]协议绑定25端口进行TCP连接\n- 邮件传输需转换为ASCII码",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "以下哪个协议用于发送电子邮件？",
+            "options": [
+              "SMTP",
+              "POP3",
+              "IMAP",
+              "HTTP"
+            ],
+            "answer_idx": 0,
+            "explanation": "SMTP是应用层协议，用于发送电子邮件，而POP3主要用于接收邮件"
+          },
+          {
+            "type": "tf",
+            "q": "SMTP协议使用25端口进行通信。",
+            "answer": true,
+            "explanation": "SMTP协议确实使用25端口进行通信"
+          }
+        ]
+      },
+      "title_zh": "邮件传输协议基础",
+      "title_en": "Basics of Email Transfer Protocol",
+      "abstract_zh": "本章介绍SMTP和POP3的基础知识，重点讲解用户代理如何通过邮件服务器发送和接收邮件。",
+      "abstract_en": "This chapter introduces SMTP and POP3 basics, focusing on how user agents send and receive emails through mail servers."
+    },
+    {
+      "title": "SMTP与MIME",
+      "start": 519.7,
+      "end": 901.43,
+      "indices": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章详细阐述SMTP协议及其与MIME的关系，特别强调BASE64编码在非ASCII数据传输中的应用。",
+      "recap": "- SMTP用于发送邮件\n- MIME定义邮件首部和主体\n- BASE64编码非ASCII数据\n- SMTP规定邮箱格式\n- [?]格式规定邮件主体",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "MIME协议规定了邮件的哪一部分？",
+            "options": [
+              "首部",
+              "主体",
+              "信封",
+              "附件"
+            ],
+            "answer_idx": 1,
+            "explanation": "MIME规定了邮件的主体格式"
+          },
+          {
+            "type": "tf",
+            "q": "BASE64编码只能用于传输英文字符。",
+            "answer": false,
+            "explanation": "BASE64编码可以用于传输任何字符，不仅仅是英文字符"
+          }
+        ]
+      },
+      "title_zh": "SMTP与MIME",
+      "title_en": "SMTP and MIME",
+      "abstract_zh": "本章详细阐述SMTP协议及其与MIME的关系，特别强调BASE64编码在非ASCII数据传输中的应用。",
+      "abstract_en": "This chapter details the SMTP protocol and its relationship with MIME, emphasizing BASE64 encoding for non-ASCII data transmission."
+    },
+    {
+      "title": "邮件格式与传输",
+      "start": 902.13,
+      "end": 1283.64,
+      "indices": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "abstract": "本章讨论邮件格式与传输过程，重点介绍MIME如何定义邮件主体格式及BASE64编码的具体应用。",
+      "recap": "- POP3用于接收邮件\n- 定义五个新的邮件首部字段\n- MIME规定邮件主体格式\n- SMTP传输文本数据\n- TCP连接传输非ASCII数据",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "MIME如何规定邮件主体的格式？",
+            "options": [
+              "通过引入分界线",
+              "通过引入附件",
+              "通过引入信封",
+              "通过引入首部"
+            ],
+            "answer_idx": 0,
+            "explanation": "MIME通过引入分界线来规定邮件主体的格式"
+          },
+          {
+            "type": "tf",
+            "q": "SMTP协议规定了邮件的格式。",
+            "answer": true,
+            "explanation": "SMTP协议确实规定了邮件的格式"
+          }
+        ]
+      },
+      "title_zh": "邮件格式与传输",
+      "title_en": "Email Format and Transmission",
+      "abstract_zh": "本章讨论邮件格式与传输过程，重点介绍MIME如何定义邮件主体格式及BASE64编码的具体应用。",
+      "abstract_en": "This chapter discusses email formats and transmission processes, highlighting how MIME defines email body formats and the specific use of BASE64 encoding."
+    },
+    {
+      "title": "邮件发送与接收",
+      "start": 1283.64,
+      "end": 1687.78,
+      "indices": [
+        15,
+        16,
+        17,
+        18,
+        19
+      ],
+      "abstract": "本章讲解邮件发送与接收流程，包括POP3协议如何缓存邮件以及SMTP如何传输邮件内容。",
+      "recap": "- 邮件发送采用BASE64编码\n- POP3显示邮件列表\n- 客户端请求下载邮件\n- 邮件缓存暂时存储未处理邮件\n- [?]组成包括缓存机制",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "POP3协议用于哪种操作？",
+            "options": [
+              "发送邮件",
+              "接收邮件",
+              "缓存邮件",
+              "传输邮件"
+            ],
+            "answer_idx": 1,
+            "explanation": "POP3协议主要用于接收邮件"
+          },
+          {
+            "type": "tf",
+            "q": "邮件传输过程中，SMTP和POP3都使用TCP连接。",
+            "answer": true,
+            "explanation": "SMTP和POP3都使用TCP连接进行邮件传输"
+          }
+        ]
+      },
+      "title_zh": "邮件发送与接收",
+      "title_en": "Sending and Receiving Emails",
+      "abstract_zh": "本章讲解邮件发送与接收流程，包括POP3协议如何缓存邮件以及SMTP如何传输邮件内容。",
+      "abstract_en": "This chapter explains the email sending and receiving process, including how POP3 caches emails and how SMTP transmits email content."
+    },
+    {
+      "title": "邮件系统组件 · 本节复习",
+      "start": 1687.78,
+      "end": 2011.97,
+      "indices": [
+        20,
+        21,
+        22,
+        23,
+        24
+      ],
+      "abstract": "本章总结SMTP和POP3的核心功能，探讨它们如何适应早期仅支持7比特传输的通信环境。",
+      "recap": "- SMTP和POP3只能传输7bit ASCII数据\n- 早期通信系统仅支持英文字符\n- [?]组成依赖7比特传输链路\n- SMTP和POP3协议限制\n- [?]组成确保兼容性",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "SMTP和POP3协议只能传输哪种类型的字符？",
+            "options": [
+              "7bit ASCII",
+              "8bit ASCII",
+              "Unicode",
+              "UTF-8"
+            ],
+            "answer_idx": 0,
+            "explanation": "SMTP和POP3协议只能传输7bit ASCII字符"
+          },
+          {
+            "type": "tf",
+            "q": "POP3协议可以缓存邮件。",
+            "answer": true,
+            "explanation": "POP3协议可以缓存邮件，允许客户端存储未读邮件"
+          }
+        ]
+      },
+      "title_zh": "邮件系统组件 · 本节复习",
+      "title_en": "Email System Components · This Section Review",
+      "abstract_zh": "本章总结SMTP和POP3的核心功能，探讨它们如何适应早期仅支持7比特传输的通信环境。",
+      "abstract_en": "This chapter summarizes the core functions of SMTP and POP3, exploring how they adapt to early communication environments that only supported 7-bit transmission."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_oversize"
+      ],
+      "llm_fail_reasons": [
+        "oversize"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 2014.1013125,
+    "n_chunks": 25,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 7,
+    "vlm_generic_ratio": 0.28,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 5,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": true
+  }
+}
