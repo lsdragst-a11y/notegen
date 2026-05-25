@@ -12,7 +12,7 @@
         4
       ],
       "abstract": "本章介绍SMTP和POP3的基础知识，重点讲解用户代理如何通过邮件服务器发送和接收邮件。",
-      "recap": "- SMTP和POP3是古老的邮件传输协议\n- 用户代理通过SMTP发送邮件到服务器\n- 邮件服务器用SMTP接收邮件\n- [?]协议绑定25端口进行TCP连接\n- 邮件传输需转换为ASCII码",
+      "recap": "- SMTP和POP3是古老的邮件传输协议\n- 用户代理通过SMTP发送邮件到服务器\n- 邮件服务器用SMTP接收邮件\n- 协议绑定25端口进行TCP连接\n- 邮件传输需转换为ASCII码",
       "quiz": {
         "questions": [
           {
@@ -52,7 +52,7 @@
         9
       ],
       "abstract": "本章详细阐述SMTP协议及其与MIME的关系，特别强调BASE64编码在非ASCII数据传输中的应用。",
-      "recap": "- SMTP用于发送邮件\n- MIME定义邮件首部和主体\n- BASE64编码非ASCII数据\n- SMTP规定邮箱格式\n- [?]格式规定邮件主体",
+      "recap": "- SMTP用于发送邮件\n- MIME定义邮件首部和主体\n- BASE64编码非ASCII数据\n- SMTP规定邮箱格式\n- 格式规定邮件主体",
       "quiz": {
         "questions": [
           {
@@ -132,7 +132,7 @@
         19
       ],
       "abstract": "本章讲解邮件发送与接收流程，包括POP3协议如何缓存邮件以及SMTP如何传输邮件内容。",
-      "recap": "- 邮件发送采用BASE64编码\n- POP3显示邮件列表\n- 客户端请求下载邮件\n- 邮件缓存暂时存储未处理邮件\n- [?]组成包括缓存机制",
+      "recap": "- 邮件发送采用BASE64编码\n- POP3显示邮件列表\n- 客户端请求下载邮件\n- 邮件缓存暂时存储未处理邮件\n- 组成包括缓存机制",
       "quiz": {
         "questions": [
           {
@@ -172,7 +172,7 @@
         24
       ],
       "abstract": "本章总结SMTP和POP3的核心功能，探讨它们如何适应早期仅支持7比特传输的通信环境。",
-      "recap": "- SMTP和POP3只能传输7bit ASCII数据\n- 早期通信系统仅支持英文字符\n- [?]组成依赖7比特传输链路\n- SMTP和POP3协议限制\n- [?]组成确保兼容性",
+      "recap": "- SMTP和POP3只能传输7bit ASCII数据\n- 早期通信系统仅支持英文字符\n- 组成依赖7比特传输链路\n- SMTP和POP3协议限制\n- 组成确保兼容性",
       "quiz": {
         "questions": [
           {
