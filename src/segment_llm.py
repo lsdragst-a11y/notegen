@@ -561,6 +561,15 @@ def _repair_oversize(parsed: dict, chunks: list[dict],
         if any(len(p) > max_chunks_per_top for p in parts):
             parts = [chs[i:i + max_chunks_per_top]
                      for i in range(0, len(chs), max_chunks_per_top)]
+        # 末段合并：parts[-1] 仅 1 chunk 时合并到 parts[-2]（轻微超 cap 换"无孤儿章"）。
+        # 触发条件：≥2 parts、末段 1 chunk、合并后 ≤ max+1。
+        # Case: max=5, len=21 -> [5,5,5,5,1] -> [5,5,5,6]，p81 ch4 单 chunk 修复
+        if (len(parts) >= 2 and len(parts[-1]) == 1
+                and len(parts[-2]) + 1 <= max_chunks_per_top + 1):
+            print(f"      [repair-oversize] '{title}' 末段单 chunk 合并到前段",
+                  flush=True)
+            parts[-2] = parts[-2] + parts[-1]
+            parts.pop()
         for pi, p in enumerate(parts, 1):
             new_chapters.append({
                 "title": f"{title} (Pt {pi})" if len(parts) > 1 else title,
@@ -1499,6 +1508,43 @@ _HEADLINE_DROP_TEXT_HITS = 3  # noun 在 chunk text 出现 ≥ 该次数即视�
                               # （即便不在 top-K kw 也保留），低于则视为 ASR 错字/漂移
 
 
+def _collect_low_prob_chars(chunk: dict, threshold: float = 0.5) -> set[str]:
+    """从 chunk.segments[*].words[*] 收集 prob < threshold 的非 ASCII 字集合。
+    用于识别 ASR keyword 里的错字（"数捷" "数损" "捹" 等），下游可 mask 或丢弃。
+    """
+    out: set[str] = set()
+    for seg in chunk.get("segments", []) or []:
+        for w in seg.get("words", []) or []:
+            if w.get("prob", 1.0) < threshold:
+                for ch_c in str(w.get("word", "")):
+                    if not ch_c.isascii():
+                        out.add(ch_c)
+    return out
+
+
+def _mask_kws_by_prob(keywords: list, chunk: dict,
+                      threshold: float = 0.5) -> list:
+    """剔除 keywords 里含低 prob 字的词（防 ASR 错字漏入 LLM prompt）。
+    BV19E411D78Q_p81 实测：chunk2 "数捷" / chunk14 "数损" 这种 prob<0.5 的字
+    被 chunker 选成 top-K keyword，refine_chapter_titles 的 "高频词" 提示
+    直接把错字喂给 LLM。这个 filter 在调 _calibrate_headline_words 前做净化。
+
+    保守策略：含 ≥1 低 prob 字 → drop。比"mask 为 [?]"更彻底，避免
+    "数[?]" 这种残词污染 prompt（LLM 看到残词会试图补全）。
+
+    已知局限：仅命中 word-level prob 信号能识别的错字（chunk14 "数统"被
+    drop 验证）。chunker 后合并产物如 "数捷"/"数损"——"捷"/"损"字本身
+    prob 正常——仍漏过，需要词频字典或 _GLOBAL_CORRECTIONS 扩列才能补。
+    """
+    if not keywords:
+        return keywords
+    low = _collect_low_prob_chars(chunk, threshold)
+    if not low:
+        return keywords
+    return [k for k in keywords
+            if not any(c in low for c in str(k) if not c.isascii())]
+
+
 def _calibrate_headline_words(headline: str, keywords: list,
                               text: str) -> dict:
     """Python 端 Step 1 校准：从 headline 里挑出名词，逐个验证是否在 keywords
@@ -1554,7 +1600,7 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
         for idx in ch["chunks"]:
             c = chunks[idx]
             hl = c.get("headline") or c.get("text", "")[:30]
-            kws = c.get("keywords") or []
+            kws = _mask_kws_by_prob(c.get("keywords") or [], c)
             text = c.get("text", "") or ""
             kws_str = " / ".join(str(k) for k in kws[:5]) if kws else "(无)"
             cal = _calibrate_headline_words(hl, kws, text)
@@ -2104,7 +2150,7 @@ def generate_chapter_abstracts(chapters: list[dict],
         lines.append(f"[第 {ci+1} {unit_word}" + (f": {title}" if title else "") + "]")
         for sub_c in ch.get("chunks", []):
             hl = (sub_c.get("headline") or "").strip()
-            kws = sub_c.get("keywords") or []
+            kws = _mask_kws_by_prob(sub_c.get("keywords") or [], sub_c)
             text = sub_c.get("text", "") or ""
             cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
             # 标题校准结果：headline 里的 ASR 错字直接从 headline 字面 mask 掉
@@ -2251,7 +2297,7 @@ def generate_chapter_recaps(chapters: list[dict],
         lines.append(f"[第 {ci+1} 章" + (f": {title}" if title else "") + "]")
         for sub_c in ch.get("chunks", []):
             hl = (sub_c.get("headline") or "").strip()
-            kws = sub_c.get("keywords") or []
+            kws = _mask_kws_by_prob(sub_c.get("keywords") or [], sub_c)
             text = sub_c.get("text", "") or ""
             cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
             hl_display = hl
@@ -2536,7 +2582,7 @@ def generate_chapter_quizzes(chapters: list[dict],
         lines.append(f"[第 {ci+1} 章" + (f": {title}" if title else "") + "]")
         for sub_c in ch.get("chunks", []):
             hl = (sub_c.get("headline") or "").strip()
-            kws = sub_c.get("keywords") or []
+            kws = _mask_kws_by_prob(sub_c.get("keywords") or [], sub_c)
             text = sub_c.get("text", "") or ""
             cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
             hl_display = hl

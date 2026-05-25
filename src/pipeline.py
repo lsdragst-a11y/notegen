@@ -524,6 +524,17 @@ def _apply_chapter_recaps(chapter_list: list, llm_chapters: bool,
             ch["recap"] = rc
             first_line = rc.split("\n", 1)[0][:60]
             print(f"      [chapter recap] L1 -> {first_line}", flush=True)
+    elif recaps:
+        # len mismatch: 之前 silent drop 让 BV19E411D78Q_p81 整批无 recap 但
+        # 跑批 stdout 看不到原因。明确报出来，下次定位 generate_chapter_recaps
+        # 哪步漏数（_parse_titles_array 截断 / I7 fallback per 计算 / LLM 漏章）
+        print(f"      [llm-chapter-recap] ⚠️ len mismatch: 拿到 {len(recaps)} "
+              f"个 recap vs {len(chapter_list)} 章，整批丢弃 → fallback 抽取式",
+              flush=True)
+    else:
+        # recaps is None/empty — generate_chapter_recaps 内部已 print parse 失败 raw
+        print(f"      [llm-chapter-recap] ⚠️ 返回空，fallback 抽取式",
+              flush=True)
 
 
 def _apply_chapter_quizzes(chapter_list: list, llm_chapters: bool,
