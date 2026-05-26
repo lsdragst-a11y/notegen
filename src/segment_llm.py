@@ -1546,14 +1546,22 @@ def _mask_kws_by_prob(keywords: list, chunk: dict,
 
 
 def _calibrate_headline_words(headline: str, keywords: list,
-                              text: str) -> dict:
+                              text: str,
+                              chunk: dict | None = None) -> dict:
     """Python 端 Step 1 校准：从 headline 里挑出名词，逐个验证是否在 keywords
     或 chunk text 里有支撑。返回 {ok, drop} 两个名词列表。
 
     drop 里的词将作为 "已识别 ASR 错字" 显式传给 LLM，模型不再自己做这一步。
+
+    K1（2026-05-26）：chunk 可选，传入后用 word-level prob<0.5 作为 ASR 错字
+    最终守门——名词即使不在 kw/text 高频，但只要不含低 prob 字符，就视为
+    LLM 合法抽象（如"万维网概念"里"万维网"在 chunk text 出现 0 次但 prob
+    高），保留不 drop。修 p93 Ch1 "万维网"被误标 ASR 错字诱发 LLM 幻觉成
+    "四维事实"的 bug（[[project-j7-apply-regression]]）。
     """
     import jieba.posseg as pseg
     kw_set = set(str(k) for k in keywords)
+    low_prob_chars = _collect_low_prob_chars(chunk) if chunk else set()
     ok, drop = [], []
     seen = set()
     for w, flag in pseg.cut(headline):
@@ -1575,6 +1583,16 @@ def _calibrate_headline_words(headline: str, keywords: list,
         in_text = text.count(w) >= _HEADLINE_DROP_TEXT_HITS if text else False
         if in_kw or in_text:
             ok.append(w)
+            continue
+        # K1: word-level prob 守门——若该词不含任何低 prob 字，视为 LLM 合法
+        # 抽象（"万维网概念"/"HTML文件结构"），保留；含低 prob 字才视为真 ASR
+        # 错字进 drop。chunk 缺时退回旧策略（保 ASR 错字识别能力）
+        if low_prob_chars:
+            has_low_prob = any(c in low_prob_chars for c in w if not c.isascii())
+            if has_low_prob:
+                drop.append(w)
+            else:
+                ok.append(w)
         else:
             drop.append(w)
     return {"ok": ok, "drop": drop}
@@ -1613,7 +1631,7 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
             kws = _mask_kws_by_prob(c.get("keywords") or [], c)
             text = c.get("text", "") or ""
             kws_str = " / ".join(str(k) for k in kws[:5]) if kws else "(无)"
-            cal = _calibrate_headline_words(hl, kws, text)
+            cal = _calibrate_headline_words(hl, kws, text, chunk=c)
             line = f"  - 段标题: {hl}  | 高频词: {kws_str}"
             if cal["drop"]:
                 any_drop = True
@@ -2308,7 +2326,7 @@ def generate_chapter_abstracts(chapters: list[dict],
             hl = (sub_c.get("headline") or "").strip()
             kws = _mask_kws_by_prob(sub_c.get("keywords") or [], sub_c)
             text = sub_c.get("text", "") or ""
-            cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
+            cal = _calibrate_headline_words(hl, kws, text, chunk=sub_c) if hl else {"drop": []}
             # 标题校准结果：headline 里的 ASR 错字直接从 headline 字面 mask 掉
             # （drop 词替换成 [?]），让 LLM 看不到原词。比单纯 prompt 警告稳得多
             hl_display = hl
@@ -2455,7 +2473,7 @@ def generate_chapter_recaps(chapters: list[dict],
             hl = (sub_c.get("headline") or "").strip()
             kws = _mask_kws_by_prob(sub_c.get("keywords") or [], sub_c)
             text = sub_c.get("text", "") or ""
-            cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
+            cal = _calibrate_headline_words(hl, kws, text, chunk=sub_c) if hl else {"drop": []}
             hl_display = hl
             for w in cal["drop"]:
                 hl_display = hl_display.replace(w, "[?]")
@@ -2740,7 +2758,7 @@ def generate_chapter_quizzes(chapters: list[dict],
             hl = (sub_c.get("headline") or "").strip()
             kws = _mask_kws_by_prob(sub_c.get("keywords") or [], sub_c)
             text = sub_c.get("text", "") or ""
-            cal = _calibrate_headline_words(hl, kws, text) if hl else {"drop": []}
+            cal = _calibrate_headline_words(hl, kws, text, chunk=sub_c) if hl else {"drop": []}
             hl_display = hl
             for w in cal["drop"]:
                 hl_display = hl_display.replace(w, "[?]")

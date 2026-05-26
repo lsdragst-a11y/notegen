@@ -1,7 +1,7 @@
 {
   "chapters": [
     {
-      "title": "网页元素与HTML结构",
+      "title": "万维网实例与组成",
       "start": 0.3,
       "end": 445.07,
       "indices": [
@@ -35,13 +35,13 @@
           }
         ]
       },
-      "title_zh": "网页元素与HTML结构",
-      "title_en": "Web elements and HTML structure",
+      "title_zh": "万维网实例与组成",
+      "title_en": "Examples and Components of the World Wide Web",
       "abstract_zh": "本章通过实例讲解网页元素组成及HTML结构，重点在于浏览器如何渲染HTML文件中的内容。",
       "abstract_en": "This chapter explains web element composition and HTML structure through examples, focusing on how browsers render HTML content."
     },
     {
-      "title": "浏览器与服务器交互",
+      "title": "浏览器与服务器交互流程",
       "start": 445.07,
       "end": 927.23,
       "indices": [
@@ -75,13 +75,13 @@
           }
         ]
       },
-      "title_zh": "浏览器与服务器交互",
-      "title_en": "Browser interaction with the server",
+      "title_zh": "浏览器与服务器交互流程",
+      "title_en": "Browser-Server Interaction Process",
       "abstract_zh": "本章详细介绍了浏览器与服务器的交互过程，包括DNS查询和HTTP请求响应机制。",
       "abstract_en": "This chapter details the interaction between browsers and servers, including DNS queries and HTTP request-response mechanisms."
     },
     {
-      "title": "HTTP请求与响应",
+      "title": "HTTP请求与响应机制",
       "start": 927.23,
       "end": 1402.01,
       "indices": [
@@ -115,13 +115,13 @@
           }
         ]
       },
-      "title_zh": "HTTP请求与响应",
-      "title_en": "HTTP requests and responses",
+      "title_zh": "HTTP请求与响应机制",
+      "title_en": "HTTP Request and Response Mechanism",
       "abstract_zh": "本章探讨HTTP请求与响应的具体流程，区分持续连接与非持续连接两种模式。",
       "abstract_en": "This chapter explores the specific flow of HTTP requests and responses, distinguishing between persistent and non-persistent connections."
     },
     {
-      "title": "TCP连接与HTTP响应",
+      "title": "TCP连接与HTTP响应流程",
       "start": 1402.01,
       "end": 1881.15,
       "indices": [
@@ -155,8 +155,8 @@
           }
         ]
       },
-      "title_zh": "TCP连接与HTTP响应",
-      "title_en": "TCP connections and HTTP responses",
+      "title_zh": "TCP连接与HTTP响应流程",
+      "title_en": "TCP Connection and HTTP Response Flow",
       "abstract_zh": "本章进一步解释TCP连接与HTTP响应的关系，强调并行TCP连接的效率。",
       "abstract_en": "This chapter further explains the relationship between TCP connections and HTTP responses, emphasizing the efficiency of parallel TCP connections."
     },
@@ -193,7 +193,7 @@
         ]
       },
       "title_zh": "HTTP协议版本与总结",
-      "title_en": "HTTP protocol versions and summary",
+      "title_en": "HTTP Protocol Versions and Summary",
       "abstract_zh": "本章总结HTTP协议的不同版本，并解释URL的构成及其在万维网中的作用。",
       "abstract_en": "This chapter summarizes different versions of the HTTP protocol and explains the structure of URLs and their role in the World Wide Web."
     }
