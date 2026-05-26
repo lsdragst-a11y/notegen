@@ -1,10 +1,17 @@
-"""端到端：URL or 本地视频 → Markdown 笔记。"""
+"""端到端：URL or 本地视频 → Markdown 笔记。
+
+结构：
+  run() 是 orchestrator，按顺序串 18 个 _stage_xxx(cfg, state) 阶段。
+  PipelineConfig 是不可变入参（dataclass）；PipelineState 是 rolling 状态。
+  各 stage 互相不传参数，只通过 state.* 读写共享变量。
+"""
 from __future__ import annotations
 
 import argparse
 import faulthandler
 import json
 import sys
+from dataclasses import dataclass, field
 from pathlib import Path
 
 # faster-whisper / ctranslate2 退出阶段偶发 Windows STATUS_FATAL_APP_EXIT
@@ -602,85 +609,149 @@ def _apply_chapter_quizzes(chapter_list: list, llm_chapters: bool,
             print(f"      [chapter quiz] {nq} questions", flush=True)
 
 
-def run(source: str, is_local: bool = False, chunk_chars: int = 800,
-        model_size: str = "large-v3", target_ratio: float = 0.25,
-        force_asr: bool = False, summarizer: str = "extractive",
-        chapters: int | None = None,
-        extra_terms: dict[str, str] | None = None,
-        keyframes: bool = False, mm_alpha: float = 0.3,
-        chunker: str = "chars", learning_mode: bool = True,
-        dedupe_asr: bool = True, llm_chapters: bool = False,
-        confidence_threshold: float = 0.5,
-        lang: str = "auto",
-        vlm_captions: bool = False,
-        quality: str = "best") -> Path:
-    print(f"[1/4] 准备视频: {source}")
-    asr_prompt = None
-    meta = None
-    if is_local:
-        video = Path(source)
+@dataclass
+class PipelineConfig:
+    """run() 的 17 个入参拢成一个不可变 record，避免到处传 kw。"""
+    source: str
+    is_local: bool = False
+    chunk_chars: int = 800
+    model_size: str = "large-v3"
+    target_ratio: float = 0.25
+    force_asr: bool = False
+    summarizer: str = "extractive"
+    chapters: int | None = None
+    extra_terms: dict[str, str] | None = None
+    keyframes: bool = False
+    mm_alpha: float = 0.3
+    chunker: str = "chars"
+    learning_mode: bool = True
+    dedupe_asr: bool = True
+    llm_chapters: bool = False
+    confidence_threshold: float = 0.5
+    lang: str = "auto"
+    vlm_captions: bool = False
+    quality: str = "best"
+
+
+@dataclass
+class PipelineState:
+    """阶段函数间共享的 rolling 状态。"""
+    video: Path | None = None
+    audio: Path | None = None
+    meta: dict | None = None
+    meta_for_terms: dict | None = None
+    resolved_lang: str = "zh"
+    asr_prompt: str | None = None
+    corrections: dict[str, str] = field(default_factory=dict)
+    asr_result: dict | None = None
+    tag: str = ""
+    chunks: list | None = None
+    chunker_desc: str = ""
+    summaries: list | None = None
+    visual_feats: object = None
+    kf_rel_prefix: str = ""
+    visual_sims_for_llm: list | None = None
+    visual_captions_for_llm: list | None = None
+    vl_max_prefix_run: int | None = None
+    vl_generic_ratio: float | None = None
+    vl_degraded_reason: str | None = None
+    inferred_category: str = "teaching"
+    chapter_list: list | None = None
+    ablation: dict | None = None
+    seg_meta: dict = field(default_factory=lambda: {
+        "method": None,
+        "llm_attempts": 0,
+        "llm_pass_via": None,
+        "llm_repair_used": [],
+        "llm_fail_reasons": [],
+        "fallback_used": False,
+    })
+    md_meta: dict | None = None
+    md_path: Path | None = None
+
+
+# ============ Stage 1: 准备视频（[1/4] 下载或定位本地文件） ============
+def _stage_prepare_video(cfg: PipelineConfig, state: PipelineState) -> None:
+    print(f"[1/4] 准备视频: {cfg.source}")
+    if cfg.is_local:
+        video = Path(cfg.source)
         if not video.exists():
             raise FileNotFoundError(video)
     else:
-        meta = fetch_metadata(source)
-        video = download_video(source, quality=quality)
+        state.meta = fetch_metadata(cfg.source)
+        video = download_video(cfg.source, quality=cfg.quality)
         # 保存 metadata 方便后续展示真实标题等
         META_DIR.mkdir(parents=True, exist_ok=True)
-        slim_meta = {k: meta.get(k) for k in
+        slim_meta = {k: state.meta.get(k) for k in
                      ("id", "title", "uploader", "duration", "webpage_url", "description")}
         (META_DIR / f"{video.stem}.meta.json").write_text(
             json.dumps(slim_meta, ensure_ascii=False, indent=2), encoding="utf-8")
+    state.video = video
     print(f"      video = {video}")
 
-    print("[2/4] 抽取音频...")
-    audio = extract_audio(video)
-    print(f"      audio = {audio}")
 
-    # 本地路径模式下尝试从同名 .meta.json 拿 prompt + 术语
-    meta_path = META_DIR / f"{video.stem}.meta.json"
-    meta_for_terms = _load_meta_safe(meta_path) or meta
+# ============ Stage 2: 抽音频（[2/4]） ============
+def _stage_extract_audio(cfg: PipelineConfig, state: PipelineState) -> None:
+    print("[2/4] 抽取音频...")
+    assert state.video is not None
+    state.audio = extract_audio(state.video)
+    print(f"      audio = {state.audio}")
+
+
+# ============ Stage 3: 构建 ASR 上下文（lang/prompt/术语校正） ============
+def _stage_build_asr_context(cfg: PipelineConfig, state: PipelineState) -> None:
+    assert state.video is not None
+    meta_path = META_DIR / f"{state.video.stem}.meta.json"
+    state.meta_for_terms = _load_meta_safe(meta_path) or state.meta
 
     # 语言检测：auto 模式按 meta 启发式判断；用户显式传 zh/en 时尊重
-    resolved_lang = lang if lang in ("zh", "en") else _detect_lang(meta_for_terms)
-    print(f"      [lang] 视频语言: {resolved_lang}" + (f" (auto-detected)" if lang == "auto" else ""))
+    state.resolved_lang = (cfg.lang if cfg.lang in ("zh", "en")
+                           else _detect_lang(state.meta_for_terms))
+    print(f"      [lang] 视频语言: {state.resolved_lang}"
+          + (f" (auto-detected)" if cfg.lang == "auto" else ""))
 
-    if meta_for_terms is not None:
-        asr_prompt = _build_asr_prompt(meta_for_terms, lang=resolved_lang)
+    if state.meta_for_terms is not None:
+        state.asr_prompt = _build_asr_prompt(state.meta_for_terms,
+                                              lang=state.resolved_lang)
 
-    corrections: dict[str, str] = {}
-    if meta_for_terms:
-        corrections.update(_build_term_corrections(meta_for_terms))
-    if extra_terms:
-        corrections.update(extra_terms)
+    if state.meta_for_terms:
+        state.corrections.update(_build_term_corrections(state.meta_for_terms))
+    if cfg.extra_terms:
+        state.corrections.update(cfg.extra_terms)
 
-    tag = _tag_for_model(model_size)
-    asr_cache = OUTPUT_DIR / f"{audio.stem}.{tag}.asr.json"
-    if asr_cache.exists() and not force_asr:
+
+# ============ Stage 4: ASR + 术语校正 + dedupe ============
+def _stage_asr(cfg: PipelineConfig, state: PipelineState) -> None:
+    assert state.audio is not None
+    state.tag = _tag_for_model(cfg.model_size)
+    asr_cache = OUTPUT_DIR / f"{state.audio.stem}.{state.tag}.asr.json"
+    if asr_cache.exists() and not cfg.force_asr:
         print(f"[3/4] 命中 ASR 缓存: {asr_cache}")
         asr_result = json.loads(asr_cache.read_text(encoding="utf-8"))
         # 旧 cache 没 word_timestamps / confidence 字段：用户若开了 --confidence-threshold>0
         # 不会报错（render 退化），但低置信标记也不会出现。提示用户用 --force-asr 升级 cache。
-        if confidence_threshold > 0 and asr_result.get("segments"):
+        if cfg.confidence_threshold > 0 and asr_result.get("segments"):
             first = asr_result["segments"][0]
             if "confidence" not in first:
                 print(f"      [hint] cache 早于 confidence 落地（无 segments[].confidence），"
-                      f"--confidence-threshold={confidence_threshold} 不会有效。"
+                      f"--confidence-threshold={cfg.confidence_threshold} 不会有效。"
                       f"加 --force-asr 重跑 ASR 升级 cache schema（~30s/视频）")
     else:
         print("[3/4] 语音识别（首次会下载 ~3GB 模型）...")
-        asr_result = transcribe(audio, model_size=model_size,
-                                language=resolved_lang,
-                                initial_prompt=asr_prompt)
-    verified_lang = _verify_lang(asr_result, resolved_lang)
-    if verified_lang != resolved_lang:
+        asr_result = transcribe(state.audio, model_size=cfg.model_size,
+                                language=state.resolved_lang,
+                                initial_prompt=state.asr_prompt)
+    verified_lang = _verify_lang(asr_result, state.resolved_lang)
+    if verified_lang != state.resolved_lang:
         print(f"      [lang] ASR 实际语言为 {verified_lang}，"
-              f"覆盖 metadata 判断 {resolved_lang}（下游 Qwen 改用 {verified_lang} 模板）")
-        resolved_lang = verified_lang
-    if corrections:
-        print(f"      ASR 后处理替换 {len(corrections)} 条术语: "
-              f"{', '.join(list(corrections.keys())[:5])}{'...' if len(corrections) > 5 else ''}")
-        asr_result = apply_term_corrections(asr_result, corrections)
-    if dedupe_asr:
+              f"覆盖 metadata 判断 {state.resolved_lang}（下游 Qwen 改用 {verified_lang} 模板）")
+        state.resolved_lang = verified_lang
+    if state.corrections:
+        print(f"      ASR 后处理替换 {len(state.corrections)} 条术语: "
+              f"{', '.join(list(state.corrections.keys())[:5])}"
+              f"{'...' if len(state.corrections) > 5 else ''}")
+        asr_result = apply_term_corrections(asr_result, state.corrections)
+    if cfg.dedupe_asr:
         asr_result, dd_stats = dedupe_consecutive_segments(asr_result)
         if dd_stats["dropped"]:
             print(f"      ASR 连续重复段去重: 丢弃 {dd_stats['dropped']} 段，"
@@ -690,14 +761,20 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
                       f"{r['text']}")
     print(f"      duration={asr_result['duration']:.1f}s, "
           f"segments={len(asr_result['segments'])}")
+    state.asr_result = asr_result
 
-    if chunker == "texttile":
-        chunks = chunk_by_texttile(asr_result["segments"],
-                                   target_chunk_chars=chunk_chars)
-        chunker_desc = f"chunker=texttile target≈{chunk_chars}c"
+
+# ============ Stage 5: chunk + 超长硬切 ============
+def _stage_chunk(cfg: PipelineConfig, state: PipelineState) -> None:
+    assert state.asr_result is not None
+    if cfg.chunker == "texttile":
+        chunks = chunk_by_texttile(state.asr_result["segments"],
+                                   target_chunk_chars=cfg.chunk_chars)
+        chunker_desc = f"chunker=texttile target≈{cfg.chunk_chars}c"
     else:
-        chunks = chunk_by_chars(asr_result["segments"], chunk_chars=chunk_chars)
-        chunker_desc = f"chunker=chars chunk_chars={chunk_chars}"
+        chunks = chunk_by_chars(state.asr_result["segments"],
+                                chunk_chars=cfg.chunk_chars)
+        chunker_desc = f"chunker=chars chunk_chars={cfg.chunk_chars}"
 
     # 后处理：硬切超长 chunk（vlog/talk 类视频 chunker 不敏感时兜底）
     # 阈值 120s — 教学视频 cc=400/600 公式下几乎不会触发，vlog 触发率高
@@ -712,119 +789,133 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             print(f"        chunk #{s['idx']} dur={s['orig_dur']}s "
                   f"chars={s['orig_chars']} → 切在 {s['split_at']}s "
                   f"({s['left_dur']}s | {s['right_dur']}s)", flush=True)
-    if summarizer == "neural" and llm_chapters:
-        # Pegasus 输出 100% 被 Qwen 覆盖，--llm-chapters 时直接跳过节省 ~30s + ~1GB VRAM
-        print(f"[4/4] {chunker_desc}, {len(chunks)} chunks + 抽取式 summary（Qwen 后生 headline）...")
-        from summarize_neural import summarize_chunks_no_headline
-        summaries = summarize_chunks_no_headline(chunks, target_ratio=target_ratio,
-                                                  lang=resolved_lang)
-    elif summarizer == "neural":
-        print(f"[4/4] {chunker_desc}, {len(chunks)} chunks + 神经摘要（Pegasus-238M）...")
-        from summarize_neural import summarize_chunks as summarize_chunks_neural
-        summaries = summarize_chunks_neural(chunks, lang=resolved_lang)
-    else:
-        print(f"[4/4] {chunker_desc}, {len(chunks)} chunks + 抽取式摘要（ratio={target_ratio}）...")
-        summaries = summarize_chunks_extractive(chunks, target_ratio=target_ratio,
-                                                 lang=resolved_lang)
+    state.chunks = chunks
+    state.chunker_desc = chunker_desc
 
-    # ===== Qwen ASR 同音字校错（chunk-level 上下文）=====
+
+# ============ Stage 6: summarize chunks（neural vs extractive） ============
+def _stage_summarize(cfg: PipelineConfig, state: PipelineState) -> None:
+    assert state.chunks is not None
+    if cfg.summarizer == "neural" and cfg.llm_chapters:
+        # Pegasus 输出 100% 被 Qwen 覆盖，--llm-chapters 时直接跳过节省 ~30s + ~1GB VRAM
+        print(f"[4/4] {state.chunker_desc}, {len(state.chunks)} chunks + 抽取式 summary（Qwen 后生 headline）...")
+        from summarize_neural import summarize_chunks_no_headline
+        summaries = summarize_chunks_no_headline(state.chunks,
+                                                  target_ratio=cfg.target_ratio,
+                                                  lang=state.resolved_lang)
+    elif cfg.summarizer == "neural":
+        print(f"[4/4] {state.chunker_desc}, {len(state.chunks)} chunks + 神经摘要（Pegasus-238M）...")
+        from summarize_neural import summarize_chunks as summarize_chunks_neural
+        summaries = summarize_chunks_neural(state.chunks, lang=state.resolved_lang)
+    else:
+        print(f"[4/4] {state.chunker_desc}, {len(state.chunks)} chunks + 抽取式摘要（ratio={cfg.target_ratio}）...")
+        summaries = summarize_chunks_extractive(state.chunks,
+                                                 target_ratio=cfg.target_ratio,
+                                                 lang=state.resolved_lang)
+    state.summaries = summaries
+
+
+# ============ Stage 7: Qwen ASR 同音字校错（chunk-level 上下文） ============
+def _stage_qwen_asr_fix(cfg: PipelineConfig, state: PipelineState) -> None:
     # 跑在 headline 生成 / 章节切分前，把"双脚线→双绞线"这类隐式错字（substring
     # corrections map 救不了的）救回。需要 chunk 关键词作上下文 cue，所以放在
     # summarize 之后。Pegasus 模式也支持（不绑 llm_chapters，但 LLM 已用于章节就
     # 没有额外 VRAM 成本）。
-    if llm_chapters and summarizer == "neural" and summaries and resolved_lang != "en":
-        # 英文视频跳过 qwen_asr_fix（专攻中文同音字，对英文 ASR 无意义且会产生
-        # 大量 false positive 被防御过滤掉，纯浪费一次 LLM 调用 ~20s）
-        try:
-            from segment_llm import qwen_asr_fix
-            asr_fixes = qwen_asr_fix(summaries)
-        except Exception as e:
-            print(f"      [llm-asr-fix] 异常：{e}", flush=True)
-            asr_fixes = {}
-        if asr_fixes:
-            # 按 key 长度降序避免短词先吃长词（与 apply_term_corrections 一致）
-            items = sorted(asr_fixes.items(), key=lambda kv: -len(kv[0]))
-            for chunk in summaries:
-                for wrong, right in items:
-                    chunk["text"] = chunk["text"].replace(wrong, right)
-                    for seg in chunk.get("segments", []) or []:
-                        seg["text"] = seg["text"].replace(wrong, right)
-            apply_term_corrections(asr_result, asr_fixes)  # 兜底，asr_result 用于 md 原文区
-            # 修后重新抽 keywords（jieba 在错字上抓的 keyword 可能误导下游 LLM 切分）
-            from summarize import keywords_for
-            from summarize_neural import clean_for_summary
-            for chunk in summaries:
-                chunk["keywords"] = keywords_for(clean_for_summary(chunk["text"]))
-            print(f"      [llm-asr-fix] 应用 {len(asr_fixes)} 个错字 + 重抽关键词", flush=True)
+    if not (cfg.llm_chapters and cfg.summarizer == "neural"
+            and state.summaries and state.resolved_lang != "en"):
+        return
+    # 英文视频跳过 qwen_asr_fix（专攻中文同音字，对英文 ASR 无意义且会产生
+    # 大量 false positive 被防御过滤掉，纯浪费一次 LLM 调用 ~20s）
+    try:
+        from segment_llm import qwen_asr_fix
+        asr_fixes = qwen_asr_fix(state.summaries)
+    except Exception as e:
+        print(f"      [llm-asr-fix] 异常：{e}", flush=True)
+        asr_fixes = {}
+    if asr_fixes:
+        # 按 key 长度降序避免短词先吃长词（与 apply_term_corrections 一致）
+        items = sorted(asr_fixes.items(), key=lambda kv: -len(kv[0]))
+        for chunk in state.summaries:
+            for wrong, right in items:
+                chunk["text"] = chunk["text"].replace(wrong, right)
+                for seg in chunk.get("segments", []) or []:
+                    seg["text"] = seg["text"].replace(wrong, right)
+        apply_term_corrections(state.asr_result, asr_fixes)  # 兜底，asr_result 用于 md 原文区
+        # 修后重新抽 keywords（jieba 在错字上抓的 keyword 可能误导下游 LLM 切分）
+        from summarize import keywords_for
+        from summarize_neural import clean_for_summary
+        for chunk in state.summaries:
+            chunk["keywords"] = keywords_for(clean_for_summary(chunk["text"]))
+        print(f"      [llm-asr-fix] 应用 {len(asr_fixes)} 个错字 + 重抽关键词", flush=True)
 
-    visual_feats = None
-    if keyframes:
-        from keyframe import extract_keyframes
-        video_for_kf = _resolve_video_for_keyframes(video)
-        if video_for_kf is None:
-            print(f"      [keyframes] 跳过：找不到 {video} 对应的视频流文件")
-        else:
-            print(f"      [keyframes] 用视频 {video_for_kf.name} 抽帧 ...")
-            # keyframes 目录与 CLIP-only / VLM 路径**共享**（同一段视频两个跑法
-            # 帧本身是一样的，只是 caption 不同），所以 kf_dir 不带 .vl 后缀
-            kf_dir = OUTPUT_DIR / f"{_output_stem(audio, tag, summarizer, chunker, chunk_chars, keyframes=True)}.keyframes"
-            summaries, visual_feats = extract_keyframes(video_for_kf, summaries, kf_dir)
-            kf_rel_prefix = f"{kf_dir.name}/"
-    else:
-        kf_rel_prefix = ""
 
-    chapter_list = None
-    ablation = None
-    # 切分路径元数据（供论文附录 B 表用）
-    seg_meta = {
-        "method": None,           # llm | texttile_fallback | none
-        "llm_attempts": 0,
-        "llm_pass_via": None,
-        "llm_repair_used": [],
-        "llm_fail_reasons": [],
-        "fallback_used": False,
-    }
+# ============ Stage 8: keyframes 抽帧 + visual_feats ============
+def _stage_keyframes(cfg: PipelineConfig, state: PipelineState) -> None:
+    if not cfg.keyframes:
+        state.kf_rel_prefix = ""
+        return
+    from keyframe import extract_keyframes
+    video_for_kf = _resolve_video_for_keyframes(state.video)
+    if video_for_kf is None:
+        print(f"      [keyframes] 跳过：找不到 {state.video} 对应的视频流文件")
+        state.kf_rel_prefix = ""
+        return
+    print(f"      [keyframes] 用视频 {video_for_kf.name} 抽帧 ...")
+    # keyframes 目录与 CLIP-only / VLM 路径**共享**（同一段视频两个跑法
+    # 帧本身是一样的，只是 caption 不同），所以 kf_dir 不带 .vl 后缀
+    kf_dir = OUTPUT_DIR / f"{_output_stem(state.audio, state.tag, cfg.summarizer, cfg.chunker, cfg.chunk_chars, keyframes=True)}.keyframes"
+    state.summaries, state.visual_feats = extract_keyframes(
+        video_for_kf, state.summaries, kf_dir)
+    state.kf_rel_prefix = f"{kf_dir.name}/"
 
-    # ===== LLM 生成/重写 chunk headline =====
+
+# ============ Stage 9: LLM 重写/生成 chunk headline ============
+def _stage_llm_headline(cfg: PipelineConfig, state: PipelineState) -> None:
     # 两种来源：(a) Pegasus 模式有初版 headline → Qwen `refine_headlines` 重写；
     # (b) 无 Pegasus 模式 headline 是空串 → Qwen `generate_headlines` 直接从原文生成。
-    if llm_chapters and summarizer == "neural" and summaries:
-        has_initial = any((c.get("headline") or "").strip() for c in summaries)
-        try:
-            if has_initial:
-                print("[headlines] Qwen 重写 Pegasus 初版 chunk headline ...", flush=True)
-                from segment_llm import refine_headlines
-                refined = refine_headlines(summaries, lang=resolved_lang)
-            else:
-                print("[headlines] Qwen 从原文直接生成 chunk headline ...", flush=True)
-                from segment_llm import generate_headlines
-                refined = generate_headlines(summaries, lang=resolved_lang)
-        except Exception as e:
-            print(f"      [llm-headline] 异常：{e}，保留初版", flush=True)
-            refined = None
-        if refined and len(refined) == len(summaries):
-            for c, new_hl in zip(summaries, refined):
-                c["headline_pegasus"] = c.get("headline", "")  # 留底
-                c["headline"] = new_hl
-            print(f"      [llm-headline] 填充 {len(refined)} 段 headline", flush=True)
+    if not (cfg.llm_chapters and cfg.summarizer == "neural" and state.summaries):
+        return
+    has_initial = any((c.get("headline") or "").strip() for c in state.summaries)
+    try:
+        if has_initial:
+            print("[headlines] Qwen 重写 Pegasus 初版 chunk headline ...", flush=True)
+            from segment_llm import refine_headlines
+            refined = refine_headlines(state.summaries, lang=state.resolved_lang)
+        else:
+            print("[headlines] Qwen 从原文直接生成 chunk headline ...", flush=True)
+            from segment_llm import generate_headlines
+            refined = generate_headlines(state.summaries, lang=state.resolved_lang)
+    except Exception as e:
+        print(f"      [llm-headline] 异常：{e}，保留初版", flush=True)
+        refined = None
+    if refined and len(refined) == len(state.summaries):
+        for c, new_hl in zip(state.summaries, refined):
+            c["headline_pegasus"] = c.get("headline", "")  # 留底
+            c["headline"] = new_hl
+        print(f"      [llm-headline] 填充 {len(refined)} 段 headline", flush=True)
 
+
+# ============ Stage 10: 视觉相似度 cue（CLIP）→ LLM 切分 ============
+def _stage_visual_sims(cfg: PipelineConfig, state: PipelineState) -> None:
     # 多模态信号：keyframes 抽帧时，把相邻 chunk 的 CLIP 视觉相似度送给 LLM 切分
     # 作为额外提示（用作 tie-breaker，文本主题仍是主依据）
-    visual_sims_for_llm = None
-    if visual_feats is not None:
-        from segment import visual_adjacent_distances
-        v_dists = visual_adjacent_distances(visual_feats)
-        visual_sims_for_llm = [(1.0 - d) if d is not None else None for d in v_dists]
-        print(f"      [mm-llm] 视觉相似度 cue 启用：{sum(1 for s in visual_sims_for_llm if s is not None)}/{len(visual_sims_for_llm)} 段间隙有信号",
-              flush=True)
+    if state.visual_feats is None:
+        return
+    from segment import visual_adjacent_distances
+    v_dists = visual_adjacent_distances(state.visual_feats)
+    sims = [(1.0 - d) if d is not None else None for d in v_dists]
+    state.visual_sims_for_llm = sims
+    print(f"      [mm-llm] 视觉相似度 cue 启用："
+          f"{sum(1 for s in sims if s is not None)}/{len(sims)} 段间隙有信号",
+          flush=True)
 
-    # ===== VLM caption（Qwen2.5-VL-7B-AWQ）：每 chunk 1 句画面描述 =====
+
+# ============ Stage 11: VLM caption（Qwen2.5-VL） ============
+def _stage_vlm_captions(cfg: PipelineConfig, state: PipelineState) -> None:
     # 给 LLM 切分提供比浮点 sim 信息密度高 10x 的视觉 cue。需 --keyframes + --vlm-captions。
     # VRAM 占用与 Qwen2.5-7B-Instruct-AWQ 相近，跑完会 free_vl_model() 让 instruct 加载回来。
-    visual_captions_for_llm = None
-    vl_max_prefix_run = None  # 二次门控诊断指标
-    vl_generic_ratio = None   # 通用动词占比，三层门控的中层指标
-    vl_degraded_reason = None
+    if not (cfg.vlm_captions and cfg.keyframes and state.summaries):
+        return
     # 自适应规则（三层）：
     # 外层 - n_chunks ≤ 15：短/动态视频画面信息密度高，caption 切更细（OS p37 实测）
     # 外层 - n_chunks > 15：长视频画面 pattern 单一，caption 反诱发 catch-all（BV1S6kQBNEJq）
@@ -840,326 +931,346 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
     CAPTION_PREFIX_RUN_MIN = 4
     CAPTION_OTHER_MIN = 3
     CAPTION_GENERIC_MAX = 0.65  # generic 动词占比 ≥ 此值 → 降级
-    if vlm_captions and keyframes and summaries:
-        try:
-            from caption_vl import caption_keyframes, caption_redundancy, free_vl_model
-            print("[vl-cap] Qwen2.5-VL 给关键帧生 caption ...", flush=True)
-            captions = caption_keyframes(summaries, lang=resolved_lang)
-            free_vl_model()
-            # 把 caption 写回 chunk dict 让 summary.json / 前端 / 论文 §5.4 截图能看
-            if captions and len(captions) == len(summaries):
-                for c, cap in zip(summaries, captions):
-                    if cap:
-                        c["vlm_caption"] = cap
-            # 诊断指标（仅 log，不参与判定）
-            jaccard, generic = caption_redundancy(captions)
-            n_cap = sum(1 for x in captions if x)
-            # 计算最大前缀 run（参与内层判定）
-            cur = best = 1
-            for i in range(1, len(captions)):
-                a = captions[i-1] or ""
-                b = captions[i] or ""
-                if a and b and a[:CAPTION_PREFIX_K] == b[:CAPTION_PREFIX_K]:
-                    cur += 1
-                    best = max(best, cur)
-                else:
-                    cur = 1
-            vl_max_prefix_run = best
-            print(f"      [vl-cap] n_cap={n_cap}, jaccard_mean={jaccard:.2f}, "
-                  f"generic_ratio={generic:.2f}, max_prefix_run={best}/{len(captions)}",
-                  flush=True)
-            # 记录 generic_ratio 供 ablation/§5.4 用
-            vl_generic_ratio = generic
-            # 外层判定：n_chunks 阈值
-            if len(summaries) > CAPTION_MAX_CHUNKS:
-                vl_degraded_reason = "n_chunks_gt_15"
-                print(f"      [vl-cap] n_chunks={len(summaries)} > "
-                      f"{CAPTION_MAX_CHUNKS} → 长视频画面 pattern 易让 LLM catch-all，"
-                      f"降级回 CLIP sim cue", flush=True)
-                visual_captions_for_llm = None
-            # 中层判定：generic_ratio（通用动词占比）
-            elif generic >= CAPTION_GENERIC_MAX:
-                vl_degraded_reason = "generic_ratio_high"
-                print(f"      [vl-cap] generic_ratio={generic:.2f} ≥ "
-                      f"{CAPTION_GENERIC_MAX} → caption 多为'讲师讲解/演示'通用句式无"
-                      f"区分度，LLM 易 catch-all，降级回 CLIP sim cue", flush=True)
-                visual_captions_for_llm = None
-            # 内层判定：前缀长 run + 剩余 chunks
-            elif (best >= CAPTION_PREFIX_RUN_MIN
-                  and len(captions) - best >= CAPTION_OTHER_MIN):
-                vl_degraded_reason = "prefix_run_degenerate"
-                print(f"      [vl-cap] max_prefix_run={best}, "
-                      f"others={len(captions)-best} → caption 高度同质化但剩余 chunks "
-                      f"足够多，易诱发 LLM 漏 chunks（p44 case），降级回 CLIP sim cue",
-                      flush=True)
-                visual_captions_for_llm = None
+    try:
+        from caption_vl import caption_keyframes, caption_redundancy, free_vl_model
+        print("[vl-cap] Qwen2.5-VL 给关键帧生 caption ...", flush=True)
+        captions = caption_keyframes(state.summaries, lang=state.resolved_lang)
+        free_vl_model()
+        # 把 caption 写回 chunk dict 让 summary.json / 前端 / 论文 §5.4 截图能看
+        if captions and len(captions) == len(state.summaries):
+            for c, cap in zip(state.summaries, captions):
+                if cap:
+                    c["vlm_caption"] = cap
+        # 诊断指标（仅 log，不参与判定）
+        jaccard, generic = caption_redundancy(captions)
+        n_cap = sum(1 for x in captions if x)
+        # 计算最大前缀 run（参与内层判定）
+        cur = best = 1
+        for i in range(1, len(captions)):
+            a = captions[i-1] or ""
+            b = captions[i] or ""
+            if a and b and a[:CAPTION_PREFIX_K] == b[:CAPTION_PREFIX_K]:
+                cur += 1
+                best = max(best, cur)
             else:
-                visual_captions_for_llm = captions
-                print(f"      [vl-cap] n_chunks={len(summaries)} ≤ "
-                      f"{CAPTION_MAX_CHUNKS}, generic_ratio={generic:.2f} < "
-                      f"{CAPTION_GENERIC_MAX}, prefix_run={best} 不退化 → "
-                      f"caption 用作切分主信号", flush=True)
-        except Exception as e:
-            print(f"      [vl-cap] 异常：{e}（跳过 caption，回退 sim cue）", flush=True)
+                cur = 1
+        state.vl_max_prefix_run = best
+        print(f"      [vl-cap] n_cap={n_cap}, jaccard_mean={jaccard:.2f}, "
+              f"generic_ratio={generic:.2f}, max_prefix_run={best}/{len(captions)}",
+              flush=True)
+        # 记录 generic_ratio 供 ablation/§5.4 用
+        state.vl_generic_ratio = generic
+        # 外层判定：n_chunks 阈值
+        if len(state.summaries) > CAPTION_MAX_CHUNKS:
+            state.vl_degraded_reason = "n_chunks_gt_15"
+            print(f"      [vl-cap] n_chunks={len(state.summaries)} > "
+                  f"{CAPTION_MAX_CHUNKS} → 长视频画面 pattern 易让 LLM catch-all，"
+                  f"降级回 CLIP sim cue", flush=True)
+            state.visual_captions_for_llm = None
+        # 中层判定：generic_ratio（通用动词占比）
+        elif generic >= CAPTION_GENERIC_MAX:
+            state.vl_degraded_reason = "generic_ratio_high"
+            print(f"      [vl-cap] generic_ratio={generic:.2f} ≥ "
+                  f"{CAPTION_GENERIC_MAX} → caption 多为'讲师讲解/演示'通用句式无"
+                  f"区分度，LLM 易 catch-all，降级回 CLIP sim cue", flush=True)
+            state.visual_captions_for_llm = None
+        # 内层判定：前缀长 run + 剩余 chunks
+        elif (best >= CAPTION_PREFIX_RUN_MIN
+              and len(captions) - best >= CAPTION_OTHER_MIN):
+            state.vl_degraded_reason = "prefix_run_degenerate"
+            print(f"      [vl-cap] max_prefix_run={best}, "
+                  f"others={len(captions)-best} → caption 高度同质化但剩余 chunks "
+                  f"足够多，易诱发 LLM 漏 chunks（p44 case），降级回 CLIP sim cue",
+                  flush=True)
+            state.visual_captions_for_llm = None
+        else:
+            state.visual_captions_for_llm = captions
+            print(f"      [vl-cap] n_chunks={len(state.summaries)} ≤ "
+                  f"{CAPTION_MAX_CHUNKS}, generic_ratio={generic:.2f} < "
+                  f"{CAPTION_GENERIC_MAX}, prefix_run={best} 不退化 → "
+                  f"caption 用作切分主信号", flush=True)
+    except Exception as e:
+        print(f"      [vl-cap] 异常：{e}（跳过 caption，回退 sim cue）", flush=True)
 
-    # ===== 内容大类轻量分类（teaching/popsci/vlog/talk）=====
+
+# ============ Stage 12: 内容大类轻量分类（早期，给 LLM 切分用） ============
+def _stage_classify_category_early(cfg: PipelineConfig, state: PipelineState) -> None:
     # 提到 LLM 章节切分前，让切分用对应 category 的 prompt（vlog/talk 章节更碎）。
     # 末段还会再算一次（用相同 transcript）回写 meta.json，结果一致。
-    inferred_category = "teaching"
-    _meta_for_cat = _load_meta_safe(META_DIR / f"{video.stem}.meta.json") or {}
+    assert state.video is not None
+    _meta_for_cat = _load_meta_safe(META_DIR / f"{state.video.stem}.meta.json") or {}
     try:
         from classify_category import classify_category
-        cat_transcript = " ".join((c.get("text") or "")[:600] for c in summaries[:10])[:5000]
-        cat_keywords_flat = [kw for c in summaries for kw in (c.get("keywords") or [])]
+        cat_transcript = " ".join((c.get("text") or "")[:600] for c in state.summaries[:10])[:5000]
+        cat_keywords_flat = [kw for c in state.summaries for kw in (c.get("keywords") or [])]
         _cat_result = classify_category(
             _meta_for_cat, transcript=cat_transcript,
             keywords=cat_keywords_flat,
-            duration_sec=asr_result.get("duration"))
-        inferred_category = _cat_result["category"]
-        print(f"      [category-early] {inferred_category} "
-              f"({_cat_result['confidence']}) → LLM 切分用 {inferred_category} prompt",
+            duration_sec=state.asr_result.get("duration"))
+        state.inferred_category = _cat_result["category"]
+        print(f"      [category-early] {state.inferred_category} "
+              f"({_cat_result['confidence']}) → LLM 切分用 {state.inferred_category} prompt",
               flush=True)
     except Exception as e:
         print(f"      [category-early] 分类异常：{e}，按 teaching 走", flush=True)
 
+
+# ============ Stage 13: 例题段标记（is_example）============
+def _stage_example_detection(cfg: PipelineConfig, state: PipelineState) -> None:
     # I4-d: chunk 级例题标记 — 教学/科普类视频跑 Python 正则识别题目讲解段，
     # 把 is_example=True 写到 chunk dict，md 渲染时加 📝 例题 badge
     # 不改 chapter 切分结构，保留 LLM 的大段判断
-    if summaries and inferred_category in ("teaching", "popsci"):
-        from segment_llm import _detect_example_chunks
-        ex_idxs = _detect_example_chunks(summaries)
-        for i in ex_idxs:
-            if 0 <= i < len(summaries):
-                summaries[i]["is_example"] = True
-        if ex_idxs:
-            print(f"      [example] 识别例题段 {len(ex_idxs)} 个 chunks: {ex_idxs}",
-                  flush=True)
+    if not (state.summaries and state.inferred_category in ("teaching", "popsci")):
+        return
+    from segment_llm import _detect_example_chunks
+    ex_idxs = _detect_example_chunks(state.summaries)
+    for i in ex_idxs:
+        if 0 <= i < len(state.summaries):
+            state.summaries[i]["is_example"] = True
+    if ex_idxs:
+        print(f"      [example] 识别例题段 {len(ex_idxs)} 个 chunks: {ex_idxs}",
+              flush=True)
 
-    # ===== LLM 层级章节切分（替代 TextTiling 章节路径）=====
-    if llm_chapters:
-        print("[chapters] LLM 层级章节切分（Qwen2.5-7B-AWQ）...", flush=True)
+
+# ============ Stage 14: 章节切分（LLM or TextTiling fallback）============
+def _stage_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
+    if cfg.llm_chapters:
+        _do_llm_chapters(cfg, state)
+    if state.chapter_list is None and cfg.chapters is not None and cfg.chapters != 0:
+        _do_texttile_chapters(cfg, state)
+
+
+def _do_llm_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
+    """LLM 层级章节切分（替代 TextTiling 章节路径）。失败时不写 state.chapter_list。"""
+    print("[chapters] LLM 层级章节切分（Qwen2.5-7B-AWQ）...", flush=True)
+    try:
+        from segment_llm import segment_hierarchical
+        outline = segment_hierarchical(state.summaries,
+                                        visual_sims=state.visual_sims_for_llm,
+                                        visual_captions=state.visual_captions_for_llm,
+                                        lang=state.resolved_lang,
+                                        category=state.inferred_category)
+    except Exception as e:
+        print(f"      [llm-chapters] 异常：{e}，fallback TextTiling", flush=True)
+        outline = None
+    # VL 救援：用了 VL caption 但 LLM 3 attempts + repair 都失败时，
+    # 自动 retry 一次不带 caption（仅 sim cue）。
+    vl_rescue_triggered = False
+    if (outline is not None
+            and state.visual_captions_for_llm is not None
+            and not outline.get("chapters")):
+        print(f"      [vl-rescue] VL caption 路径 LLM 3 attempts + repair 都失败，"
+              f"自动 retry 不带 caption（仅 sim cue）...", flush=True)
         try:
-            from segment_llm import segment_hierarchical
-            outline = segment_hierarchical(summaries, visual_sims=visual_sims_for_llm,
-                                            visual_captions=visual_captions_for_llm,
-                                            lang=resolved_lang,
-                                            category=inferred_category)
-        except Exception as e:
-            print(f"      [llm-chapters] 异常：{e}，fallback TextTiling", flush=True)
-            outline = None
-        # VL 救援：用了 VL caption 但 LLM 3 attempts + repair 都失败时，
-        # 自动 retry 一次不带 caption（仅 sim cue）。FwOTs4UxQS4 实测 VL 让
-        # mm.vl 死在 missing，mm-only 第 3 attempt 通过——caption 偶尔诱发
-        # Qwen 漏 chunks 是英文短视频上的失败模式，门控 prefix-run 抓不到
-        # 语义同构但前缀不同的英文 caption，所以加这层"事后救援"作 belt-and-
-        # suspenders 兜底
-        vl_rescue_triggered = False
-        if (outline is not None
-                and visual_captions_for_llm is not None
-                and not outline.get("chapters")):
-            print(f"      [vl-rescue] VL caption 路径 LLM 3 attempts + repair 都失败，"
-                  f"自动 retry 不带 caption（仅 sim cue）...", flush=True)
-            try:
-                outline_rescue = segment_hierarchical(
-                    summaries, visual_sims=visual_sims_for_llm,
-                    visual_captions=None, lang=resolved_lang,
-                    category=inferred_category)
-                if outline_rescue and outline_rescue.get("chapters"):
-                    print(f"      [vl-rescue] retry 成功，VL caption 是失败原因",
-                          flush=True)
-                    outline = outline_rescue
-                    vl_rescue_triggered = True
-                    # 标记后续 ablation：vlm 被自动救援降级
-                    vl_degraded_reason = "rescue_after_llm_fail"
-                    visual_captions_for_llm = None
-                else:
-                    print(f"      [vl-rescue] retry 仍失败，问题不在 VL caption",
-                          flush=True)
-            except Exception as e:
-                print(f"      [vl-rescue] 异常：{e}", flush=True)
-        # 即便 outline 没出 chapters（LLM 失败），也读 _meta 让 ablation 准确
-        # 显示"LLM 跑了 N 次 attempt 但失败 → fallback"
-        if outline:
-            llm_meta = outline.get("_meta") or {}
-            seg_meta["llm_attempts"] = llm_meta.get("attempts_used", 0)
-            seg_meta["llm_pass_via"] = llm_meta.get("pass_via")
-            seg_meta["llm_repair_used"] = llm_meta.get("repair_used", [])
-            seg_meta["llm_fail_reasons"] = llm_meta.get("fail_reasons", [])
-            seg_meta["vl_rescue_used"] = vl_rescue_triggered
-        if outline and outline.get("chapters"):
-            chapter_list = outline["chapters"]
-            seg_meta["method"] = "llm"
-            # 补 chunks 引用，供后续 chapter abstract 用
-            for ch in chapter_list:
-                ch["chunks"] = [summaries[i] for i in ch["indices"]]
-                for sub in ch.get("children", []):
-                    sub["chunks"] = [summaries[i] for i in sub["indices"]]
-            print(f"      [llm-chapters] {len(chapter_list)} 顶层 / "
-                  f"{sum(len(ch.get('children', [])) for ch in chapter_list)} 子章节",
-                  flush=True)
-            # 章节级 abstractive 概述：llm_chapters 模式下用 Qwen 生成 prose，
-            # 否则 / Qwen 失败时 fallback 到拼接式 summarize_chapter
-            if summarizer == "neural":
-                _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang,
-                                                          category=inferred_category)
-                # 章末复习要点（learning 类专属，3-5 条 bullet markdown）
-                _apply_chapter_recaps(chapter_list, llm_chapters, lang=resolved_lang,
-                                                          category=inferred_category)
-                # 章末自测题（learning 类专属，2-3 道选择/判断）
-                _apply_chapter_quizzes(chapter_list, llm_chapters, lang=resolved_lang,
-                                                          category=inferred_category)
-            _mark_wrapup_chapter(chapter_list, lang=resolved_lang)
-
-    if chapter_list is None and chapters is not None and chapters != 0:
-        # 走 fallback TextTiling 路径（或用户没开 llm_chapters）
-        if llm_chapters:
-            seg_meta["fallback_used"] = True
-        seg_meta["method"] = "texttile"
-        from segment import segment_chunks, detect_boundaries
-        n = chapters if chapters > 0 else None
-        title_fn = None
-        # llm_chapters 时 refine_chapter_titles 会覆盖 fallback 章标题，无需 Pegasus
-        # title_fn——保留 None 走 _default_title（取首段 headline），由后续 Qwen 改写
-        if summarizer == "neural" and not llm_chapters:
-            # 复用 Pegasus 对整章重新生成一个更概括的标题
-            from summarize_neural import (summarize_text, clean_for_summary,
-                                          post_clean_headline,
-                                          nominalize_title,
-                                          _is_chapter_title_copy,
-                                          _fallback_chapter_title)
-
-            def title_fn(members):
-                # 层次化摘要：拼接各段 headline 而非原文，避免输入超 max_input
-                # 而只看到首段。短输入让 Pegasus 做高层抽象。
-                headlines = [m.get("headline", "") for m in members
-                             if m.get("headline")]
-                if not headlines:
-                    joined = "".join(clean_for_summary(m["text"]) for m in members)
-                    return nominalize_title(post_clean_headline(summarize_text(joined)))
-                if len(headlines) == 1:
-                    return nominalize_title(headlines[0])
-                joined = "。".join(headlines)
-                title = post_clean_headline(summarize_text(joined))
-                # Pegasus 在小输入（≤3 段 headline）上倾向退化成抄一段。大章节
-                # (n≥4) 时 Pegasus 可能从多个候选中选 representative，即使 copy
-                # 也是有意识选择，保留比 fallback 强（fallback 只看前 2 段会丢章中段）。
-                if len(headlines) <= 3 and _is_chapter_title_copy(title, headlines):
-                    title = _fallback_chapter_title(headlines)
-                return nominalize_title(title)
-        # ablation: 文本-only 和 多模态分别算一次，方便对比与论文分析
-        text_only_bounds, text_dbg = detect_boundaries(
-            summaries, num_chapters=n, return_debug=True)
-        if visual_feats is not None:
-            mm_bounds_idx, mm_dbg = detect_boundaries(
-                summaries, num_chapters=n, visual_feats=visual_feats,
-                alpha=mm_alpha, return_debug=True)
-        else:
-            mm_bounds_idx, mm_dbg = text_only_bounds, text_dbg
-        from segment import group_into_chapters
-        chapter_list = group_into_chapters(summaries, mm_bounds_idx, title_fn=title_fn)
-        # B1 移植到 fallback 路径：LLM 切分失败时（如 p37 漏 chunk），TextTiling fallback
-        # 出的章节也应享受"只看本章 headlines"的标题重写。条件：用户开了 --llm-chapters
-        if llm_chapters and chapter_list:
-            try:
-                from segment_llm import refine_chapter_titles
-                outline_for_titles = {"chapters": [
-                    {"chunks": ch["indices"]} for ch in chapter_list]}
-                refined_titles = refine_chapter_titles(outline_for_titles, summaries,
-                                                        lang=resolved_lang,
-                                                        category=inferred_category)
-            except Exception as e:
-                print(f"      [llm-chapter-title-fallback] 异常：{e}", flush=True)
-                refined_titles = None
-            if refined_titles and len(refined_titles) == len(chapter_list):
-                for ch, new_title in zip(chapter_list, refined_titles):
-                    ch["title_v1"] = ch.get("title", "")
-                    ch["title"] = new_title
-                print(f"      [llm-chapter-title-fallback] 重写 {len(refined_titles)} 个 fallback 章标题",
+            outline_rescue = segment_hierarchical(
+                state.summaries, visual_sims=state.visual_sims_for_llm,
+                visual_captions=None, lang=state.resolved_lang,
+                category=state.inferred_category)
+            if outline_rescue and outline_rescue.get("chapters"):
+                print(f"      [vl-rescue] retry 成功，VL caption 是失败原因",
                       flush=True)
-        # 章节级 abstractive 概述（仅 neural 模式）
-        if summarizer == "neural" and chapter_list:
-            _apply_chapter_abstracts(chapter_list, llm_chapters, lang=resolved_lang,
-                                                          category=inferred_category)
-            _apply_chapter_recaps(chapter_list, llm_chapters, lang=resolved_lang,
-                                                          category=inferred_category)
-            _apply_chapter_quizzes(chapter_list, llm_chapters, lang=resolved_lang,
-                                                          category=inferred_category)
-        _mark_wrapup_chapter(chapter_list, lang=resolved_lang)
-        mm_bounds = [ch["indices"][0] for ch in chapter_list[1:]]
-        ablation = {
-            "alpha": mm_alpha,
-            "text_dists": text_dbg["text_dists"],
-            "visual_dists": mm_dbg["visual_dists"],
-            "fused_dists": mm_dbg["fused_dists"],
-            "depth_scores": mm_dbg["depth_scores"],
-            "text_only_boundaries": text_only_bounds,
-            "multimodal_boundaries": mm_bounds,
-        }
-        if visual_feats is not None:
-            print(f"      章节切分（多模态 α={mm_alpha}）: {len(chapter_list)} 章，"
-                  f"边界 段{[b + 1 for b in mm_bounds]}")
-            if text_only_bounds != mm_bounds:
-                print(f"      ablation 对比 - 纯文本 段{[b + 1 for b in text_only_bounds]}"
-                      f" → 多模态 段{[b + 1 for b in mm_bounds]}")
+                outline = outline_rescue
+                vl_rescue_triggered = True
+                state.vl_degraded_reason = "rescue_after_llm_fail"
+                state.visual_captions_for_llm = None
             else:
-                print(f"      ablation - 文本与多模态边界一致")
-        else:
-            print(f"      章节切分（纯文本）: {len(chapter_list)} 章，边界 段"
-                  f"{[b + 1 for b in mm_bounds]}")
+                print(f"      [vl-rescue] retry 仍失败，问题不在 VL caption",
+                      flush=True)
+        except Exception as e:
+            print(f"      [vl-rescue] 异常：{e}", flush=True)
+    # 即便 outline 没出 chapters（LLM 失败），也读 _meta 让 ablation 准确
+    # 显示"LLM 跑了 N 次 attempt 但失败 → fallback"
+    if outline:
+        llm_meta = outline.get("_meta") or {}
+        state.seg_meta["llm_attempts"] = llm_meta.get("attempts_used", 0)
+        state.seg_meta["llm_pass_via"] = llm_meta.get("pass_via")
+        state.seg_meta["llm_repair_used"] = llm_meta.get("repair_used", [])
+        state.seg_meta["llm_fail_reasons"] = llm_meta.get("fail_reasons", [])
+        state.seg_meta["vl_rescue_used"] = vl_rescue_triggered
+    if outline and outline.get("chapters"):
+        chapter_list = outline["chapters"]
+        state.seg_meta["method"] = "llm"
+        # 补 chunks 引用，供后续 chapter abstract 用
+        for ch in chapter_list:
+            ch["chunks"] = [state.summaries[i] for i in ch["indices"]]
+            for sub in ch.get("children", []):
+                sub["chunks"] = [state.summaries[i] for i in sub["indices"]]
+        print(f"      [llm-chapters] {len(chapter_list)} 顶层 / "
+              f"{sum(len(ch.get('children', [])) for ch in chapter_list)} 子章节",
+              flush=True)
+        # 章节级 abstractive 概述：llm_chapters 模式下用 Qwen 生成 prose
+        if cfg.summarizer == "neural":
+            _apply_chapter_abstracts(chapter_list, cfg.llm_chapters,
+                                     lang=state.resolved_lang,
+                                     category=state.inferred_category)
+            _apply_chapter_recaps(chapter_list, cfg.llm_chapters,
+                                  lang=state.resolved_lang,
+                                  category=state.inferred_category)
+            _apply_chapter_quizzes(chapter_list, cfg.llm_chapters,
+                                   lang=state.resolved_lang,
+                                   category=state.inferred_category)
+        _mark_wrapup_chapter(chapter_list, lang=state.resolved_lang)
+        state.chapter_list = chapter_list
 
-    # ===== 双语翻译（章标题 + abstract + chunk headline） =====
+
+def _do_texttile_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
+    """TextTiling fallback 路径（llm 失败或没开 llm_chapters 但开了 --chapters）。"""
+    if cfg.llm_chapters:
+        state.seg_meta["fallback_used"] = True
+    state.seg_meta["method"] = "texttile"
+    from segment import detect_boundaries, group_into_chapters
+    n = cfg.chapters if cfg.chapters > 0 else None
+    title_fn = None
+    # llm_chapters 时 refine_chapter_titles 会覆盖 fallback 章标题
+    if cfg.summarizer == "neural" and not cfg.llm_chapters:
+        # 复用 Pegasus 对整章重新生成一个更概括的标题
+        from summarize_neural import (summarize_text, clean_for_summary,
+                                       post_clean_headline,
+                                       nominalize_title,
+                                       _is_chapter_title_copy,
+                                       _fallback_chapter_title)
+
+        def title_fn(members):
+            # 层次化摘要：拼接各段 headline 而非原文，避免输入超 max_input
+            # 而只看到首段。短输入让 Pegasus 做高层抽象。
+            headlines = [m.get("headline", "") for m in members
+                         if m.get("headline")]
+            if not headlines:
+                joined = "".join(clean_for_summary(m["text"]) for m in members)
+                return nominalize_title(post_clean_headline(summarize_text(joined)))
+            if len(headlines) == 1:
+                return nominalize_title(headlines[0])
+            joined = "。".join(headlines)
+            title = post_clean_headline(summarize_text(joined))
+            # Pegasus 在小输入（≤3 段 headline）上倾向退化成抄一段
+            if len(headlines) <= 3 and _is_chapter_title_copy(title, headlines):
+                title = _fallback_chapter_title(headlines)
+            return nominalize_title(title)
+    # ablation: 文本-only 和 多模态分别算一次
+    text_only_bounds, text_dbg = detect_boundaries(
+        state.summaries, num_chapters=n, return_debug=True)
+    if state.visual_feats is not None:
+        mm_bounds_idx, mm_dbg = detect_boundaries(
+            state.summaries, num_chapters=n, visual_feats=state.visual_feats,
+            alpha=cfg.mm_alpha, return_debug=True)
+    else:
+        mm_bounds_idx, mm_dbg = text_only_bounds, text_dbg
+    chapter_list = group_into_chapters(state.summaries, mm_bounds_idx,
+                                       title_fn=title_fn)
+    # B1 移植到 fallback 路径：LLM 切分失败时（如 p37 漏 chunk），TextTiling fallback
+    # 出的章节也应享受"只看本章 headlines"的标题重写
+    if cfg.llm_chapters and chapter_list:
+        try:
+            from segment_llm import refine_chapter_titles
+            outline_for_titles = {"chapters": [
+                {"chunks": ch["indices"]} for ch in chapter_list]}
+            refined_titles = refine_chapter_titles(outline_for_titles, state.summaries,
+                                                    lang=state.resolved_lang,
+                                                    category=state.inferred_category)
+        except Exception as e:
+            print(f"      [llm-chapter-title-fallback] 异常：{e}", flush=True)
+            refined_titles = None
+        if refined_titles and len(refined_titles) == len(chapter_list):
+            for ch, new_title in zip(chapter_list, refined_titles):
+                ch["title_v1"] = ch.get("title", "")
+                ch["title"] = new_title
+            print(f"      [llm-chapter-title-fallback] 重写 {len(refined_titles)} 个 fallback 章标题",
+                  flush=True)
+    # 章节级 abstractive 概述（仅 neural 模式）
+    if cfg.summarizer == "neural" and chapter_list:
+        _apply_chapter_abstracts(chapter_list, cfg.llm_chapters,
+                                 lang=state.resolved_lang,
+                                 category=state.inferred_category)
+        _apply_chapter_recaps(chapter_list, cfg.llm_chapters,
+                              lang=state.resolved_lang,
+                              category=state.inferred_category)
+        _apply_chapter_quizzes(chapter_list, cfg.llm_chapters,
+                               lang=state.resolved_lang,
+                               category=state.inferred_category)
+    _mark_wrapup_chapter(chapter_list, lang=state.resolved_lang)
+    mm_bounds = [ch["indices"][0] for ch in chapter_list[1:]]
+    state.ablation = {
+        "alpha": cfg.mm_alpha,
+        "text_dists": text_dbg["text_dists"],
+        "visual_dists": mm_dbg["visual_dists"],
+        "fused_dists": mm_dbg["fused_dists"],
+        "depth_scores": mm_dbg["depth_scores"],
+        "text_only_boundaries": text_only_bounds,
+        "multimodal_boundaries": mm_bounds,
+    }
+    if state.visual_feats is not None:
+        print(f"      章节切分（多模态 α={cfg.mm_alpha}）: {len(chapter_list)} 章，"
+              f"边界 段{[b + 1 for b in mm_bounds]}")
+        if text_only_bounds != mm_bounds:
+            print(f"      ablation 对比 - 纯文本 段{[b + 1 for b in text_only_bounds]}"
+                  f" → 多模态 段{[b + 1 for b in mm_bounds]}")
+        else:
+            print(f"      ablation - 文本与多模态边界一致")
+    else:
+        print(f"      章节切分（纯文本）: {len(chapter_list)} 章，边界 段"
+              f"{[b + 1 for b in mm_bounds]}")
+    state.chapter_list = chapter_list
+
+
+# ============ Stage 15: 双语翻译（title + abstract + headline） ============
+def _stage_bilingual(cfg: PipelineConfig, state: PipelineState) -> None:
     # 给前端 lang toggle 用：把每个文本字段翻译为另一种语言并存为 _zh / _en 后缀字段。
     # llm_chapters 时复用 Qwen（model 已在显存），增量 ~10-20s。
-    if llm_chapters and chapter_list and resolved_lang in ("zh", "en"):
-        tgt_lang = "en" if resolved_lang == "zh" else "zh"
-        src_lang = resolved_lang
-        try:
-            from segment_llm import translate_bilingual
-            # 1) 章标题
-            titles = [ch.get("title", "") for ch in chapter_list]
-            t_titles = translate_bilingual(titles, src_lang, tgt_lang) if any(titles) else None
-            if t_titles and len(t_titles) == len(chapter_list):
-                for ch, t in zip(chapter_list, t_titles):
-                    ch[f"title_{src_lang}"] = ch.get("title", "")
-                    ch[f"title_{tgt_lang}"] = t
-            # 2) 章 abstract
-            abstracts = [ch.get("abstract", "") for ch in chapter_list]
-            if any(abstracts):
-                t_abs = translate_bilingual(abstracts, src_lang, tgt_lang)
-                if t_abs and len(t_abs) == len(chapter_list):
-                    for ch, t in zip(chapter_list, t_abs):
-                        ch[f"abstract_{src_lang}"] = ch.get("abstract", "")
-                        ch[f"abstract_{tgt_lang}"] = t
-            # 3) chunk headlines
-            headlines = [c.get("headline", "") for c in summaries]
-            if any(headlines):
-                t_hls = translate_bilingual(headlines, src_lang, tgt_lang)
-                if t_hls and len(t_hls) == len(summaries):
-                    for c, t in zip(summaries, t_hls):
-                        c[f"headline_{src_lang}"] = c.get("headline", "")
-                        c[f"headline_{tgt_lang}"] = t
-            print(f"      [bilingual] 双语字段填充完成 ({src_lang}<->{tgt_lang})", flush=True)
-        except Exception as e:
-            print(f"      [bilingual] 翻译异常：{e}（跳过，前端 fallback 单语）", flush=True)
+    if not (cfg.llm_chapters and state.chapter_list
+            and state.resolved_lang in ("zh", "en")):
+        return
+    tgt_lang = "en" if state.resolved_lang == "zh" else "zh"
+    src_lang = state.resolved_lang
+    try:
+        from segment_llm import translate_bilingual
+        # 1) 章标题
+        titles = [ch.get("title", "") for ch in state.chapter_list]
+        t_titles = translate_bilingual(titles, src_lang, tgt_lang) if any(titles) else None
+        if t_titles and len(t_titles) == len(state.chapter_list):
+            for ch, t in zip(state.chapter_list, t_titles):
+                ch[f"title_{src_lang}"] = ch.get("title", "")
+                ch[f"title_{tgt_lang}"] = t
+        # 2) 章 abstract
+        abstracts = [ch.get("abstract", "") for ch in state.chapter_list]
+        if any(abstracts):
+            t_abs = translate_bilingual(abstracts, src_lang, tgt_lang)
+            if t_abs and len(t_abs) == len(state.chapter_list):
+                for ch, t in zip(state.chapter_list, t_abs):
+                    ch[f"abstract_{src_lang}"] = ch.get("abstract", "")
+                    ch[f"abstract_{tgt_lang}"] = t
+        # 3) chunk headlines
+        headlines = [c.get("headline", "") for c in state.summaries]
+        if any(headlines):
+            t_hls = translate_bilingual(headlines, src_lang, tgt_lang)
+            if t_hls and len(t_hls) == len(state.summaries):
+                for c, t in zip(state.summaries, t_hls):
+                    c[f"headline_{src_lang}"] = c.get("headline", "")
+                    c[f"headline_{tgt_lang}"] = t
+        print(f"      [bilingual] 双语字段填充完成 ({src_lang}<->{tgt_lang})", flush=True)
+    except Exception as e:
+        print(f"      [bilingual] 翻译异常：{e}（跳过，前端 fallback 单语）", flush=True)
 
+
+# ============ Stage 16: 写 summary.json + chapters.json ============
+def _stage_write_outputs(cfg: PipelineConfig, state: PipelineState) -> None:
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    stem = _output_stem(audio, tag, summarizer, chunker, chunk_chars,
-                         keyframes=keyframes, vlm_captions=vlm_captions)
+    stem = _output_stem(state.audio, state.tag, cfg.summarizer, cfg.chunker,
+                         cfg.chunk_chars, keyframes=cfg.keyframes,
+                         vlm_captions=cfg.vlm_captions)
     (OUTPUT_DIR / f"{stem}.summary.json").write_text(
-        json.dumps(summaries, ensure_ascii=False, indent=2), encoding="utf-8"
+        json.dumps(state.summaries, ensure_ascii=False, indent=2), encoding="utf-8"
     )
-    if chapter_list:
+    if state.chapter_list:
         # chapters 序列化时不能直接 dump（含原 chunk 引用），写一份精简版
         def _slim_ch(ch: dict) -> dict:
             s = {"title": ch["title"], "start": ch["start"], "end": ch["end"],
                  "indices": ch["indices"], "abstract": ch.get("abstract", "")}
             # 学习类专属 (teaching/popsci)：LLM 生成的章末复习要点 + 自测题
-            # 序列化保留，供 chapters.json 下游使用（web 渲染、aggregate_eval）
             if ch.get("recap"):
                 s["recap"] = ch["recap"]
             if ch.get("quiz"):
                 s["quiz"] = ch["quiz"]
-            # 双语字段（pipeline 末段 translate_bilingual 填的；缺也兼容老 schema）
+            # 双语字段
             for k in ("title_zh", "title_en", "abstract_zh", "abstract_en"):
                 if ch.get(k):
                     s[k] = ch[k]
@@ -1167,83 +1278,140 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
             if children:
                 s["children"] = [_slim_ch(sub) for sub in children]
             return s
-        slim = [_slim_ch(ch) for ch in chapter_list]
+        slim = [_slim_ch(ch) for ch in state.chapter_list]
         # 给 ablation 加上切分路径元数据（供 aggregate_eval.py / 论文附录 B 用）
-        if ablation is None:
-            ablation = {}
-        ablation["seg_meta"] = seg_meta
-        ablation["duration"] = asr_result.get("duration")
-        ablation["n_chunks"] = len(summaries)
-        ablation["lang"] = resolved_lang
-        ablation["keyframes"] = keyframes  # 区分 mm vs 纯文本路径
-        ablation["vlm_captions"] = vlm_captions  # 区分 VLM caption vs CLIP sim
+        if state.ablation is None:
+            state.ablation = {}
+        state.ablation["seg_meta"] = state.seg_meta
+        state.ablation["duration"] = state.asr_result.get("duration")
+        state.ablation["n_chunks"] = len(state.summaries)
+        state.ablation["lang"] = state.resolved_lang
+        state.ablation["keyframes"] = cfg.keyframes
+        state.ablation["vlm_captions"] = cfg.vlm_captions
         # 用户开了 vlm_captions 但 redundancy 太高被降级时 captions_used = False
-        ablation["vlm_captions_used"] = vlm_captions and visual_captions_for_llm is not None
+        state.ablation["vlm_captions_used"] = (
+            cfg.vlm_captions and state.visual_captions_for_llm is not None)
         # 二次门控诊断
-        if vlm_captions:
-            ablation["vlm_max_prefix_run"] = vl_max_prefix_run
-            ablation["vlm_generic_ratio"] = (
-                round(vl_generic_ratio, 3) if vl_generic_ratio is not None else None)
-            ablation["vlm_degraded_reason"] = vl_degraded_reason
-        ablation["n_chapters"] = len(chapter_list)
-        ablation["max_chunks_per_chapter"] = max(len(c["indices"]) for c in chapter_list)
-        ablation["has_wrapup"] = any(
+        if cfg.vlm_captions:
+            state.ablation["vlm_max_prefix_run"] = state.vl_max_prefix_run
+            state.ablation["vlm_generic_ratio"] = (
+                round(state.vl_generic_ratio, 3)
+                if state.vl_generic_ratio is not None else None)
+            state.ablation["vlm_degraded_reason"] = state.vl_degraded_reason
+        state.ablation["n_chapters"] = len(state.chapter_list)
+        state.ablation["max_chunks_per_chapter"] = max(
+            len(c["indices"]) for c in state.chapter_list)
+        state.ablation["has_wrapup"] = any(
             "本节复习" in c.get("title", "") or "Recap" in c.get("title", "")
-            for c in chapter_list)
-        payload = {"chapters": slim, "ablation": ablation}
+            for c in state.chapter_list)
+        payload = {"chapters": slim, "ablation": state.ablation}
         (OUTPUT_DIR / f"{stem}.chapters.json").write_text(
             json.dumps(payload, ensure_ascii=False, indent=2,
                        default=lambda x: float(x) if hasattr(x, "item") else None),
             encoding="utf-8"
         )
-    md_path = OUTPUT_DIR / f"{stem}.md"
-    md_title = stem
-    meta_path = META_DIR / f"{video.stem}.meta.json"
-    md_meta = _load_meta_safe(meta_path)
-    if md_meta is not None:
-        md_title = md_meta.get("title", stem)
+    state.md_path = OUTPUT_DIR / f"{stem}.md"
+    # md_meta 给后续 stage 17/18 用
+    meta_path = META_DIR / f"{state.video.stem}.meta.json"
+    state.md_meta = _load_meta_safe(meta_path)
 
-    # ===== 内容大类分类（teaching/popsci/vlog/talk）=====
+
+# ============ Stage 17: 内容大类回写 meta（拿 confidence 字段）============
+def _stage_classify_category_for_meta(cfg: PipelineConfig, state: PipelineState) -> None:
     # 写入 raw/{stem}.meta.json，server._publish_to_web 会 copy 到 web/public。
     # 前端据此切换 UI 模板（vlog 不显示术语表 / 知识点速览改时间轴等）。
-    # 与 L688-706 [category-early] 同输入同结果（纯启发式，毫秒级）；重算只为
+    # 与 stage 12 [category-early] 同输入同结果（纯启发式，毫秒级）；重算只为
     # 拿 confidence 字段写 meta，category 用 inferred_category 保证 md 与 meta 一致
-    if md_meta is not None:
-        try:
-            from classify_category import classify_category
-            transcript = " ".join((c.get("text") or "")[:600] for c in summaries[:10])[:5000]
-            keywords_flat: list[str] = []
-            for c in summaries:
-                for kw in (c.get("keywords") or []):
-                    keywords_flat.append(kw)
-            cat_result = classify_category(
-                md_meta, transcript=transcript,
-                keywords=keywords_flat,
-                duration_sec=asr_result.get("duration"))
-            md_meta["category"] = cat_result["category"]
-            md_meta["category_confidence"] = cat_result["confidence"]
-            meta_path.write_text(
-                json.dumps(md_meta, ensure_ascii=False, indent=2),
-                encoding="utf-8")
-            print(f"      [category] {cat_result['category']} "
-                  f"({cat_result['confidence']}) scores={cat_result['scores']}",
-                  flush=True)
-        except Exception as e:
-            print(f"      [category] 分类异常：{e}（meta 不写 category 字段）",
-                  flush=True)
-
-    md_path.write_text(to_markdown(summaries, title=md_title, chapters=chapter_list,
-                                   keyframe_rel_prefix=kf_rel_prefix,
-                                   learning_mode=learning_mode,
-                                   confidence_threshold=confidence_threshold,
-                                   lang=resolved_lang,
-                                   category=inferred_category),
-                       encoding="utf-8")
-
-    print(f"\n[OK] 完成! 笔记: {md_path}")
-    return md_path
+    if state.md_meta is None:
+        return
+    meta_path = META_DIR / f"{state.video.stem}.meta.json"
+    try:
+        from classify_category import classify_category
+        transcript = " ".join((c.get("text") or "")[:600] for c in state.summaries[:10])[:5000]
+        keywords_flat: list[str] = []
+        for c in state.summaries:
+            for kw in (c.get("keywords") or []):
+                keywords_flat.append(kw)
+        cat_result = classify_category(
+            state.md_meta, transcript=transcript,
+            keywords=keywords_flat,
+            duration_sec=state.asr_result.get("duration"))
+        state.md_meta["category"] = cat_result["category"]
+        state.md_meta["category_confidence"] = cat_result["confidence"]
+        meta_path.write_text(
+            json.dumps(state.md_meta, ensure_ascii=False, indent=2),
+            encoding="utf-8")
+        print(f"      [category] {cat_result['category']} "
+              f"({cat_result['confidence']}) scores={cat_result['scores']}",
+              flush=True)
+    except Exception as e:
+        print(f"      [category] 分类异常：{e}（meta 不写 category 字段）",
+              flush=True)
 
 
+# ============ Stage 18: 写 md ============
+def _stage_write_md(cfg: PipelineConfig, state: PipelineState) -> None:
+    assert state.md_path is not None
+    md_title = state.md_meta.get("title", state.md_path.stem) if state.md_meta else state.md_path.stem
+    state.md_path.write_text(
+        to_markdown(state.summaries, title=md_title, chapters=state.chapter_list,
+                    keyframe_rel_prefix=state.kf_rel_prefix,
+                    learning_mode=cfg.learning_mode,
+                    confidence_threshold=cfg.confidence_threshold,
+                    lang=state.resolved_lang,
+                    category=state.inferred_category),
+        encoding="utf-8")
+    print(f"\n[OK] 完成! 笔记: {state.md_path}")
+
+
+_STAGES = [
+    _stage_prepare_video,
+    _stage_extract_audio,
+    _stage_build_asr_context,
+    _stage_asr,
+    _stage_chunk,
+    _stage_summarize,
+    _stage_qwen_asr_fix,
+    _stage_keyframes,
+    _stage_llm_headline,
+    _stage_visual_sims,
+    _stage_vlm_captions,
+    _stage_classify_category_early,
+    _stage_example_detection,
+    _stage_chapters,
+    _stage_bilingual,
+    _stage_write_outputs,
+    _stage_classify_category_for_meta,
+    _stage_write_md,
+]
+
+
+def run(source: str, is_local: bool = False, chunk_chars: int = 800,
+        model_size: str = "large-v3", target_ratio: float = 0.25,
+        force_asr: bool = False, summarizer: str = "extractive",
+        chapters: int | None = None,
+        extra_terms: dict[str, str] | None = None,
+        keyframes: bool = False, mm_alpha: float = 0.3,
+        chunker: str = "chars", learning_mode: bool = True,
+        dedupe_asr: bool = True, llm_chapters: bool = False,
+        confidence_threshold: float = 0.5,
+        lang: str = "auto",
+        vlm_captions: bool = False,
+        quality: str = "best") -> Path:
+    """Orchestrator：把 17 个 kwarg 装进 PipelineConfig，依次跑 18 个 stage。"""
+    cfg = PipelineConfig(
+        source=source, is_local=is_local, chunk_chars=chunk_chars,
+        model_size=model_size, target_ratio=target_ratio, force_asr=force_asr,
+        summarizer=summarizer, chapters=chapters, extra_terms=extra_terms,
+        keyframes=keyframes, mm_alpha=mm_alpha, chunker=chunker,
+        learning_mode=learning_mode, dedupe_asr=dedupe_asr,
+        llm_chapters=llm_chapters, confidence_threshold=confidence_threshold,
+        lang=lang, vlm_captions=vlm_captions, quality=quality)
+    state = PipelineState()
+    for stage in _STAGES:
+        stage(cfg, state)
+    assert state.md_path is not None
+    return state.md_path
 def main():
     p = argparse.ArgumentParser()
     p.add_argument("source", help="视频 URL，或本地文件路径（搭配 --local）")
