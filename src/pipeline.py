@@ -318,6 +318,12 @@ _DOMAIN_CORRECTIONS: dict[str, dict[str, str]] = {
         "服务程庆": "服务程序",
         "服务程庫": "服务程序",
         "服务程庈": "服务程序",
+        # p68 实测：whisper 把"任务"听成"任劳"（6 处），上下文如
+        # "这两个任劳基本上是同时完成的" / "第三个任劳就是引出中断服务程序"
+        # 注意：会同时把"任劳任怨"成语吃成"任务任怨"。current corpus 0 出现
+        # 该成语；若未来计组讲师引用，需在 apply_term_corrections 加 idiom
+        # 两遍保护（sentinel pre/post-pass），目前 trade-off 接受
+        "任劳": "任务",
     },
 }
 
