@@ -1,7 +1,7 @@
 {
   "chapters": [
     {
-      "title": "程序方式与处理",
+      "title": "中断机制与请求",
       "start": 1.36,
       "end": 364.88,
       "indices": [
@@ -35,13 +35,13 @@
           }
         ]
       },
-      "title_zh": "程序方式与处理",
-      "title_en": "Programmation and Processing",
+      "title_zh": "中断机制与请求",
+      "title_en": "Interrupt mechanisms and requests",
       "abstract_zh": "本章介绍程序中断方式及其在控制IO设备中的应用，重点讲解如何使用中断机制解放CPU。",
       "abstract_en": "This chapter introduces interrupt mechanisms and their application in controlling I/O devices, focusing on how to use interrupts to free up the CPU."
     },
     {
-      "title": "请求与响应流程",
+      "title": "中断处理流程与优先级",
       "start": 364.88,
       "end": 772.54,
       "indices": [
@@ -75,13 +75,13 @@
           }
         ]
       },
-      "title_zh": "请求与响应流程",
-      "title_en": "Request and Response Flow",
+      "title_zh": "中断处理流程与优先级",
+      "title_en": "Interrupt handling process and priorities",
       "abstract_zh": "本章详细解释中断请求与响应流程，包括内外中断的区别及优先级设定。",
       "abstract_en": "This chapter explains the interrupt request and response process, distinguishing between internal and external interrupts and setting priorities."
     },
     {
-      "title": "向量地址解析",
+      "title": "中断向量地址与响应",
       "start": 773.04,
       "end": 1190.8,
       "indices": [
@@ -115,13 +115,13 @@
           }
         ]
       },
-      "title_zh": "向量地址解析",
-      "title_en": "Vector Address Resolution",
+      "title_zh": "中断向量地址与响应",
+      "title_en": "Interrupt vector addresses and responses",
       "abstract_zh": "本章探讨中断向量地址解析，重点在于每条指令结束时如何响应中断请求。",
       "abstract_en": "This chapter explores interrupt vector address resolution, focusing on how to respond to interrupt requests at the end of each instruction."
     },
     {
-      "title": "服务程序详解",
+      "title": "中断服务程序详解",
       "start": 1190.8,
       "end": 1515.53,
       "indices": [
@@ -155,13 +155,13 @@
           }
         ]
       },
-      "title_zh": "服务程序详解",
-      "title_en": "Service Program Details",
+      "title_zh": "中断服务程序详解",
+      "title_en": "Detailed explanation of interrupt service routines",
       "abstract_zh": "本章深入解析中断服务程序的执行细节，重点介绍硬件向量法及其应用。",
       "abstract_en": "This chapter delves into the execution details of interrupt service routines, emphasizing the hardware vector method and its applications."
     },
     {
-      "title": "服务程序执行",
+      "title": "多重中断与屏蔽技术",
       "start": 1515.53,
       "end": 1935.8,
       "indices": [
@@ -195,13 +195,13 @@
           }
         ]
       },
-      "title_zh": "服务程序执行",
-      "title_en": "Service Program Execution",
+      "title_zh": "多重中断与屏蔽技术",
+      "title_en": "Multiple interrupts and masking techniques",
       "abstract_zh": "本章讲解中断服务程序的执行过程，包括现场保存与恢复，重点在于多重中断的处理。",
       "abstract_en": "This chapter explains the execution process of interrupt service routines, including saving and restoring the context, with a focus on handling multiple interrupts."
     },
     {
-      "title": "服务程序恢复",
+      "title": "中断服务程序执行",
       "start": 1935.8,
       "end": 2308.71,
       "indices": [
@@ -235,13 +235,13 @@
           }
         ]
       },
-      "title_zh": "服务程序恢复",
-      "title_en": "Service Program Recovery",
+      "title_zh": "中断服务程序执行",
+      "title_en": "Execution of interrupt service routines",
       "abstract_zh": "本章讨论中断服务程序的恢复过程，重点在于屏蔽技术及其优先级管理。",
       "abstract_en": "This chapter discusses the recovery process of interrupt service routines, focusing on masking techniques and priority management."
     },
     {
-      "title": "服务程序应用",
+      "title": "中断系统概述",
       "start": 2308.71,
       "end": 2759.34,
       "indices": [
@@ -275,8 +275,8 @@
           }
         ]
       },
-      "title_zh": "服务程序应用",
-      "title_en": "Service Program Application",
+      "title_zh": "中断系统概述",
+      "title_en": "Overview of interrupt systems",
       "abstract_zh": "本章应用中断服务程序的概念，重点在于多重中断场景下的屏蔽字设置及执行轨迹。",
       "abstract_en": "This chapter applies the concept of interrupt service routines, focusing on setting and executing mask bits in scenarios with multiple interrupts."
     }
