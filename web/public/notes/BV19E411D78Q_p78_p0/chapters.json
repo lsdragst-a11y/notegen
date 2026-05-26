@@ -39,10 +39,10 @@
         7,
         8
       ],
-      "abstract": "本章解释接收窗口字段的意义及其在流量控制中的应用，并介绍校验核方法确保数据传输的准确性。",
+      "abstract": "本章解释接收窗口字段的意义及其在流量控制中的应用，并介绍校验和方法确保数据传输的准确性。",
       "title_zh": "接收窗口与校验",
       "title_en": "Receive Window and Checksum",
-      "abstract_zh": "本章解释接收窗口字段的意义及其在流量控制中的应用，并介绍校验核方法确保数据传输的准确性。",
+      "abstract_zh": "本章解释接收窗口字段的意义及其在流量控制中的应用，并介绍校验和方法确保数据传输的准确性。",
       "abstract_en": "This chapter explains the significance of the receive window field and its application in flow control, introducing checksum methods to ensure data accuracy."
     },
     {

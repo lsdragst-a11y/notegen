@@ -1,0 +1,147 @@
+{
+  "chapters": [
+    {
+      "title": "中断处理与服务",
+      "start": 1.3,
+      "end": 192.66,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍中断处理与服务，重点讲解如何实现CPU与IO设备的并行工作，包括中断请求的接收和中断服务程序的执行流程。",
+      "recap": "- 中断是CPU与I/O设备并行工作的机制，CPU执行主程序时接收中断请求\n- 中断服务程序通过执行中断引指令启动，恢复现场后继续执行原程序\n- 中断响应周期包括外设准备时间和CPU执行时间",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在中断处理中，CPU如何实现与I/O设备的并行工作？",
+            "options": [
+              "直接执行I/O设备的任务",
+              "等待I/O设备完成后再继续执行",
+              "通过中断服务程序暂停当前任务",
+              "先执行当前程序，再响应中断"
+            ],
+            "answer_idx": 2,
+            "explanation": "当CPU接收到中断请求时，会暂停当前程序执行，转而去执行中断服务程序，以实现与I/O设备的并行工作。"
+          },
+          {
+            "type": "tf",
+            "q": "CPU在接收到中断请求后，会立即停止当前程序并执行中断服务程序。",
+            "answer": true,
+            "explanation": "CPU接收到中断请求后，会暂停当前程序的执行，并跳转到中断服务程序，以处理I/O设备的需求。"
+          }
+        ]
+      },
+      "title_zh": "中断处理与服务",
+      "title_en": "Interrupt Handling and Services",
+      "abstract_zh": "本章介绍中断处理与服务，重点讲解如何实现CPU与IO设备的并行工作，包括中断请求的接收和中断服务程序的执行流程。",
+      "abstract_en": "This chapter introduces interrupt handling and services, focusing on how to achieve parallel work between the CPU and I/O devices, including the flow of receiving interrupt requests and executing interrupt service routines."
+    },
+    {
+      "title": "通信总线与字符传输",
+      "start": 192.66,
+      "end": 458.39,
+      "indices": [
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章讨论通信总线与字符传输，分析通信总线的数据传输方式及字符传输时间，计算中断响应所需时钟周期。",
+      "recap": "- 通信总线传输字符需起始位和停止位，加上校验位传输效率降低\n- 每秒最多传输字符数取决于字符传输时间及总线响应时间\n- 传输时间计算基于时钟周期数，每字符传输时间为0.5毫秒",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "通信总线上的数据传输至少需要哪些位？",
+            "options": [
+              "仅起始位",
+              "起始位和停止位",
+              "起始位、停止位和校验位",
+              "起始位、停止位和字符数据"
+            ],
+            "answer_idx": 1,
+            "explanation": "通信总线的数据传输至少需要起始位和停止位，以确保数据传输的正确性和完整性。"
+          },
+          {
+            "type": "tf",
+            "q": "每秒最多可以传输2000个字符，意味着每秒传输2000个字节。",
+            "answer": false,
+            "explanation": "每秒最多可以传输2000个字符，但每个字符可能包含多个字节，因此每秒传输的字节数不一定等于2000。"
+          }
+        ]
+      },
+      "title_zh": "通信总线与字符传输",
+      "title_en": "Communication Bus and Character Transmission",
+      "abstract_zh": "本章讨论通信总线与字符传输，分析通信总线的数据传输方式及字符传输时间，计算中断响应所需时钟周期。",
+      "abstract_en": "This chapter discusses communication buses and character transmission, analyzing data transfer methods on communication buses and character transmission times, and calculating the clock cycles needed for interrupt response."
+    },
+    {
+      "title": "中断周期与服务程序",
+      "start": 459.03,
+      "end": 712.84,
+      "indices": [
+        5,
+        6,
+        7
+      ],
+      "abstract": "本章涉及中断周期计算与服务程序应用，通过分析中断响应时间和指令周期，计算CPU在中断处理中的实际工作时间。",
+      "recap": "- 中断周期计算基于0.5毫秒内20纳秒周期数，外设准备时间和指令周期\n- 中断服务程序执行期间CPU持续工作，计算CPU实际占用时间\n- 中断应用包括单重和多重中断处理，理解CPU与I/O交互流程",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "中断响应需要10个时钟周期，读出1000个字符所需的时间是多少个时钟周期？",
+            "options": [
+              "4000个时钟周期",
+              "5000个时钟周期",
+              "6000个时钟周期",
+              "7000个时钟周期"
+            ],
+            "answer_idx": 0,
+            "explanation": "读出1000个字符需要1000个时钟周期，加上中断响应的10个时钟周期，总共需要4000个时钟周期。"
+          },
+          {
+            "type": "tf",
+            "q": "中断服务程序执行期间，CPU一直都在执行中断服务程序代码。",
+            "answer": true,
+            "explanation": "中断服务程序执行期间，CPU暂停其他任务，专注于执行中断服务程序代码，直到中断返回。"
+          }
+        ]
+      },
+      "title_zh": "中断周期与服务程序",
+      "title_en": "Interrupt Cycle and Service Programs",
+      "abstract_zh": "本章涉及中断周期计算与服务程序应用，通过分析中断响应时间和指令周期，计算CPU在中断处理中的实际工作时间。",
+      "abstract_en": "This chapter covers interrupt cycle calculation and service program applications, by analyzing interrupt response times and instruction cycles to determine the actual working time of the CPU in interrupt handling."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 3,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_too_few"
+      ],
+      "llm_fail_reasons": [
+        "too_few_chapters",
+        "too_few_chapters",
+        "too_few_chapters"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 716.5653125,
+    "n_chunks": 8,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 3,
+    "vlm_generic_ratio": 0.75,
+    "vlm_degraded_reason": "generic_ratio_high",
+    "n_chapters": 3,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": false
+  }
+}

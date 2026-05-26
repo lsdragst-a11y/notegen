@@ -14,16 +14,16 @@
       "abstract_en": "This chapter covers Ethernet and IEEE 802.3"
     },
     {
-      "title": "双脚线连接的两个节点",
+      "title": "双绞线连接的两个节点",
       "start": 173.5,
       "end": 318.64,
       "indices": [
         1
       ],
-      "abstract": "本章涵盖 双脚线连接的两个节点",
-      "title_zh": "双脚线连接的两个节点",
+      "abstract": "本章涵盖 双绞线连接的两个节点",
+      "title_zh": "双绞线连接的两个节点",
       "title_en": "A Twisted Pair Connection Between Two Nodes",
-      "abstract_zh": "本章涵盖 双脚线连接的两个节点",
+      "abstract_zh": "本章涵盖 双绞线连接的两个节点",
       "abstract_en": "This section covers nodes connected by a twisted pair"
     },
     {
@@ -40,17 +40,17 @@
       "abstract_en": "This chapter covers 10Mbps fiber supporting full-duplex communication"
     },
     {
-      "title": "双脚线连接的终端节点",
+      "title": "双绞线连接的终端节点",
       "start": 436.73,
       "end": 1032.35,
       "indices": [
         3,
         4
       ],
-      "abstract": "本章涵盖 p12：双脚线连接连接的终端节点 · 网络层的协议是什么",
-      "title_zh": "双脚线连接的终端节点",
+      "abstract": "本章涵盖 p12：双绞线连接连接的终端节点 · 网络层的协议是什么",
+      "title_zh": "双绞线连接的终端节点",
       "title_en": "Terminal Nodes in a Twisted Pair Connection",
-      "abstract_zh": "本章涵盖 p12：双脚线连接连接的终端节点 · 网络层的协议是什么",
+      "abstract_zh": "本章涵盖 p12：双绞线连接连接的终端节点 · 网络层的协议是什么",
       "abstract_en": "This chapter covers P12: Terminal nodes connected by a twisted pair · What protocols are at the network layer"
     },
     {

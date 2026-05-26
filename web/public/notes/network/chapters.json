@@ -1,7 +1,7 @@
 {
   "chapters": [
     {
-      "title": "以太网和ieee 802.3的技术标准·双脚线或光纤可以支持",
+      "title": "以太网和ieee 802.3的技术标准·双绞线或光纤可以支持",
       "start": 0.0,
       "end": 694.86,
       "indices": [
@@ -9,10 +9,10 @@
         1,
         2
       ],
-      "abstract": "本章涵盖 以太网和ieee 802.3的技术标准 · 双脚线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么",
-      "title_zh": "以太网和ieee 802.3的技术标准·双脚线或光纤可以支持",
+      "abstract": "本章涵盖 以太网和ieee 802.3的技术标准 · 双绞线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么",
+      "title_zh": "以太网和ieee 802.3的技术标准·双绞线或光纤可以支持",
       "title_en": "Ethernet and IEEE 802.3 standards · Twisted pair or fiber can support",
-      "abstract_zh": "本章涵盖 以太网和ieee 802.3的技术标准 · 双脚线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么",
+      "abstract_zh": "本章涵盖 以太网和ieee 802.3的技术标准 · 双绞线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么",
       "abstract_en": "This chapter covers Ethernet and IEEE 802.3 standards · Twisted pair or fiber can support half-duplex and full-duplex modes · What connects two nodes using fiber?"
     },
     {
