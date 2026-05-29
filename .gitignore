@@ -19,6 +19,9 @@ data/.cookies/
 # 评估聚合结果（论文用，必须入库）
 !data/outputs/eval_*.json
 !data/outputs/headline_rating_*.json
+# 跑批验证 scratch（dryrun / 新旧对照 / 特征缓存），不入库
+data/_dryrun_*
+data/_compare_*
 models/
 models_msc_cache/
 wheels/
