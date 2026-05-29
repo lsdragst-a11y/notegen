@@ -3320,9 +3320,20 @@ def translate_bilingual(items: list[str], src_lang: str, tgt_lang: str,
     raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
     arr = _parse_titles_array(raw, n)
     if arr is None:
-        print(f"      [translate] parse failed, raw len={len(raw)}, "
-              f"head: {raw[:200]}", flush=True)
-        return None
+        # 容错：长文本翻译时 LLM 常在字符串里吐**真实换行** → JSON array 非法，
+        # _parse_titles_array 跨不过（与 recap 同型，见 _recover_recaps_lenient）。
+        # 用容忍换行的正则抓顶层引号字符串元素；恰好 n 个才采纳（保对齐）。
+        elems = re.findall(r'"((?:[^"\\]|\\.)*)"', raw, re.DOTALL)
+        if len(elems) == n:
+            def _un(s: str) -> str:
+                return (s.replace("\\n", "\n").replace("\\t", "\t")
+                         .replace('\\"', '"').replace("\\\\", "\\")).strip()
+            arr = [_un(e) for e in elems]
+            print(f"      [translate] lenient recovery: {n} 元素", flush=True)
+        else:
+            print(f"      [translate] parse failed, raw len={len(raw)}, "
+                  f"got {len(elems)} elems vs n={n}, head: {raw[:200]}", flush=True)
+            return None
     out_strs = [str(s).strip().strip('"').strip("'") for s in arr]
     n_filled = sum(1 for s in out_strs if s)
     print(f"      [translate] got {n_filled}/{n} translations", flush=True)
