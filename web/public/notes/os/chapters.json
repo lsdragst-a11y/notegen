@@ -7,7 +7,11 @@
       "indices": [
         0
       ],
-      "abstract": "本章介绍哲学家进餐问题及其核心冲突，探讨如何通过信号量来解决这一问题。"
+      "abstract": "本章介绍哲学家进餐问题及其核心冲突，探讨如何通过信号量来解决这一问题。",
+      "title_zh": "哲学家进餐问题",
+      "title_en": "Philosophers' Dining Problem",
+      "abstract_zh": "本章介绍哲学家进餐问题及其核心冲突，探讨如何通过信号量来解决这一问题。",
+      "abstract_en": "This chapter introduces the philosopher dining problem and its core conflicts, exploring how to resolve them using semaphores."
     },
     {
       "title": "冲突与信号量",
@@ -17,7 +21,11 @@
         1,
         2
       ],
-      "abstract": "本章分析互斥操作在哲学家进餐问题中的表现，并详细讲解死锁避免的具体策略。"
+      "abstract": "本章分析互斥操作在哲学家进餐问题中的表现，并详细讲解死锁避免的具体策略。",
+      "title_zh": "冲突与信号量",
+      "title_en": "Concurrency and Semaphores",
+      "abstract_zh": "本章分析互斥操作在哲学家进餐问题中的表现，并详细讲解死锁避免的具体策略。",
+      "abstract_en": "This chapter analyzes the manifestation of mutual exclusion operations in the philosopher dining problem and details specific deadlock avoidance strategies."
     },
     {
       "title": "互斥和避免",
@@ -27,7 +35,11 @@
         3,
         4
       ],
-      "abstract": ""
+      "abstract": "",
+      "title_zh": "互斥和避免",
+      "title_en": "Mutual Exclusion and Avoidance",
+      "abstract_zh": "",
+      "abstract_en": ""
     }
   ],
   "ablation": {

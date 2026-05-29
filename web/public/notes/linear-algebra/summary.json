@@ -11436,7 +11436,27 @@
         ]
       }
     ],
-    "headline_pegasus": ""
+    "headline_pegasus": "",
+    "headline_zh": "线性代数入门",
+    "headline_en": "Introduction to Linear Algebra",
+    "summary_zh": "就是基础和强化阶段。这个老师叫。所以我们基础阶段。这个是我们基础阶段一个目标。就是江小千老师。就是毕竟这个老师嘛。然后这个光老师。所以考验老师的基础。",
+    "summary_en": "It's the foundational and intensive phase. This teacher is called Jiang Xiaqian. So our goal in the foundational phase is Jiang Xiaqian. After all, this is a foundational teacher.",
+    "keywords_zh": [
+      "老师",
+      "基础",
+      "就是",
+      "这个",
+      "线性代数",
+      "入门"
+    ],
+    "keywords_en": [
+      "Teacher",
+      "Basic",
+      "Is",
+      "This",
+      "Linear Algebra",
+      "Introduction"
+    ]
   },
   {
     "start": 382.78,
@@ -17286,7 +17306,27 @@
         ]
       }
     ],
-    "headline_pegasus": ""
+    "headline_pegasus": "",
+    "headline_zh": "基础阶段学习",
+    "headline_en": "Key Concepts in Basic Stage",
+    "summary_zh": "我们以这个行列式部分为例。我们是轻基础重强化。轻基础重强化。轻基础重强化。就是这个强化阶段的话。我们基础阶段。我们不做题。我们再把基础篇的这个题给做了。",
+    "summary_en": "We use the determinant part as an example. We focus on reinforcement rather than basic knowledge. In the intensive phase, we don't do exercises; instead, we redo the questions from the foundational book.",
+    "keywords_zh": [
+      "比方说",
+      "我们",
+      "基础",
+      "这个",
+      "强化",
+      "行列式"
+    ],
+    "keywords_en": [
+      "For Example",
+      "We",
+      "Basic",
+      "This",
+      "Strengthen",
+      "Determinant"
+    ]
   },
   {
     "start": 558.19,
@@ -19836,7 +19876,27 @@
         ]
       }
     ],
-    "headline_pegasus": ""
+    "headline_pegasus": "",
+    "headline_zh": "强化阶段重点",
+    "headline_en": "Focus Areas in Advanced Stage",
+    "summary_zh": "那大AX等于0。这个特征值对吧特征值。是它的特征值。是不是正负惯性指数一定不满。正负惯性不满或者说是。都是可以相互去推出来的为什么呢。大A的行列是等于0。或者说大AX等于0。",
+    "summary_en": "If AX equals 0, it's a characteristic value, right? It's one of its characteristic values. Does the positive and negative inertia index necessarily not match? Why can they be derived from each other? The determinant of A is 0, or AX equals 0.",
+    "keywords_zh": [
+      "特征值",
+      "或者说",
+      "航向",
+      "为什么",
+      "等于",
+      "线性相关"
+    ],
+    "keywords_en": [
+      "Eigenvalues",
+      "Or",
+      "Navigate",
+      "Why",
+      "Equal",
+      "Linearly Dependent"
+    ]
   },
   {
     "start": 646.64,
@@ -22266,7 +22326,27 @@
         ]
       }
     ],
-    "headline_pegasus": ""
+    "headline_pegasus": "",
+    "headline_zh": "特征值与线性相关",
+    "headline_en": "Eigenvalues and Linear Independence",
+    "summary_zh": "它是一个一个条件拼出来的一个大题。我带学生的时候。就比方说我带二段的学生。但是很多同学他是怎么样他比方说。比方说我他可能线性相关。比方说你在做大题的时候。比方说条件二你卡住了。你思考一下到底哪一章的条件你给漏了。",
+    "summary_en": "It's a large problem composed of conditions. When I teach students, for example, when I teach second-year students, many students might encounter issues. For instance, they might find themselves linearly dependent. Or when you're solving a problem, you might get stuck on condition two. Think about which chapter's condition you might have missed.",
+    "keywords_zh": [
+      "比方说",
+      "第二章",
+      "一章",
+      "线性相关",
+      "我带",
+      "条件"
+    ],
+    "keywords_en": [
+      "For Example",
+      "Chapter Two",
+      "Chapter One",
+      "Linearly Dependent",
+      "I Lead",
+      "Conditions"
+    ]
   },
   {
     "start": 720.44,
@@ -29616,7 +29696,27 @@
         ]
       }
     ],
-    "headline_pegasus": ""
+    "headline_pegasus": "",
+    "headline_zh": "综合题解法",
+    "headline_en": "Comprehensive Problem Solving Methods",
+    "summary_zh": "这个是24年的。就这个是24年的一个真题。这个是24年一个真题。这个是24考研的一个真题。这个就是李林的108题。这个是23年真题。刚好有这个题目。这个是真题。",
+    "summary_en": "This is from 2024. This is a real exam question from 2024. This is a real exam question from 2024. This is a real exam question from the 2024 postgraduate entrance exam. This is Li Lin's 108 questions. This is from 2023. There's exactly this question. This is a real exam question.",
+    "keywords_zh": [
+      "这个",
+      "题目",
+      "24",
+      "真题",
+      "就是",
+      "108"
+    ],
+    "keywords_en": [
+      "This",
+      "Question",
+      "24",
+      "Exam Question",
+      "Is",
+      "108"
+    ]
   },
   {
     "start": 953.01,
@@ -31989,6 +32089,26 @@
         ]
       }
     ],
-    "headline_pegasus": ""
+    "headline_pegasus": "",
+    "headline_zh": "真题解析",
+    "headline_en": "Exam Question Analysis",
+    "summary_zh": "基础阶段我们就是熟悉概念。基础阶段我们就是熟悉概念。所以基础阶段我们不用配套习题。然后到了强化阶段。然后到强化结束了之后结束之后。强化部分对应的这个888或者1000好吧。你们的水平如果够了之后。就是你们强化阶段结束之后。",
+    "summary_en": "In the foundational phase, we familiarize ourselves with concepts. We don't use accompanying exercises. After the intensive phase ends, you should complete the corresponding 888 or 1000 questions. Once your level is sufficient, after the intensive phase, you should finish these questions.",
+    "keywords_zh": [
+      "1000",
+      "888",
+      "强化",
+      "你们",
+      "阶段",
+      "之后"
+    ],
+    "keywords_en": [
+      "1000",
+      "888",
+      "Strengthen",
+      "You",
+      "Stage",
+      "Afterwards"
+    ]
   }
 ]

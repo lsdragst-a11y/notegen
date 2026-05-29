@@ -215,7 +215,29 @@
       "rel": "keyframe_01_0123s.jpg",
       "time": 123.6588888888889,
       "score": 0.50146484375
-    }
+    },
+    "headline_zh": "以太网和ieee 802.3的技术标准",
+    "headline_en": "Ethernet and IEEE 802.3 standards",
+    "summary_zh": "在这个视频中我们要展开探讨以太网和IEEE 802.3。介质访问控制子层。探讨的范畴是物理层和MAC子层这两个部分。然后再去探讨MAC子层相关的一些技术标准好。后来又出现了高速以太网。那么就可以称为高速以太网。这些以太网技术标准是否支持全双工通信或者半双工通信。那只有使用半双工通信的这种以太网技术标准。",
+    "summary_en": "This chapter discusses Ethernet and IEEE 802.3, focusing on the medium access control sublayer, including physical and MAC layers.",
+    "text_zh": "各位同学大家好,在这个视频中我们要展开探讨以太网和IEEE 802.3\n那802.3这个工作组主要负责的就是以太网技术的标准化工作\n之前我们说过,802委员会把数据链路层拆分成了逻辑链路控制子层和介质访问控制子层这样的两个部分\n介质访问控制子层,英文缩写叫MAC子层\n而逻辑链路控制子层,英文缩写叫LLC子层\n那802.3这个工作组,它研究的以太网技术\n探讨的范畴是物理层和MAC子层这两个部分\n那接下来我们先探讨802.3工作组推出的一些物理层的相关的技术标准\n然后再去探讨MAC子层相关的一些技术标准\n好,首先看物理层的一些技术标准\n这两张表格来自于王道书\n上面这张表格总结了IEEE 802.3\n刚开始那几年推出的一些比较重要的这种物理层的以太网标准\n包括以同轴电缆作为传输介质的10Base5,10Base2\n以及以双脚线作为传输介质的10BaseT\n还有以光纤作为传输介质的10BaseF\n那这几种经典的以太网技术\n它的速率都只能到10Mbps\n只能到这样的一个速度\n后来又出现了高速以太网\n如果一个网段的带宽可以超过100Mbps\n那么就可以称为高速以太网\n那下面这张表展示的就是几种高速以太网\n并且在这张表格当中罗列了这些高速以太网的速率\n以及传输介质\n我们要重点关注的是\n这些以太网技术标准是否支持全双工通信或者半双工通信\n那只有使用半双工通信的这种以太网技术标准\n才需要去使用CSMA-CD协议去解决信道真用的问题\n如果工作在全双工模式下\n就不需要使用CSMA-CD协议\n好那关于各种技术标准\n到底支持全双工还是半双工\n还是二者都支持\n给大家做了一个梳理和总结\n很简单\n只要使用同轴电缆\n那么肯定只能支持半双工通信\n而如果使用双脚线作为传输介质",
+    "text_en": "In this video, we will explore Ethernet and IEEE 802.3. The 802.3 working group focuses on standardizing Ethernet technology, dividing the data link layer into LLC and MAC sublayers. We will first discuss physical layer standards and then move on to MAC sublayer standards.",
+    "keywords_zh": [
+      "以太网",
+      "子层",
+      "802.3",
+      "技术标准",
+      "介质",
+      "半双工"
+    ],
+    "keywords_en": [
+      "Ethernet",
+      "Sublayer",
+      "802.3",
+      "Technical Standard",
+      "Medium",
+      "Half-duplex"
+    ]
   },
   {
     "start": 158.99,
@@ -573,7 +595,29 @@
       "rel": "keyframe_02_0336s.jpg",
       "time": 336.31444444444446,
       "score": 0.421630859375
-    }
+    },
+    "headline_zh": "双脚线或光纤可以支持半双工和全双工方式",
+    "headline_en": "Twisted pair or fiber can support half-duplex and full-duplex modes",
+    "summary_zh": "那么用双脚线连接的两个节点。到底是使用半双工还是全双工通信呢。如果两个节点都支持全双工通信。就肯定只支持全双工通信。它也是支持半双工和全双工。它也只支持全双工通信。肯定都只支持全双工通信。可以支持半双工和全双工方式。",
+    "summary_en": "For two nodes connected by a twisted pair, which mode of communication—half-duplex or full-duplex—do they use?",
+    "text_zh": "那么当这个双脚线的速率小于2.5Gbps的时候\n速率在这个范围内的技术标准\n是可以支持半双工和全双工两种模式的\n我们知道\n一根双脚线它只能连接两个节点\n只能连接两个节点\n那么用双脚线连接的两个节点\n到底是使用半双工还是全双工通信呢\n这件事情是在节点相互连接的时候进行协商的\n比如说如果用双脚线\n其中一端连接了一台计算机\n另一端连接了一个极限器\n那么由于极限器这种设备\n它只能连接两个节点\n它只能工作在半双工模式下\n所以如果双脚线的一端连了极限器\n那么极限器和连接的节点\n经过协商之后就会决定\n接下来会使用半双工模式去通信\n而一旦使用半双工模式去通信\n就肯定需要用CSMA-CD协议\n去实现这个介质防控制\n好再举一个例子\n假如我们用一根速率小于2.5Gbps的电脑\n去连接一个计算机\n另一端连接了一个交换机\n那么交换机通常都支持全双工通信\n因此当这两个节点连接起来的时候\n二者会相互协商\n如果两个节点都支持全双工通信\n那接下来二者的通信就会采用全双工的模式\n这样的话就不需要再使用CSMA-CD协议\n好\n接下来\n如果某一个技术标准\n它的速率大于等于2.5Gbps\n那么这种类型的双脚线\n就肯定只支持全双工通信\n所以你会看到\n在高速以太网这张表格里边\n这种速度为100Mbps的双脚线以太网\n它既支持半双工\n也支持全双工\n而如果说\n以Gbps的这种双脚线\n它也是支持半双工和全双工\n但是大于2.5Gbps的这种技术标准\n比如说10Gbps的这种双脚线以太网\n它就只有全双工模式\n所以双脚线的这种技术标准\n是以2.5Gbps作为一个分水岭\n最后还有光纤这种传输介质\n这种传输介质即便是10BaseF\n就是只有10Mbps的\n光纤\n它也只支持全双工通信\n只要是IEEE 802.3工作组推出的\n关于\n光纤的这种技术标准\n肯定都只支持全双工通信\n所以在这个表格当中\n这可能会让大家产生一些误会\n就是双脚线或光纤\n可以支持半双工和全双工方式\n如果说使用一个\nGbps的\n1Gbps的光纤作为传输介质的话",
+    "text_en": "The tables show early Ethernet standards using coaxial cable, twisted pair, and fiber, all limited to 10 Mbps. Later, high-speed Ethernet standards emerged, supporting speeds over 100 Mbps. These standards use CSMA-CD only in half-duplex mode, while full-duplex mode does not require it.",
+    "keywords_zh": [
+      "全双工",
+      "半双工",
+      "双脚",
+      "节点",
+      "Gbps",
+      "连接"
+    ],
+    "keywords_en": [
+      "Full-duplex",
+      "Half-duplex",
+      "Two-way",
+      "Node",
+      "Gbps",
+      "Connection"
+    ]
   },
   {
     "start": 358.48,
@@ -1346,7 +1390,29 @@
       "rel": "keyframe_03_0657s.jpg",
       "time": 657.4844444444445,
       "score": 0.41455078125
-    }
+    },
+    "headline_zh": "光纤连接的两个节点之间是什么？",
+    "headline_en": "What is the connection between two nodes using fiber?",
+    "summary_zh": "那光纤以太网。同轴电缆和双脚线以太网。好这是双脚线以太网。那光线以太网。推出的一些以太网的物理层技术标准。以太网VR标准。推出的这个以太网VR标准。和VR标准的这个字段。",
+    "summary_en": "Fiber Ethernet, coaxial cable, and twisted pair Ethernet: this section covers twisted pair Ethernet, then discusses fiber Ethernet's physical layer standards and the Ethernet VR standard.",
+    "text_zh": "那么光纤连接的两个节点之间\n肯定是工作在全双工模式下\n也就是不需要使用CSMACD协议\n那光纤以太网\n通常来说考得不多\n所以大家重点关注\n同轴电缆和双脚线以太网\n好下面这基于刚才的总结给大家\n画了几个图\n首先这是一个同轴电缆以太网\n同轴电缆和同轴电缆之间\n通常是用中继器进行连接\n中继器的两端\n对应的是两个不同的网段\n而从这张图当中可以看到\n不同的网段\n可以采用不同的\n这种物理层技术标准\n比如说最左边这个网段\n使用的就是Space5\n而中间这个网段使用的就是\nSpace2这种技术标准\n那刚才我们说过\n用同轴电缆实现的这种\n网段\n只支持半双共通性\n也就是说\n只要一个节点在发送数据\n那么其他的节点就暂时不能发送数据\n否则会产生\n信号的冲突\n好这是同轴电缆以太网的特性\n接下来再看一个双脚线以太网的例子\n当我们使用双脚线作为传输介质的时候\n一般会配合交换机和极限器\n去连接各个节点\n以后我们在做题的时候\n可以默认\n只要是交换机连接的中端节点\n注意我这说的是中端节点\n也就是指计算机\n这一类的节点\n都可以工作在全双共模式下\n所以你看这台交换机和这四台电脑\n直接连接\n它们之间用双脚线作为传输介质\n都可以工作在全双共模式下\n但是交换机和极限器\n连接的这个端口\n由于极限器它只支持\n半双共通信\n所以交换机和极限器之间的这个数据通信\n也只能在半双共模式下进行\n也就是说这两个节点\n在使用中间这根双脚线\n传输数据的时候\n还需要采用CSMA-CD协议\n去增强这个双脚线\n这个信道\n因为工作在半双共模式下嘛\n好另外极限器这种设备\n连接的其他电脑\n其他的节点\n都只能工作在半双共模式下\n好这是双脚线以太网\n那光线以太网\n由于不是考试的重点\n所以这就不再赘述\n反正大家在做题的时候\n能够分析出\n这个节点和节点之间\n到底是采用半双共通信\n还是全双共通信\n就行了\n好那刚才我们探讨的是\n802.3\n工作组\n推出的一些以太网的物理层技术标准\n接下来我们要探讨MAC层\n也就是\n设置访问控制子层的\n标准\n那MAC层的技术标准\n主要有两种\n第一种是DEC\n英特尔和施乐\n这三个公司联合推出的\nDIX\nEthernet\n以太网VR标准\n而这个标准\n也是现在市面上最常用的\n技术标准\n那基于这三个公司\n推出的这个以太网VR标准\nHAP 802.3\n工作组\n抄了一份小小的作业\n然后把这个技术标准\n改了一些\n小小的细节\n然后就推出了iEEE 802.3的标准\n总之这两种技术标准其实差异不大\n并且现在\n市面上流行的反而是这个VR标准\n所以我们重点关注前者\n接下来我们重点探讨这两种标准\n在以太网真的格式上面\n有什么区别\n先来看一个总图\n这是VR标准的真格式\n这是802.3标准的真格式\n你会看到\n其实只有\n这个部分\n这个部分\n的含义不一样\n再看一眼\n这是VR标准\n这是802.3标准\n好那接下来我们先展开探讨VR标准的以太网Mac真\n它的各个部分有什么含义\n等最后再来解释802.3的这个字段\n和VR标准的\n这个字段\n为什么含义不一致\n好首先\n一个以太网Mac真\n分为12345这样的五个部分\n每个部分占多少个字节\n分别是什么含义\n这个是需要记住的\n考试会考\n所以给大家编了一个记忆口诀叫662N4\n收发邪术验\n662N4分别指这五个字段\n分别占\n多少个字节\n第一个字段占六个字节\n第二个字段占六个字节\n第三个字段占两个字节\n第四个字段\n它的这个长度是可变的\n所以我用N来表示\n最后一个字段占四个字节\n好这是662N4的意思\n其中N的范围是4615\n最少46字节\n最多1500字节\n好这是662N4",
+    "text_en": "For speeds below 2.5 Gbps, devices can negotiate between half-duplex and full-duplex modes. Fiber always supports full-duplex, while coaxial and twisted pair cables have different support based on their speed.",
+    "keywords_zh": [
+      "以太网",
+      "节点",
+      "VR",
+      "同轴电缆",
+      "半双",
+      "802.3"
+    ],
+    "keywords_en": [
+      "Ethernet",
+      "Node",
+      "VR",
+      "Coaxial Cable",
+      "Half-duplex",
+      "802.3"
+    ]
   },
   {
     "start": 694.86,
@@ -2124,7 +2190,29 @@
       "rel": "keyframe_04_0845s.jpg",
       "time": 845.0866666666666,
       "score": 0.486328125
-    }
+    },
+    "headline_zh": "ip 数据链路层为网络层服务",
+    "headline_en": "The IP data link layer serves the network layer",
+    "summary_zh": "MAC子层它的上面。MAC真的前六个字节。A节点的MAC地址。应该交给网络层的哪个协议。MAC层的上方直接就是网络层。其实MAC层并不直接为网络层提供服务。所以MAC子层。网络层交给MAC层传输的这个IP数据报。",
+    "summary_en": "The MAC address is six bytes long; A node’s MAC address should be passed to which network-layer protocol.",
+    "text_zh": "那我们知道数据链路层为网络层\n也就是这儿标注的这个IP层服务\n那网络层会把要传输的IP数据报\n也就是IP分组\nIP分组\n交给数据链路层\n让数据链路层把IP数据报\n封装成一个真\n然后再把这个真\n交给物理层\n传输到下一个节点\n那这儿我们会看到\n在这张图示当中\n第二个层次\n它并没有写数据链路层\n而是写了MAC层\n那这是因为802.3工作组\n把数据链路层拆分成了\nLLC子层和MAC子层\n但是由于LLC子层不太争气\n现在已经不存在了\n所以在现在的网络世界当中\n逻辑上看\nMAC子层\n它的上面\n已经没有LLC子层了\n而是MAC层\n直接为网络层服务\n所以在现在的网络世界当中\n你可以认为MAC层\n就等价于数据链路层\n好所以在这个图示当中\nMAC层的上面\n就直接是网络层\n也就这标注的IP层\n好接下来我们关注前两个字段\n66的含义\nMAC真的前六个字节\n表示的是目的地址\n也就是要说明这个MAC真\n要让谁\n接收\n那我们知道\n网络当中\n每一个节点都会有\n自己的MAC地址\n并且\n每个节点的MAC地址都是唯一的\n48比特\n也就刚好\n六个字节\n所以如果A节点\n要给B节点\n发送一个\nMAC真\n那么它需要在这个真的前六个字节处\n写明\nB节点\n也就是接收方的MAC地址\n好那接下来\n在后面这六个字节处\n我们又需要说明\n这个真是谁发送的\n也就是要指明发送方\nA节点的MAC地址\n好所以前两个66分别对应收发\n也就是谁接收\n谁发送\n好接下来需要注意的是\n如果我们把这个目的地址\n全部写为1\n48比特全为1\n那么就表示\n这个MAC真是一个广播真\n那一个广播真是一个广播真\n会被局域网内的所有节点所接收\n那一会我们再来探讨广播真的传播问题\n好接下来我们把目光放到2这个地方\n这两个字节表示的是网络层协议\n什么意思呢\n刚才我们说过MAC层的上面\n就是网络层\n为网络层服务\n那网络层有很多协议\n比如说IPv4\n或者IPv6\n那MAC层传播的这个真\n到底是为哪个协议去服务的呢\n或者换一个角度来解释\n如果数据的接收方\nMAC层\n收到了一个真\n那么他收到的这个真\nIP数据报拆出来之后\n到底应该交给\n网络层的哪一个协议去处理呢\n要交给IPv4处理\n还是要交给IPv6去处理\n我们得说明清楚对吧\n这个IP数据报\n应该交给网络层的哪个协议\n好所以这两个字节\n对应的是协\n指的是网络层的协议\n好那讲到这个地方\n我们可以去解释VR标准\n和802.3标准的\n这个字段的含义区别了\nVR标准是现实中的标准\nMAC层的上方直接就是网络层\n所以需要在这个地方\n指明\n我服务的对象是网络层的哪个协议\n需要指明这个东西\n那对于802.3标准的这个MAC帧来说\n中间这两个字节\n它表示的是数据部分的长度\n实际有多少个字节\n表示的是这样的一个信息\n难道802.3标准不需要考虑这个数据部分\n应该交给网络层的哪个协议吗\n其实不是的\n我们说802委员会设计的这个层次\n划分当中\nMAC层的上方\n还有一个LAC层对吧\n所以基于他们最初的这个设计\n其实MAC层并不直接为网络层提供服务\n直接和网络层对接的应该是LAC子层\n所以当收到一个数据真的时候\n到底要把这些数据交给网络层的哪个协议\n在IEEE的这种层次划分当中\n是由LAC子层去决定的\n所以MAC子层\n不需要关心\n我到底是为哪个网络层协议服务\n这件事情交给LAC子层去解决就行了\n因此才会出现这样的区别\n好那这个字段的区别是我们需要了解的\n接下来我们再回到VR标准\n继续往后探讨\n这两个字节指明了网络层的协议\n接下来这个部分就是\n网络层交给MAC层传输的这个IP数据报\n也就是IP分组\n通过之前学习我们知道\n以太网技术当中\n如果涉及到信道帧用的话\n那么会采用CSMA-CD协议\n去实现介质访问控制\n而基于CSMA-CD协议的一些特性",
+    "text_en": "We will explain the structure of Ethernet MAC frames, focusing on the purpose address and protocol type fields. The VR standard and 802.3 standard differ in these fields, with the latter indicating the length of the data portion.",
+    "keywords_zh": [
+      "MAC",
+      "网络层",
+      "IP",
+      "子层",
+      "字节",
+      "这个"
+    ],
+    "keywords_en": [
+      "MAC",
+      "Network Layer",
+      "IP",
+      "Sublayer",
+      "Bytes",
+      "This"
+    ]
   },
   {
     "start": 1032.87,
@@ -2417,7 +2505,29 @@
       "rel": "keyframe_05_1056s.jpg",
       "time": 1056.8033333333333,
       "score": 0.4873046875
-    }
+    },
+    "headline_zh": "以太网mac帧的长度范围",
+    "headline_en": "The range of Ethernet MAC frame lengths",
+    "summary_zh": "它的范围是46到1500字节。比如说一个IP数据报的长度。都小于46字节的话。不能小于46字节。最后还有四个字节。一个以太网MAC帧的。长度范围应该是64字节。这是一个MAC帧的长度范围。",
+    "summary_en": "The range is from 46 to 1500 bytes; if an IP datagram is less than 46 bytes, it must be at least 46 bytes, with four additional bytes for the Ethernet MAC frame.",
+    "text_zh": "我们需要限制\n一个帧的最短帧长\n另外为了防止一个节点\n长时间的占用\n传输信道\n所以我们也需要限制\n一个帧的最长的长度\n因此在以太网MAC帧\n设计的时候就考虑到了\n最短帧长和最长帧长的问题\n数据部分的大小\n它的范围是46到1500字节\n那如果说这个\n网络层\n要传输的IP数据报\n太长的话就需要把IP数据报分片\n每一个片\n不能超过1500字节\n那相应的\n如果IP数据报太短\n比如说一个IP数据报的\n长度\n都小于46字节的话\n那么我们就需要\n在IP数据报进行填充\n比如说用比特0去填充\n反正数据这个部分\n不能小于46字节\n必须满足这个特性\n好这是N\n数据部分\nN的范围是4615\n最后还有四个字节\n这四个字节用于差错控制\n那在以太网当中使用的是\nCRC循环冗余校验\n所以这四个字节就是\nCRC校验码\n好那这就是一个以太网MAC帧的网站\n完整构成\n662N4\n收发鞋数验\n那如果我们考虑整个MAC帧的\n长度范围的话\nN这个部分是可变的\n剩下的这四个部分\n6加6加2再加4\n应该是等于18对吧\n所以综合来看\n一个以太网MAC帧的\n长度范围应该是64字节\n这是最小的\n一直到15 18字节\n这是一个MAC帧的长度范围",
+    "text_en": "We need to limit the shortest and longest frame lengths to prevent one node from monopolizing the transmission channel. The data part size ranges from 46 to 1500 bytes. If an IP datagram is too long, it needs to be fragmented; if it's too short, it needs to be padded. The shortest and longest frame lengths in Ethernet MAC frames are considered, with the data part ranging from 46 to 1500 bytes. The last four bytes are used for error control, employing CRC cyclic redundancy check. This is a complete Ethernet MAC frame structure: 662N4. Considering the entire MAC frame length range, N can vary, making the total length range from 64 to 1518 bytes.",
+    "keywords_zh": [
+      "字节",
+      "MAC",
+      "IP",
+      "以太网",
+      "数据",
+      "长度"
+    ],
+    "keywords_en": [
+      "Byte",
+      "MAC",
+      "IP",
+      "Ethernet",
+      "Data",
+      "Length"
+    ]
   },
   {
     "start": 1140.57,
@@ -3115,7 +3225,29 @@
       "rel": "keyframe_06_1274s.jpg",
       "time": 1274.9611111111112,
       "score": 0.488525390625
-    }
+    },
+    "headline_zh": "以太网mac帧的最后一跳",
+    "headline_en": "The final hop of an Ethernet MAC frame",
+    "summary_zh": "那以太网的物理层传输。以太网MAC帧。去传输这个以太网MAC帧。那么如何去表示这个以太网MAC帧的结束呢。发送一个MAC帧那B节点。以太网MAC帧传输结束。好那么这是物理层传输以太网MAC帧的一个原理。某一个特定节点的MAC地址。",
+    "summary_en": "How does the Ethernet physical layer transmit an Ethernet MAC frame? How do we indicate the end of the MAC frame transmission?",
+    "text_zh": "好那接下来\nMAC帧把IP数据报封装成帧之后\n会把这个帧\n交给物理层进行传输\n那以太网的物理层传输\n都是采用曼彻斯特编码\n物理层会在以太网帧的前面\n插入八个字节的前导码\n而这个前导码又可以拆分成两个部分\n分别是七个字节的前同步码\n和一个字节的帧开始定介符\n好首先来观察这个\n这七个字节都是101010\n如此往复交替对吧\n相当于什么呢\n在以太网当中如果A要给B\n发送一个MAC帧\n那么A节点的物理层\n首先\n会给B节点\n发送\n七个字节的101010\n其实相当于给B节点打一个节奏对吧\n相当于A跟B说\n哥们接下来我给你传一些数据\n我传数据的这个节奏大概就是\n1打2打3打4打\n是这样的一个速度\n那B节点就可以根据他收到的这个前同步码\n去调整自己接收数据的这个频率\n好那发送了这些前同步码之后\n二者的\n节奏同步了\n好接下来看这个部分\n帧开始定介符\n它的构成是101010\n11\n最后两个比特\n变成了两个连续的1\n那这么做的好处就是\nB节点\n一直在接收101010对吧\n那B节点在收到两个1之后\n就知道\n再往后\n收到的那些曼彻斯特编码\n表示的就是\n以太网MAC帧\n实际的那些数据了\n所以这一个字节的作用就是\n作为帧开始的定介符\n好接下来继续用曼彻斯特编码\n去传输这个以太网MAC帧\n那么如何去表示这个以太网MAC帧的结束呢\n我们会采用违规编码法\n同时传输完一个MAC帧之后\n会留一段间隙\n所以相当于如果A给B\n发送一个MAC帧\n那B节点\n连续的收到\n一些比特对吧\n那如果突然收不到比特了\n那就说明\n当前的这个\n以太网MAC帧\n传输结束\n所以数据的接受方\n完全可以根据流出的这段空隙\n去判断\n以太网帧已经传输结束了\n好那除了这段空隙之外\n其实也可以采用违规编码法\n去标记\n这个帧的结尾\n那之前我们学过曼彻斯特编码\n它的特点是\n跳0反跳1看中间\n中必变\n就是每一个节拍的中间\n它肯定会要么上跳要么下跳对吧\n在考验当中比较常见的一种标准是\n上跳表示0下跳表示1\n那么既然曼彻斯特编码的中间\n每个节奏的中间一定会发生跳变\n那如果说我们在传输曼彻斯特编码的过程当中\n信号的中间\n没有发生跳变\n那我们就可以把这种信号视为\n违规编码\n所以如果A给B传输数据的时候\n要让他知道\n这个以太网帧已经到结尾了\n那么\n当这个以太网帧的最后一比特\n发送完了之后\n在这一个比特的后面\n我们插入一个\n曼彻斯特编码的违规码\n违规码也就是中间没有跳变的这种\n这种\n节拍信号\n那么接收方B节点\n就可以根据违规编码判断\n已经到了帧的结尾对吧\n好那这就是以太网MAC帧的\n结尾定界\n好那么这是物理层传输以太网MAC帧的\n一个原理\n没跟上的同学可以暂停\n吸收一下这张图\n那刚才我们留下了一个坑\n目的地址这个部分\n如果我们填写的是\n某一个特定节点的MAC地址\n那么这样的帧就是单波帧对吧\n它是一对一的传输\n而如果目的地址\n我们写了48比特的1\n那么就意味着这是一个广播帧\n会被整个局域网内的所有节点所接收\n所以接下来我们要探讨\n单波帧和\n广播帧在一个局域网内部的\n传播过程\n那这也是一个考试的重点\n好我们引入这样的一个模型\n路由器可以连接多个网络\n在路由器的这一端\n我们用交换机极限器连接了很多节点\n那么这些节点共同组成了一个局域网\n而路由器的另外两个端口\n又分别连接了其他的网络\n那通过之前的学习我们知道\nMAC地址这个",
+    "text_en": "After encapsulating the IP datagram into a frame, the MAC frame will be transmitted by the physical layer using Manchester encoding. The physical layer inserts an eight-byte preamble before the frame, which can be divided into two parts: seven bytes of preamble sync and one byte of start delimiter. The seven bytes of 101010 represent a rhythm, indicating that data transmission will begin shortly. After sending these preamble syncs, the rhythm synchronizes. The start delimiter consists of 10101011, signaling the beginning of the actual data. Manchester encoding is used to transmit the Ethernet MAC frame, and the end is marked using an illegal encoding method, leaving a gap after the frame. If the receiver does not receive any bits, it indicates the end of the frame. Additionally, the frame end can be marked using illegal encoding.",
+    "keywords_zh": [
+      "以太网",
+      "MAC",
+      "节点",
+      "传输",
+      "编码",
+      "曼彻斯特"
+    ],
+    "keywords_en": [
+      "Ethernet",
+      "MAC",
+      "Node",
+      "Transmission",
+      "Encoding",
+      "Manchester"
+    ]
   },
   {
     "start": 1442.99,
@@ -3568,7 +3700,29 @@
       "rel": "keyframe_07_1485s.jpg",
       "time": 1485.641111111111,
       "score": 0.4345703125
-    }
+    },
+    "headline_zh": "交换机路由器有mac 地址吗？",
+    "headline_en": "Do switches and routers have MAC addresses?",
+    "summary_zh": "因此交换机肯定也有MAC地址。终端节点拥有MAC地址。都会对应一个MAC地址。有MAC地址。路由器有MAC地址。还有这些终端节点有MAC地址。也就是A节点自己的MAC地址。那根据接收方的MAC地址。",
+    "summary_en": "Switches have MAC addresses, as do terminal nodes; routers also have MAC addresses, and terminal nodes have their own MAC addresses.",
+    "text_zh": "概念其实是数据链路层才拥有的东西\n对吧\n物理层是没有MAC地址这个概念的\n那我们知道\n极限器\n它工作在物理层\n而交换机\n它的功能包含了物理层\n和数据链路层\n那既然交换机涉及到了数据链路层\n因此交换机肯定也有MAC地址\n这个东西对吧\n那同样的道理\n路由器\n需要实现\n物理层数据链路层\n甚至网络层的功能\n所以对于路由器而言\n它涉及到了数据链路层的功能\n因此它也会有MAC地址这个东西\n所以在网络当中\n不只是这种\n终端节点拥有MAC地址\n其实交换机路由器\n也拥有MAC地址\n甚至\n交换机路由器这两种设备\n它们会包含多个MAC地址\n比如一个交换机可能是这么设计的\n每一个网线接口的\n背后\n都会有一个网络适配器\n而我们知道每一个网络适配器\n都会有一个MAC地址对吧\n所以\n如果交换机它有多个网线接口\n那么每个网线接口\n都会对应一个MAC地址\n路由器也是一样的道理\n当然有些情况下\n可能多个网线接口会共用一个MAC地址\n也有这样的设计\n不过这儿我们就暂且先不展开\n好总之这儿我们想强调的是\n交换机\n有MAC地址\n路由器有MAC地址\n还有这些终端节点有MAC地址\n但是极限器没有MAC地址\n我想强调的是这个东西\n好接下来我们看一个单波针如何传输\n假设现在A节点要给C节点发送一个单波针\n那么根据刚才学习的这个以太网针的结构\n662N4\n收发斜数验对吧\n收发斜数验\n那就是说A节点在构造一个针的时候\n最开始的\n6个字节\n需要写明接收方也就是C节点的MAC地址\n紧接着后面的6个比特需要写明发送方\n也就是A节点自己的MAC地址\n好用这样的方式构造一个MAC针之后\n这个MAC针\n首先会发送给交换机\n交换机会检查这个MAC针的\n接收方的地址\n那根据接收方的MAC地址\n这个MAC针会被转发到相应的端口\n好所以\nA给C发送一个单波针\n这个动作的背后\n只有C节点会收到这个单波针\n好接下来如果A要给F发送一个单波针\n那么同样的\n在这个针里边\n也要写明这是A发给F的对吧\n好那么这个针同样的也需要先交给\n交换机\n交换机经过检查发现\n数据的接收方F\n它连接的是右边这个端口\n好所以它会从这个端口\n把数据针转发出去\n好接下来对于极限器来说\n它不会去判断数据针的接收方MAC地址到底是多少",
+    "text_en": "The concept of MAC addresses is unique to the data link layer. Limiters operate at the physical layer without MAC addresses. Switches combine physical and data link layer functions, thus having MAC addresses. Routers need to implement physical, data link, and network layer functions, including MAC addresses. In networks, not only terminal nodes have MAC addresses, but also switches and routers, which may contain multiple MAC addresses. A switch may have multiple MAC addresses corresponding to each network interface. Similarly, routers also have MAC addresses. When A sends a unicast frame to C, the first six bytes specify C's MAC address, followed by A's MAC address. The frame is then sent to the switch, which forwards it based on the destination MAC address. For limiters, they simply forward received Manchester-encoded signals to connected ports, ensuring that F receives the frame while others discard it.",
+    "keywords_zh": [
+      "MAC",
+      "地址",
+      "交换机",
+      "节点",
+      "路由器",
+      "单波针"
+    ],
+    "keywords_en": [
+      "MAC",
+      "Address",
+      "Switch",
+      "Node",
+      "Router",
+      "Single-mode Fiber"
+    ]
   },
   {
     "start": 1634.92,
@@ -4231,7 +4385,29 @@
       "rel": "keyframe_08_1859s.jpg",
       "time": 1859.7733333333335,
       "score": 0.43896484375
-    }
+    },
+    "headline_zh": "f 发送单波针看两个广播针的例子",
+    "headline_en": "F: An example of sending unicast frames versus broadcast frames",
+    "summary_zh": "但是只有F这个节点会接收这个针。接收方是A节点。但是只有F节点会把这个针接收下来。A节点发送了一个广播针。会转发这个广播针B节点C节点D节点。都会收到这个广播针。转发给与它相连的所有的节点。也就是说A节点发送的广播针。",
+    "summary_en": "When A node sends a broadcast frame, only F node will receive it; B, C, and D nodes will forward the broadcast frame to all connected nodes.",
+    "text_zh": "它只会无脑的把自己收到的这些曼彻斯特编码\n这些物理层的信号\n无脑的转发给\n自己连接的\n各个端口\n因此A发给F的这个数据针\n会被E\n会被F\n会被G\n都给收到\n但是只有F这个节点会接收这个针\n因为这三个节点收到针之后\n都会检查接收方是不是自己对吧\n如果跟自己没关系\n那么我就直接把这个针给丢弃\n好这是A给F发送单波针\n好接下来看E给A发送单波针\n那E发送的针\n先传给\n极限器\n那我们说极限器会无脑的把这个\n它收到的这些物理层的信号全部转发出去对吧\n所以F和G这两个节点\n肯定也会收到E给A发送的单波针\n好那么这个针\n从极限器的左边这转发给\n交换机之后\n交换机它有点脑子啊\n它会检查接收方是谁\n接收方是A节点\n那么交换机就会把这个\n针\n这个单波针\n从\n这个端口转发出来\n所以A节点会收到针\n并且把针给接收下来\n好这是E给A发送\n好接下来假设\nE给F发送一个单波针\n那么这个针\n到极限器这\n无脑的转发出去\n无脑的转发出去\nF会收到\nG也会收到\n但是只有F节点会把这个针\n接收下来\n好另外这个交换机也会收到E给F发的这个针\n但是检查接收方的地址\nF\n它连接的\n端口刚好就是\n数据进来的这个端口\n所以交换机\n并不会\n把收到的这个针\n重新转发回去\n没有必要对吧\n那当然也不会转发到其他端口\n好所以E给F发送的针\n就是FG能收到\n然后F会接收这个针\n好这是单波针\n接下来看两个广播针的例子\n我们说662N4收发协数验\n如果把接收方的地址\n也就是\n目的地址\n全部写为1的话\n那么表示这个针\n是要广播给局域网内的每一个节点的\n然后现在假设\nA节点\nA节点发送了一个广播针\n这个广播针的目的地址\n全部为1对吧\n那么这个广播针\n首先到了交换机这个地方\n交换机检查\n它是一个广播针\n那接下来它会把这个广播针\n转发到其他所有的端口\n也就是上面这条路\n会转发这个广播针\nB节点\nC节点\nD节点\n还有极限器这边\n都会收到这个广播针\n那对于极限器来说\n它会无脑的把这些物理层的比特信号\n再一次的转发\n转发给与它相连的所有的节点\n所以A节点发送的广播针\n会被B\nC\nD\nE\nF\nG\n还有路由器R\n会被所有的这些节点所接收\n那值得注意的是\n当路由器接收到一个广播针之后\n它并不会把这个广播针\n转发到其他的网络\n不会这么做\n所以我们说只有同一个局域网内的各个节点\n才属于同一个广播域\n也就是说A节点发送的广播针\n只能传播到\n同一个局域网内的各个节点对吧\n一旦到路由器这一块\n路由器就不会再转发到其他的局域网了\n就是这个意思\n好那了解了这些之后我们看20年的35题\n问我们在这个网络当中\n冲突域和广播域的个数分别是多少个\n那冲突域我们之前介绍过\n如果两个节点同时发送数据的时候会导致冲突\n那么二者就处于同一个冲突域\n那我们知道\n只要极限器\n相连接的节点\n就肯定只能半双共通性对吧\n也就是说连接同一个极限器的两个节点\n肯定是属于同一个冲突域",
+    "text_en": "MAC addresses are specific to the data link layer, while limiters operate at the physical layer without MAC addresses. Switches combine physical and data link layer functions, so they have MAC addresses. Routers need to implement physical, data link, and network layer functions, including MAC addresses. In networks, not only terminal nodes have MAC addresses, but also switches and routers, which may contain multiple MAC addresses. When A sends a unicast frame to C, the first six bytes specify C's MAC address, followed by A's MAC address. The frame is then sent to the switch, which forwards it based on the destination MAC address. Only C will receive the frame, as other nodes will discard it. When E sends a unicast frame to A, the frame is forwarded through the limiter, switch, and finally to A. When E sends a unicast frame to F, the frame is forwarded through the limiter and switch to F. When A sends a broadcast frame, it is forwarded to all nodes in the same local network, but not to other networks. This is because routers do not forward broadcast frames to other networks.",
+    "keywords_zh": [
+      "节点",
+      "广播",
+      "转发",
+      "这个",
+      "接收",
+      "收到"
+    ],
+    "keywords_en": [
+      "Node",
+      "Broadcast",
+      "Forwarding",
+      "This",
+      "Receive",
+      "Received"
+    ]
   },
   {
     "start": 1887.88,
@@ -4509,7 +4685,29 @@
       "rel": "keyframe_09_1900s.jpg",
       "time": 1900.3566666666668,
       "score": 0.435546875
-    }
+    },
+    "headline_zh": "交换机隔离了冲突域",
+    "headline_en": "Switches isolate collision domains",
+    "summary_zh": "发送广播针。它会把广播针转发到所有的端口。它就不会再继续转发广播针。我们看如果这个节点发送一个广播针。一个广播针。它不会继续转发广播针。应该属于同一个广播域。也属于同一个广播域。",
+    "summary_en": "Broadcast frames are sent and broadcasted to all ports. They are not forwarded further. If this node sends a broadcast frame, it will not continue to forward it. It should be within the same broadcast domain.",
+    "text_zh": "好这是冲突域的概念\n而广播域的概念就是说\n如果一个节点\n发送广播针\n可以被另一个节点所接收\n那么二者处于同一个广播域\n那通过刚才学习我们知道\n这个以太网交换机\n它会把广播针转发到所有的端口\n而路由器收到广播针之后\n它就不会再继续转发广播针\n那显然冲突域和广播域的个数\n分别是4和2\n这两台电脑\n连接了同一个极限器\n它俩属于同一个冲突域\n这是一个冲突域\n总共有四个冲突域\n那交换机是可以隔离冲突域的对吧\n因为交换机这边收到一个数据之后\n它不会无脑的把它转发到另一个端口\n不会无脑的转发\n它会先检查自己收到的这个数据针\n有没有必要去转发对吧\n所以有了交换机的存在\n当左边这台电脑\n在发送数据的时候\n其实右边这台电脑\n也可以发送数据\n二者是不会冲突的\n所以我们说交换机隔离了冲突域\n那接下来再分析广播域有几个\n我们看如果这个节点发送一个广播针\n一个广播针\n那么这个广播针首先到极限器这\n极限器无脑的转发\n这个节点会收到\n好除此之外\n这个广播针也会发到交换机这个地方\n那交换机检查发现这是一个广播针\n所以它会把它转发到其他\n连接的端口\n那么通过下面这台极限器\n又会转发给这两个节点\n而对于路由器来说\n当它收到这个广播针的时候\n它不会继续转发广播针\n好所以左边这个部分\n应该属于同一个广播域\n那相应的右边这个部分\n也属于同一个广播域",
+    "text_en": "This concept is about collision domains, and broadcast domains are defined as follows: if one node sends a broadcast frame that another node can receive, they are in the same broadcast domain. We learned that an Ethernet switch forwards broadcast frames to all ports, while a router does not. Thus, there are four collision domains and two broadcast domains. These two computers connected to the same hub belong to the same collision domain. Switches isolate collision domains because they selectively forward data frames. Next, we analyze how many broadcast domains there are. If a node sends a broadcast frame, it will be forwarded by the hub and the switch. Routers do not forward broadcast frames, so the left part and the right part each belong to one broadcast domain.",
+    "keywords_zh": [
+      "广播",
+      "转发",
+      "交换机",
+      "冲突",
+      "节点",
+      "无脑"
+    ],
+    "keywords_en": [
+      "Broadcast",
+      "Forwarding",
+      "Switch",
+      "Collision",
+      "Node",
+      "Dumb"
+    ]
   },
   {
     "start": 2000.17,
@@ -4797,7 +4995,29 @@
       "rel": "keyframe_10_2034s.jpg",
       "time": 2034.38,
       "score": 0.40234375
-    }
+    },
+    "headline_zh": "以太网与ieee 802.3802.3 工作组",
+    "headline_en": "Ethernet and IEEE 802.3, 802.3 working group",
+    "summary_zh": "也隔离广播域。也不隔离广播域。它可以工作在半双工模式下。当工作在半双工模式下的时候。半双工模式。工作在半双工模式下。工作在全双工模式下。光纤网段只工作在全双工模式下。",
+    "summary_en": "It also isolates broadcast domains but does not isolate them. It can operate in half-duplex mode. When operating in half-duplex mode, it works in half-duplex mode. It can work in full-duplex mode, with fiber segments only using full-duplex mode.",
+    "text_zh": "因此广播域的数量就是两个\n这个题目选择C选项\n好因此我们可以得到这样的结论\n以太网交换机\n它可以隔离冲突域\n但是不隔离广播域\n而这个问题呢\n而路由器这种设备\n它既隔离冲突域\n也隔离广播域\n极限器这种设备\n它既不隔离冲突域\n也不隔离广播域\n这是三种设备的特性\n好那这是20年的35题\n好的那么这个视频中\n我们介绍了以太网与IEEE 802.3\n802.3工作组的主要任务\n是推行以太网的这个标准化工作\n我们首先介绍了物理层的一些\n技术标准\n命名规律是这样的\n速率加base加传输介质\n主要有同轴电缆\n双脚线和光纤\n这三种传输介质\n我们需要重点关注的是\n每一个网段\n它可以工作在半双工模式下\n还是全双工模式下\n当工作在半双工模式下的时候\n就需要使用CSMA-CD协议\n去实现介质访问控制\n那在做题的时候\n如果看到一个网段\n是由同轴电缆组成的\n那么它肯定只支持\n半双工模式\n也就是需要使用CSMA-CD协议\n而如果一个网段\n是用双脚线组成的\n那这样的一个网段\n只能连接两个节点对吧\n只能连接两个节点\n那我们要观察\n双脚线连接的这两个节点当中\n如果其中一端有极限器\n那么就肯定只能\n工作在半双工模式下\n而如果连接的是交换机\n那我们默认\n工作在全双工模式下\n光纤网段只工作在全双工模式下",
+    "text_en": "Therefore, there are two broadcast domains. The correct answer is C. This means that Ethernet switches isolate collision domains but not broadcast domains, while routers isolate both. Hubs neither isolate collision domains nor broadcast domains. These are the characteristics of three types of devices. This is question 35 from 2020. In this video, we introduced Ethernet and IEEE 802.3. The 802.3 working group's main task is to standardize Ethernet. We discussed some physical layer standards, naming them based on speed, base, and transmission medium. Coaxial cable, twisted pair, and fiber optics are the main media. We need to focus on whether each segment works in half-duplex or full-duplex mode. Half-duplex segments use CSMA-CD for medium access control.",
+    "keywords_zh": [
+      "网段",
+      "隔离",
+      "半双工",
+      "广播",
+      "模式",
+      "连接"
+    ],
+    "keywords_en": [
+      "Segment",
+      "Isolation",
+      "Half-duplex",
+      "Broadcast",
+      "Mode",
+      "Connection"
+    ]
   },
   {
     "start": 2102.82,
@@ -5185,6 +5405,28 @@
       "rel": "keyframe_11_2178s.jpg",
       "time": 2178.2533333333336,
       "score": 0.436767578125
-    }
+    },
+    "headline_zh": "以太网的物理层",
+    "headline_en": "Ethernet's physical layer",
+    "summary_zh": "VR标准的MAC帧。它的构成是662N4收发协议数验。收发长数验。而VR标准的这两个字节。662N4收发协议数验。8个字节的前导码。8个字节的前导码包含7同步1定介。收发协议数验。",
+    "summary_en": "The VR standard MAC frame consists of 662N4 transmission protocol validation. The two bytes of 662N4 transmission protocol validation include an 8-byte preamble. The 8-byte preamble contains 7 synchronization bytes.",
+    "text_zh": "但是考得比较少\n大家有个印象就可以\n好另外以太网的这个物理层\n我们使用的是曼彻斯特编码\n跳0反跳1看中间\n中必变\n那这是我们需要了解的一些物理层标准\n那对于MAC层的\n技术标准\n我们主要关注\n对于这个MAC帧的格式的定义\n有两种标准\n一种是VR标准\n一种是802.3标准\nVR标准的MAC帧\n它的构成是662N4\n收发协议\n数验\n而802.3标准的构成是662N4\n收发长数验\n也就中间这两个字节\n802.3标准表示的是长度\n就是数据部分的\n数据部分的长度\n而VR标准的这\n两个字节\n它表示的是网络层的协议\n我到底是为哪一个网络层协议服务的\n标注的是这样的一个东西\n那中间这个N是可变的数据部分\n它的范围是\n4615\n所以大家可以把这两句话连起来\n背诵\n662N4收发协议数验\nN是4615\n记住这句话\n你就记住了以太网针的组成\n那么以太网针\n交给物理层\n之后\n物理层会在以太网针的前面加\n8个字节的前导码\n8个字节的前导码包含\n7同步\n1定介\n其中7个字节\n是同步码\n由1010\n交替组成\n而1定介指的是最后一个字节\n是真开始的定介符\n好这是8字节前导码的记忆\n7同步1定介\n那在这个视频中我们也强调了\n收发协议数验\n这个接收方的地址\n如果我们全部写成1的话\n表示这是一个广播针\n而交换机会把收到的广播针\n转发到其他端口\n也就除了接收广播针的那个端口之外\n其他的端口\n都会被转发出去\n而路由器收到广播针之后\n不会转发广播针\n所以我们说\n交换机\n它不隔离\n广播域\n而路由器\n可以隔离广播域\n好的那以上就是这些视频的全部内容",
+    "text_en": "These concepts are less frequently tested, but you should have an understanding of them. For Ethernet's physical layer, Manchester encoding is used, where a 0 is represented by a transition and a 1 by no transition. We need to know these physical layer standards. For MAC layer standards, we focus on the format definition of MAC frames. There are two standards: VR and 802.3. VR frames consist of 662N4, while 802.3 frames include 662N4, where N represents variable data length. VR's two bytes indicate the network layer protocol. Remember: 662N4, where N is 46-15. This covers the structure of Ethernet frames. After passing through the physical layer, eight bytes of preamble are added to the front of the frame. The preamble includes seven sync bytes and one delimiter byte.",
+    "keywords_zh": [
+      "字节",
+      "以太网",
+      "广播",
+      "物理层",
+      "标准",
+      "收发"
+    ],
+    "keywords_en": [
+      "Byte",
+      "Ethernet",
+      "Broadcast",
+      "Physical Layer",
+      "Standard",
+      "Transmit-receive"
+    ]
   }
 ]

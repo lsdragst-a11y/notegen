@@ -8,7 +8,11 @@
         0,
         1
       ],
-      "abstract": "本章从线性代数的基础概念入手，帮助学生打下坚实的学习基础。"
+      "abstract": "本章从线性代数的基础概念入手，帮助学生打下坚实的学习基础。",
+      "title_zh": "线性代数基础与强化",
+      "title_en": "Fundamentals and Reinforcement of Linear Algebra",
+      "abstract_zh": "本章从线性代数的基础概念入手，帮助学生打下坚实的学习基础。",
+      "abstract_en": "This chapter introduces fundamental concepts of linear algebra to help students build a solid foundation."
     },
     {
       "title": "特征值与综合题解",
@@ -18,7 +22,11 @@
         2,
         3
       ],
-      "abstract": "本章聚焦于特征值及其应用，通过综合题目加深学生对知识点的理解。"
+      "abstract": "本章聚焦于特征值及其应用，通过综合题目加深学生对知识点的理解。",
+      "title_zh": "特征值与综合题解",
+      "title_en": "Eigenvalues and Comprehensive Problem Solutions",
+      "abstract_zh": "本章聚焦于特征值及其应用，通过综合题目加深学生对知识点的理解。",
+      "abstract_en": "This chapter focuses on eigenvalues and their applications, deepening students' understanding through comprehensive problems."
     },
     {
       "title": "真题解析与方法",
@@ -28,7 +36,11 @@
         4,
         5
       ],
-      "abstract": "本章通过对历年真题的详细解析，传授有效的解题方法和技巧。"
+      "abstract": "本章通过对历年真题的详细解析，传授有效的解题方法和技巧。",
+      "title_zh": "真题解析与方法",
+      "title_en": "True Exam Questions Analysis and Methods",
+      "abstract_zh": "本章通过对历年真题的详细解析，传授有效的解题方法和技巧。",
+      "abstract_en": "This chapter analyzes past exam questions in detail to teach effective problem-solving methods and techniques."
     }
   ],
   "ablation": null
