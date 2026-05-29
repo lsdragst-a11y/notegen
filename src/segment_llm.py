@@ -84,6 +84,84 @@ _TOKENIZER = None
 _DEFAULT_MODEL = "Qwen/Qwen2.5-7B-Instruct-AWQ"
 
 
+# ============ 章节粒度调节旋钮（集中配置）============
+# 这些常量原本散落在 _diagnose_outline / _validate_outline / segment_hierarchical
+# 里写死，调一处粒度要改 5+ 个地方且容易漏。集中到这里后，想让章节"更粗 / 更细"
+# 只改下面的值即可。默认值与历史行为完全一致（不改默认 = 不改输出）。
+#
+#   想要章节更"粗"（少而大）→ 调大 CAP_*、调小 OVERSEG_RATIO_VLOG_TALK
+#   想要章节更"细"（多而小）→ 调小 CAP_*、调大 DOMINANT_CHAPTER_PCT
+#
+# 单顶层覆盖的 chunks 数上限：教学/科普 5（PPT 章节可能较长），vlog/talk 4
+# （场景/论点切换频繁，章节更碎）。超上限且无子章节 → 判定 catch-all 失败。
+CAP_TEACHING = 5
+CAP_VLOG_TALK = 4
+# 顶层章节数下限：n_chunks>=4 至少 3 章（保证导航价值），n_chunks 3 时至少 2 章。
+TOP_MIN_LARGE = 3   # n_chunks >= 4
+TOP_MIN_SMALL = 2   # n_chunks == 3
+# 单章时长上限：任一章占总时长比例超过此值 → reject（防一章吞半个视频）。
+DOMINANT_CHAPTER_PCT = 0.45
+# 过碎阈值（仅 vlog/talk + n_chunks>=8）：章数/段数比超此值 → 判定过碎要求归并。
+OVERSEG_RATIO_VLOG_TALK = 0.65
+# 末章均衡阈值：贪心切分常把余数堆成"末章只剩 1-2 段"的短尾（p68 实测 5,5,5,5,5,5,2）。
+# 当 末章段数 比 前一章 少 >= 此值时，从前一章末尾匀 chunk 给末章，逐步收敛到差 <= 1。
+# 只动最后两章的边界，不碰中间章语义切点；两章都不超 cap。
+SHORT_TAIL_GAP = 2
+
+
+def _cap_for_category(category: str) -> int:
+    """单顶层 chunks 数上限：vlog/talk 收紧到 CAP_VLOG_TALK，其它走 CAP_TEACHING。"""
+    return CAP_VLOG_TALK if category in ("vlog", "talk") else CAP_TEACHING
+
+
+def _top_min_for(n_chunks: int) -> int:
+    """顶层数下限：n_chunks>=4 用 TOP_MIN_LARGE，否则 TOP_MIN_SMALL。"""
+    return TOP_MIN_LARGE if n_chunks >= 4 else TOP_MIN_SMALL
+
+
+def _rebalance_short_tail(outline: dict, category: str = "teaching") -> bool:
+    """末章短尾均衡：贪心切分把余数堆到末章时（如 5,5,5,5,5,5,2），从前一章末尾
+    把边界 chunk 逐个匀给末章，直到两章段数差 <= 1。**只移动最后两章的公共边界**，
+    不触碰任何中间章节的语义切点，因此不会破坏已校验通过的切分结构。
+
+    原地修改 outline["chapters"]（仅末两章的 chunks）。返回是否发生了移动。
+
+    保守触发条件（任一不满足则不动）：
+      - >= 2 个顶层章节，且末两章都是 flat（无 children——移动边界会破坏 children 覆盖）
+      - 末章、前一章的 chunks 都是连续区间且首尾相接（正常校验后必然成立）
+      - 末章段数 <= 前一章段数 - SHORT_TAIL_GAP（确有明显短尾才动）
+    移动后两章都不超 cap（末章只会变长但起点本就短；前一章只会变短），且保证
+    前一章移动后仍 >= 2 段（不把前一章也掏成短尾）。
+    """
+    chapters = outline.get("chapters")
+    if not isinstance(chapters, list) or len(chapters) < 2:
+        return False
+    prev_ch, last_ch = chapters[-2], chapters[-1]
+    if prev_ch.get("children") or last_ch.get("children"):
+        return False
+    prev = prev_ch.get("chunks")
+    last = last_ch.get("chunks")
+    if not (isinstance(prev, list) and isinstance(last, list) and prev and last):
+        return False
+    # 必须首尾相接的连续区间：prev=[a..b], last=[b+1..c]
+    if prev[-1] + 1 != last[0]:
+        return False
+    if prev[-1] - prev[0] + 1 != len(prev) or last[-1] - last[0] + 1 != len(last):
+        return False
+    cap = _cap_for_category(category)
+    moved = False
+    # 逐个把 prev 末尾 chunk 移到 last 开头，直到差 <= 1 或前一章只剩 2 段
+    while len(prev) - len(last) >= SHORT_TAIL_GAP and len(prev) > 2 and len(last) + 1 <= cap:
+        boundary = prev[-1]
+        prev = prev[:-1]
+        last = [boundary] + last
+        moved = True
+    if moved:
+        prev_ch["chunks"] = prev
+        last_ch["chunks"] = last
+    return moved
+
+
 def _format_time(s: float) -> str:
     s = int(s)
     return f"{s // 60:02d}:{s % 60:02d}"
@@ -267,7 +345,9 @@ SYSTEM_PROMPT = """你是教学视频结构化助手。给定一个教学视频�
 
 ## 硬约束（违反必拒绝，自检通不过就重新切）
 
-1. **顶层数量 ∈ [3, 6]**——视频再单一也能找出"引入 / 主体 1 / 主体 2 / 收尾"等多个主轴
+1. **顶层数量下限 3**——视频再单一也能找出"引入 / 主体 1 / 主体 2 / 收尾"等多个主轴。\
+短视频典型 3-6 章；**长视频（段数多）按 user 消息里的"算术参考"区间，可超过 6 章**——\
+不要为了凑进 6 章而把多个知识点硬塞成一个大章
 2. **单个顶层覆盖的 chunks 数 ≤ 5**——超 5 就拆，要么内部分子章节，要么再切个顶层
 3. 顶层按时间顺序覆盖 [0, n) 全部 chunk_idx，不漏不重不交叉；children 同样
 4. 标题 6-12 字中文 或 3-7 词英文 名词短语，去口语词 / 疑问句 / 句末标点
@@ -335,7 +415,7 @@ SYSTEM_PROMPT = """你是教学视频结构化助手。给定一个教学视频�
 
 ## 自检清单（输出前 mentally verify）
 
-1. 顶层数量在 [3, 6] ✓
+1. 顶层数量 ≥ 3（短视频典型 3-6；长视频按算术参考可更多）✓
 2. **没有任何顶层 chunks 数 > 5** ✓（这条最容易踩）
 3. 所有 chunk_idx 覆盖 [0, n) 一次，无重 / 无漏 ✓
 4. 标题是名词短语，不是动词句 / 疑问句 ✓
@@ -845,7 +925,8 @@ def _diagnose_outline(parsed: dict, n_chunks: int,
     """
     # vlog/talk cap=4（2026-05-21 放宽，原 3 太严）：长 vlog n>=15 时 5 章×3=15<n 必然
     # 需要归并到每章 3-4 chunks。教学/科普仍 5（PPT 章节可能更长）。
-    max_chunks_per_top = 4 if category in ("vlog", "talk") else 5
+    # 上限集中在 _cap_for_category（见文件顶部粒度旋钮）
+    max_chunks_per_top = _cap_for_category(category)
     if not isinstance(parsed, dict) or "chapters" not in parsed:
         return "顶层 JSON 缺少 'chapters' 字段"
     chapters = parsed.get("chapters")
@@ -890,7 +971,7 @@ def _diagnose_outline(parsed: dict, n_chunks: int,
     # 切"单顶层+多 children" 也命中）。2026-05-21 stress test 揭示原本两条规则
     # 不一致：L740 children-blind 在 n>=4 时把 auto_subs 注入的 N children 仍然
     # reject，导致 belt-and-suspenders 永不生效。
-    min_top = 3 if n_chunks >= 4 else 2
+    min_top = _top_min_for(n_chunks)
     if n_chunks >= 3 and len(chapters) < min_top:
         top0_children = chapters[0].get("children") if chapters else None
         has_nav_subs = isinstance(top0_children, list) and len(top0_children) >= 2
@@ -900,14 +981,14 @@ def _diagnose_outline(parsed: dict, n_chunks: int,
                     f"否则笔记零导航价值）")
     # 2026-05-21 BV1q6 日料 vlog 16/19 几乎一章一 chunk 揭示：vlog/talk LLM 倾向不归并
     # 长 vlog 相邻同类 chunks，导致章节过碎。加比例硬约束：vlog/talk + n_chunks>=8 时
-    # n_chapters / n_chunks 比 > 0.65 视为"过碎"，引导 LLM retry 时主动归并。
+    # n_chapters / n_chunks 比 > OVERSEG_RATIO_VLOG_TALK 视为"过碎"，引导 LLM retry 时主动归并。
     # 教学/科普不限（教学每章 1-2 chunks 是正常的）。
     if category in ("vlog", "talk") and n_chunks >= 8:
         ratio = len(chapters) / n_chunks
-        if ratio > 0.65:
+        if ratio > OVERSEG_RATIO_VLOG_TALK:
             target_max = max(5, int(n_chunks * 0.6))
             return (f"n_chunks={n_chunks} 时切了 {len(chapters)} 章，"
-                    f"过碎（比例 {ratio:.2f} > 0.65）。"
+                    f"过碎（比例 {ratio:.2f} > {OVERSEG_RATIO_VLOG_TALK}）。"
                     f"vlog/talk 长视频必须把相邻同类 chunks 归并——"
                     f"目标 ≤ {target_max} 章（每章 ~{n_chunks//target_max}-"
                     f"{(n_chunks+target_max-1)//target_max} chunks）")
@@ -922,10 +1003,10 @@ def _diagnose_outline(parsed: dict, n_chunks: int,
                     continue
                 ch_dur = chunks[cs[-1]].get("end", 0) - chunks[cs[0]].get("start", 0)
                 pct = ch_dur / total
-                if pct > 0.45:
+                if pct > DOMINANT_CHAPTER_PCT:
                     return (f"第 {ci+1} 章 '{ch.get('title','')}' 覆盖 "
                             f"{ch_dur/60:.1f}min/{total/60:.1f}min = "
-                            f"{pct*100:.0f}% 总时长（>45% 上限），"
+                            f"{pct*100:.0f}% 总时长（>{DOMINANT_CHAPTER_PCT*100:.0f}% 上限），"
                             f"必须把这一章拆为多个更短的顶层")
     return None
 
@@ -941,7 +1022,8 @@ def _validate_outline(outline: dict, n_chunks: int,
     # 按 category 决定单顶层 chunks 上限
     # vlog/talk cap=4（2026-05-21 放宽，原 3 太严）：长 vlog n>=15 时 5 章×3=15<n 必然
     # 需要归并到每章 3-4 chunks。教学/科普仍 5（PPT 章节可能更长）。
-    max_chunks_per_top = 4 if category in ("vlog", "talk") else 5
+    # 上限集中在 _cap_for_category（见文件顶部粒度旋钮）
+    max_chunks_per_top = _cap_for_category(category)
     if not isinstance(outline, dict) or "chapters" not in outline:
         return None
     chapters = outline.get("chapters")
@@ -996,14 +1078,14 @@ def _validate_outline(outline: dict, n_chunks: int,
             return None
     # 顶层数软下限（children-aware，与 _diagnose_outline 对齐）：
     # n>=4 要求 ≥3 顶层，n>=3 要求 ≥2 顶层；1 顶层 + ≥2 children 等价导航形态
-    min_top = 3 if n_chunks >= 4 else 2
+    min_top = _top_min_for(n_chunks)
     if n_chunks >= 3 and len(out_chapters) < min_top:
         top0_children = out_chapters[0].get("children") if out_chapters else None
         if not (isinstance(top0_children, list) and len(top0_children) >= 2):
             return None
-    # 过碎硬约束（与 _diagnose 对齐）：vlog/talk n>=8 时 chapters/chunks > 0.65 reject
+    # 过碎硬约束（与 _diagnose 对齐）：vlog/talk n>=8 时 chapters/chunks 超阈 reject
     if category in ("vlog", "talk") and n_chunks >= 8:
-        if len(out_chapters) / n_chunks > 0.65:
+        if len(out_chapters) / n_chunks > OVERSEG_RATIO_VLOG_TALK:
             return None
     # 单章时长上限（n_chunks≥5 + ≥2 章 + 任一章 >45% 总时长 → reject）
     if chunks is not None and n_chunks >= 5 and len(out_chapters) >= 2 and len(chunks) == n_chunks:
@@ -1012,7 +1094,7 @@ def _validate_outline(outline: dict, n_chunks: int,
             for ch in out_chapters:
                 cs = ch["chunks"]
                 ch_dur = chunks[cs[-1]].get("end", 0) - chunks[cs[0]].get("start", 0)
-                if ch_dur / total > 0.45:
+                if ch_dur / total > DOMINANT_CHAPTER_PCT:
                     return None
     return {"chapters": out_chapters}
 
@@ -1103,25 +1185,35 @@ def segment_hierarchical(chunks: list[dict],
     sys_prompt_base = _CATEGORY_PROMPTS.get(category, SYSTEM_PROMPT)
     cat_label = {"teaching": "教学视频", "popsci": "科普视频",
                  "vlog": "vlog 实拍视频", "talk": "时评/资讯视频"}.get(category, "视频")
-    # vlog/talk 的单顶层上限更小（3 而非 5），retry 提示词要同步
-    chunks_per_top_cap = 4 if category in ("vlog", "talk") else 5
+    # vlog/talk 的单顶层上限更小（4 而非 5），retry 提示词要同步（见文件顶部粒度旋钮）
+    chunks_per_top_cap = _cap_for_category(category)
     # 算术 hint：长视频（n > 10）建议顶层数 ≈ ceil(n/cap)
     # 注意：这是"建议"不是"硬约束"——硬约束会让 LLM 为凑数选非连续 chunks（p57 实测 ch1=[0,3,17,18]）
     min_tops_arith = -(-n // chunks_per_top_cap)  # ceil division
+    # 上界 = 下界 + 2（给主题更细的视频一点余量）。
+    # 旧实现用 min(6, min_tops_arith+2) 把上界钳在 6，但长视频（n>=31, cap=5）
+    # 下界已 >=7，会打印出"7-6 / 8-6"这种倒挂区间，反而把 LLM 往"切太少→oversize
+    # →程序化拆"的 churn 路径上推。校验函数本就不强制 6 上界，这里取 max 防倒挂。
+    max_tops_arith = max(min_tops_arith, min_tops_arith + 2)
     arith_clause = ""
     if n > 10:
         arith_clause = (
             f"\n**算术参考**：{n} 段 / 单顶层 ≤ {chunks_per_top_cap}，"
-            f"顶层数典型在 **{min_tops_arith}-{min(6, min_tops_arith+2)}** 之间。"
+            f"顶层数典型在 **{min_tops_arith}-{max_tops_arith}** 之间。"
             f"主题更细可超，但每章必须是**连续区间**——宁可少 1 章也不要为凑数跳着选 chunks。\n"
         )
+    # 自检清单的顶层数目标：短视频 [3,6]；长视频（n>10）用算术参考区间，
+    # 避免写死的 "6 上界" 与上面 arith_clause 矛盾（长视频 6 章塞不下会被逼成
+    # 大章 → oversize → 程序化拆，边界反而乱）。
+    top_count_hint = (f"[{min_tops_arith}, {max_tops_arith}]（见上方算术参考）"
+                      if n > 10 else "[3, 6]")
     user_prompt = (
         f"{cat_label}共 {n} 个原子段（chunk_idx 0~{n-1}）：\n\n"
         f"{chunk_text}\n"
         f"{visual_block}\n"
         f"{arith_clause}"
         f"**自检清单**（输出前 mentally verify，每条都过才允许输出）：\n"
-        f"1. 顶层数 ∈ [3, 6]\n"
+        f"1. 顶层数 ∈ {top_count_hint}\n"
         f"2. 每个顶层 chunks 数 ≤ {chunks_per_top_cap}（最易踩；主题集中也必须拆）\n"
         f"3. **每个顶层的 chunks 必须是连续区间 [a, a+1, ..., b]**——禁止跳跃式选取\n"
         f"   ✗ 反例：`\"chunks\": [0, 3, 17, 18]` 不连续，等于把别章 chunks 也抢了\n"
@@ -1168,7 +1260,7 @@ def segment_hierarchical(chunks: list[dict],
                 {"role": "user", "content":
                     f"上次输出违反硬约束：{last_err}\n\n"
                     f"请**重新输出完整的 JSON**（不要 partial 不要 diff），严格遵守所有硬约束："
-                    f"顶层数 ∈ [3,6]、单顶层 chunks ≤ {chunks_per_top_cap}、"
+                    f"顶层数 ∈ {top_count_hint}、单顶层 chunks ≤ {chunks_per_top_cap}、"
                     f"覆盖 0~{n-1} 全部 chunk_idx 无漏无重。"},
             ]
             # 重试温度更低更确定性
@@ -1317,6 +1409,14 @@ def segment_hierarchical(chunks: list[dict],
         # 理论上 _diagnose 通过了 _validate 也该通过，兜底
         print(f"      [llm] outline validation failed after diagnose passed (bug?)", flush=True)
         return {"chapters": [], "_meta": meta}
+
+    # B4: 末章短尾均衡——贪心切分会把余数堆成末章只剩 1-2 段（p68: 5,5,5,5,5,5,2）。
+    # 在标题重写前匀边界（标题随后按新 chunks 重新生成，不会指向错段）。只动末两章。
+    before_tail = [len(c.get("chunks") or []) for c in outline["chapters"]]
+    if _rebalance_short_tail(outline, category=category):
+        after_tail = [len(c.get("chunks") or []) for c in outline["chapters"]]
+        meta.setdefault("repair_used", []).append("rebalance_short_tail")
+        print(f"      [llm] 末章短尾均衡：{before_tail} → {after_tail}", flush=True)
 
     # B1: 二次调 LLM，按"只看本章 headlines"重写章标题，避开邻章串台问题
     refined_titles = refine_chapter_titles(outline, chunks, lang=lang, category=category)
@@ -2004,6 +2104,49 @@ def _parse_titles_array(raw: str, K: int) -> Optional[list]:
     return None
 
 
+def _recover_recaps_lenient(raw: str, K: int) -> Optional[list[str]]:
+    """recap 专用容错恢复：当 _parse_titles_array + I7 单元素兜底都失败时调用。
+
+    recap 的 element 是含多行 bullet 的长字符串，比 title 数组更容易坏在两点：
+      (a) 模型把 `\\n` 写成**真实换行**（直接吐 markdown 列表），整段 JSON 非法；
+          _parse_titles_array 的 quoted 兜底用 `[^"\\n]+` 跨不过真实换行。
+      (b) 长输出被 max_new_tokens 截断，数组末尾不闭合，json.loads 全程失败。
+
+    策略（都失败才返回 None，让 caller 走抽取式）：
+      1) 用容忍换行的正则抓顶层双引号字符串元素（recap 正文基本不含裸 `"`），
+         还原转义后若拿到 >= K 个 → 取前 K（与 _parse_titles_array 的 len>K 一致）。
+      2) 否则退而求其次：扫描 raw 里所有 bullet 行（`- ` 开头），>= K 条就按 I7
+         的均分逻辑摊到 K 章——边界近似，但保住 LLM 生成的要点，好过抽取式。
+    """
+    # 1) 容忍真实换行 / 转义的字符串元素抽取
+    elems = re.findall(r'"((?:[^"\\]|\\.)*)"', raw, re.DOTALL)
+    def _unescape(s: str) -> str:
+        return (s.replace("\\n", "\n").replace("\\t", "\t")
+                 .replace('\\"', '"').replace("\\\\", "\\")).strip()
+    cleaned = []
+    for e in elems:
+        u = _unescape(e)
+        # 过滤明显的 JSON 字段名 / boilerplate（recap 正文都是 bullet，远长于这些）
+        if len(u) >= 3 and u not in {"recap", "recaps", "chapters", "json", "title"}:
+            cleaned.append(u)
+    if len(cleaned) >= K:
+        return cleaned[:K]
+    # 2) bullet 行级恢复（generalize I7：不要求 JSON 可解析）
+    bullets = [m.strip() for m in re.findall(r"(?m)^\s*[-•*]\s+(.+)$", raw)]
+    bullets = [b for b in bullets if b]
+    if len(bullets) >= K:
+        per = max(1, len(bullets) // K)
+        out: list[str] = []
+        for i in range(K):
+            s = i * per
+            e = (i + 1) * per if i < K - 1 else len(bullets)
+            out.append("\n".join(f"- {b}" for b in bullets[s:e]))
+        print(f"      [llm-chapter-recap] lenient bullet-split: "
+              f"{len(bullets)} bullets → {K} 章", flush=True)
+        return out
+    return None
+
+
 ASR_FIX_SYSTEM = """你是教学视频 ASR 转写错字校对助手。给定若干段视频文本（每段含\
 关键词和原文），找出明显的**同音字 / 字形错误**并输出修正字典。
 
@@ -2461,7 +2604,10 @@ def generate_chapter_recaps(chapters: list[dict],
         return None
     K = len(chapters)
     if max_new_tokens is None:
-        max_new_tokens = max(800, 220 * K)
+        # 每章 3-5 条 bullet（中文 10-30 字）+ JSON 转义 ~ 200-280 tokens/章。
+        # 原 220*K 在 K>=7 且 bullet 偏长时易截断 → array 不闭合 parse 失败。
+        # 提到 260*K（下限 1024）给足闭合余量，截断回退概率显著下降。
+        max_new_tokens = max(1024, 260 * K)
     snippet_max = 200 if K <= 8 else 120
     lines = []
     any_drop = False
@@ -2550,6 +2696,10 @@ def generate_chapter_recaps(chapters: list[dict],
                         arr = recaps_split
         except (json.JSONDecodeError, ValueError):
             pass
+    if arr is None:
+        # J4 容错：标准 parse + I7 单元素兜底都失败（多为真实换行 / 截断）。
+        # 走 recap 专用宽松恢复，仍失败才回退抽取式。
+        arr = _recover_recaps_lenient(raw, K)
     if arr is None:
         print(f"      [llm-chapter-recap] parse failed, raw: {raw[:250]}", flush=True)
         return None
