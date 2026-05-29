@@ -1,9 +1,9 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence, useDragControls, useMotionValue } from "framer-motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Video, BookOpen, Layers, Hash, Clock, Sparkles, Loader2, Trash2, Link2, FolderUp, X, FileVideo, Search, LockOpen, Lock } from "lucide-react";
+import { ArrowRight, Video, BookOpen, Layers, Hash, Clock, Sparkles, Loader2, Trash2, Link2, FolderUp, X, FileVideo, Search, LockOpen, Lock, GripVertical } from "lucide-react";
 import NavBar from "@/components/NavBar";
 import FluidBG from "@/components/FluidBG";
 import ParticleBG from "@/components/ParticleBG";
@@ -22,6 +22,36 @@ function formatBytes(n: number): string {
   return `${(n / 1024 / 1024 / 1024).toFixed(2)} GB`;
 }
 
+// 笔记卡片排序持久化：用户拖拽后只在本浏览器记忆
+const ORDER_KEY = "notegen.cardOrder.v1";
+
+function loadSavedOrder(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem(ORDER_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.filter(x => typeof x === "string") : [];
+  } catch { return []; }
+}
+
+function saveOrder(ids: string[]): void {
+  if (typeof window === "undefined") return;
+  try { localStorage.setItem(ORDER_KEY, JSON.stringify(ids)); } catch {}
+}
+
+// 把 fetched catalog 按 savedIds 排序；savedIds 里没出现的 id（新生成的笔记）追加在末尾
+function applySavedOrder(items: CatalogItem[], savedIds: string[]): CatalogItem[] {
+  if (!savedIds.length) return items;
+  const byId = new Map(items.map(it => [it.id, it]));
+  const ordered: CatalogItem[] = [];
+  for (const id of savedIds) {
+    const it = byId.get(id);
+    if (it) { ordered.push(it); byId.delete(id); }
+  }
+  for (const it of byId.values()) ordered.push(it);
+  return ordered;
+}
+
 export default function LandingPage() {
   const router = useRouter();
   const [catalog, setCatalog] = useState<CatalogItem[]>([]);
@@ -31,6 +61,9 @@ export default function LandingPage() {
   const [submitting, setSubmitting] = useState(false);
   const [confirmDel, setConfirmDel] = useState<CatalogItem | null>(null);
   const [deleting, setDeleting] = useState(false);
+  // 拖拽态：被拖 id + 它在最终序里的目标位置；松手前不动 catalog
+  const [dragState, setDragState] = useState<{ id: string; previewIdx: number } | null>(null);
+  const anyDragging = dragState !== null;
   const [mode, setMode] = useState<SubmitMode>("url");
   const [file, setFile] = useState<File | null>(null);
   const [fileTitle, setFileTitle] = useState("");
@@ -42,8 +75,99 @@ export default function LandingPage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    fetchCatalog().then(setCatalog).catch(console.error).finally(() => setLoading(false));
+    fetchCatalog()
+      .then(items => setCatalog(applySavedOrder(items, loadSavedOrder())))
+      .catch(console.error)
+      .finally(() => setLoading(false));
   }, []);
+
+  // 每张卡的 DOM ref，用于拖拽时根据光标位置实时查 hover 目标（iOS 桌面图标式）
+  const cardRefs = useRef<Map<string, HTMLElement>>(new Map());
+  const registerCardRef = (id: string, el: HTMLElement | null) => {
+    if (el) cardRefs.current.set(id, el);
+    else cardRefs.current.delete(id);
+  };
+
+  // 读卡的"静态布局位置"（offsetLeft/Top，忽略 transform，与 layout 动画无关）。
+  // 用 getBoundingClientRect 会读到 layout 动画中间帧 → 命中检测乱跳。
+  function getStaticRect(el: HTMLElement): { left: number; right: number; top: number; bottom: number } {
+    const op = (el.offsetParent as HTMLElement | null) ?? document.body;
+    const pr = op.getBoundingClientRect();
+    return {
+      left: pr.left + el.offsetLeft,
+      right: pr.left + el.offsetLeft + el.offsetWidth,
+      top: pr.top + el.offsetTop,
+      bottom: pr.top + el.offsetTop + el.offsetHeight,
+    };
+  }
+
+  // catalog 不动，根据 dragState 派生"视觉顺序"——driver 用 CSS `order` 而非 DOM 重排，
+  // 避免 React reconciliation 搬动 DOM 节点导致的一帧空白。
+  const visualCatalog = useMemo<CatalogItem[]>(() => {
+    if (!dragState) return catalog;
+    const oldIdx = catalog.findIndex(it => it.id === dragState.id);
+    if (oldIdx < 0 || oldIdx === dragState.previewIdx) return catalog;
+    const next = [...catalog];
+    const [it] = next.splice(oldIdx, 1);
+    next.splice(dragState.previewIdx, 0, it);
+    return next;
+  }, [catalog, dragState]);
+
+  const visualOrderMap = useMemo(() => {
+    const m = new Map<string, number>();
+    visualCatalog.forEach((it, i) => m.set(it.id, i));
+    return m;
+  }, [visualCatalog]);
+
+  // 拖拽中由 onDrag 触发：用 dragged 卡的视觉中心作探针，命中目标卡静态格子就更新 previewIdx。
+  function reorderByPointer(draggedId: string) {
+    const draggedEl = cardRefs.current.get(draggedId);
+    if (!draggedEl) return;
+    const dr = draggedEl.getBoundingClientRect();
+    const probeX = dr.left + dr.width / 2;
+    const probeY = dr.top + dr.height / 2;
+
+    let overId: string | null = null;
+    for (const [id, el] of cardRefs.current) {
+      if (id === draggedId) continue;
+      const r = getStaticRect(el);
+      if (probeX >= r.left && probeX <= r.right && probeY >= r.top && probeY <= r.bottom) {
+        overId = id;
+        break;
+      }
+    }
+    if (!overId) return;
+    const newIdx = visualOrderMap.get(overId);
+    if (newIdx === undefined) return;
+    setDragState(prev => {
+      if (!prev || prev.id !== draggedId) return prev;
+      if (prev.previewIdx === newIdx) return prev;
+      return { id: draggedId, previewIdx: newIdx };
+    });
+  }
+
+  function handleDragStart(id: string) {
+    const oldIdx = catalog.findIndex(it => it.id === id);
+    if (oldIdx < 0) return;
+    setDragState({ id, previewIdx: oldIdx });
+  }
+
+  function handleDragEnd() {
+    setDragState(prev => {
+      if (prev) {
+        // 提交：把 visualCatalog 落到 catalog
+        const oldIdx = catalog.findIndex(it => it.id === prev.id);
+        if (oldIdx >= 0 && oldIdx !== prev.previewIdx) {
+          const next = [...catalog];
+          const [it] = next.splice(oldIdx, 1);
+          next.splice(prev.previewIdx, 0, it);
+          setCatalog(next);
+          saveOrder(next.map(x => x.id));
+        }
+      }
+      return null;
+    });
+  }
 
   // 探测完成后：1 个可选 → 自动选；>1 个可选 → 默认最高
   function pickDefaultQuality(p: ProbeResult) {
@@ -77,7 +201,11 @@ export default function LandingPage() {
     setDeleting(true);
     try {
       await deleteNote(confirmDel.id);
-      setCatalog(c => c.filter(it => it.id !== confirmDel.id));
+      setCatalog(c => {
+        const next = c.filter(it => it.id !== confirmDel.id);
+        saveOrder(next.map(it => it.id));
+        return next;
+      });
       setConfirmDel(null);
     } catch (e) {
       alert(`删除失败：${String(e)}`);
@@ -465,56 +593,19 @@ export default function LandingPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {catalog.map((item, i) => (
-              <Link key={item.id} href={`/notes/${item.id}`}>
-                <motion.article
-                  initial={{ opacity: 0, y: 12 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.35 + i * 0.06, type: "spring", stiffness: 180, damping: 24 }}
-                  whileHover={{ y: -3 }}
-                  className="apple-card group p-5 h-full cursor-pointer flex flex-col relative"
-                >
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      setConfirmDel(item);
-                    }}
-                    title="删除笔记"
-                    className="absolute top-3 right-3 w-7 h-7 rounded-full
-                               bg-[var(--bg-muted)] text-[var(--fg-tertiary)]
-                               hover:bg-[#ff3b30] hover:text-white
-                               inline-flex items-center justify-center
-                               opacity-0 group-hover:opacity-100 transition-all z-10"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                  <div className="flex items-start justify-between gap-3">
-                    <span className="tag-chip">{item.domain}</span>
-                    <span className="inline-flex items-center gap-1 text-xs text-[var(--fg-tertiary)] tabular-nums">
-                      <Clock size={11} /> {formatDuration(item.duration_sec)}
-                    </span>
-                  </div>
-                  <h3 className="mt-3 text-base font-semibold leading-snug line-clamp-2 flex-1">
-                    {item.title}
-                  </h3>
-                  {item.uploader && (
-                    <p className="mt-1 text-xs text-[var(--fg-tertiary)]">{item.uploader}</p>
-                  )}
-                  <div className="mt-4 pt-4 border-t border-[var(--border)] flex items-center gap-3 text-xs text-[var(--fg-secondary)]">
-                    <span className="inline-flex items-center gap-1">
-                      <Layers size={11} /> {item.chapters} 章
-                    </span>
-                    <span className="inline-flex items-center gap-1">
-                      <Hash size={11} /> {item.chunks} 段
-                    </span>
-                    <span className="ml-auto inline-flex items-center gap-1 text-[var(--accent)] font-medium
-                                     group-hover:gap-1.5 transition-all">
-                      打开 <ArrowRight size={12} />
-                    </span>
-                  </div>
-                </motion.article>
-              </Link>
+              <NoteCard
+                key={item.id}
+                item={item}
+                index={i}
+                cssOrder={visualOrderMap.get(item.id) ?? i}
+                isDragged={dragState?.id === item.id}
+                anyDragging={anyDragging}
+                registerRef={el => registerCardRef(item.id, el)}
+                onDragStart={() => handleDragStart(item.id)}
+                onDragMove={() => reorderByPointer(item.id)}
+                onDragEnd={() => handleDragEnd()}
+                onDelete={() => setConfirmDel(item)}
+              />
             ))}
           </div>
         )}
@@ -596,5 +687,135 @@ export default function LandingPage() {
         <div className="text-[10px]">本科毕设演示 · ASR + 多模态章节切分 + 学习场景 md 渲染</div>
       </footer>
     </main>
+  );
+}
+
+function NoteCard({ item, index, cssOrder, isDragged, anyDragging, registerRef, onDragStart, onDragMove, onDragEnd, onDelete }: {
+  item: CatalogItem;
+  index: number;
+  cssOrder: number;
+  isDragged: boolean;
+  anyDragging: boolean;
+  registerRef: (el: HTMLElement | null) => void;
+  onDragStart: () => void;
+  onDragMove: () => void;
+  onDragEnd: () => void;
+  onDelete: () => void;
+}) {
+  const dragControls = useDragControls();
+  const ref = useRef<HTMLDivElement>(null);
+  // 自己 own x/y motion value，方便在 CSS slot 变化时手动补偿，保证拖拽中的卡视觉位置不动
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+  const lastBase = useRef<{ left: number; top: number } | null>(null);
+
+  useEffect(() => {
+    registerRef(ref.current);
+    return () => registerRef(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // 当 cssOrder 变化（被 swap 进新格子）时，offsetLeft/Top 反映新的静态位置。
+  // 如果这张卡正在被拖，给 motion value 减掉 base 的 delta，视觉位置保持不变（仍在光标下）。
+  useLayoutEffect(() => {
+    if (!ref.current) return;
+    const el = ref.current;
+    const op = (el.offsetParent as HTMLElement | null) ?? document.body;
+    const opRect = op.getBoundingClientRect();
+    const base = { left: opRect.left + el.offsetLeft, top: opRect.top + el.offsetTop };
+    if (isDragged && lastBase.current) {
+      const dx = base.left - lastBase.current.left;
+      const dy = base.top - lastBase.current.top;
+      if (Math.abs(dx) > 0.5 || Math.abs(dy) > 0.5) {
+        x.set(x.get() - dx);
+        y.set(y.get() - dy);
+      }
+    }
+    lastBase.current = base;
+  }, [cssOrder, isDragged, x, y]);
+
+  return (
+    <motion.div
+      ref={ref}
+      // 被拖的那张关掉 layout：FLIP 会让它从老位置滑到新位置 → 抢走 drag 对 x/y 的控制；
+      // 不被拖的卡保留 layout，让 CSS order 改变时它们能丝滑 FLIP 让位
+      layout={!isDragged}
+      drag
+      dragListener={false}
+      dragControls={dragControls}
+      dragMomentum={false}
+      dragElastic={0}
+      dragSnapToOrigin
+      onDragStart={onDragStart}
+      onDrag={onDragMove}
+      onDragEnd={onDragEnd}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{
+        layout: { type: "spring", stiffness: 320, damping: 28, mass: 1 },
+        default: { delay: 0.35 + index * 0.06, duration: 0.25 },
+      }}
+      // hover 用 scale 不用 y——避免和 drag 共用 y 通道
+      whileHover={anyDragging ? undefined : { scale: 1.015 }}
+      whileDrag={{ scale: 1.06, zIndex: 50, boxShadow: "var(--shadow-lg)" }}
+      className="draggable-tile"
+      style={{ x, y, order: cssOrder, touchAction: "none" }}
+    >
+      <Link href={`/notes/${item.id}`} draggable={false}
+            onClick={(e) => { if (isDragged) e.preventDefault(); }}>
+        <article className="apple-card group p-5 h-full cursor-pointer flex flex-col relative">
+          <button
+            type="button"
+            onPointerDown={(e) => { e.preventDefault(); dragControls.start(e); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            title="拖动排序"
+            className="absolute top-3 left-3 w-7 h-7 rounded-full
+                       bg-[var(--bg-muted)] text-[var(--fg-tertiary)]
+                       hover:bg-[var(--bg-elevated)] hover:text-[var(--fg)]
+                       inline-flex items-center justify-center
+                       opacity-0 group-hover:opacity-100 transition-all z-10
+                       cursor-grab active:cursor-grabbing touch-none"
+          >
+            <GripVertical size={13} />
+          </button>
+          <button
+            type="button"
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(); }}
+            title="删除笔记"
+            className="absolute top-3 right-3 w-7 h-7 rounded-full
+                       bg-[var(--bg-muted)] text-[var(--fg-tertiary)]
+                       hover:bg-[#ff3b30] hover:text-white
+                       inline-flex items-center justify-center
+                       opacity-0 group-hover:opacity-100 transition-all z-10"
+          >
+            <Trash2 size={13} />
+          </button>
+          <div className="flex items-start justify-between gap-3">
+            <span className="tag-chip">{item.domain}</span>
+            <span className="inline-flex items-center gap-1 text-xs text-[var(--fg-tertiary)] tabular-nums">
+              <Clock size={11} /> {formatDuration(item.duration_sec)}
+            </span>
+          </div>
+          <h3 className="mt-3 text-base font-semibold leading-snug line-clamp-2 flex-1">
+            {item.title}
+          </h3>
+          {item.uploader && (
+            <p className="mt-1 text-xs text-[var(--fg-tertiary)]">{item.uploader}</p>
+          )}
+          <div className="mt-4 pt-4 border-t border-[var(--border)] flex items-center gap-3 text-xs text-[var(--fg-secondary)]">
+            <span className="inline-flex items-center gap-1">
+              <Layers size={11} /> {item.chapters} 章
+            </span>
+            <span className="inline-flex items-center gap-1">
+              <Hash size={11} /> {item.chunks} 段
+            </span>
+            <span className="ml-auto inline-flex items-center gap-1 text-[var(--accent)] font-medium
+                             group-hover:gap-1.5 transition-all">
+              打开 <ArrowRight size={12} />
+            </span>
+          </div>
+        </article>
+      </Link>
+    </motion.div>
   );
 }

@@ -96,6 +96,16 @@ html, body {
   box-shadow: var(--shadow-lg);
 }
 
+/* 可拖拽卡片：禁用 apple-card 自带的 hover transform 与 transition，
+   避免与 framer-motion 的 layout 拖拽动画同时跑两套 transform 引擎产生闪烁。
+   hover 抬升效果改用 framer-motion 的 whileHover 在外层 motion.div 上接管。 */
+.draggable-tile .apple-card {
+  transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.draggable-tile .apple-card:hover {
+  transform: none;
+}
+
 .apple-button {
   background: var(--accent);
   color: white;

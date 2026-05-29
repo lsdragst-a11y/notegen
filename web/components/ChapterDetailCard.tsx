@@ -139,9 +139,9 @@ export default function ChapterDetailCard({
           {/* 本章高频术语 */}
           {kws.length > 0 && (
             <div className="mt-3.5 flex flex-wrap gap-1.5">
-              {kws.map(k => (
+              {kws.map((k, i) => (
                 <span
-                  key={k}
+                  key={`${k}-${i}`}
                   className="tag-chip !text-[11px] !py-0.5 !px-2"
                 >
                   {k}

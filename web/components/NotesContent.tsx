@@ -91,7 +91,7 @@ export default function NotesContent({
         </div>
         {keywords.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {keywords.map(k => <span key={k} className="tag-chip">{k}</span>)}
+            {keywords.map((k, i) => <span key={`${k}-${i}`} className="tag-chip">{k}</span>)}
           </div>
         )}
       </motion.section>
@@ -186,8 +186,8 @@ export default function NotesContent({
                       const clean = filterStopwords(kws).slice(0, 3);
                       return clean.length > 0 ? (
                         <div className="mt-1.5 flex flex-wrap gap-1">
-                          {clean.map(kw => (
-                            <span key={kw} className="text-[10px] text-[var(--fg-tertiary)]">·{kw}</span>
+                          {clean.map((kw, i) => (
+                            <span key={`${kw}-${i}`} className="text-[10px] text-[var(--fg-tertiary)]">·{kw}</span>
                           ))}
                         </div>
                       ) : null;
