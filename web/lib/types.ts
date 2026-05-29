@@ -46,8 +46,18 @@ export interface Chapter {
   children?: Chapter[];
 }
 
+export interface Overview {
+  summary: string;
+  summary_zh?: string;
+  summary_en?: string;
+  takeaways: string[];
+  takeaways_zh?: string[];
+  takeaways_en?: string[];
+}
+
 export interface ChaptersFile {
   chapters: Chapter[];
+  overview?: Overview;
   ablation?: Record<string, unknown>;
 }
 

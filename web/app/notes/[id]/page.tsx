@@ -230,6 +230,7 @@ export default function NoteDetailPage({ params }: PageProps) {
             title={title}
             summary={bundle.summary}
             chapters={bundle.chapters}
+            overview={bundle.overview}
             currentTime={currentTime}
             onSeek={seek}
             category={bundle.meta?.category}

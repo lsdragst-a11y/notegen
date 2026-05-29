@@ -327,6 +327,12 @@ Output: ["AI Agent vs Automation Definition"]""",
 # ====== LANGUAGE OVERRIDE: ENGLISH ======
 **Input text is in ENGLISH.** Output every refined headline in English (3-8 word noun phrase).
 DO NOT translate. DO NOT output Chinese characters.""",
+    "overview": """
+
+# ====== LANGUAGE OVERRIDE: ENGLISH ======
+**Chapter titles/abstracts are in ENGLISH.** Output `summary` and every `takeaways` item in English.
+DO NOT output any Chinese character. `summary` is 40-80 words of connected prose;
+each takeaway is 5-15 words naming a concrete concept/technique.""",
 }
 
 
@@ -2432,46 +2438,27 @@ introduces..."），中文则用中文（"本章介绍..."）。**不要翻译**
 不要 markdown / 解释 / 前言。"""
 
 
-def generate_chapter_abstracts(chapters: list[dict],
-                               model_id: str = _DEFAULT_MODEL,
-                               max_new_tokens: Optional[int] = None,
-                               lang: str = "zh",
-                               category: str = "teaching") -> Optional[list[str]]:
-    """批量生成章节级 abstractive 概述（1-2 句 prose）。
-    chapters 需含 chunks 列表（每个 chunk 含 headline）。
-    成功返回与 chapters 等长字符串列表；失败返回 None（caller 应 fallback summarize_chapter）。
-
-    category=vlog/talk 时切到 VLOG_SECTION_ABSTRACT_SYSTEM（"本段..."开头 + 场景元素），
-    其余走 CHAPTER_ABSTRACT_SYSTEM（"本章..."开头 + 技术点）。
-
-    max_new_tokens 默认按 K 动态算（每 abstract ~150 tokens），防多章 K>=6 截断。"""
-    if not chapters:
-        return None
-    K = len(chapters)
-    if max_new_tokens is None:
-        max_new_tokens = max(600, 180 * K)
-    is_vlog_like = category in ("vlog", "talk")
-    unit_word = "片段" if is_vlog_like else "章"
-    sys_prompt = (VLOG_SECTION_ABSTRACT_SYSTEM if is_vlog_like
-                  else CHAPTER_ABSTRACT_SYSTEM)
-    # 2026-05-21 BV1q6 日料 vlog 揭示：只喂 headline 关键词导致 LLM 从字面 hallucinate
-    # abstract（"心理线"→股市，"包容心"→情感，"皇上价格"→清朝皇帝）。补 snippet
-    # 让 LLM 看见 ASR 实际内容。snippet 优先 summary（抽取式紧凑），fallback text[:200]。
-    # 长视频 K>=10 时收紧 snippet 长度防 context 超额。
-    snippet_max = 200 if K <= 8 else 120
-    lines = []
+def _run_abstract_batch(chapters_subset: list[dict], model, tok, sys_prompt: str,
+                        unit_word: str, snippet_max: int, lang: str,
+                        max_new_tokens: int, start_idx: int = 0) -> Optional[list[str]]:
+    """为 chapters_subset 生成 abstract：每 chunk 喂 headline + 关键词 + 内容 snippet，
+    ASR 错字经 _calibrate_headline_words 校准成 [?] mask。返回 len(subset) 的 list 或 None。
+    snippet 优先 summary（抽取式紧凑），fallback text[:snippet_max]——让 LLM 看见 ASR
+    实际内容，避免从 headline 字面 hallucinate（2026-05-21 BV1q6 日料 vlog 教训）。"""
+    import torch
+    lines: list[str] = []
     any_drop = False
     all_drops: set[str] = set()
-    for ci, ch in enumerate(chapters):
+    for li, ch in enumerate(chapters_subset):
         title = ch.get("title", "")
-        lines.append(f"[第 {ci+1} {unit_word}" + (f": {title}" if title else "") + "]")
+        lines.append(f"[第 {start_idx + li + 1} {unit_word}"
+                     + (f": {title}" if title else "") + "]")
         for sub_c in ch.get("chunks", []):
             hl = (sub_c.get("headline") or "").strip()
             kws = _mask_kws_by_prob(sub_c.get("keywords") or [], sub_c)
             text = sub_c.get("text", "") or ""
             cal = _calibrate_headline_words(hl, kws, text, chunk=sub_c) if hl else {"drop": []}
-            # 标题校准结果：headline 里的 ASR 错字直接从 headline 字面 mask 掉
-            # （drop 词替换成 [?]），让 LLM 看不到原词。比单纯 prompt 警告稳得多
+            # ASR 错字直接从 headline / snippet 字面 mask 成 [?]，比单纯 prompt 警告稳
             hl_display = hl
             for w in cal["drop"]:
                 hl_display = hl_display.replace(w, "[?]")
@@ -2482,32 +2469,171 @@ def generate_chapter_abstracts(chapters: list[dict],
             snippet = (sub_c.get("summary") or sub_c.get("text") or "").strip()
             if snippet:
                 snippet = re.sub(r"\s+", " ", snippet)[:snippet_max]
-                # snippet 里同 mask：保留上下文但屏蔽 ASR 错字字面
                 for w in cal["drop"]:
                     snippet = snippet.replace(w, "[?]")
                 lines.append(f"    内容: {snippet}")
     body = "\n".join(lines)
+    n = len(chapters_subset)
     drop_clause = (
         f"\n⚠️ 文本中的 [?] 是 Python 校准过的 ASR 错字 mask "
         f"(原词: {', '.join(sorted(all_drops))})——abstract 里**不要**写 [?]，"
         f"也**不要**尝试还原原词；用「内容」里实际描述的概念替代。\n"
         if any_drop else "")
-    user_prompt = (f"共 {K} {unit_word}，请基于每{unit_word}下"
+    user_prompt = (f"共 {n} {unit_word}，请基于每{unit_word}下"
                    f"「内容」字段中的实际转写文本生成 1-2 句简介。"
                    f"**严格根据「内容」实际讲的事情写**——"
                    f"不要从{unit_word}标题字面猜测含义，"
-                   f"不要写「内容」里没出现的概念或场景。"
+                   f"不要写「内容」里没出现的概念或场景，"
+                   f"**不要借用其它{unit_word}的内容**。"
                    f"{drop_clause}\n{body}\n\n"
-                   f"输出 JSON 数组（必须 {K} 个元素）：")
-    model, tok = load_model(model_id)
+                   f"输出 JSON 数组（必须 {n} 个元素）：")
     messages = [
         {"role": "system", "content": _system_with_lang(sys_prompt, lang, "abstract")},
         {"role": "user", "content": user_prompt},
     ]
     text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    inputs = tok(text, return_tensors="pt").to(model.device)
+    with torch.no_grad():
+        out = model.generate(
+            **inputs, max_new_tokens=max_new_tokens, do_sample=True,
+            temperature=0.2, top_p=0.9, pad_token_id=tok.eos_token_id,
+        )
+    gen_ids = out[0][inputs["input_ids"].shape[1]:]
+    raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
+    arr = _parse_titles_array(raw, n)
+    if arr is None:
+        return None
+    return [_strip_qmask(str(s).strip().strip('"').strip("'")) for s in arr]
+
+
+def generate_chapter_abstracts(chapters: list[dict],
+                               model_id: str = _DEFAULT_MODEL,
+                               max_new_tokens: Optional[int] = None,
+                               lang: str = "zh",
+                               category: str = "teaching") -> Optional[list[str]]:
+    """生成章节级 abstractive 概述（1-2 句 prose）。chapters 需含 chunks 列表。
+    成功返回与 chapters 等长字符串列表；空输入返回 None。
+
+    2026-05-29 改为**逐章独立生成**：原先把全部 K 章塞进一次 LLM 调用，主题集中的
+    教学视频上模型会跨章串味，输出近乎雷同的 abstract（p68 8 章里 Ch4/Ch5 几乎一致、
+    Ch2「请求与响应」却在讲优先级/屏蔽）。逐章只喂**本章** chunk，模型物理上看不到
+    邻章内容，从根上消除同质化漂移。单章解析失败重试一次，再失败用抽取式兜底。
+
+    category=vlog/talk 时切到 VLOG_SECTION_ABSTRACT_SYSTEM，其余走 CHAPTER_ABSTRACT_SYSTEM。"""
+    if not chapters:
+        return None
+    K = len(chapters)
+    is_vlog_like = category in ("vlog", "talk")
+    unit_word = "片段" if is_vlog_like else "章"
+    sys_prompt = (VLOG_SECTION_ABSTRACT_SYSTEM if is_vlog_like
+                  else CHAPTER_ABSTRACT_SYSTEM)
+    snippet_max = 200 if K <= 8 else 120
+    per_ch_tokens = max_new_tokens or 260
+    model, tok = load_model(model_id)
+    abstracts: list[str] = []
+    n_fallback = 0
+    for ci, ch in enumerate(chapters):
+        res = _run_abstract_batch([ch], model, tok, sys_prompt, unit_word,
+                                  snippet_max, lang, per_ch_tokens)
+        if not res or not res[0]:
+            res = _run_abstract_batch([ch], model, tok, sys_prompt, unit_word,
+                                      snippet_max, lang, per_ch_tokens)
+        if res and res[0]:
+            abstracts.append(res[0])
+        else:
+            from summarize_neural import summarize_chapter
+            abstracts.append(summarize_chapter(ch.get("chunks", [])))
+            n_fallback += 1
+    tail = f"（{n_fallback} 章抽取式兜底）" if n_fallback else ""
+    print(f"      [llm-chapter-abstract] generated {K} chapter abstracts 逐章{tail}",
+          flush=True)
+    return abstracts
+
+
+DOC_OVERVIEW_SYSTEM = """你是教学视频的**全文总结**助手。给定一个视频的标题，以及它\
+各章节的标题 + 概述，生成整段视频的「全文总结」和「你将学到」要点。
+
+**⚠️ 输出语言匹配输入**：章节是英文则用英文，中文则用中文。**不要翻译**——保持原语言一致。
+
+## 要求
+
+1. **summary（全文总结）**：3-5 句连贯的陈述句 prose，概括整段视频"讲了什么 + 主线脉络"。
+   - 要体现章节之间的**逻辑递进**（"从 X 出发，依次展开 Y、Z，最后落到 W"），不是罗列章标题。
+   - 80-160 字（中文）或 40-80 词（英文）。
+   - 必须点出 1-2 个贯穿全片的核心问题 / 主线。
+2. **takeaways（你将学到）**：3-5 条"学完整段视频能掌握什么"的具体要点。
+   - 每条 10-30 字（中文）或 5-15 词（英文），**含具体技术点 / 概念名**，不要空泛
+     （禁止"了解 X 的相关内容""掌握 X 的基本知识"这种无信息表述）。
+   - **覆盖全片不同章节**，不要都挤在一个主题上。
+3. summary 和 takeaways 都**必须基于给定的章节概述实际内容**，禁止编造章节里没出现的概念。
+4. **严格输出一个 JSON 对象**：{"summary": "...", "takeaways": ["...", "..."]}，
+   不要 markdown 代码块、解释或前言。"""
+
+
+def _parse_overview_obj(raw: str) -> Optional[dict]:
+    """解析 LLM 输出的 overview 对象 {"summary": str, "takeaways": [str]}。
+    容错：剥 ```json fence、截取首个 {...}。校验通不过返回 None。"""
+    s = re.sub(r"^```(?:json)?\s*|\s*```$", "", raw.strip(),
+               flags=re.IGNORECASE).strip()
+    obj = None
+    try:
+        obj = json.loads(s)
+    except Exception:
+        m = re.search(r"\{.*\}", s, re.DOTALL)
+        if m:
+            try:
+                obj = json.loads(m.group(0))
+            except Exception:
+                obj = None
+    if not isinstance(obj, dict):
+        return None
+    summary = _strip_qmask(str(obj.get("summary", "") or "").strip())
+    tk_raw = obj.get("takeaways")
+    if not isinstance(tk_raw, list):
+        return None
+    takeaways = []
+    for t in tk_raw:
+        t = _strip_qmask(str(t).strip().lstrip("-•*").strip())
+        if t:
+            takeaways.append(t)
+    if not summary or not takeaways:
+        return None
+    return {"summary": summary, "takeaways": takeaways[:6]}
+
+
+def generate_doc_overview(chapters: list[dict],
+                          video_title: str = "",
+                          model_id: str = _DEFAULT_MODEL,
+                          max_new_tokens: int = 600,
+                          lang: str = "zh") -> Optional[dict]:
+    """生成文档级「全文总结」+「你将学到」要点。
+
+    基于各章 title + abstract（不依赖 chunks，pipeline 与 backfill 两条路径通用）。
+    返回 {"summary": str, "takeaways": [str]}；失败返回 None（caller 应 fallback / 跳过）。"""
+    if not chapters:
+        return None
+    lines = []
+    if video_title:
+        lines.append(f"视频标题：{video_title}")
+    lines.append(f"共 {len(chapters)} 章：")
+    for ci, ch in enumerate(chapters, 1):
+        title = (ch.get("title") or "").strip()
+        ab = (ch.get("abstract") or "").strip()
+        lines.append(f"[第 {ci} 章] {title}")
+        if ab:
+            lines.append(f"  概述：{ab}")
+    body = "\n".join(lines)
+    user_prompt = (f"下面是一个视频的章节标题与概述。请基于这些**实际内容**生成整段视频的"
+                   f"全文总结和「你将学到」要点。\n\n{body}\n\n输出 JSON 对象：")
+    model, tok = load_model(model_id)
+    messages = [
+        {"role": "system", "content": _system_with_lang(DOC_OVERVIEW_SYSTEM, lang, "overview")},
+        {"role": "user", "content": user_prompt},
+    ]
+    text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     import torch
     inputs = tok(text, return_tensors="pt").to(model.device)
-    print(f"      [llm-chapter-abstract] generate for {K} chapters "
+    print(f"      [llm-doc-overview] generate from {len(chapters)} chapters "
           f"(input {inputs['input_ids'].shape[1]} tokens) ...", flush=True)
     with torch.no_grad():
         out = model.generate(
@@ -2516,13 +2642,13 @@ def generate_chapter_abstracts(chapters: list[dict],
         )
     gen_ids = out[0][inputs["input_ids"].shape[1]:]
     raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
-    arr = _parse_titles_array(raw, K)
-    if arr is None:
-        print(f"      [llm-chapter-abstract] parse failed, raw: {raw[:250]}", flush=True)
+    obj = _parse_overview_obj(raw)
+    if obj is None:
+        print(f"      [llm-doc-overview] parse failed, raw: {raw[:250]}", flush=True)
         return None
-    abstracts = [_strip_qmask(str(s).strip().strip('"').strip("'")) for s in arr]
-    print(f"      [llm-chapter-abstract] generated {K} chapter abstracts", flush=True)
-    return abstracts
+    print(f"      [llm-doc-overview] summary {len(obj['summary'])} chars, "
+          f"{len(obj['takeaways'])} takeaways", flush=True)
+    return obj
 
 
 CHAPTER_RECAP_SYSTEM = """你是教学视频的**复习要点**生成助手。给定一章的内容，\
@@ -3038,6 +3164,106 @@ def _local_headline_fallback(chunk: dict, max_len: int = 12) -> str:
     return text[:max_len] if text else "（章节）"
 
 
+REPAIR_HEADLINES_SYSTEM = """你是教学视频笔记的标题去重助手。下面给你若干**连续**的\
+视频段，它们之前被错误地贴上了**同一个**总括标题——其实每段讲的是这个总括主题下\
+**不同的子主题 / 步骤 / 方法 / 示例**。请为每段重写一个互不相同、具体的小标题。
+
+要求：
+1. 每段输出 6-15 字中文名词短语（英文 3-8 词），不带句末标点
+2. **禁止**把总括词单独作为某段标题——必须指出该段**具体讲什么**
+   （某个子机制 / 某个执行步骤 / 某种实现方法 / 某道例题 / 现场保存/恢复 等）
+3. 段与段的标题**绝对不能重复**，要体现讲解的推进
+4. 严格基于每段"内容摘要 / 关键词"判定，不要照搬总括词
+5. 严格输出 JSON 数组，长度必须等于输入段数，按顺序对应
+6. 不要任何 markdown 标记、解释或前言"""
+
+
+def _regen_distinct_headlines(group_chunks: list[dict], umbrella: str,
+                              model, tok, lang: str = "zh") -> Optional[list[str]]:
+    """对一组被塌缩到同一 headline 的连续 chunk，基于各自 summary 重命名为
+    互不相同的子主题标题。temp 调高到 0.3 打破生成端的"懒惰复读"模式。"""
+    import torch
+    n = len(group_chunks)
+    lines = []
+    for i, c in enumerate(group_chunks):
+        summ = (c.get("summary") or "").replace("\n", " ").strip()
+        kws = c.get("keywords") or []
+        txt = (c.get("text") or "").replace("\n", " ").strip()
+        lines.append(f"[段 {i}]")
+        if kws:
+            lines.append(f"  关键词: {', '.join(kws[:6])}")
+        if summ:
+            lines.append(f"  内容摘要: {summ[:220]}")
+        elif txt:
+            lines.append(f"  原文: {txt[:220]}")
+    user_prompt = (
+        f"以下 {n} 个连续段之前都被错误贴上了同一个总括标题「{umbrella}」。\n"
+        f"它们其实是「{umbrella}」之下**不同的子主题/步骤/方法/示例**，请为每段\n"
+        f"重写一个互不相同、具体的小标题：\n\n"
+        + "\n".join(lines)
+        + f"\n\n## 硬约束\n"
+        f"1. **禁止**把「{umbrella}」单独当作某段标题——必须写出该段具体子主题\n"
+        f"2. 这 {n} 个标题**绝对不能重复**\n"
+        f"3. 标题核心名词要来自该段的关键词/内容摘要\n"
+        f"4. 每个 6-15 字中文名词短语\n"
+        f"输出 JSON 数组（必须 {n} 个元素）："
+    )
+    messages = [
+        {"role": "system", "content": _system_with_lang(REPAIR_HEADLINES_SYSTEM, lang, "headlines")},
+        {"role": "user", "content": user_prompt},
+    ]
+    text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+    inputs = tok(text, return_tensors="pt").to(model.device)
+    with torch.no_grad():
+        out = model.generate(
+            **inputs, max_new_tokens=max(400, 60 * n), do_sample=True,
+            temperature=0.3, top_p=0.9, pad_token_id=tok.eos_token_id,
+        )
+    raw = tok.decode(out[0][inputs["input_ids"].shape[1]:],
+                     skip_special_tokens=True).strip()
+    arr = _parse_titles_array(raw, n)
+    if arr is None:
+        return None
+    return [str(s).strip().strip('"').strip("'") for s in arr]
+
+
+def _repair_collapsed_headlines(chunks: list[dict], titles: list[str],
+                                model, tok, lang: str = "zh",
+                                min_repeat: int = 3, window: int = 12) -> list[str]:
+    """检测并修复 headline 塌缩：若某 headline 出现 ≥ min_repeat 次（如 p68
+    "中断服务程序"×23），说明 LLM 在主题集中视频上把整段都贴了总括词，丢失了
+    子主题区分。对每个塌缩组分窗（≤ window）重新命名为互不相同的子主题标题。
+
+    仅在检测到塌缩时触发——健康视频此函数零额外 LLM 调用、原样返回。"""
+    from collections import Counter
+    counts = Counter(t for t in titles if t)
+    collapsed = sorted((t for t, c in counts.items() if c >= min_repeat),
+                       key=lambda t: -counts[t])
+    if not collapsed:
+        return titles
+    new_titles = list(titles)
+    for umbrella in collapsed:
+        idxs = [i for i, t in enumerate(titles) if t == umbrella]
+        print(f"      [headline-repair] 检测到塌缩「{umbrella}」×{len(idxs)} → "
+              f"分窗重修", flush=True)
+        for w0 in range(0, len(idxs), window):
+            win = idxs[w0:w0 + window]
+            repaired = _regen_distinct_headlines(
+                [chunks[i] for i in win], umbrella, model, tok, lang)
+            if repaired and len(repaired) == len(win):
+                for j, i in enumerate(win):
+                    cand = repaired[j].strip()
+                    # 拒绝重修又吐出总括词 / 空串：保留旧值（残留少量重复无妨，
+                    # 不再拼 ASR-noisy keyword 区分——那会造出"·优前级"这类乱码后缀）
+                    if cand and cand != umbrella:
+                        new_titles[i] = cand
+    n_changed = sum(1 for a, b in zip(titles, new_titles) if a != b)
+    if n_changed:
+        print(f"      [headline-repair] 重修完成，改写 {n_changed} 段 headline",
+              flush=True)
+    return new_titles
+
+
 def generate_headlines(chunks: list[dict],
                       model_id: str = _DEFAULT_MODEL,
                       max_new_tokens: Optional[int] = None,
@@ -3160,6 +3386,9 @@ def generate_headlines(chunks: list[dict],
               f"({n_truncated} blank from truncation fallback)", flush=True)
     else:
         print(f"      [llm-headline-gen] generated {n} headlines from scratch", flush=True)
+    # 塌缩重修：主题集中视频上 LLM 易把整段贴同一总括词（p68 "中断服务程序"×23），
+    # 丢失子主题区分并污染下游分段/章标题。检测到 ≥3 次重复才触发，否则零开销。
+    titles = _repair_collapsed_headlines(chunks, titles, model, tok, lang=lang)
     return titles
 
 

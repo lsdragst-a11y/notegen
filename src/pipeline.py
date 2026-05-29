@@ -645,6 +645,33 @@ def _apply_chapter_quizzes(chapter_list: list, llm_chapters: bool,
             print(f"      [chapter quiz] {nq} questions", flush=True)
 
 
+def _apply_doc_overview(chapter_list: list, llm_chapters: bool,
+                        video_title: str = "",
+                        lang: str = "zh",
+                        category: str = "teaching") -> dict | None:
+    """生成文档级「全文总结」（散文概览 + 你将学到要点），喂各章 title+abstract。
+
+    仅对 teaching / popsci 类视频生成（vlog/talk 上整篇 takeaways 无意义）。
+    失败/关闭时返回 None，前端无 overview 时不渲染 hero。"""
+    if not llm_chapters:
+        return None
+    if category in ("vlog", "talk"):
+        return None
+    try:
+        from segment_llm import generate_doc_overview
+        ov = generate_doc_overview(chapter_list, video_title=video_title, lang=lang)
+    except Exception as e:
+        print(f"      [doc-overview] 异常：{e}，跳过全文总结", flush=True)
+        return None
+    if ov and ov.get("summary"):
+        nt = len(ov.get("takeaways", []))
+        print(f"      [doc-overview] summary {len(ov['summary'])} 字 / "
+              f"{nt} takeaways", flush=True)
+        return ov
+    print(f"      [doc-overview] ⚠️ 返回空，跳过全文总结", flush=True)
+    return None
+
+
 @dataclass
 class PipelineConfig:
     """run() 的 17 个入参拢成一个不可变 record，避免到处传 kw。"""
@@ -693,6 +720,7 @@ class PipelineState:
     vl_degraded_reason: str | None = None
     inferred_category: str = "teaching"
     chapter_list: list | None = None
+    doc_overview: dict | None = None
     ablation: dict | None = None
     seg_meta: dict = field(default_factory=lambda: {
         "method": None,
@@ -1145,6 +1173,11 @@ def _do_llm_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
             _apply_chapter_quizzes(chapter_list, cfg.llm_chapters,
                                    lang=state.resolved_lang,
                                    category=state.inferred_category)
+            state.doc_overview = _apply_doc_overview(
+                chapter_list, cfg.llm_chapters,
+                video_title=(state.meta_for_terms or {}).get("title", ""),
+                lang=state.resolved_lang,
+                category=state.inferred_category)
         _mark_wrapup_chapter(chapter_list, lang=state.resolved_lang)
         state.chapter_list = chapter_list
 
@@ -1223,6 +1256,11 @@ def _do_texttile_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
         _apply_chapter_quizzes(chapter_list, cfg.llm_chapters,
                                lang=state.resolved_lang,
                                category=state.inferred_category)
+        state.doc_overview = _apply_doc_overview(
+            chapter_list, cfg.llm_chapters,
+            video_title=(state.meta_for_terms or {}).get("title", ""),
+            lang=state.resolved_lang,
+            category=state.inferred_category)
     _mark_wrapup_chapter(chapter_list, lang=state.resolved_lang)
     mm_bounds = [ch["indices"][0] for ch in chapter_list[1:]]
     state.ablation = {
@@ -1282,6 +1320,19 @@ def _stage_bilingual(cfg: PipelineConfig, state: PipelineState) -> None:
                 for c, t in zip(state.summaries, t_hls):
                     c[f"headline_{src_lang}"] = c.get("headline", "")
                     c[f"headline_{tgt_lang}"] = t
+        # 4) 文档级全文总结（summary 散文 + takeaways 要点）
+        ov = state.doc_overview
+        if ov and ov.get("summary"):
+            t_sum = translate_bilingual([ov["summary"]], src_lang, tgt_lang)
+            if t_sum and len(t_sum) == 1:
+                ov[f"summary_{src_lang}"] = ov["summary"]
+                ov[f"summary_{tgt_lang}"] = t_sum[0]
+            tk = ov.get("takeaways") or []
+            if tk:
+                t_tk = translate_bilingual(tk, src_lang, tgt_lang)
+                ov[f"takeaways_{src_lang}"] = list(tk)
+                if t_tk and len(t_tk) == len(tk):
+                    ov[f"takeaways_{tgt_lang}"] = t_tk
         print(f"      [bilingual] 双语字段填充完成 ({src_lang}<->{tgt_lang})", flush=True)
     except Exception as e:
         print(f"      [bilingual] 翻译异常：{e}（跳过，前端 fallback 单语）", flush=True)
@@ -1341,6 +1392,8 @@ def _stage_write_outputs(cfg: PipelineConfig, state: PipelineState) -> None:
             "本节复习" in c.get("title", "") or "Recap" in c.get("title", "")
             for c in state.chapter_list)
         payload = {"chapters": slim, "ablation": state.ablation}
+        if state.doc_overview and state.doc_overview.get("summary"):
+            payload["overview"] = state.doc_overview
         (OUTPUT_DIR / f"{stem}.chapters.json").write_text(
             json.dumps(payload, ensure_ascii=False, indent=2,
                        default=lambda x: float(x) if hasattr(x, "item") else None),

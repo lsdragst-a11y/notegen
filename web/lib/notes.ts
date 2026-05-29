@@ -1,5 +1,5 @@
 import type {
-  CatalogItem, Chapter, ChaptersFile, Chunk, NoteMeta, Mark
+  CatalogItem, Chapter, ChaptersFile, Chunk, NoteMeta, Mark, Overview
 } from "./types";
 const PUBLIC_BASE = ""; // 同源，public/ 静态文件用绝对路径 /notes/... 即可
 
@@ -20,6 +20,7 @@ export interface NoteBundle {
   id: string;
   summary: Chunk[];
   chapters: Chapter[];
+  overview: Overview | null;
   meta: NoteMeta | null;
   videoUrl: string;
 }
@@ -43,6 +44,7 @@ export async function fetchNote(id: string): Promise<NoteBundle> {
     id,
     summary,
     chapters: chaptersData.chapters || [],
+    overview: chaptersData.overview || null,
     meta,
     videoUrl: `${PUBLIC_BASE}/videos/${id}.mp4`,
   };

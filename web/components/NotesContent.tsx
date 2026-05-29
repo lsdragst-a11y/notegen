@@ -2,18 +2,20 @@
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { Sparkles, Target, Clock, Expand, ChevronDown } from "lucide-react";
-import type { Chapter, Chunk, Category } from "@/lib/types";
+import type { Chapter, Chunk, Category, Overview } from "@/lib/types";
 import { chunkMarks, overviewKeywords, buildGlossary, filterStopwords, formatTime } from "@/lib/notes";
 import { useLang, pickByLang } from "./LangContext";
 import GlossaryList from "./GlossaryList";
 import Lightbox, { LightboxItem } from "./Lightbox";
 import VlogTimeline from "./VlogTimeline";
+import OverviewHero from "./OverviewHero";
 
 interface Props {
   noteId: string;
   title: string;
   summary: Chunk[];
   chapters: Chapter[];
+  overview?: Overview | null;
   currentTime: number;
   onSeek: (sec: number) => void;
   /** 视频内容大类。teaching=保留全部；popsci=去🎯且术语表折叠；
@@ -22,7 +24,7 @@ interface Props {
 }
 
 export default function NotesContent({
-  noteId, title, summary, chapters, currentTime, onSeek, category = "teaching",
+  noteId, title, summary, chapters, overview, currentTime, onSeek, category = "teaching",
 }: Props) {
   const { lang } = useLang();
   const keywords = overviewKeywords(summary, 8, lang);
@@ -95,6 +97,16 @@ export default function NotesContent({
           </div>
         )}
       </motion.section>
+
+      {/* 全文总结 hero：散文概览 + 你将学到 + 章节比例条（有 overview 才渲染） */}
+      {overview && (
+        <OverviewHero
+          overview={overview}
+          chapters={chapters}
+          currentTime={currentTime}
+          onSeek={onSeek}
+        />
+      )}
 
       {/* 中间主区：教学/科普 → 知识点速览卡片；vlog/talk → 时间轴 */}
       {showKnowledgePoints ? (
