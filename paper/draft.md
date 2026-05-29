@@ -994,6 +994,254 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 
 整体看，本轮 6 项工程加固以**低 LOC 改动换取了端到端可用性 + 单视频质量两个维度的实质提升**，为论文 §8 「Future Work」中「面向用户路径的健壮性验证」一节提供了具体范例。
 
+### 6.6 vlog 域适配：LLM 字面 hallucinate 的根因与修复（2026-05-21~22）
+
+§6.5.1.bis 把 vlog 长视频纳入 corpus 后暴露了第二条 ASR 故障路径并完成三层防御；同一轮 corpus 扩展也在**下游 LLM 摘要层**触发了一类此前未被观察的失败模式——章 abstract 出现大规模字面级 hallucinate。这类失败在教学类视频上长期被掩盖，因为教学类章标题（"PPP 协议"/"NAT"）本身就是技术概念，LLM 按字面联想碰巧靠谱；vlog 域章标题大量使用 up 主自创术语（"心理线"/"包容心"/"皇上价格"），字面联想必然脱离 ASR 实际内容。本节记录该问题的根因、修复与跨视频回归验证。
+
+#### 6.6.1 BV1q6 日料探店：13/16 章 abstract 字面 hallucinate
+
+**现象**：
+
+BV1q6ozBmE8z（上海日料探店，26.1 min）经 §6.5.1.bis 三层防御救回 ASR cache 后，LLM 切分得到 K=16 章。`generate_chapter_abstracts` 输出的章 abstract 在人工对照后发现 **13/16 章** 与 ASR 实际内容严重脱节：
+
+| 章号 | 章标题 | LLM 生成的 abstract | 章内 ASR 实际内容 |
+|------|--------|---------------------|-------------------|
+| ch3 | 心理线 | 分析心理线在**股市**中的应用，揭示投资者如何利用心理指标做出决策 | 讨论"莫娜鸽子腿"菜品口感 |
+| ch5 | 心理极限 | 揭示**潜能边界**与突破方法 | 蒸汽雾化眼部按摩仪改善黑眼圈 |
+| ch10 | 包容心 | 倡导包容心，通过真实故事展现不同背景下的**理解与接纳** | 讨论菜品质量评分 |
+| ch14 | 走鱼价格 | **市场商家差异**的价格分析 | "去掉某条鱼人均七八十元" |
+| ch15 | 皇上价格 | 揭示**皇上价格**的秘密，从**高端市场**到**普通消费者**的视角进行解读 | "770 或 760 元左右"（"皇上"是 ASR 错字） |
+
+ch15 进一步揭示了一条二阶 hallucinate 链路——ASR 错字（"770/760"识为"皇上"）→ LLM 看到"皇上"字面，进一步联想到"清朝皇帝"。上游 ASR 噪声通过 LLM 的字面联想被**放大**而非仅仅"传递"，这是单纯 ASR 后处理无法覆盖的层级问题。
+
+**根因**：
+
+`segment_llm.py:generate_chapter_abstracts` 给 LLM 的 user prompt 只包含章标题与每章 chunk-level **headline 关键词**（如"心理线 / 鸽子腿 / 按摩"），**完全不喂 ASR 原文**。LLM 在缺少 grounding 信号时，按训练分布对自创术语做字面联想——"心理线"在 LLM 先验里关联股市技术指标，"包容心"关联情感教育，"皇上"关联清朝。
+
+这一缺陷在 v5 引入 `VLOG_SECTION_ABSTRACT_SYSTEM` 时未被修复：v5 改动只动 system prompt 风格（让 abstract 用"本段..."开头 + 强调场景元素），但**没动 user prompt 的 input 构造**。教学类视频未暴露此 bug 的原因是其章标题与 ASR 内容在概念层强相关，字面联想偶然成立。
+
+**修复**：
+
+`segment_llm.py:generate_chapter_abstracts` 的 user prompt 构造改为：每个 chunk 同时输出 headline 与 ASR snippet。snippet 优先取 `chunk.summary`（chunker 阶段产生的抽取式紧凑摘要），fallback `chunk.text[:200]`。K ≥ 10 时收紧到 `snippet_max=120` 防 context 超额（16 章 × 120 字 ≈ 6000 tokens 安全）：
+
+```python
+snippet_max = 200 if K <= 8 else 120
+for sub_c in ch.get("chunks", []):
+    hl = (sub_c.get("headline") or "").strip()
+    if hl:
+        lines.append(f"  - {hl}")
+    snippet = (sub_c.get("summary") or sub_c.get("text") or "").strip()
+    if snippet:
+        snippet = re.sub(r"\s+", " ", snippet)[:snippet_max]
+        lines.append(f"    内容: {snippet}")
+```
+
+user_prompt 同步增加硬约束："**严格根据「内容」实际讲的事情写**——不要从{unit_word}标题字面猜测含义，不要写「内容」里没出现的概念或场景"。三重约束（snippet input + user_prompt + `VLOG_SECTION_ABSTRACT_SYSTEM` 的场景元素要求）协同生效。
+
+**后验**：
+
+BV1q6 K=16 重生成对照——
+
+| 章 | 旧（hallucinate） | 新（基于 ASR） | 评级 |
+|----|---|---|---|
+| ch2 卡时间 | 时间管理重要性 | 至少达到六成消费标准 | ✓ |
+| ch3 心理线 | 股市心理指标 | 莫娜鸽子腿 口感令人怀疑 | ✓✓✓ |
+| ch5 心理极限 | 潜能边界 | 蒸汽雾化眼部按摩仪改善黑眼圈 | ✓✓ |
+| ch10 包容心 | 理解和接纳 | 给予创作者更多时间完成视频 | △（略飘但已不离谱） |
+| ch14 走鱼价格 | 市场商家差异 | 去掉某条鱼 人均七八十元 | ✓✓ |
+| ch15 皇上价格 | 清朝皇帝秘密 | 770 或 760 元左右 | ✓✓✓ |
+
+13/16 章显著改善，3/16 章略飘但已不再是"离谱 hallucinate"级别。
+
+**跨视频回归（3-vlog corpus，2026-05-22）**：
+
+| 视频 | 时长 | K | abstract 全贴合？ |
+|------|------|---|-----------------|
+| BV1dkLr6UEJ6 陈泽测评山姆零食 | 15.5 min | 6 (mm) / 7 (txt-only) | ✓ |
+| BV1uHL16SEBp 翔翔包子 | 8.1 min | 7 | ✓ |
+| BV1AYR6BsE9U 陈泽薯片测评 | 28.2 min | 8 | ✓ |
+
+**21/21 章 abstract 无字面 hallucinate**——BV1q6 第一轮 13/16 严重 hallucinate 在新 corpus 上 0 复发。snippet 注入 + user_prompt 严格约束 + `VLOG_SECTION_ABSTRACT_SYSTEM` 三层约束在跨视频上稳定。
+
+值得一提：BV1AYR6BsE9U（陈泽薯片）附带踩中 §6.5.1.bis 的 L3 增量落盘场景——ASR 推进到 1690.3s/1693.1s 后 native abort（与 BV1q6 同型），cache 99.99% 覆盖率落盘，retry 复用通过。这次跨视频回归同时验证了三层 ASR 防御 + abstract snippet 修复**两条独立的 vlog 域加固**。
+
+**分析**：
+
+本案例的方法论 takeaway 有三层：
+
+1. **LLM-as-summarizer 在缺少 ASR grounding 时的字面 bias 是系统性而非偶发**。教学类视频偶然规避了此问题，并不能作为"abstract prompt 足够鲁棒"的证据——必须在术语自创度更高的域（vlog）上做对抗性验证。这也呼应 §6.5.7 的元规律——"corpus 扩展才能暴露此前被掩盖的失败模式"。
+
+2. **上游 ASR 错字会通过 LLM 联想被放大**。ch15 "770/760 → 皇上 → 清朝皇帝" 是经典的二阶 hallucinate。这意味着 ASR 后处理（§6.5.3 字典扩充）与下游 LLM grounding（本节）必须协同——任何一层独立修不彻底。同一原则在 §6.7 章标题层（J7 三件套）再次复现。
+
+3. **input grounding 比 prompt 警告更可靠**。本修复的核心是 input 多塞了 100-200 字 snippet，而非加更长的 system prompt 警告。这一观察与 §6.7.2 / [[feedback-prompt-vs-python]] 的"把判定搬 Python 给二值化 hint"属同一思路——**给 LLM 数据而非规则**通常比反过来更有效。
+
+适用范围：所有 `generate_*_abstract` / `generate_*_summary` 类 LLM 调用——input 必须包含 ASR 实际文本 snippet，不能只给 headline / title。`refine_chapter_titles`（§6.7.1 的修复）也采用同款 snippet 注入。
+
+### 6.7 LLM 章标题质量加固（2026-05-24~25）
+
+§6.6 把 abstract 层的 LLM grounding 修好后，章标题层（`refine_chapter_titles`）在后续视频上接连暴露两类独立失败模式：一类是 **ASR 错字直接漏入章标题**（BV1EBdcBrEea 显卡盲盒 vlog 把"烟台"误识漏入），另一类是 **chunker 上游塌成同一 headline 后 LLM 输出 N 章共享前缀雷同串**（王道 p68 中断系统的"服务程序详解/执行/恢复/应用"）。两者本质相同——**LLM 在 input 信号稀疏时回退到字面拼接**——但表现差异大，修复路径也不同。本节分别记录。
+
+#### 6.7.1 J7 三件套：N 章共享前缀的 LLM 失败模式
+
+**视频**：王道计算机考研 计算机组成原理 BV1BE411D7ii_p68 中断系统（PPT 教学，n_chunks=20）
+
+**现象（J6 之后回归触发）**：
+
+§6.5.3 / J6（commit 67136f0）把"中段→中断"等计算机组成域 ASR 错字清掉后，p68 ASR 文本干净，但 web 端重跑章标题输出退化：
+
+| 章 | J6 后章标题 | 评价 |
+|----|------------|------|
+| ch1 | 程序方式与处理 | generic（无具体术语锚定） |
+| ch2 | 请求与响应流程 | generic |
+| ch3 | 向量地址解析 | generic |
+| ch4 | 服务程序**详解** | 共享前缀串首章 |
+| ch5 | 服务程序**执行** | 共享前缀串 |
+| ch6 | 服务程序**恢复** | 共享前缀串 |
+| ch7 | 服务程序**应用** | 共享前缀串 |
+
+ch4-ch7 共 4 章共享"服务程序"前缀 + generic 后缀（详解/执行/恢复/应用），完全失去章间区分度；ch1-ch3 也都是 generic 套话标题（"方式"/"流程"/"解析"）。J6 牺牲章标题信息密度换 ASR 干净底线（[[project-j6-asr-titles]]）的代价超出预期。
+
+**根因（dryrun 诊断 `scripts/_dryrun_chapter_titles.py`）**：
+
+三层信号都失效：
+
+1. **chunker (`generate_headlines`) 塌缩**：ch3-ch6 共 20 chunks 的 chunk-level headline 全部生成同一字符串 "中断服务程序"——这是 LLM-based chunker 在同主题视频后半段的已知失败模式（同前半段切完后，LLM 复用同一概念命名），20 个 chunks 给 `refine_chapter_titles` 0 段级差异信号。
+2. **chunks keywords 有信号但被噪声污染**：实际 chunk keywords 含 PC/向量/12H/多重/屏蔽/微秒/例题 等区分性术语，但同时混入 ASR 错字残留（屁屁/屏屏/中段/中斷/中斧/地坝/任劳/程庇），jieba `extract_tags` 把错字误选成 top-K。
+3. **现有 prompt 规则未覆盖此场景**：H2（去重）只抓"完全相同 title"，I6（generic 模板）只抓"全 generic token"。"服务程序详解"这种"共享前缀 + 差异后缀"模式既不完全相同又含 specific 词，两个规则都漏。
+
+**修复（commit 8eb8376 + aa4880e，三件套）**：
+
+**J7-A — snippet 喂 LLM（`refine_chapter_titles` 输入端）**：
+
+仿 §6.6.1 的 abstract 修法，每个 chunk 同时输出段标题、高频词与 ASR snippet：
+
+```python
+snippet = (c.get("summary") or "").strip() or text[:120].strip()
+if snippet:
+    snippet = snippet[:120].replace("\n", " ")
+    lines.append(f"    内容: {snippet}")
+```
+
+让 LLM 在 chunker headline 塌缩时仍能从 ASR snippet 看到本章实际讲了什么（如 ch5 实际讲"多重中断"、ch7 实际讲"中断屏蔽"）。
+
+**J7-B — prompt 共享前缀禁令**：
+
+新增两个条件子句，仅在触发时注入：
+
+- `dup_headline_clause`（当 ≥1 章内 chunks headlines 完全相同时）：强制 LLM "**绝对不能**用段标题作为章标题词根——必须从「内容」行抽出本章独有的子机制 / 步骤 / 对象"。
+- `prefix_clause`（默认开启）：禁止 ≥3 章共享 ≥2 字前缀。
+
+**J7-C — Python 端 `_split_shared_prefix_titles` 兜底**：
+
+即便 prompt 已禁，LLM 在主题集中视频上仍可能输出"X 详解 / X 执行 / X 恢复"模式。Python 后处理检测：若 ≥3 章共享 ≥2 字中文前缀，从各章独有 keyword 重写。关键守门——**`max_share_ratio=0.7` 视频整体主题守门**：若 `hit_indices / K ≥ 0.7`，视为视频本身就讲该主题（如整集都在讲"中断"），保留前缀不拆。
+
+p68 测试：第一次（4/7 = 0.57 < 0.7）触发拆解；J6 重跑后（"中断"为整集主题 6/7 = 0.86 ≥ 0.7）不触发，避免破坏合法主题前缀。
+
+另两个辅助：扩 `_GENERIC_TITLE_TOKENS` 加 对应/这些/那些/叫做/哪些/返回/执行/恢复 等口语连接词；`_collect_low_prob_chars(threshold=0.5)` 收集 ASR 低 prob 字，含错字的 keyword 不进 J7-C 候选池。
+
+**后验（p68 web 落地 + 6 视频跨回归 dryrun）**：
+
+p68 落地（commit 6535c85，`scripts/_apply_chapter_titles.py` 只重跑 `refine_chapter_titles` + 同步前端 title/title_zh/title_en + regen md）：
+
+| Ch | J6 后 | J7 落地后 |
+|----|-------|----------|
+| 1 | 程序方式与处理 | 中断机制与请求 |
+| 2 | 请求与响应流程 | 中断处理流程与优先级 |
+| 3 | 向量地址解析 | 中断向量地址与响应 |
+| 4 | 服务程序详解 | 中断服务程序详解 |
+| 5 | 服务程序执行 | 多重中断与屏蔽技术 |
+| 6 | 服务程序恢复 | 中断服务程序执行 |
+| 7 | 服务程序应用 | 中断系统概述 |
+
+7/7 章全部更新。ch4/ch6 仍共享"中断服务程序"4 字前缀，但仅 2 章 < `min_share=3` 不触发 J7-C，可接受。"中断"为视频整体主题（6/7 ≥ 70%），J7-C 守门正确跳过强拆。
+
+6 视频跨回归 dryrun（不写盘，仅验证 J7 不破坏非 dup-headline 视频）：
+
+| 视频 | n_ch | J7-C 守门 | 评价 |
+|------|------|----------|------|
+| p66 IO 接口 | 5 | 跳过 | 4/5 章改，主体改进 |
+| p67 IO 查询 | 5 | 跳过 | 4/5 改，部分降级（J7-A/B 副作用） |
+| p70 DMA | 4 | 跳过 | 全新，"DMA-X" 是合法主题前缀 |
+| p81 TCP 流量 | 5 | 跳过 | 4/5 改 |
+| p92 邮件 | 5 | 跳过 | 全改 |
+| p93 HTML | 5 | 跳过 | ch1 暴露 LLM 幻觉（"四维事实"，触发 K1） |
+
+**6/6 视频 J7-C 守门全跳过**，验证守门不破坏 non-dup-headline 视频。p93 ch1 的 "网页元素与HTML结构" → "四维事实建立网页框架"幻觉触发了 K1 后续 patch（`_calibrate_headline_words` 加 word-prob<0.5 守门，commit f6c859e）——J7-B 的 prefix_clause 强制 LLM 避开公共词时可能选择 unusual 概念，这是 corpus-wide trade-off。
+
+**分析**：
+
+1. **chunker 失败会通过 input 信号稀疏传导到章标题层**。本案例与 §6.6.1 同构——LLM 在 input grounding 不足时回退到字面拼接，差异只在拼接对象（abstract 拼章标题字面，章标题拼共享 headline）。统一的修复范式是 **input 端补 ASR snippet 给 LLM 看实际内容**，而非更复杂的 prompt 规则。
+
+2. **三件套的分层防御对应失败的三个发生层**：J7-A 修 input 信号、J7-B 修 LLM 决策偏好、J7-C 修 LLM 决策残留。**任一层单独不够**——只做 J7-A 时 LLM 仍可能拼共享前缀（特别是同主题视频）；只做 J7-B 时 LLM 缺 input 无法生成差异化命名；只做 J7-C 时强行拆解会破坏合法主题前缀（如"DMA-X"）。三层叠加 + 0.7 视频主题守门是测试 6 视频后稳定的工作点。
+
+3. **"修一层暴露下一层"的迭代节奏**。J6 把 ASR 修干净后 J7 暴露；J7 落地后 K1 暴露 prefix_clause 与 LLM 创造性的 trade-off。这与 §7 演进章描述的 corpus 扩展驱动迭代是同一规律——但本节展示该规律也在**单一视频的不同处理层**上以微观尺度重现。
+
+#### 6.7.2 章标题 Python 端校准：把判定从 prompt 搬到代码
+
+**视频**：BV1EBdcBrEea_p0 "8 个显卡盲盒"（vlog，8 个显卡型号开箱评测）
+
+**现象**：
+
+J6 之前的 chapter title prompt 含一条规则："**主题词锚点**：headline 里若出现高频 specific 词（型号 / 专有名词），用作章标题核心；若该词被 chunk keywords 与 ASR text 都未支持（即 ASR 错字），从标题剔除"（rule 8 / rule 5）。BV1EBdcBrEea 章 2 chunks 含"烟台显卡"（ASR 把"烟"识错的产物）与"3070显卡"两组 headline。LLM 输出章 2 = "**烟台**显卡与3070显卡"——错字未被剔除。
+
+**根因**：
+
+`refine_chapter_titles` 的 user_prompt 在 1300+ tokens 上下文里同时含 10+ 条规则。Rule 4（"2 段成片段时用 'X 与 Y' 拼接"）作为**结构化输出指令**比 Rule 8（"主题词锚点 + ASR 错字剔除"）作为**语义级判定指令**更容易被 LLM 遵循。LLM 在多规则冲突时倾向选择句法明确的指令——rule 4 直接给出"X 与 Y"模板，rule 8 要求模型自己在每个名词上判定"是否在 kw 或 text 里有支撑"，认知负担显著高。
+
+实测：rule 8 在多数 case 下确实生效（如 ch4 "电源配件"里"电源"被剔除），但在"两段拼接"的明确句法触发下被压制。
+
+**修复（commit b764618）**：
+
+把 Rule 8 的"NLP 判定"从 prompt 搬到 Python 端，给 LLM 一个**二值化 hint 列表**——
+
+```python
+def _calibrate_headline_words(headline, keywords, text, chunk=None) -> dict:
+    """jieba 切 headline 名词，逐个验证是否在该 chunk keywords 或 text (≥3 次)
+    里有支撑。ASCII 数字/英文（型号 X79/580/3070/R7X）不参与校验。
+    返回 {ok: [...], drop: [...]} 两个名词列表。
+    """
+```
+
+`refine_chapter_titles` 在调 LLM 前对每个 chunk 跑 `_calibrate_headline_words`，把 drop 列表写入 user_prompt 的 `drop_clause`：
+
+> "⚠️ 标注了「已识别 ASR 错字」的词是 Python 校准过的，**绝对禁止**进入任何章/片段标题。若该段所有关键名词都被标禁，则该段不能单独主导命名，必须借同章其他段或共同高频词抽象。"
+
+LLM 不再自己做 step 1 判定——Python 已把"哪些是 ASR 错字"以二值化形式标好，LLM 只负责 step 2 命名。同时该结构嵌入 `generate_chapter_abstracts`：drop 词在 input 阶段被替换为 `[?]` mask，LLM 看不到原词字面，从源头避免被错字诱导。
+
+**后验（BV1EBdcBrEea_p0 重生成）**：
+
+| Ch | 旧标题 | 新标题 | 评价 |
+|----|--------|--------|------|
+| ch1 | (中性变化) | — | — |
+| ch2 | **烟台**显卡与3070显卡 | 显卡对比 | ✓ "烟台"成功剔除 |
+| ch3 | (中性变化) | — | — |
+| ch4 | **电源**配件 | 显卡与配件 | ✓ "电源"剔除；"配件"虽 Python drop 但 LLM 保留（仅 1 段，无替代词），可接受 |
+
+**K1 后续守门补丁（commit f6c859e）**：
+
+J7 落地后，p93 ch1 暴露了 `_calibrate_headline_words` 的反向 bug——把"万维网"误判为 ASR 错字（chunk text 出现 0 次但是 LLM 合法抽象）→ drop hint 给 LLM 后，LLM 在"避开禁用词"的压力下生成幻觉"四维事实建立网页框架"。修复：加 word-level prob<0.5 守门，名词只要不含低 prob 字符，即视为 LLM 合法抽象保留：
+
+```python
+if low_prob_chars:
+    has_low_prob = any(c in low_prob_chars for c in w if not c.isascii())
+    if has_low_prob:
+        drop.append(w)
+    else:
+        ok.append(w)
+```
+
+"万维网"含字符均高 prob → ok 保留；"烟台"中"烟"低 prob → drop。在 p93 K=5 重生成上 ch1 正确恢复为"网页元素与HTML结构"。
+
+**分析**：
+
+1. **prompt 多规则冲突时把判定搬 Python**。本案例与 [[feedback-prompt-vs-python]] 互为印证——当 LLM 需要在两个 prompt 规则之间做取舍时，模型对"结构化输出指令"的遵循度高于"语义级判定指令"。把语义判定外包给 Python 后给模型二值化 hint，是把"软约束"转为"硬约束"的可靠路径。
+
+2. **二值化 hint 优于 NLP 描述**。`_calibrate_headline_words` 的 drop 列表本质是个布尔表（哪些名词被禁），LLM 只需匹配字符串而非自己做 NLP 推理。这与 §6.6.1 用 ASR snippet 给 LLM "看数据而非规则"是同一原则的不同表现。
+
+3. **Python 校准本身也需要守门——避免反向 hallucinate**。K1 patch 揭示：把判定搬 Python 不是"一搬就完"，Python 端的启发式也会误伤（"万维网"被误判 ASR 错字）。word-prob 是一个比 keyword/text 频次更可靠的最终守门信号——ASR 真错字在 word-level prob 上确实偏低，合法抽象词不偏低。本节给出的"先用启发式判断 → 再用 prob 守门"双层校准，是后续 Python-端 LLM input 净化的范式。
+
+适用范围：所有"LLM 在 prompt 内做 NLP 判定"的场景，特别是 prompt 含 ≥5 条规则且规则间存在结构化/语义化优先级冲突时。
+
 ## 7 系统演进 (System Evolution)
 
 §3-§6 给出的是本工作"当前态"的系统设计与评估。然而本工作并非一次性设计完成，而是经历了 6 个明确的里程碑迭代，每一轮都由"corpus 扩展暴露的失败模式"驱动算法或工程改动。本节按时间顺序回顾这 6 个版本（v1-v6），每个版本以"触发问题 → 改动 → 量化效果 → takeaway"四段式呈现。这一组织既能让读者理解"为何当前架构是这样的"，也为后续工作提供了具体的失败案例索引——附录 C 进一步收录了过程中**未被采纳**的探索性尝试。
@@ -1166,6 +1414,14 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 - **ctranslate2 native abort 第二条触发路径**（v6+，见 §6.5.1.bis）：`transcribe()` 实际完成后、Python 收尾前仍可能崩。L1/L2 解码约束与 hallucination gate 无法预防此路径，只能用 L3 流式增量落盘做兜底。这是 native 层资源释放的健壮性问题，非 Python 端可彻底根除
 - **章 abstract LLM input 的"标题字面化"陷阱**（v6+，见 §6.5.1.bis 关联讨论）：早期 `generate_chapter_abstracts` 只喂 LLM headline 关键词，未喂 ASR 实际文本片段，导致 vlog 域章标题（如"心理线" / "皇上"）被 LLM 按字面跨域解读为"股市心理指标" / "清朝皇帝"。本工作通过在 LLM input 加入 ASR snippet + user_prompt "严格根据「内容」"双重约束修复，3-vlog 回归 0 hallucinate；但这一陷阱揭示了 prompt design 中"input 信息完备性"对 hallucination 控制的决定性作用，是后续 LLM 流水线设计应优先核查的维度
 
+- **章标题 LLM 同音字幻觉路径**（v7+，K1 修复）：在 J7 共享前缀禁令 prompt + Python 端 headline 字面 mask 共同作用下，曾观察到一例 5/5 稳定复现的同音字幻觉——p93 计网 HTML 视频 Ch1 "网页元素与 HTML 结构" 被 LLM 重写为 "四维事实建立网页框架"。根因诊断显示，`_calibrate_headline_words` 把 "万维网 / 网页 / 概念 / 结构 / 过程" 等合法抽象名词（共 15+ 词）误标为 "已识别 ASR 错字" 并在 prompt 里 `[?]` mask + 强禁令，LLM 失去合法选词后转向同音字（万维网 → 四维）幻觉。修复方案是把 ASR 错字识别守门统一到 word-level prob<0.5 信号，名词不含低 prob 字一律视为 LLM 合法抽象保留。这一案例揭示 Python 端程序化校准必须严格区分"声学层 ASR 错字"与"LLM 内部抽象决策"——后者完全不应进入 drop 列表，否则会从"防 hallucination 工具"转变为"诱发 hallucination 信源"
+
+- **dup-headline 视频章标题信号脆弱性**（v7+）：chunker 给一章内多个 chunks 生成相同 headline 时（如 BV1BE411D7ii_p68 中断系统 ch3-ch6 共 20 chunks 全部 headline = "中断服务程序"），章标题 LLM 失去段落级差异信号，必须靠"J7-A snippet 喂 ASR 摘要 + J7-B 共享前缀禁令 + J7-C Python 关键词差异化拆解"三件套配合差异化。但这套机制在 K1 把 calibrate 信号清洁化之后，在边界 case（前述同视频）会输出"12H 与中断服务程序 / CPU 与中断服务程序"这类弱区分标题——LLM 在共享前缀禁令下被迫挑选具体但低信息密度的 keyword 当 disambiguator。这是"清洁信号" vs "强信号"的取舍：本工作选择清洁信号根除幻觉风险，但暴露 dup-headline 场景需要更主动的差异 snippet 提取（如二次 LLM 抽取本章独有子主题），而非依赖 prompt 端共享前缀禁令的间接施压
+
+- **ASR 字典纠错的 scalability 边界**（v7+，[[project-asr-correction-dict-expansion]]）：feasibility dryrun 在 134 视频 corpus 上发现 24 视频 / 18% 有 ASR 错字 leakage、668+ 实例，silver/gold 采样显示 100% 为 1:1 lookup（无 context-dependent 误识别）。本工作据此采用扩 `_GLOBAL_CORRECTIONS` + `_DOMAIN_CORRECTIONS["computer_org"]` 字典策略，corpus sweep 清零；但 ambiguous patterns（如"中段"是计组域错字 / vlog 域合法 / "电源/烟台"在 vlog 域全合法）必须严格 domain-condition——错放 `_GLOBAL` 会产生跨域 false positive。此外曾尝试 `"服务程" → "服务程序"` 之类的"扩张式"补全规则，因非幂等（含子串）导致二次 apply 变 "服务程序序序" 链式增长，被改为只匹配具体错字变体（"服务程庇 / 庆 / 庫 / 庈" → "服务程序"）。综合来看字典型纠错的边际维护成本随域数线性增长，长尾域扩展时这是必然的工程负担
+
+- **结构化错误识别上 ML 路径的 [no-go] 证据**（v7+，2026-05-26 双 dryrun）：本工作探索过两条用机器学习替代字典 + LLM 的路径，均在小规模 feasibility 阶段被否定。（a）视觉判别器：用 Chinese-CLIP feature 训轻量 boundary 判别器，87 视频 / 1153 pairs，AUROC = 0.557（≈ 随机）、MLP F1 = 0.31，CLIP feature 太低层学不到"PPT 翻页 vs 章节切换"语义差异；若要做需换 VLM caption 文本作为判别 input，回到 §5.4 已实现的路径。（b）ASR 纠错 ML：silver/gold 采样 5 视频跑 `qwen_asr_fix` 100% 是 1:1 lookup 无上下文依赖，训 context-dependent ML 模型相对字典扩展的边际收益为零，且 LLM baseline (`qwen_asr_fix`) 已经覆盖。这两条 [no-go] 不是论文核心结果，但作为工程方法论值得记入：**当 corpus 上观察到的失败分布是 lookup 性质时，ML 路径相对"字典 + LLM"混合工程几乎不会有收益，应优先验证失败分布而非默认选 ML**
+
 ### 8.2 Future Work
 
 1. **ASR confidence 二级判别**：当前 `[?]` 标记基于 segment-level confidence，未来引入 word-level confidence + LLM 语义合理性检查识别同音字错字
@@ -1176,6 +1432,12 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 6. **多模态评估指标**：当前 §5 全部基于章节边界 F1，未来需要面向"学习笔记"本身的指标——如术语表覆盖率、章末小结召回率、TOC 与人工目录的一致性
 7. **vlog 域评估的可比基线**：当前 vlog 域只有定性 case 与 abstract hallucinate 计数，未做章节边界 gold 标注（vlog 边界主观性远高于 PPT 教学），需要探索"主观但可复制"的标注协议——例如多人独立标注 + 边界容差度量——把 vlog 域纳入 strict / F1@1 量化对比
 8. **multi-vlog corpus 扩展**：当前 vlog 回归 corpus 只有 3 个视频（BV1q6 + BV1dkLr6UEJ6 + BV1AYR6BsE9U），且全部为"美食测评"子类；未来扩到探店 / 健身 / 旅行 / 评测等子类，验证 `VLOG_SECTION_ABSTRACT_SYSTEM` 与 abstract snippet fix 在更宽泛 vlog 分布上的鲁棒性
+
+9. **dup-headline 场景的差异 snippet 主动提取**（对应 §8.1 第 10 条）：当 chunker 给一章内多 chunks 塌成同一 headline 时，目前 J7-A 简单截取 `chunk.summary` 前 120 字喂 LLM 作为差异信号；这一信号在塌缩严重的章节上仍可能不足以让 LLM 拼出高信息密度的章标题（实测见"12H 与中断服务程序"等弱区分输出）。未来可探索在章标题阶段之前插入一次"轻量 LLM 差异点抽取"——给定本章 N 个 chunks 的 summary，让 LLM 显式输出"本章相对其他章独有的子主题 / 步骤 / 实例对象"，再把这些差异点作为章标题 LLM 的强 input，而非依赖 prompt 端共享前缀禁令的间接施压
+
+10. **章标题校准链路的解耦与 ensemble**（对应 §8.1 第 9-10 条）：当前章标题校准链路是 word-prob mask → ASR 字典纠错 → Python 端 `_calibrate_headline_words` 校准 → LLM prompt 共享前缀禁令 → Python 端共享前缀拆解兜底，共五层串联。K1 修复揭示串联设计中任一层信号失真都会沿链路放大（calibrate 误标 → mask 误压 → LLM 幻觉）。未来可探索更解耦的设计——例如让 chunker keyword frequency 矩阵、LLM 候选标题集（多次采样）、Python 端关键词差异化作为独立投票来源，通过 ensemble 而非 chain 产出最终标题，把"chain of corrections 的脆弱性"换为"ensemble 的冗余健壮性"
+
+11. **失败分布的 lookup-vs-context 二分诊断**（对应 §8.1 第 12 条）：本工作两条 ML [no-go] 结论共同指向一个方法论——在选择"字典 / 规则" vs "ML 模型"路径之前，应先 dryrun corpus 上的失败分布是 1:1 lookup 还是 context-dependent。前者用字典 + LLM 几乎必然优于 ML（成本低、可审计、可幂等），后者才进入 ML 候选。未来扩展到更多失败类型（如 chapter abstract hallucination / quiz mismatch）时可沿用此诊断范式
 
 ## 9 结论 (Conclusion)
 
@@ -1191,9 +1453,9 @@ VLM 时间开销实测：本次复跑 ASR cache 命中（跳过最慢的 6 分�
 
 **（4）三层防御纵深与"failure mode 演进"**（v6+，见 §6.5.1.bis）——同一个 ctranslate2 native abort 的失败模式在 corpus 跨入新域（教学 → vlog）时演化出第二条触发路径（"transcribe 完成之后"而非"transcribe 推进中"）。一个 fix 在它当时的 benchmark 上 100% 通过，不代表它在新域下仍然 100% 充分；工程健壮性评估必须随 corpus 同步迭代。本工作据此建立三层纵深——L1 解码约束（预防）+ L2 hallucination gate（预防）+ L3 流式增量落盘（兜底，WAL 思想）——把"native 崩溃面前 Python exception handling 不可靠"这一隐含假设显式化为"用持久化频率换最大损失上界"的工程范式。这一思路与方法论 takeaway (3) 互补：(3) 强调"主动构造极端 case 验证兜底"，(4) 强调"承认底层故障不可避免后设计可恢复状态"。
 
-工作的局限性已在 §8.1 列出，涵盖 ASR 隐式错字、英文长视频 catch-all bias、大模型并行约束、ctranslate2 native abort 第二条触发路径、章 abstract LLM input 字面化陷阱、12GB VRAM 大模型串行约束等八类。其中硬件相关项是工程而非算法问题；ctranslate2 与 abstract input 两项揭示了"corpus 跨入新域时既有 fix 充分性需要重新评估"这一更深层的工程方法论。
+工作的局限性已在 §8.1 列出，共十二类，涵盖 ASR 隐式错字、英文长视频 catch-all bias、大模型并行约束、ctranslate2 native abort 第二条触发路径、章 abstract LLM input 字面化陷阱、章标题 LLM 同音字幻觉路径（K1 修复揭示 Python 校准必须严格区分 ASR 错字与 LLM 抽象决策）、dup-headline 视频章标题信号脆弱性（清洁信号 vs 强信号的取舍）、ASR 字典纠错的 scalability 边界与跨域 false positive、结构化错误识别上 ML 路径的 [no-go] 证据等。其中硬件相关项是工程而非算法问题；ctranslate2 / abstract input / K1 calibrate 三项揭示了"corpus 跨入新域或链路串联层数增加时既有 fix 充分性需要重新评估"这一更深层的工程方法论。
 
-未来工作有八条主线（§8.2 详述），核心方向有三：（a）把 v6 建立的 stress test 范式扩展到所有兜底机制（`_repair_oversize` / VL 三层 gate 等），（b）探索面向"学习笔记本身"的评估指标（术语表覆盖率、章末小结召回率、TOC 一致性），从"边界 F1"升级到"笔记可用性"的端到端度量，（c）扩展 vlog 域评估（当前仅 3 视频美食测评子类）并设计"主观但可复制"的边界标注协议。我们希望本工作的 24 视频 benchmark、6 个版本的演进路径、ASR 三层防御范式与配套的 stress / 回归测试脚本，能为后续视频结构化笔记研究提供既有可比较基线、又有可复用工程实践的参考。
+未来工作有十一条主线（§8.2 详述），核心方向有四：（a）把 v6 建立的 stress test 范式扩展到所有兜底机制（`_repair_oversize` / VL 三层 gate 等），（b）探索面向"学习笔记本身"的评估指标（术语表覆盖率、章末小结召回率、TOC 一致性），从"边界 F1"升级到"笔记可用性"的端到端度量，（c）扩展 vlog 域评估（当前仅 3 视频美食测评子类）并设计"主观但可复制"的边界标注协议，（d）把当前章标题"chain of corrections"五层串联设计重构为多源信号 ensemble，并在 dup-headline 场景前置一次差异点抽取替代依赖共享前缀禁令的间接施压。我们希望本工作的 24 视频 benchmark、6 个版本的演进路径、ASR 三层防御范式、章标题校准链路（J / K 系列修复）与配套的 stress / 回归测试脚本，能为后续视频结构化笔记研究提供既有可比较基线、又有可复用工程实践的参考。
 
 ---
 
