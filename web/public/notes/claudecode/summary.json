@@ -65,29 +65,7 @@
       "rel": "keyframe_01_0058s.jpg",
       "time": 58.39999999999999,
       "score": 0.49609375
-    },
-    "headline_zh": "10 分钟学会claude code 基础操作",
-    "headline_en": "Learn basic Claude Code operations in 10 minutes",
-    "summary_zh": "它自动进入了计划模式。和ClaudeCode讨论一下对计划有什么建议。那就可以使用这个命令回滚到对应节点。Claude Code的回滚功能只能回滚使用内置工具创建的文件和文件夹。刚才在运行途中我们发现Claude Code自动进入了计划模式。在计划和自动同意编辑工具模式来回切换。我们现在使用计划模式。并进入计划模式。",
-    "summary_en": "It automatically entered plan mode. Discuss with ClaudeCode about plan suggestions. This command can roll back to the corresponding node. ClaudeCode’s rollback function only affects files and folders created with built-in tools. ClaudeCode automatically entered plan mode during the run. Switching between plan and auto-consent editing modes.",
-    "text_zh": "10分钟学会ClaudeCode基础操作。没有安装ClaudeCode可以看UP上一期视频。本期视频我用一个项目实战教会大家ClaudeCode13个常用命令和使用技巧。提高你的使用效率。跟着UP操作,你也能学会。\n先创建一个文件夹当作项目文件夹。进入文件夹。在上方地址栏输入CNB打开提示符。输入Claude启动。选择相信此文件夹。\n在输入框输入想要制作一个摄影师个人网站。回车发送。看左下角。它自动进入了计划模式。等待一会写完计划会暂停行为是否批准计划。看看这三个选项是什么意思。\n第一个是同意。并且后续自动同意使用编辑工具。第二个是同意。但是后续需要手动同意使用编辑工具。第三个是暂停。和ClaudeCode讨论一下对计划有什么建议。我们这里选择第一项继续。\n它会一个一个完成计划。好的。现在ClaudeCode又向我们申请权限。看看它说了什么。这次申请的是Start命令的权限。第一个是同意这次使用。下次使用还会向你申请。第二个是同意。并在这个绘画中以后都同意使用Start这个命令。第三个是拒绝。选择第二项以后都同意。等待一会它就制作完成了。好的看来它已经自动帮我打开。查看一下。页面总体看起来还是不错的。\n我们返回CM里。假设发现这次做的页面不是想要的怎么办。而且叫它改越改越乱。那就可以使用这个命令回滚到对应节点。回车之后可以使用上下键切换节点。也可以双击ESC键进入回滚页面。现在选择回滚到第一个节点。会弹出一个页面。第一个选项是回滚代码和对话。第二个和第三个是指回滚对话或者代码。第四个是将这个节点之前的内容压缩成摘要。\n最后一个就是取消。在这里选择回滚代码和对话。需要注意的是。Claude Code的回滚功能只能回滚使用内置工具创建的文件和文件夹。如果使用命令创建的是无法回滚的。刚才在运行途中我们发现Claude Code自动进入了计划模式。在计划模式中,Claude Code和你会进行讨论。然后输出一份详细的计划。建议在开始之前使用计划模式相讨一波。那该怎么手动进入呢?\n我们可以使用协议。\n在计划和自动同意编辑工具模式来回切换。我们现在使用计划模式。再发送一次请求。看现在弹出了几个选项。Claude Code在询问你项目细节。这样可以使之更具体,更符合你的要求。我们使用向下左右键切换选项回车键确定。提交之后它就会按照你的反馈更新计划。计划完毕之后会向你申请批准计划。选择第一项批准,并进入计划模式。",
-    "text_en": "Learn ClaudeCode basics in 10 minutes. Watch the previous video if you haven't installed ClaudeCode. This video teaches 13 common commands and tips through a project. Improve your efficiency by following along.",
-    "keywords_zh": [
-      "回滚",
-      "计划",
-      "使用",
-      "Claude",
-      "同意",
-      "文件夹"
-    ],
-    "keywords_en": [
-      "Rollback",
-      "Plan",
-      "Use",
-      "Claude",
-      "Agree",
-      "Folder"
-    ]
+    }
   },
   {
     "start": 175.22,
@@ -125,29 +103,7 @@
       "rel": "keyframe_02_0254s.jpg",
       "time": 254.31333333333333,
       "score": 0.44921875
-    },
-    "headline_zh": "如何手动打开cnb",
-    "headline_en": "How to manually open cnb",
-    "summary_zh": "在计划和自动同意模式。好的。在这个模式下我们可以使用终端命令。现在我们输入这个命令。我们可以使用这个命令更改Claude Code的思考强度。可以使用Ctrl加J换行。内容就自动进入到输入框了。输入这个命令启动Claude Code就会自动同意所有权限申请。",
-    "summary_en": "In plan and auto-consent mode. Good. We can use terminal commands here. Enter this command. It changes ClaudeCode’s thinking intensity. Use Ctrl+J to create new lines. Content automatically enters the input box. Running this command will automatically consent to all permissions.",
-    "text_zh": "在计划和自动同意模式。好的。它生成完毕了。还是老样子自动帮打开了。看一下确实效果更好一点。回到CNB。那我们该如何手动打开呢?在输入框中输入英文的感叹号。看左下角。它已经切换成终端模式了。在这个模式下我们可以使用终端命令。现在我们输入这个命令。Start后面接的是你所有文件的名称。点击回车。页面打开了。现在想想。只使用前端三键套路。\n这个套路的网页可维护性会很差。我们可以叫它使用现代一点的技术键重构一下。这可是一项大工程。能让它思考得更久更深一点。我们可以使用这个命令更改Claude Code的思考强度。总共六个可选。这里选择Max。开到最高。看右下角Asset变成了Max。说明生效了。输入屏幕上的提示词。如果是说遇到需要换行。可以使用Ctrl加J换行。也可以使用Ctrl加J在文本编辑器中。\n打开编辑。编辑完之后Ctrl加S保存一下然后关闭。内容就自动进入到输入框了。回车发送。等待一会后会向你申请很多次权限。如果不想每次都手动同意权限该怎么办。我们这里开一个新的CNB窗口。输入这个命令启动Claude Code就会自动同意所有权限申请。但是这是极其危险的。建议不要在经济上使用。返回原来的CNB。稍等一会就重构完成了。",
-    "text_en": "In Plan and Auto Agree modes. It's completed. Still automatically opens. Go back to CNB. How to manually open it? Input an exclamation point in the input box. It switches to terminal mode. Use terminal commands here. Input this command. Start followed by all file names. Click enter. Think about using modern techniques to refactor. This is a big task. Increase ClaudeCode's thinking intensity. Six options available. Choose Max. It's now set to maximum. Input the prompt. Use Ctrl+J for line breaks. Save changes. Confirm by pressing Enter. After confirmation, it will apply the changes.",
-    "keywords_zh": [
-      "CNB",
-      "Ctrl",
-      "使用",
-      "输入",
-      "权限",
-      "自动"
-    ],
-    "keywords_en": [
-      "CNB",
-      "Ctrl",
-      "Use",
-      "Input",
-      "Permission",
-      "Auto"
-    ]
+    }
   },
   {
     "start": 264.46,
@@ -195,29 +151,7 @@
       "rel": "keyframe_03_0315s.jpg",
       "time": 315.9211111111111,
       "score": 0.4443359375
-    },
-    "headline_zh": "ineed 命令",
-    "headline_en": "The ineed command",
-    "summary_zh": "可以使用这个命令退出Claude Code。可以使用这个命令来查看最近历史。还可以使用这个命令直接打开项次绘画。这个命令运行之后会生成一个名为Claude的Markdown文件。输入这个命令可以查看上下文使用情况。我们可以使用这个命令压缩上下文。可以使用这个更极端的命令。",
-    "summary_en": "Use this command to exit ClaudeCode. This command shows recent history. Use this command to open item painting directly. After running, it generates a Markdown file named Claude. Input this command to view context usage. Use this command to compress context. Use this more extreme command.",
-    "text_zh": "假设有些人想要使用CNB。\n但是需要退出一下该怎么办。可以使用这个命令退出Claude Code。事情解决之后我们只用再在这个路径下输入Claude启动就行。启动之后发现前面的记录不见了。可以使用这个命令来查看最近历史。回车就可以加载。还可以使用这个命令直接打开项次绘画。接下来介绍iNeed命令。这个命令运行之后会生成一个名为Claude的Markdown文件。这个文件是Claude Code的记忆系统。\n有关于项目规则和记录。\n每次对话系统都会带着这份文件发送给模型。查看一下这个文件。全英文的。返回CNB。在对话框中输入这个符号。就可以选中文件或者agents。这里选中Claude文件。然后叫它翻译成中文。好的。翻译完成之后我们再打开。再文末加上这一段提示词。在每句话后都加上一句喵。保存。返回CNB。向他随便发点消息。\n每句话后面都会记一句喵。证明了确实每次绘画都会将这个文件发送给模型。用来约束模型。接下来学习另一个命令。输入这个命令可以查看上下文使用情况。可以看到,已经用掉了13%的上下文了。也能清楚看到各种提示词的占比。太长的上下文可能导致模型效果越来越差。我们可以使用这个命令压缩上下文。如果压缩之后模型效果还是不好。可以使用这个更极端的命令。",
-    "text_en": "Want to use CNB but need to exit? Use this command to exit ClaudeCode. After solving the issue, just restart ClaudeCode at the same path. If records disappear, use this command to view recent history. Load it by pressing Enter. Also, use this command to directly open a specific drawing. Next, introduce iNeed command. It generates a Markdown file named Claude. This file is ClaudeCode’s memory system. Contains project rules and records. Sent to models with each conversation. View this file. All in English. Return to CNB. Select this symbol in the dialogue box. Choose files or agents. Select the Claude file. Ask it to translate into Chinese. Translation complete. Add the prompt at the end. Add “喵” after each sentence. Save. Return to CNB. Send any message.",
-    "keywords_zh": [
-      "Claude",
-      "命令",
-      "文件",
-      "这个",
-      "上下文",
-      "CNB"
-    ],
-    "keywords_en": [
-      "Claude",
-      "Command",
-      "File",
-      "This",
-      "Context",
-      "CNB"
-    ]
+    }
   },
   {
     "start": 357.11,
@@ -300,28 +234,6 @@
       "rel": "keyframe_04_0456s.jpg",
       "time": 456.3833333333333,
       "score": 0.4521484375
-    },
-    "headline_zh": "claude code的skills",
-    "headline_en": "Skills in Claude Code",
-    "summary_zh": "Agents和Skills有所不同。在输入框输入这个命令打开Agents功能。生成一个Agent。第一个选项是生成一个项目级别的Agent。选择这个生成的Agent只会在当前项目生效。我们选择第一个让Claude Code给我们生成。生成一个代码选合的Agent。回车。我们选择第一个Agent。",
-    "summary_en": "Agents differ from Skills. Input this command to open Agents functionality. Generate an Agent. The first option is to generate a project-level Agent. This Agent only applies within the current project. We choose the first option to generate one. Generate a code-selecting Agent. Press Enter. Select the first Agent.",
-    "text_zh": "直接把上下文全部清空。清空之后再使用Context查看一下上下文情况。确实占用变小了很多。现在向他询问项目相关内容发现他还是对项目有一些基础了解。这是因为Claude起作用了。接下来学习的是Claude Code的Skills用法。这里不讲Skills的技术细节。可以理解为一部说明书。当Claude Code需要干活的时候可以根据说明书的名字。选择自己刚好需要的技能。我们点上方加号信号。\n在地址栏输入自己的用户名。回车。进入到用户目录。打开这个文件夹。再打开Skills文件夹。这个文件夹就是Skills的全局目录网上下载的Skills安装在这里就能生效。在文件夹内新建一个名为这个的文件夹。打开文件夹。在上方地址栏输入CNB打开提示符。输入Claude打开Claude Code。输入以下提示词让Claude Code创建一个每日报告的Skills。过一会他就创建完毕了。\n我们打开Skills的Markdown文件。可以看到Skills是由Name和Description以及完整指令组成。再扫回到CNB。输入这个命令查看安装的Skills。好的可以看到刚才制作的Skills成功识别了。叫他做一个每日报告给我们。回车发送。好的。发现他成功识别到了刚才制作的Skills。并成功加载了。下面学习的是Agents。Agents和Skills有所不同。\nAgents是独立于当前主绘画的一个进程。\n可以理解为另一个Claude Code。Agents执行完对应任务之后会将结果返回给当前主绘画。运行时时向下文不会加载到主绘画。避免污染主绘画向下文环境。在输入框输入这个命令打开Agents功能。可以看到有两个选项。第一个是正在运行的Agent。使用右方向键选择第二个。使用下方向键选择Create。生成一个Agent。回车选就。会出现两个选项。\n第一个选项是生成一个项目级别的Agent。选择这个生成的Agent只会在当前项目生效。别的项目是看不到的。第二个是用户级别。意思是这个Agent不论在哪个项目都可以看到。选择第一个选项。回车进入。又会出现两个选项。第一个选项是使用Claude Code生成一个。第二个是自己手动配件。我们选择第一个让Claude Code给我们生成。选择之后,进入到一个页面。我们只有形容需要一个页面。\n选择一个什么样的Agent就行。输入一下提示词。生成一个代码选合的Agent。回车。消等一会之后就生成完毕了。生成完毕之后进入到配件Agent工具权限的页面。只给它读取的工具权限就行了。首先我们先选择All Tools回车。这样就取消了所有工具权限。再选择Read Only。只同意读取。最后选择Continue。进行下一步配件。下一步配件是这个Agent的驱动模型。\n我们选择第一个Agent。\n第三个就行。回车下一步。这一步是选择Agent的颜色。随便选择一个喜欢的就行。再下一步是设计这个Agent的记忆文件存放位置。第一个是用项目级别。选择这个如果你提交到了GitHub,被别人拉去下来。记忆也能同步到对方那。第二个是不保留记忆。第三个是用户级别。记忆保存在用户目录下。所有项目都可以读取到。第四个也是用户级别。但是记忆是保存在本地。\nGit提交不会上传上去。别人无法查看。选择第一个就行。进入最后一个页面。这个页面会预览刚才生成的Agent提示词。点击E编辑,或者S进行保存退出。按ESC退出Agent。再输入框输入以下提示词。叫它调用Agent进行代码审核。可以看Agent成功被调用出来了。过一会就审核完毕,输出了完整报告。接下来学习的是插件功能。插件可以理解为同时代码审核。\n打包了Skills、Agents、MCP、Hooks的整合包。\n当前项目生效。选择第一个。下载到当前项目。回车安装。我们再创建一个文件夹。随便取个名字。打开文件夹启动CMD。启动Claude。在输入框中要求它使用Front End Design插件制作一个摄影师个人网页。回车发送。等待生成完毕。生成完毕查看一下。能明显感觉到比不使用插件效果更好。后续微调一下就行。关注我。学习更多AI使用技巧。",
-    "text_en": "Directly clear the context. Check the context again. Context usage significantly reduced. Ask about project details. ClaudeCode still has some understanding. Use this command to compress context. If model performance is still poor, use more extreme commands.",
-    "keywords_zh": [
-      "Agent",
-      "Skills",
-      "Claude",
-      "回车",
-      "选择",
-      "文件夹"
-    ],
-    "keywords_en": [
-      "Agent",
-      "Skills",
-      "Claude",
-      "Enter",
-      "Select",
-      "Folder"
-    ]
+    }
   }
 ]

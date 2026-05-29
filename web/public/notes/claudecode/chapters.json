@@ -8,11 +8,7 @@
         0,
         1
       ],
-      "abstract": "本章涵盖 10 分钟学会claude code 基础操作 · 手动打开cnb",
-      "title_zh": "10 分钟学会claude code 基础操作·如何手动打开",
-      "title_en": "How to Master Claude Code Basics in 10 Minutes · How to Manually Open",
-      "abstract_zh": "本章涵盖 10 分钟学会claude code 基础操作 · 手动打开cnb",
-      "abstract_en": "This chapter covers learning basic operations of Claude Code in just 10 minutes · manually opening cnb"
+      "abstract": "本章涵盖 10 分钟学会claude code 基础操作 · 手动打开cnb"
     },
     {
       "title": "ineed 命令·claude code的skills",
@@ -22,11 +18,7 @@
         2,
         3
       ],
-      "abstract": "本章涵盖 ineed 命令 · claude code的skills",
-      "title_zh": "ineed 命令·claude code的skills",
-      "title_en": "The Ineed Command · Essential Skills for Claude Code",
-      "abstract_zh": "本章涵盖 ineed 命令 · claude code的skills",
-      "abstract_en": "This chapter covers the ineed command · skills of Claude Code"
+      "abstract": "本章涵盖 ineed 命令 · claude code的skills"
     }
   ],
   "ablation": {

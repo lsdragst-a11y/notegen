@@ -1,7 +1,7 @@
 {
   "chapters": [
     {
-      "title": "以太网和ieee 802.3的技术标准·双绞线或光纤可以支持",
+      "title": "以太网和ieee 802.3的技术标准·双脚线或光纤可以支持",
       "start": 0.0,
       "end": 694.86,
       "indices": [
@@ -9,11 +9,7 @@
         1,
         2
       ],
-      "abstract": "本章涵盖 以太网和ieee 802.3的技术标准 · 双绞线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么",
-      "title_zh": "以太网和ieee 802.3的技术标准·双绞线或光纤可以支持",
-      "title_en": "Ethernet and IEEE 802.3 standards · Twisted pair or fiber can support",
-      "abstract_zh": "本章涵盖 以太网和ieee 802.3的技术标准 · 双绞线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么",
-      "abstract_en": "This chapter covers Ethernet and IEEE 802.3 standards · Twisted pair or fiber can support half-duplex and full-duplex modes · What connects two nodes using fiber?"
+      "abstract": "本章涵盖 以太网和ieee 802.3的技术标准 · 双脚线或光纤可以支持半双工和全双工方式 · 光纤连接的两个节点之间是什么"
     },
     {
       "title": "交换机路由器有mac 地址吗",
@@ -25,11 +21,7 @@
         5,
         6
       ],
-      "abstract": "本章涵盖 ip 数据链路层为网络层服务 · 以太网mac帧的长度范围 · 以太网mac帧的最后一跳 · 交换机路由器有mac 地址吗",
-      "title_zh": "交换机路由器有mac 地址吗",
-      "title_en": "Do switches and routers have MAC addresses?",
-      "abstract_zh": "本章涵盖 ip 数据链路层为网络层服务 · 以太网mac帧的长度范围 · 以太网mac帧的最后一跳 · 交换机路由器有mac 地址吗",
-      "abstract_en": "This chapter covers IP data link layer services for the network layer · The range of Ethernet MAC frame lengths · The final hop of an Ethernet MAC frame · Do switches and routers have MAC addresses?"
+      "abstract": "本章涵盖 ip 数据链路层为网络层服务 · 以太网mac帧的长度范围 · 以太网mac帧的最后一跳 · 交换机路由器有mac 地址吗"
     },
     {
       "title": "f 发送单波针看两个广播针的例子·交换机隔离了冲突域",
@@ -39,11 +31,7 @@
         7,
         8
       ],
-      "abstract": "本章涵盖 f 发送单波针看两个广播针的例子 · 交换机隔离了冲突域",
-      "title_zh": "f 发送单波针看两个广播针的例子·交换机隔离了冲突域",
-      "title_en": "Example: Sending a unicast frame versus two broadcast frames · Switches isolate collision domains",
-      "abstract_zh": "本章涵盖 f 发送单波针看两个广播针的例子 · 交换机隔离了冲突域",
-      "abstract_en": "This chapter covers sending unicast frames and examples of broadcast frames · Switches isolate collision domains"
+      "abstract": "本章涵盖 f 发送单波针看两个广播针的例子 · 交换机隔离了冲突域"
     },
     {
       "title": "以太网与ieee 802.3802.3 工作组·以太网的物理",
@@ -53,11 +41,7 @@
         9,
         10
       ],
-      "abstract": "本章涵盖 以太网与ieee 802.3802.3 工作组 · 以太网的物理层",
-      "title_zh": "以太网与ieee 802.3802.3 工作组·以太网的物理",
-      "title_en": "Ethernet and IEEE 802.3 · 802.3工作组的工作 · Ethernet的物理层",
-      "abstract_zh": "本章涵盖 以太网与ieee 802.3802.3 工作组 · 以太网的物理层",
-      "abstract_en": "This chapter covers Ethernet and IEEE 802.3, specifically the 802.3 working group · Ethernet's physical layer"
+      "abstract": "本章涵盖 以太网与ieee 802.3802.3 工作组 · 以太网的物理层"
     }
   ],
   "ablation": {

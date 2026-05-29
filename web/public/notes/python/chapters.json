@@ -8,11 +8,7 @@
         0,
         1
       ],
-      "abstract": "本章涵盖 python 基础：python 基础 · python 教程：如何写一个随机数",
-      "title_zh": "python 基础：python 基础·python 教程",
-      "title_en": "Python Basics: Python Tutorial",
-      "abstract_zh": "本章涵盖 python 基础：python 基础 · python 教程：如何写一个随机数",
-      "abstract_en": "This chapter covers Python basics: how to write a random number."
+      "abstract": "本章涵盖 python 基础：python 基础 · python 教程：如何写一个随机数"
     },
     {
       "title": "字符串切取的哪一段下标为1·python中的字符串列表",
@@ -23,11 +19,7 @@
         3,
         4
       ],
-      "abstract": "本章涵盖 字符串切取的哪一段下标为1 · python中的字符串列表 · python的排序排序排序方法",
-      "title_zh": "字符串切取的哪一段下标为1·python中的字符串列表",
-      "title_en": "Substring Indexing in Python · Python String Lists",
-      "abstract_zh": "本章涵盖 字符串切取的哪一段下标为1 · python中的字符串列表 · python的排序排序排序方法",
-      "abstract_en": "This section covers string slicing, index positions in Python strings, and sorting methods in Python."
+      "abstract": "本章涵盖 字符串切取的哪一段下标为1 · python中的字符串列表 · python的排序排序排序方法"
     },
     {
       "title": "python 基础内容的理解",
@@ -38,11 +30,7 @@
         6,
         7
       ],
-      "abstract": "本章涵盖 空的集合字典 · 函数也叫方法这个de 就是一个方法 · python 3 基础内容的理解",
-      "title_zh": "python 基础内容的理解",
-      "title_en": "Understanding Python Basics Content",
-      "abstract_zh": "本章涵盖 空的集合字典 · 函数也叫方法这个de 就是一个方法 · python 3 基础内容的理解",
-      "abstract_en": "This chapter covers empty sets and dictionaries, functions as methods, and understanding basic content in Python 3."
+      "abstract": "本章涵盖 空的集合字典 · 函数也叫方法这个de 就是一个方法 · python 3 基础内容的理解"
     }
   ],
   "ablation": {

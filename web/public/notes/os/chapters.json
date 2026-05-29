@@ -1,66 +1,51 @@
 {
   "chapters": [
     {
-      "title": "主题: 进程同步互斥的最后一个经典问题·主题: 5个哲学家都",
+      "title": "哲学家进餐问题",
       "start": 1.46,
+      "end": 234.55,
+      "indices": [
+        0
+      ],
+      "abstract": "本章介绍哲学家进餐问题及其核心冲突，探讨如何通过信号量来解决这一问题。"
+    },
+    {
+      "title": "冲突与信号量",
+      "start": 234.55,
       "end": 534.57,
       "indices": [
-        0,
         1,
         2
       ],
-      "abstract": "本章涵盖 主题: 进程同步互斥的最后一个经典问题 · 主题: 5个哲学家都并发的执行吃饭 · 主题: 用筷子的代码",
-      "title_zh": "主题: 进程同步互斥的最后一个经典问题·主题: 5个哲学家都",
-      "title_en": "Topic: The Final Classic Problem of Process Synchronization and Mutual Exclusion · Topic: The P Operation of Philosopher Number 2",
-      "abstract_zh": "本章涵盖 主题: 进程同步互斥的最后一个经典问题 · 主题: 5个哲学家都并发的执行吃饭 · 主题: 用筷子的代码",
-      "abstract_en": "This chapter covers the final classic problem of process synchronization and mutual exclusion · The topic is five philosophers dining concurrently · The code for using chopsticks"
+      "abstract": "本章分析互斥操作在哲学家进餐问题中的表现，并详细讲解死锁避免的具体策略。"
     },
     {
-      "title": "2号哲学家的p 操作·2号哲学家为什么会被阻塞",
+      "title": "互斥和避免",
       "start": 534.57,
       "end": 898.14,
       "indices": [
         3,
         4
       ],
-      "abstract": "本章涵盖 2号哲学家的p 操作 · 2号哲学家为什么会被阻塞",
-      "title_zh": "2号哲学家的p 操作·2号哲学家为什么会被阻塞",
-      "title_en": "Why is Philosopher Number 2 Blocked by the P Operation?",
-      "abstract_zh": "本章涵盖 2号哲学家的p 操作 · 2号哲学家为什么会被阻塞",
-      "abstract_en": "This section covers philosopher 2's p operation · Why is philosopher 2 blocked"
+      "abstract": ""
     }
   ],
   "ablation": {
-    "alpha": 0.3,
-    "text_dists": [
-      0.6666666666666667,
-      0.8,
-      0.8,
-      0.6666666666666667
-    ],
-    "visual_dists": [
-      0.030271708965301514,
-      0.012206017971038818,
-      0.06484109163284302,
-      0.026840031147003174
-    ],
-    "fused_dists": [
-      0.10296760166238236,
-      0.7,
-      1.0,
-      0.08340833682494027
-    ],
-    "depth_scores": [
-      -0.2985161991688088,
-      0.14851619916880876,
-      0.6082958315875299,
-      -0.4582958315875299
-    ],
-    "text_only_boundaries": [
-      2
-    ],
-    "multimodal_boundaries": [
-      3
-    ]
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "too_few_chapters"
+      ],
+      "fallback_used": false
+    },
+    "duration": 900.3946875,
+    "n_chunks": 5,
+    "lang": "zh",
+    "n_chapters": 3,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": false
   }
 }

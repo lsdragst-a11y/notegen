@@ -99,6 +99,41 @@ def main():
         json.dumps(catalog, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"\n[OK] catalog -> {notes_root / 'catalog.json'}")
 
+    backfill_missing_videos(web_pub, {d[0] for d in DEMOS})
+
+
+def backfill_missing_videos(web_pub: Path, demo_short_ids: set[str]) -> None:
+    """扫 web/public/notes/<id>/，凡是有 chapters.json 但 web/public/videos/<id>.mp4
+    不存在的，从 data/raw/<id>.mp4 兜底拷一份。前端按 note 目录名找视频，
+    扩 corpus 时只手动 copy 笔记目录易遗漏 video 同步。"""
+    videos_dir = web_pub / "videos"
+    notes_root = web_pub / "notes"
+    raw_dir = ROOT / "data" / "raw"
+
+    copied = skipped_no_src = ok = 0
+    print("\n[backfill] 扫 notes/ 找缺视频:")
+    for note_dir in sorted(notes_root.iterdir()):
+        if not note_dir.is_dir() or note_dir.name in demo_short_ids:
+            continue
+        if not (note_dir / "chapters.json").exists():
+            continue
+        nid = note_dir.name
+        vid_dst = videos_dir / f"{nid}.mp4"
+        if vid_dst.exists():
+            ok += 1
+            continue
+        vid_src = raw_dir / f"{nid}.mp4"
+        if vid_src.exists():
+            shutil.copy(vid_src, vid_dst)
+            size_mb = vid_dst.stat().st_size / 1024 / 1024
+            print(f"  + {nid}.mp4 ({size_mb:.1f}MB)")
+            copied += 1
+        else:
+            print(f"  ! {nid}: data/raw/{nid}.mp4 不存在，跳过")
+            skipped_no_src += 1
+
+    print(f"[backfill] copied={copied} already-ok={ok} no-source={skipped_no_src}")
+
 
 if __name__ == "__main__":
     main()
