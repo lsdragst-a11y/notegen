@@ -1,0 +1,191 @@
+{
+  "chapters": [
+    {
+      "title": "逻辑与物理结构",
+      "start": 5.81,
+      "end": 415.46,
+      "indices": [
+        0,
+        1,
+        2,
+        3,
+        4
+      ],
+      "abstract": "本章介绍文件的逻辑结构与物理结构，重点探讨定常与可变长记录的区别及其应用。",
+      "recap": "- 逻辑结构与物理结构：文件分为无结构和有结构，有结构文件又称流式文件\n- 定常与可变长记录：定常记录使用固定长度，可变长记录使用可变长度\n- 随机存取与顺序文件：记录按关键字顺序排列，支持随机访问\n- 顺序文件与链式存储：记录按顺序存储，链式存储支持追加但不支持随机访问",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在文件的逻辑结构中，哪种文件类型是通过索引表来加速检索的？",
+            "options": [
+              "无结构文件",
+              "有结构文件",
+              "索引顺序文件",
+              "顺序文件"
+            ],
+            "answer_idx": 2,
+            "explanation": "有结构文件（记彩文件）通过索引表来加速检索"
+          },
+          {
+            "type": "tf",
+            "q": "定常记录的顺序文件采用链式存储时可以实现随机存取。",
+            "answer": false,
+            "explanation": "定常记录的顺序文件采用链式存储时无法实现随机存取"
+          }
+        ]
+      },
+      "title_zh": "逻辑与物理结构",
+      "title_en": "Logical vs Physical Structure",
+      "abstract_zh": "本章介绍文件的逻辑结构与物理结构，重点探讨定常与可变长记录的区别及其应用。",
+      "abstract_en": "This chapter introduces the logical and physical structures of files, focusing on the differences between fixed-length and variable-length records and their applications."
+    },
+    {
+      "title": "索引文件逻辑结构及优点",
+      "start": 415.46,
+      "end": 833.16,
+      "indices": [
+        5,
+        6,
+        7,
+        8,
+        9
+      ],
+      "abstract": "本章详细阐述索引文件的逻辑结构及其优点，特别强调索引顺序文件的性能优势。",
+      "recap": "- 索引文件逻辑结构：索引文件支持随机存取，记录长度可变\n- 索引文件优点：索引文件占用空间少，适合可变长记录\n- 索引顺序文件：定长记录顺序存储，索引表用于快速检索\n- 多级索引优化：多级索引提高检索效率，减少磁盘I/O",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "索引顺序文件的索引表通常包含多少个表项？",
+            "options": [
+              "100",
+              "1000",
+              "10000",
+              "100000"
+            ],
+            "answer_idx": 0,
+            "explanation": "索引顺序文件的索引表通常包含100个表项"
+          },
+          {
+            "type": "tf",
+            "q": "索引顺序文件的索引表是按照关键字的顺序排列的。",
+            "answer": true,
+            "explanation": "索引顺序文件的索引表按照关键字顺序排列，以加快检索速度"
+          }
+        ]
+      },
+      "title_zh": "索引文件逻辑结构及优点",
+      "title_en": "Logical Structure and Advantages of Index Files",
+      "abstract_zh": "本章详细阐述索引文件的逻辑结构及其优点，特别强调索引顺序文件的性能优势。",
+      "abstract_en": "This chapter elaborates on the logical structure of indexed files and their advantages, particularly highlighting the performance benefits of indexed sequential files."
+    },
+    {
+      "title": "顺序文件与索引构建",
+      "start": 833.16,
+      "end": 1251.46,
+      "indices": [
+        10,
+        11,
+        12,
+        13,
+        14
+      ],
+      "abstract": "本章讨论顺序文件与索引构建的方法，重点介绍索引顺序文件的索引表结构及其构建过程。",
+      "recap": "- 文件逻辑结构介绍：顺序文件与索引文件逻辑结构\n- 文件特点：索引表长度固定，记录长度可变\n- 关键字排序与快速检索：索引文件按关键字排序，支持快速检索\n- 索引表结构：索引顺序文件建立索引表，支持快速检索",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "索引文件的索引表通常包含多少个字节？",
+            "options": [
+              "12",
+              "128",
+              "1024",
+              "4096"
+            ],
+            "answer_idx": 0,
+            "explanation": "索引文件的索引表通常需要12个字节的长度"
+          },
+          {
+            "type": "tf",
+            "q": "索引文件的逻辑结构可以用于无结构文件。",
+            "answer": false,
+            "explanation": "索引文件的逻辑结构主要用于有结构文件（记彩文件）"
+          }
+        ]
+      },
+      "title_zh": "顺序文件与索引构建",
+      "title_en": "Sequential Files and Index Construction",
+      "abstract_zh": "本章讨论顺序文件与索引构建的方法，重点介绍索引顺序文件的索引表结构及其构建过程。",
+      "abstract_en": "This chapter discusses methods for creating sequential and indexed files, emphasizing the structure of the index table in indexed sequential files and its construction process."
+    },
+    {
+      "title": "快速检索方法 · 本节复习",
+      "start": 1251.46,
+      "end": 1465.18,
+      "indices": [
+        15,
+        16,
+        17
+      ],
+      "abstract": "本章介绍快速检索方法，通过高级索引表和低级索引表的配合，显著提高文件记录的查找效率。",
+      "recap": "- 文件记录类型：顶级索引表和低级索引表，支持快速检索\n- 顺序文件与索引：介绍文件逻辑结构，包括顺序文件和索引文件\n- 快速检索方法：按关键字顺序排列记录，支持快速查找",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在索引顺序文件中，索引表如何帮助检索？",
+            "options": [
+              "直接访问每个记录",
+              "顺序查找每个记录",
+              "通过关键字快速定位记录",
+              "随机访问每个记录"
+            ],
+            "answer_idx": 2,
+            "explanation": "通过关键字快速定位记录，从而加快检索速度"
+          },
+          {
+            "type": "tf",
+            "q": "索引顺序文件中的索引表是按照关键字的顺序排列的。",
+            "answer": true,
+            "explanation": "索引顺序文件中的索引表按照关键字顺序排列，以加快检索速度"
+          }
+        ]
+      },
+      "title_zh": "快速检索方法 · 本节复习",
+      "title_en": "Fast Retrieval Methods · This Section Review",
+      "abstract_zh": "本章介绍快速检索方法，通过高级索引表和低级索引表的配合，显著提高文件记录的查找效率。",
+      "abstract_en": "This chapter introduces fast retrieval methods, using advanced and low-level index tables to significantly improve the efficiency of locating file records."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_oversize"
+      ],
+      "llm_fail_reasons": [
+        "missing",
+        "missing"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 1467.2921875,
+    "n_chunks": 18,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 3,
+    "vlm_generic_ratio": 0.111,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": true
+  }
+}
