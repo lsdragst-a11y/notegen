@@ -1772,110 +1772,60 @@ def _calibrate_headline_words(headline: str, keywords: list,
     return {"ok": ok, "drop": drop}
 
 
-def refine_chapter_titles(outline: dict, chunks: list[dict],
-                          model_id: str = _DEFAULT_MODEL,
-                          max_new_tokens: int = 400,
-                          lang: str = "zh",
-                          category: str = "teaching") -> Optional[list[str]]:
-    """二次调 LLM，仅基于每章内部 chunks 的 headlines 命名章标题。
-    避开"一次切+命名"时邻章 headline 串台。成功返回与顶层等长的标题列表。
-
-    category=vlog/talk 时切到 TITLE_CHAPTER_VLOG_SYSTEM，避开 "X 与 Y 与 Z" 拼接。"""
-    chapters = outline.get("chapters", [])
-    if not chapters:
-        return None
-    K = len(chapters)
-    lines = []
+def _run_title_one(ch: dict, chunks: list[dict], model, tok, sys_prompt: str,
+                   lang: str, max_new_tokens: int = 120) -> Optional[str]:
+    """逐章隔离命名：只喂**本章** chunks（段标题 + 高频词 + 内容 snippet），
+    返回 1 个章标题或 None。跨章约束（共享前缀禁令 / 姊妹章差异化 / 重复标题）
+    **不在这里**——由 refine_chapter_titles 末尾的 Python 后处理兜，因为把全部章
+    塞进一个 prompt 正是 p51「IP 耗尽/共享」标题串到邻章的根源（2026-06-01）。"""
+    import torch
+    ch_chunks = ch.get("chunks") or []
+    distinct_hls = len({(chunks[i].get("headline") or "").strip()
+                        for i in ch_chunks if i < len(chunks)})
+    dup_headlines = len(ch_chunks) >= 2 and distinct_hls <= 1
+    lines: list[str] = []
     any_drop = False
-    # J7: 检测"chunker 给一章内所有 chunks 生成相同 headline"模式（如 p68 ch3-ch6
-    # 共 20 chunks 全部 headline="中断服务程序"），此时必须靠 ASR snippet 给 LLM
-    # 看到本章真实内容差异，否则 LLM 只能从 headline+kw 拼"X详解/X执行/X恢复"雷同串。
-    n_dup_chs = sum(
-        1 for ch in chapters
-        if len(ch.get("chunks") or []) >= 2
-        and len({(chunks[i].get("headline") or "").strip()
-                 for i in ch["chunks"] if i < len(chunks)}) <= 1
-    )
-    any_dup_headlines = n_dup_chs >= 1
-    for ci, ch in enumerate(chapters):
-        lines.append(f"[第 {ci+1} 章]")
-        for idx in ch["chunks"]:
-            c = chunks[idx]
-            hl = c.get("headline") or c.get("text", "")[:30]
-            kws = _mask_kws_by_prob(c.get("keywords") or [], c)
-            text = c.get("text", "") or ""
-            kws_str = " / ".join(str(k) for k in kws[:5]) if kws else "(无)"
-            cal = _calibrate_headline_words(hl, kws, text, chunk=c)
-            line = f"  - 段标题: {hl}  | 高频词: {kws_str}"
-            if cal["drop"]:
-                any_drop = True
-                line += f"  | ⚠️ 已识别 ASR 错字 (禁用): {', '.join(cal['drop'])}"
-            lines.append(line)
-            # J7: 喂 ASR snippet——优先抽取式 summary，fallback text 前 120 字。
-            # 仿 abstract 的 J 修法（[[project-abstract-snippet-fix]]）。
-            snippet = (c.get("summary") or "").strip() or text[:120].strip()
-            if snippet:
-                snippet = snippet[:120].replace("\n", " ")
-                lines.append(f"    内容: {snippet}")
+    for idx in ch_chunks:
+        if idx >= len(chunks):
+            continue
+        c = chunks[idx]
+        hl = c.get("headline") or c.get("text", "")[:30]
+        kws = _mask_kws_by_prob(c.get("keywords") or [], c)
+        text = c.get("text", "") or ""
+        kws_str = " / ".join(str(k) for k in kws[:5]) if kws else "(无)"
+        cal = _calibrate_headline_words(hl, kws, text, chunk=c)
+        line = f"  - 段标题: {hl}  | 高频词: {kws_str}"
+        if cal["drop"]:
+            any_drop = True
+            line += f"  | ⚠️ 已识别 ASR 错字 (禁用): {', '.join(cal['drop'])}"
+        lines.append(line)
+        # J7: 喂 ASR snippet——优先抽取式 summary，fallback text 前 120 字。
+        snippet = (c.get("summary") or "").strip() or text[:120].strip()
+        if snippet:
+            snippet = snippet[:120].replace("\n", " ")
+            lines.append(f"    内容: {snippet}")
     body = "\n".join(lines)
     drop_clause = (
         "\n⚠️ 标注了「已识别 ASR 错字」的词是 Python 校准过的，**绝对禁止**\n"
-        "进入任何章/片段标题。若该段所有关键名词都被标禁，则该段不能单独主导\n"
-        "命名，必须借同章其他段或共同高频词抽象。\n"
+        "进入章标题。若本章所有关键名词都被标禁，用「内容」行里实际描述的概念命名。\n"
         if any_drop else "")
-    # I2: 检测 _split_pair_id（_repair_too_few_chapters 产生的姊妹章）
-    # 给 LLM 强提示：这些姊妹章必须用不同核心名词命名
-    pair_map: dict[str, list[int]] = {}
-    for ci, ch in enumerate(chapters):
-        pid = ch.get("_split_pair_id")
-        if pid:
-            pair_map.setdefault(pid, []).append(ci + 1)
-    sibling_clause = ""
-    if pair_map:
-        sibling_lines = []
-        for pid, sib_chs in pair_map.items():
-            if len(sib_chs) >= 2:
-                sib_str = " / ".join(f"第 {x} 章" for x in sib_chs)
-                sibling_lines.append(f"  - {sib_str}")
-        if sibling_lines:
-            sibling_clause = (
-                "\n⚠️ **姊妹章差异命名硬约束**：以下章节原本是 LLM 切分时归为 1 章被\n"
-                "Python 程序化拆开的，**必须用完全不重叠的核心名词命名**——禁止\n"
-                "两章都用同一个主题词（如不要 ch1=\"距离向量与自治\" + ch3=\"分层\n"
-                "次路由与自治\" 都共享\"自治\"）。每章用本章 chunks 独有的关键词锚定：\n"
-                + "\n".join(sibling_lines) + "\n")
-    # J7: 当 ≥1 章内 chunks headlines 完全相同（chunker 同主题视频后半段塌成
-    # 同一 headline），段标题给不出区分信号，必须强制 LLM 看「内容」行抽差异
     dup_headline_clause = (
-        "\n⚠️ **同标题段内容差异命名硬约束**：本批输入里有 "
-        f"{n_dup_chs} 章内所有段标题完全相同（chunker 对同主题后半段塌成同一\n"
-        "headline）。这些章节**绝对不能**用\"段标题\"作为章标题词根——必须从\n"
-        "**「内容」行（ASR 摘要）**抽出本章独有的子机制 / 步骤 / 对象 /\n"
-        "实例对象，再拼章标题。共享前缀（如多章都以\"服务程序X\"/\"中断X\"开头）\n"
-        "是失败模式，每章必须用不重叠的核心名词锚定。\n"
-        if any_dup_headlines else "")
-    prefix_clause = (
-        "\n⚠️ **共享前缀禁令**：K 个章标题里**禁止 ≥3 个**共享同一个 ≥2 字前缀\n"
-        "（如不允许 ch3=\"服务程序详解\" + ch4=\"服务程序执行\" + ch5=\"服务程序恢复\"）。\n"
-        "若同主题被切成多章，必须用各章「内容」行里的独有概念（如 PC 保存 / \n"
-        "向量地址 / 多重屏蔽 / 微秒例题）锚定，避免前缀雷同。\n")
-    user_prompt = (f"共 {K} 章/片段，请按顺序命名。\n"
-                   f"{drop_clause}{sibling_clause}{dup_headline_clause}{prefix_clause}\n"
-                   f"{body}\n\n"
-                   f"输出 JSON 数组（必须 {K} 个元素）：")
-    model, tok = load_model(model_id)
-    # vlog/talk 用专属 prompt 避开 "X 与 Y 与 Z" 拼接
-    sys_prompt = (TITLE_CHAPTER_VLOG_SYSTEM if category in ("vlog", "talk")
-                  else TITLE_CHAPTER_SYSTEM)
+        "\n⚠️ **本章所有段标题完全相同**（chunker 对同主题塌成同一 headline）——\n"
+        "**不能**用段标题作章标题词根，必须从**「内容」行（ASR 摘要）**抽出本章\n"
+        "独有的子机制 / 步骤 / 对象命名。\n"
+        if dup_headlines else "")
+    user_prompt = (
+        "请为下面这**一章**生成 1 个章标题——**只**依据本章「段标题/高频词/内容」，\n"
+        "禁止编造本章没出现的概念。\n"
+        f"{drop_clause}{dup_headline_clause}\n"
+        f"{body}\n\n"
+        "输出 JSON 数组（恰好 1 个元素）：")
     messages = [
         {"role": "system", "content": _system_with_lang(sys_prompt, lang, "title")},
         {"role": "user", "content": user_prompt},
     ]
     text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
-    import torch
     inputs = tok(text, return_tensors="pt").to(model.device)
-    print(f"      [llm-chapter-title] generate for {K} chapters "
-          f"(input {inputs['input_ids'].shape[1]} tokens) ...", flush=True)
     with torch.no_grad():
         out = model.generate(
             **inputs, max_new_tokens=max_new_tokens, do_sample=True,
@@ -1883,11 +1833,59 @@ def refine_chapter_titles(outline: dict, chunks: list[dict],
         )
     gen_ids = out[0][inputs["input_ids"].shape[1]:]
     raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
-    arr = _parse_titles_array(raw, K)
-    if arr is None:
-        print(f"      [llm-chapter-title] parse failed, raw: {raw[:250]}", flush=True)
+    arr = _parse_titles_array(raw, 1)
+    if not arr:
         return None
-    titles = [str(s).strip().strip('"').strip("'") for s in arr]
+    t = str(arr[0]).strip().strip('"').strip("'")
+    return t or None
+
+
+def refine_chapter_titles(outline: dict, chunks: list[dict],
+                          model_id: str = _DEFAULT_MODEL,
+                          max_new_tokens: int = 400,
+                          lang: str = "zh",
+                          category: str = "teaching") -> Optional[list[str]]:
+    """二次调 LLM，仅基于每章内部 chunks 的 headlines 命名章标题。
+    2026-06-01 起改为**逐章独立调用**（_run_title_one）：原先一次 prompt 塞全部 K 章
+    在主题同质视频上会让标题串到邻章（p51 ch3/ch4 标题互漂）。逐章隔离从根上消除，
+    跨章去重（共享前缀 / 重复标题 / generic 注入）由本函数末尾的 Python 后处理兜。
+    成功返回与顶层等长的标题列表。
+
+    category=vlog/talk 时切到 TITLE_CHAPTER_VLOG_SYSTEM，避开 "X 与 Y 与 Z" 拼接。"""
+    chapters = outline.get("chapters", [])
+    if not chapters:
+        return None
+    K = len(chapters)
+    model, tok = load_model(model_id)
+    # vlog/talk 用专属 prompt 避开 "X 与 Y 与 Z" 拼接
+    sys_prompt = (TITLE_CHAPTER_VLOG_SYSTEM if category in ("vlog", "talk")
+                  else TITLE_CHAPTER_SYSTEM)
+    # 逐章隔离命名（2026-06-01）：原先一次 prompt 塞全部 K 章，主题同质视频上标题会串到
+    # 邻章——p51 实测 ch3（IP 耗尽/共享）的标题漂成 ch4 的「IP地址耗尽与共享」、ch3 反被
+    # 贴上不属于它的「端口号分配与首部」。逐章只喂本章 chunk，模型物理上看不到邻章，从根
+    # 上消除漂移（同 generate_chapter_abstracts 的逐章修法）。跨章去重（共享前缀禁令 /
+    # 姊妹章差异化 / 重复标题）改由下面的 Python 后处理（_split_shared_prefix_titles / H2 /
+    # I6）兜底——这些原本就是 Python pass，批量 LLM 的"全局视野"是假收益、真串台源头。
+    titles: list[str] = []
+    n_fallback = 0
+    for ci, ch in enumerate(chapters):
+        t = _run_title_one(ch, chunks, model, tok, sys_prompt, lang)
+        if not t:
+            t = _run_title_one(ch, chunks, model, tok, sys_prompt, lang)
+        if not t:
+            # 兜底：保留切分时的原 title，再不行用本章首段 headline
+            t = (ch.get("title") or "").strip()
+            if not t:
+                cc = ch.get("chunks") or []
+                idx0 = cc[0] if cc else None
+                if idx0 is not None and idx0 < len(chunks):
+                    t = (chunks[idx0].get("headline") or "").strip()
+            t = t or f"第{ci + 1}章"
+            n_fallback += 1
+        titles.append(str(t).strip().strip('"').strip("'"))
+    tail = f"（{n_fallback} 章命名失败兜底）" if n_fallback else ""
+    print(f"      [llm-chapter-title] generated {K} chapter titles 逐章{tail}",
+          flush=True)
     # H2: Python 端去重兜底——若 K 个 title 有重复（主题集中视频 LLM 易出
     # "链路状态与路由" × 3），用每章 chunks 的关键词差异化
     seen: dict[str, int] = {}

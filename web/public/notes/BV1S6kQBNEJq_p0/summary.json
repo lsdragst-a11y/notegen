@@ -1,17 +1,17 @@
 [
   {
     "start": 30.47,
-    "end": 82.48,
-    "text": "i\nModule is by far the most important module, I have not seen this information, especially on evaluations, being covered to this depth anywhere else.\nIt's what everybody talks about, but nobody has actually really covered it well, and this course does it well.\nAnd finally, Module 5 is Patterns for Highly Autonomous Agents, where Andrew covers more experimental agentic workflows.\nA taste for the future.\nAlright, let's jump into Module 1, the fundamentals, starting off by defining agentic AI.",
-    "headline": "模块的重要性",
-    "summary": "Module is by far the most important module。being covered to this depth anywhere else。It's what everybody talks about。let's jump into Module 1。",
+    "end": 116.64,
+    "text": "i\nModule is by far the most important module, I have not seen this information, especially on evaluations, being covered to this depth anywhere else.\nIt's what everybody talks about, but nobody has actually really covered it well, and this course does it well.\nAnd finally, Module 5 is Patterns for Highly Autonomous Agents, where Andrew covers more experimental agentic workflows.\nA taste for the future.\nAlright, let's jump into Module 1, the fundamentals, starting off by defining agentic AI.\nAn agentic AI workflow is defined as a process where an LLM-based app executes multiple steps to complete a task.\nFor example, if you want your agentic AI workflow to help you write an essay on tea ceremonies.\nFirst, the LLM will need to come up with an essay outline about tea ceremonies.\nThen it will need to think to itself, do I need any web research?\nIt decides that it does, and it will then do research on tea ceremonies across different locations and across different times.\nNext, it will then write a first draft.\nBut that's not good.\nIt would then consider what parts would need more revision and more research.",
+    "headline": "agentic",
+    "summary": "starting off by defining agentic AI. if you want your agentic AI workflow to help you write an essay on tea ceremonies. the LLM will need to come up with an essay outline about tea ceremonies. and it will then do research on tea ceremonies across different locations and across different times.",
     "keywords": [
-      "Module",
-      "covered",
-      "well",
       "agentic",
-      "far",
-      "most"
+      "Module",
+      "AI",
+      "tea",
+      "ceremonies",
+      "covered"
     ],
     "segments": [
       {
@@ -613,47 +613,7 @@
             "prob": 0.995
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "模块的重要性",
-    "headline_en": "Importance of Modules",
-    "summary_zh": "Module is by far the most important module。being covered to this depth anywhere else。It's what everybody talks about。let's jump into Module 1。",
-    "summary_en": "The module is the most important, covered in depth elsewhere. It's what everyone discusses; let's dive into Module 1.",
-    "text_zh": "i\nModule is by far the most important module, I have not seen this information, especially on evaluations, being covered to this depth anywhere else.\nIt's what everybody talks about, but nobody has actually really covered it well, and this course does it well.\nAnd finally, Module 5 is Patterns for Highly Autonomous Agents, where Andrew covers more experimental agentic workflows.\nA taste for the future.\nAlright, let's jump into Module 1, the fundamentals, starting off by defining agentic AI.",
-    "text_en": "Module 1 is crucial; it covers agentic AI in depth, something rarely explored elsewhere. This course excels in explaining it. Module 5 focuses on patterns for highly autonomous agents, with Andrew covering experimental workflows. Let's dive into Module 1, starting with defining agentic AI.",
-    "keywords_zh": [
-      "Module",
-      "covered",
-      "well",
-      "agentic",
-      "far",
-      "most"
-    ],
-    "keywords_en": [
-      "Module",
-      "covered",
-      "well",
-      "agentic",
-      "far",
-      "most"
-    ]
-  },
-  {
-    "start": 82.48,
-    "end": 116.64,
-    "text": "An agentic AI workflow is defined as a process where an LLM-based app executes multiple steps to complete a task.\nFor example, if you want your agentic AI workflow to help you write an essay on tea ceremonies.\nFirst, the LLM will need to come up with an essay outline about tea ceremonies.\nThen it will need to think to itself, do I need any web research?\nIt decides that it does, and it will then do research on tea ceremonies across different locations and across different times.\nNext, it will then write a first draft.\nBut that's not good.\nIt would then consider what parts would need more revision and more research.",
-    "headline": "茶文化论文写作流程",
-    "summary": "the LLM will need to come up with an essay outline about tea ceremonies。and it will then do research on tea ceremonies across different locations and across different times。",
-    "keywords": [
-      "tea",
-      "ceremonies",
-      "will",
-      "need",
-      "agentic",
-      "AI"
-    ],
-    "segments": [
+      },
       {
         "start": 82.48,
         "end": 89.42,
@@ -1465,43 +1425,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_01_0049s.jpg",
+      "rel": "keyframe_01_0049s.jpg",
+      "time": 49.61888888888889,
+      "score": 0.416748046875
+    },
     "headline_pegasus": "",
-    "headline_zh": "茶文化论文写作流程",
-    "headline_en": "Writing Process for Tea Culture Research Paper",
-    "summary_zh": "the LLM will need to come up with an essay outline about tea ceremonies。and it will then do research on tea ceremonies across different locations and across different times。",
-    "summary_en": "The LLM will need to create an essay outline about tea ceremonies and then conduct research on them across different locations and times.",
-    "text_zh": "An agentic AI workflow is defined as a process where an LLM-based app executes multiple steps to complete a task.\nFor example, if you want your agentic AI workflow to help you write an essay on tea ceremonies.\nFirst, the LLM will need to come up with an essay outline about tea ceremonies.\nThen it will need to think to itself, do I need any web research?\nIt decides that it does, and it will then do research on tea ceremonies across different locations and across different times.\nNext, it will then write a first draft.\nBut that's not good.\nIt would then consider what parts would need more revision and more research.",
-    "text_en": "An agentic AI workflow involves an LLM executing multiple steps to complete a task. For instance, to write an essay on tea ceremonies, the LLM first creates an outline, then conducts research, writes a draft, revises it, and finally completes the essay.",
-    "keywords_zh": [
-      "tea",
-      "ceremonies",
-      "will",
-      "need",
-      "agentic",
-      "AI"
-    ],
-    "keywords_en": [
-      "tea",
-      "ceremonies",
-      "will",
-      "need",
-      "agentic",
-      "AI"
-    ]
+    "vlm_caption": "The video demonstrates tool use with a calendar and optimization methods highlighted.",
+    "headline_en": "agentic",
+    "headline_zh": "自主"
   },
   {
     "start": 116.84,
     "end": 143.44,
     "text": "Maybe it would even request a human review at this point, if it's really quite unsure about tea ceremonies.\nThen finally, it would revise the draft and have the final draft ready.\nThis is an example of an agentic AI workflow that is less autonomous, since it's quite clear what the steps are to be taken in order to get the final result.\nBut you can also have more autonomous agents too.\nUsing the same essay-writing agentic workflow and a more autonomous workflow would look something like",
-    "headline": "最终修订与确认",
-    "summary": "Maybe it would even request a human review at this point。Using the same essay-writing agentic workflow and a more autonomous workflow would look something like。",
+    "headline": "workflow",
+    "summary": "if it's really quite unsure about tea ceremonies. Then finally. This is an example of an agentic AI workflow that is less autonomous.",
     "keywords": [
-      "would",
       "workflow",
       "autonomous",
       "quite",
       "draft",
-      "final"
+      "final",
+      "agentic"
     ],
     "segments": [
       {
@@ -2114,43 +2061,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_02_0122s.jpg",
+      "rel": "keyframe_02_0122s.jpg",
+      "time": 122.75111111111111,
+      "score": 0.3876953125
+    },
     "headline_pegasus": "",
-    "headline_zh": "最终修订与确认",
-    "headline_en": "Final Revision and Confirmation",
-    "summary_zh": "Maybe it would even request a human review at this point。Using the same essay-writing agentic workflow and a more autonomous workflow would look something like。",
-    "summary_en": "At this point, it might even request a human review. A less autonomous workflow would involve using the same essay-writing process, while a more autonomous one would allow the agent greater freedom.",
-    "text_zh": "Maybe it would even request a human review at this point, if it's really quite unsure about tea ceremonies.\nThen finally, it would revise the draft and have the final draft ready.\nThis is an example of an agentic AI workflow that is less autonomous, since it's quite clear what the steps are to be taken in order to get the final result.\nBut you can also have more autonomous agents too.\nUsing the same essay-writing agentic workflow and a more autonomous workflow would look something like",
-    "text_en": "The workflow might request a human review if uncertain. More autonomous agents decide their steps autonomously, using tools like web searches and news archives to gather information and produce the final draft.",
-    "keywords_zh": [
-      "would",
-      "workflow",
-      "autonomous",
-      "quite",
-      "draft",
-      "final"
-    ],
-    "keywords_en": [
-      "would",
-      "workflow",
-      "autonomous",
-      "quite",
-      "draft",
-      "final"
-    ]
+    "vlm_caption": "The video explains how an LLM generates an essay outline, which is then revised after more research.",
+    "headline_en": "workflow",
+    "headline_zh": "工作流"
   },
   {
     "start": 143.44,
-    "end": 210.69,
-    "text": "You similarly tell the LLM to, you know, write an essay about tea ceremonies.\nBut instead of directing it to go write an outline, and then do the web research, and then et cetera, et cetera.\nYou can just give the LLM a set of tools, like web search, and news search, and maybe archive search for more research papers too.\nAnd you let the LLM itself decide which tool it's going to use to gather the right information.\nFind the best sources, compile it together, then write the essay draft.\nIt will also have the autonomy of how it's going to reflect on how it is that you can improve things,\nwhether it wants to call a human reviewer or not, until the agent itself feels satisfied and produces the final result.\nIt's the same input, and the output that you want is the same as well.\nBut you can see that one is very linear, and the steps are very well defined, less autonomous.\nAnd you have the much more autonomous version, where the agent has access to tools and a lot more freedom to decide how it's going to get to that final essay.\nThere's of course pros and cons to being less autonomous versus more autonomous.\nLike if you're less autonomous, the steps are predefined, they're clearer.\nAnd most of all, you have a lot more control over what you're doing.\nWhat is happening and the final result.\nOn the other hand, if something is more autonomous, the agent gets to make a lot more decisions for itself.",
-    "headline": "线性与自主流程对比",
-    "summary": "less autonomous。And you have the much more autonomous version。where the agent has access to tools and a lot more freedom to decide how it's going to get to that final essay。There's of course pros and cons to being less autonomous versus more autonomous。Like if you're less autonomous。if something is more autonomous。the agent gets to make a lot more decisions for itself。",
+    "end": 185.42,
+    "text": "You similarly tell the LLM to, you know, write an essay about tea ceremonies.\nBut instead of directing it to go write an outline, and then do the web research, and then et cetera, et cetera.\nYou can just give the LLM a set of tools, like web search, and news search, and maybe archive search for more research papers too.\nAnd you let the LLM itself decide which tool it's going to use to gather the right information.\nFind the best sources, compile it together, then write the essay draft.\nIt will also have the autonomy of how it's going to reflect on how it is that you can improve things,\nwhether it wants to call a human reviewer or not, until the agent itself feels satisfied and produces the final result.\nIt's the same input, and the output that you want is the same as well.\nBut you can see that one is very linear, and the steps are very well defined, less autonomous.",
+    "headline": "LLM",
+    "summary": "write an essay about tea ceremonies. But instead of directing it to go write an outline. and then do the web research. et cetera. You can just give the LLM a set of tools. like web search. and news search. then write the essay draft.",
     "keywords": [
-      "autonomous",
-      "more",
       "LLM",
       "write",
+      "search",
       "essay",
-      "search"
+      "web",
+      "research"
     ],
     "segments": [
       {
@@ -3301,7 +3235,34 @@
             "prob": 0.995
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_03_0166s.jpg",
+      "rel": "keyframe_03_0166s.jpg",
+      "time": 166.76222222222222,
+      "score": 0.357421875
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The video explains how an LLM can autonomously find the best sources for information.",
+    "headline_en": "LLM",
+    "headline_zh": "大语言模型"
+  },
+  {
+    "start": 185.64,
+    "end": 210.69,
+    "text": "And you have the much more autonomous version, where the agent has access to tools and a lot more freedom to decide how it's going to get to that final essay.\nThere's of course pros and cons to being less autonomous versus more autonomous.\nLike if you're less autonomous, the steps are predefined, they're clearer.\nAnd most of all, you have a lot more control over what you're doing.\nWhat is happening and the final result.\nOn the other hand, if something is more autonomous, the agent gets to make a lot more decisions for itself.",
+    "headline": "autonomous",
+    "summary": "And you have the much more autonomous version. There's of course pros and cons to being less autonomous versus more autonomous. Like if you're less autonomous.",
+    "keywords": [
+      "autonomous",
+      "agent",
+      "final",
+      "version",
+      "access",
+      "tools"
+    ],
+    "segments": [
       {
         "start": 185.64,
         "end": 192.62,
@@ -3969,43 +3930,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_04_0188s.jpg",
+      "rel": "keyframe_04_0188s.jpg",
+      "time": 188.42333333333332,
+      "score": 0.444091796875
+    },
     "headline_pegasus": "",
-    "headline_zh": "线性与自主流程对比",
-    "headline_en": "Comparison of Linear vs Autonomous Processes",
-    "summary_zh": "less autonomous。And you have the much more autonomous version。where the agent has access to tools and a lot more freedom to decide how it's going to get to that final essay。There's of course pros and cons to being less autonomous versus more autonomous。Like if you're less autonomous。if something is more autonomous。the agent gets to make a lot more decisions for itself。",
-    "summary_en": "Less autonomous workflows involve more decision-making by the agent, while more autonomous ones grant it more freedom. There are pros and cons to both approaches.",
-    "text_zh": "You similarly tell the LLM to, you know, write an essay about tea ceremonies.\nBut instead of directing it to go write an outline, and then do the web research, and then et cetera, et cetera.\nYou can just give the LLM a set of tools, like web search, and news search, and maybe archive search for more research papers too.\nAnd you let the LLM itself decide which tool it's going to use to gather the right information.\nFind the best sources, compile it together, then write the essay draft.\nIt will also have the autonomy of how it's going to reflect on how it is that you can improve things,\nwhether it wants to call a human reviewer or not, until the agent itself feels satisfied and produces the final result.\nIt's the same input, and the output that you want is the same as well.\nBut you can see that one is very linear, and the steps are very well defined, less autonomous.\nAnd you have the much more autonomous version, where the agent has access to tools and a lot more freedom to decide how it's going to get to that final essay.\nThere's of course pros and cons to being less autonomous versus more autonomous.\nLike if you're less autonomous, the steps are predefined, they're clearer.\nAnd most of all, you have a lot more control over what you're doing.\nWhat is happening and the final result.\nOn the other hand, if something is more autonomous, the agent gets to make a lot more decisions for itself.",
-    "text_en": "Less autonomous workflows follow predefined steps, offering clear control but less flexibility. More autonomous agents decide their actions, reflecting on improvements and calling human reviewers if needed. Both achieve the same goal but differ in autonomy and control.",
-    "keywords_zh": [
-      "autonomous",
-      "more",
-      "LLM",
-      "write",
-      "essay",
-      "search"
-    ],
-    "keywords_en": [
-      "autonomous",
-      "more",
-      "LLM",
-      "write",
-      "essay",
-      "search"
-    ]
+    "vlm_caption": "The speaker explains the different levels of autonomy in agentic AI, ranging from less autonomous to highly autonomous.",
+    "headline_en": "autonomous",
+    "headline_zh": "自主"
   },
   {
     "start": 210.95,
     "end": 230.67,
     "text": "And you can end up with really creative, really great results that are beyond what you imagine.\nBut the downside is that you would then have less control.\nAnd it could also potentially come up with results that may not be what you're looking for at all.\nIn any case, with agentic AI workflows, there is this spectrum of autonomy.\nThat you, the person building the agentic workflow, gets to choose how autonomous you want it to be.",
-    "headline": "创造性结果与控制权",
-    "summary": "really great results that are beyond what you imagine。And it could also potentially come up with results that may not be what you're looking for at all。",
+    "headline": "results",
+    "summary": "really great results that are beyond what you imagine. with agentic AI workflows. the person building the agentic workflow.",
     "keywords": [
-      "up",
-      "really",
       "results",
-      "what",
       "agentic",
-      "end"
+      "end",
+      "creative",
+      "beyond",
+      "imagine"
     ],
     "segments": [
       {
@@ -4540,43 +4488,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_05_0217s.jpg",
+      "rel": "keyframe_05_0217s.jpg",
+      "time": 217.5233333333333,
+      "score": 0.431884765625
+    },
     "headline_pegasus": "",
-    "headline_zh": "创造性结果与控制权",
-    "headline_en": "Creative Results and Control",
-    "summary_zh": "really great results that are beyond what you imagine。And it could also potentially come up with results that may not be what you're looking for at all。",
-    "summary_en": "It can produce really great results beyond imagination, but it might also come up with unexpected outcomes.",
-    "text_zh": "And you can end up with really creative, really great results that are beyond what you imagine.\nBut the downside is that you would then have less control.\nAnd it could also potentially come up with results that may not be what you're looking for at all.\nIn any case, with agentic AI workflows, there is this spectrum of autonomy.\nThat you, the person building the agentic workflow, gets to choose how autonomous you want it to be.",
-    "text_en": "You can achieve highly creative and unexpected results, but with less control and potential unpredictability. The level of autonomy in agentic AI workflows can be chosen by the builder.",
-    "keywords_zh": [
-      "up",
-      "really",
-      "results",
-      "what",
-      "agentic",
-      "end"
-    ],
-    "keywords_en": [
-      "up",
-      "really",
-      "results",
-      "what",
-      "agentic",
-      "end"
-    ]
+    "vlm_caption": "The speaker discusses pros and cons of an agent making decisions, highlighting potential benefits and reduced control.",
+    "headline_en": "results",
+    "headline_zh": "结果"
   },
   {
     "start": 230.75,
-    "end": 273.73,
-    "text": "Very explicitly though, Andrew in the course emphasizes that he rejects this notion.\nOf like a binary something is either an agent or it's not an agent.\nWhich is pretty much like what the people on X has been debating about for like the past two years.\nWhat is actually considered an agent?\nBut Andrew is basically like, nah guys, nah guys.\nSo just don't think about it that way, okay?\nLet's just call things like agentic AI.\nAnd as long as it involves multiple steps, it's agentic AI.\nAnd you can just be on the spectrum of least autonomous to more autonomous.\nParaphrasing a little bit here.\nAnyways, what we all can agree on though, is if you wrap a LLM model in an agentic workflow.\nIt is going to be much better than just calling it an agentic workflow.\nThis is a fact.\nIt would also be oftentimes faster and more modular.\nMeaning that you can change things a lot more easily.\nSo that is why agentic AI is so popular and very much worth building.",
-    "headline": "二元对立的拒绝",
-    "summary": "Let's just call things like agentic AI。it's agentic AI。is if you wrap a LLM model in an agentic workflow。It is going to be much better than just calling it an agentic workflow。So that is why agentic AI is so popular and very much worth building。",
+    "end": 256.03,
+    "text": "Very explicitly though, Andrew in the course emphasizes that he rejects this notion.\nOf like a binary something is either an agent or it's not an agent.\nWhich is pretty much like what the people on X has been debating about for like the past two years.\nWhat is actually considered an agent?\nBut Andrew is basically like, nah guys, nah guys.\nSo just don't think about it that way, okay?\nLet's just call things like agentic AI.\nAnd as long as it involves multiple steps, it's agentic AI.\nAnd you can just be on the spectrum of least autonomous to more autonomous.\nParaphrasing a little bit here.",
+    "headline": "Andrew Rejection Explanation",
+    "summary": "Andrew in the course emphasizes that he rejects this notion. Of like a binary something is either an agent or it's not an agent. Let's just call things like agentic AI. it's agentic AI.",
     "keywords": [
-      "like",
-      "just",
-      "agentic",
       "agent",
-      "though",
-      "Andrew"
+      "Andrew",
+      "about",
+      "nah",
+      "explicitly",
+      "course"
     ],
     "segments": [
       {
@@ -5376,7 +5311,34 @@
             "prob": 0.999
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_06_0233s.jpg",
+      "rel": "keyframe_06_0233s.jpg",
+      "time": 233.55888888888887,
+      "score": 0.387939453125
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The speaker discusses Agentic AI, emphasizing that it is not binary but rather a complex system.",
+    "headline_en": "Andrew Rejection Explanation",
+    "headline_zh": "安德鲁拒绝解释"
+  },
+  {
+    "start": 256.27,
+    "end": 284.44,
+    "text": "Anyways, what we all can agree on though, is if you wrap a LLM model in an agentic workflow.\nIt is going to be much better than just calling it an agentic workflow.\nThis is a fact.\nIt would also be oftentimes faster and more modular.\nMeaning that you can change things a lot more easily.\nSo that is why agentic AI is so popular and very much worth building.\nOkay, let's now cover from a practical perspective.\nWhat are the building blocks of agentic AI?\nAndrew's building blocks for agentic AI is pretty simplistic actually.",
+    "headline": "agentic",
+    "summary": "is if you wrap a LLM model in an agentic workflow. So that is why agentic AI is so popular and very much worth building. What are the building blocks of agentic AI.",
+    "keywords": [
+      "agentic",
+      "workflow",
+      "Anyways",
+      "agree",
+      "wrap",
+      "LLM"
+    ],
+    "segments": [
       {
         "start": 256.27,
         "end": 261.59,
@@ -5892,47 +5854,7 @@
             "prob": 0.99
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "二元对立的拒绝",
-    "headline_en": "Rejection of Binary Opposition",
-    "summary_zh": "Let's just call things like agentic AI。it's agentic AI。is if you wrap a LLM model in an agentic workflow。It is going to be much better than just calling it an agentic workflow。So that is why agentic AI is so popular and very much worth building。",
-    "summary_en": "We'll call this agentic AI. If you wrap an LLM model in an agentic workflow, it will be much better than just calling it an agentic workflow. That's why agentic AI is so popular and worth building.",
-    "text_zh": "Very explicitly though, Andrew in the course emphasizes that he rejects this notion.\nOf like a binary something is either an agent or it's not an agent.\nWhich is pretty much like what the people on X has been debating about for like the past two years.\nWhat is actually considered an agent?\nBut Andrew is basically like, nah guys, nah guys.\nSo just don't think about it that way, okay?\nLet's just call things like agentic AI.\nAnd as long as it involves multiple steps, it's agentic AI.\nAnd you can just be on the spectrum of least autonomous to more autonomous.\nParaphrasing a little bit here.\nAnyways, what we all can agree on though, is if you wrap a LLM model in an agentic workflow.\nIt is going to be much better than just calling it an agentic workflow.\nThis is a fact.\nIt would also be oftentimes faster and more modular.\nMeaning that you can change things a lot more easily.\nSo that is why agentic AI is so popular and very much worth building.",
-    "text_en": "Andrew explicitly rejects the binary notion of agents, aligning with ongoing debates. He suggests calling anything involving multiple steps agentic AI, placing it on a spectrum of autonomy. Wrapping an LLM in such a workflow significantly improves outcomes, making them faster and more modular.",
-    "keywords_zh": [
-      "like",
-      "just",
-      "agentic",
-      "agent",
-      "though",
-      "Andrew"
-    ],
-    "keywords_en": [
-      "like",
-      "just",
-      "agentic",
-      "agent",
-      "though",
-      "Andrew"
-    ]
-  },
-  {
-    "start": 276.16,
-    "end": 304.68,
-    "text": "Okay, let's now cover from a practical perspective.\nWhat are the building blocks of agentic AI?\nAndrew's building blocks for agentic AI is pretty simplistic actually.\nIt involves just three components.\nLet's start off by addressing the first two.\nWhich is models and tools.\nModels just refers to the AI model.\nThat can be large language models or it can be like other types of AI models.\nLike video generation models, audio generation models, any type of model.\nAnd then there are tools.\nWhich are basically functions and capabilities that you're giving your AI agent.",
-    "headline": "构建块介绍",
-    "summary": "What are the building blocks of agentic AI。Andrew's building blocks for agentic AI is pretty simplistic actually。Which is models and tools。audio generation models。",
-    "keywords": [
-      "AI",
-      "models",
-      "building",
-      "blocks",
-      "agentic",
-      "just"
-    ],
-    "segments": [
+      },
       {
         "start": 276.16,
         "end": 278.38,
@@ -6139,7 +6061,34 @@
             "prob": 0.61
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_07_0281s.jpg",
+      "rel": "keyframe_07_0281s.jpg",
+      "time": 281.31,
+      "score": 0.402587890625
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The speaker discusses the components that make up an AI agent while seated in front of a microphone.",
+    "headline_en": "agentic",
+    "headline_zh": "自主"
+  },
+  {
+    "start": 284.54,
+    "end": 325.76,
+    "text": "It involves just three components.\nLet's start off by addressing the first two.\nWhich is models and tools.\nModels just refers to the AI model.\nThat can be large language models or it can be like other types of AI models.\nLike video generation models, audio generation models, any type of model.\nAnd then there are tools.\nWhich are basically functions and capabilities that you're giving your AI agent.\nSo that it's able to perform different types of tasks.\nExamples of this would include being able to use external software through their APIs.\nStuff like web search, getting real time data, being able to check emails, things like that.\nInformation retrieval, so being able to access certain types of databases.\nAnd code execution, being able to write code to be able to do things like math, data analysis, building stuff.",
+    "headline": "models",
+    "summary": "Which is models and tools. That can be large language models or it can be like other types of AI models. Like video generation models. audio generation models. so being able to access certain types of databases.",
+    "keywords": [
+      "models",
+      "AI",
+      "tools",
+      "model",
+      "types",
+      "generation"
+    ],
+    "segments": [
       {
         "start": 284.54,
         "end": 286.38,
@@ -6649,47 +6598,7 @@
             "prob": 0.965
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "构建块介绍",
-    "headline_en": "Introduction to Building Blocks",
-    "summary_zh": "What are the building blocks of agentic AI。Andrew's building blocks for agentic AI is pretty simplistic actually。Which is models and tools。audio generation models。",
-    "summary_en": "The building blocks of agentic AI are simple: models and tools, such as audio generation models.",
-    "text_zh": "Okay, let's now cover from a practical perspective.\nWhat are the building blocks of agentic AI?\nAndrew's building blocks for agentic AI is pretty simplistic actually.\nIt involves just three components.\nLet's start off by addressing the first two.\nWhich is models and tools.\nModels just refers to the AI model.\nThat can be large language models or it can be like other types of AI models.\nLike video generation models, audio generation models, any type of model.\nAnd then there are tools.\nWhich are basically functions and capabilities that you're giving your AI agent.",
-    "text_en": "Now, let’s look at the practical building blocks of agentic AI. Andrew’s framework consists of just three components: models, tools, and a third element to be discussed later. Models refer to AI models, while tools are functions and capabilities that enable the AI agent to perform various tasks.",
-    "keywords_zh": [
-      "AI",
-      "models",
-      "building",
-      "blocks",
-      "agentic",
-      "just"
-    ],
-    "keywords_en": [
-      "AI",
-      "models",
-      "building",
-      "blocks",
-      "agentic",
-      "just"
-    ]
-  },
-  {
-    "start": 304.84,
-    "end": 330.28,
-    "text": "So that it's able to perform different types of tasks.\nExamples of this would include being able to use external software through their APIs.\nStuff like web search, getting real time data, being able to check emails, things like that.\nInformation retrieval, so being able to access certain types of databases.\nAnd code execution, being able to write code to be able to do things like math, data analysis, building stuff.\nSo all of these are tools.\nThere is also a third component which I will talk about in a little bit.",
-    "headline": "执行不同任务",
-    "summary": "Examples of this would include being able to use external software through their APIs。being able to write code to be able to do things like math。",
-    "keywords": [
-      "able",
-      "being",
-      "like",
-      "So",
-      "types",
-      "data"
-    ],
-    "segments": [
+      },
       {
         "start": 304.84,
         "end": 306.98,
@@ -7196,7 +7105,34 @@
             "prob": 0.999
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_08_0302s.jpg",
+      "rel": "keyframe_08_0302s.jpg",
+      "time": 302.86,
+      "score": 0.4013671875
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The presenter discusses various building blocks and their use cases, emphasizing the importance of tools and capabilities in AI applications.",
+    "headline_en": "models",
+    "headline_zh": "模型"
+  },
+  {
+    "start": 325.98,
+    "end": 363.33,
+    "text": "So all of these are tools.\nThere is also a third component which I will talk about in a little bit.\nBecause when you are first thinking about creating an agentic system.\nYou're really just thinking about how do you take these building blocks of different models and different tools.\nAnd chain them together and put them together in such a way to achieve the results that you want.\nFor example, say you want to develop an agentic AI system.\nWith the goal to respond to a customer email for your company.\nThis is an example of the type of email that you may get.\nSubject line here is wrong item shipped.\nIt's like, hi, I ordered a blue kitchen mirror.\nHere's the order number.\nBut received a red toaster instead.\nI need a blender for my daughter's birthday party this weekend.\nCan you help?\nSusan Jones",
+    "headline": "about",
+    "summary": "Because when you are first thinking about creating an agentic system. You're really just thinking about how do you take these building blocks of different models and different tools. say you want to develop an agentic AI system.",
+    "keywords": [
+      "about",
+      "tools",
+      "thinking",
+      "agentic",
+      "system",
+      "together"
+    ],
+    "segments": [
       {
         "start": 325.98,
         "end": 327.04,
@@ -7340,47 +7276,7 @@
             "prob": 0.991
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "执行不同任务",
-    "headline_en": "Executing Different Tasks",
-    "summary_zh": "Examples of this would include being able to use external software through their APIs。being able to write code to be able to do things like math。",
-    "summary_en": "Examples include using external software through APIs and writing code for tasks like math.",
-    "text_zh": "So that it's able to perform different types of tasks.\nExamples of this would include being able to use external software through their APIs.\nStuff like web search, getting real time data, being able to check emails, things like that.\nInformation retrieval, so being able to access certain types of databases.\nAnd code execution, being able to write code to be able to do things like math, data analysis, building stuff.\nSo all of these are tools.\nThere is also a third component which I will talk about in a little bit.",
-    "text_en": "Tools include using external software via APIs, information retrieval, and code execution for tasks like math and data analysis. The third component will be covered shortly.",
-    "keywords_zh": [
-      "able",
-      "being",
-      "like",
-      "So",
-      "types",
-      "data"
-    ],
-    "keywords_en": [
-      "able",
-      "being",
-      "like",
-      "So",
-      "types",
-      "data"
-    ]
-  },
-  {
-    "start": 330.4,
-    "end": 359.21,
-    "text": "Because when you are first thinking about creating an agentic system.\nYou're really just thinking about how do you take these building blocks of different models and different tools.\nAnd chain them together and put them together in such a way to achieve the results that you want.\nFor example, say you want to develop an agentic AI system.\nWith the goal to respond to a customer email for your company.\nThis is an example of the type of email that you may get.\nSubject line here is wrong item shipped.\nIt's like, hi, I ordered a blue kitchen mirror.\nHere's the order number.\nBut received a red toaster instead.",
-    "headline": "创建系统步骤",
-    "summary": "Because when you are first thinking about creating an agentic system。You're really just thinking about how do you take these building blocks of different models and different tools。",
-    "keywords": [
-      "thinking",
-      "about",
-      "agentic",
-      "system",
-      "different",
-      "them"
-    ],
-    "segments": [
+      },
       {
         "start": 330.4,
         "end": 333.32,
@@ -8172,47 +8068,7 @@
             "prob": 0.938
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "创建系统步骤",
-    "headline_en": "Creating System Steps",
-    "summary_zh": "Because when you are first thinking about creating an agentic system。You're really just thinking about how do you take these building blocks of different models and different tools。",
-    "summary_en": "When designing an agentic system, you're essentially combining different models and tools.",
-    "text_zh": "Because when you are first thinking about creating an agentic system.\nYou're really just thinking about how do you take these building blocks of different models and different tools.\nAnd chain them together and put them together in such a way to achieve the results that you want.\nFor example, say you want to develop an agentic AI system.\nWith the goal to respond to a customer email for your company.\nThis is an example of the type of email that you may get.\nSubject line here is wrong item shipped.\nIt's like, hi, I ordered a blue kitchen mirror.\nHere's the order number.\nBut received a red toaster instead.",
-    "text_en": "When designing an agentic system, you focus on combining various models and tools to achieve desired outcomes.",
-    "keywords_zh": [
-      "thinking",
-      "about",
-      "agentic",
-      "system",
-      "different",
-      "them"
-    ],
-    "keywords_en": [
-      "thinking",
-      "about",
-      "agentic",
-      "system",
-      "different",
-      "them"
-    ]
-  },
-  {
-    "start": 359.35,
-    "end": 382.13,
-    "text": "I need a blender for my daughter's birthday party this weekend.\nCan you help?\nSusan Jones\nIf you want to create an AI workflow that's able to accomplish this task.\nThe easiest way to do this is actually think to yourself.\nHow would I go about accomplishing this task?\nLike how would a human do this?\nOkay, so the first step would be you need to extract key information.\nIncluding the order number.\nThe fact that it was supposed to be a blue kitchen pro blender.\nBut they got a red toaster instead.",
-    "headline": "提取关键信息",
-    "summary": "I need a blender for my daughter's birthday party this weekend。If you want to create an AI workflow that's able to accomplish this task。",
-    "keywords": [
-      "would",
-      "need",
-      "task",
-      "do",
-      "blender",
-      "my"
-    ],
-    "segments": [
+      },
       {
         "start": 359.35,
         "end": 361.85,
@@ -8347,7 +8203,34 @@
             "prob": 0.961
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_09_0342s.jpg",
+      "rel": "keyframe_09_0342s.jpg",
+      "time": 342.58,
+      "score": 0.3955078125
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The screen is black, indicating a transition or pause in the presentation.",
+    "headline_en": "about",
+    "headline_zh": "关于"
+  },
+  {
+    "start": 363.33,
+    "end": 382.13,
+    "text": "If you want to create an AI workflow that's able to accomplish this task.\nThe easiest way to do this is actually think to yourself.\nHow would I go about accomplishing this task?\nLike how would a human do this?\nOkay, so the first step would be you need to extract key information.\nIncluding the order number.\nThe fact that it was supposed to be a blue kitchen pro blender.\nBut they got a red toaster instead.",
+    "headline": "task",
+    "summary": "If you want to create an AI workflow that's able to accomplish this task. How would I go about accomplishing this task.",
+    "keywords": [
+      "task",
+      "AI",
+      "workflow",
+      "able",
+      "accomplish",
+      "easiest"
+    ],
+    "segments": [
       {
         "start": 363.33,
         "end": 366.85,
@@ -8913,43 +8796,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_10_0375s.jpg",
+      "rel": "keyframe_10_0375s.jpg",
+      "time": 375.86333333333334,
+      "score": 0.408447265625
+    },
     "headline_pegasus": "",
-    "headline_zh": "提取关键信息",
-    "headline_en": "Extracting Key Information",
-    "summary_zh": "I need a blender for my daughter's birthday party this weekend。If you want to create an AI workflow that's able to accomplish this task。",
-    "summary_en": "I need a blender for my daughter's birthday party this weekend. To create an AI workflow for this task.",
-    "text_zh": "I need a blender for my daughter's birthday party this weekend.\nCan you help?\nSusan Jones\nIf you want to create an AI workflow that's able to accomplish this task.\nThe easiest way to do this is actually think to yourself.\nHow would I go about accomplishing this task?\nLike how would a human do this?\nOkay, so the first step would be you need to extract key information.\nIncluding the order number.\nThe fact that it was supposed to be a blue kitchen pro blender.\nBut they got a red toaster instead.",
-    "text_en": "For instance, if you want an AI to respond to a customer email, consider how a human would handle it: extract key information like the order number and identify the issue.",
-    "keywords_zh": [
-      "would",
-      "need",
-      "task",
-      "do",
-      "blender",
-      "my"
-    ],
-    "keywords_en": [
-      "would",
-      "need",
-      "task",
-      "do",
-      "blender",
-      "my"
-    ]
+    "vlm_caption": "The video demonstrates the first step of information extraction by highlighting key information extraction as a human task.",
+    "headline_en": "task",
+    "headline_zh": "任务"
   },
   {
     "start": 382.49,
     "end": 402.33,
     "text": "And the timeline.\nThe daughter's birthday party is for the weekend.\nThen you need to do this.\nThen you would go and find the relevant customer record.\nWhich would likely include looking into an order's database.\nTo see what was actually recorded.\nYou would then determine what possibly could have went wrong.\nAnd then send an email reply back.\nNow we need to translate these three steps into what an LLM would do.",
-    "headline": "寻找客户记录",
-    "summary": "Which would likely include looking into an order's database。Now we need to translate these three steps into what an LLM would do。",
+    "headline": "timeline",
+    "summary": "The daughter's birthday party is for the weekend. You would then determine what possibly could have went wrong. And then send an email reply back.",
     "keywords": [
-      "would",
       "timeline",
       "daughter",
       "birthday",
       "party",
-      "weekend"
+      "weekend",
+      "relevant"
     ],
     "segments": [
       {
@@ -9496,43 +9366,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_11_0384s.jpg",
+      "rel": "keyframe_11_0384s.jpg",
+      "time": 384.69444444444446,
+      "score": 0.41796875
+    },
     "headline_pegasus": "",
-    "headline_zh": "寻找客户记录",
-    "headline_en": "Finding Customer Records",
-    "summary_zh": "Which would likely include looking into an order's database。Now we need to translate these three steps into what an LLM would do。",
-    "summary_en": "This would likely involve examining an order's database. Now we need to translate these steps into actions an LLM would perform.",
-    "text_zh": "And the timeline.\nThe daughter's birthday party is for the weekend.\nThen you need to do this.\nThen you would go and find the relevant customer record.\nWhich would likely include looking into an order's database.\nTo see what was actually recorded.\nYou would then determine what possibly could have went wrong.\nAnd then send an email reply back.\nNow we need to translate these three steps into what an LLM would do.",
-    "text_en": "The timeline involves finding the relevant customer record by checking the order database, determining the problem, and sending a reply.",
-    "keywords_zh": [
-      "would",
-      "timeline",
-      "daughter",
-      "birthday",
-      "party",
-      "weekend"
-    ],
-    "keywords_en": [
-      "would",
-      "timeline",
-      "daughter",
-      "birthday",
-      "party",
-      "weekend"
-    ]
+    "vlm_caption": "A customer explains they received the wrong item for their daughter's birthday party.",
+    "headline_en": "timeline",
+    "headline_zh": "时间线"
   },
   {
     "start": 402.47,
-    "end": 435.51,
-    "text": "Well, for the first one, extracting key information.\nThe LLM is able to extract that information just by itself.\nBut for the next step, which is finding a relevant customer record.\nThe LLM would actually need a tool that would allow it to look into the order's database.\nSo it would need to provide that with that tool for order's database query.\nAnd then finally for writing and sending the response.\nThe LLM would be able to draft the response.\nBut in order to actually send that email.\nIt would need to have access to another tool that allows it to send the email.\nMake sense?\nThis is how the building blocks are coming together here.\nYou have the large language models.\nAnd the different tools that it requires.",
-    "headline": "编写并发送邮件",
-    "summary": "The LLM would actually need a tool that would allow it to look into the order's database。So it would need to provide that with that tool for order's database query。The LLM would be able to draft the response。",
+    "end": 423.35,
+    "text": "Well, for the first one, extracting key information.\nThe LLM is able to extract that information just by itself.\nBut for the next step, which is finding a relevant customer record.\nThe LLM would actually need a tool that would allow it to look into the order's database.\nSo it would need to provide that with that tool for order's database query.\nAnd then finally for writing and sending the response.\nThe LLM would be able to draft the response.",
+    "headline": "LLM",
+    "summary": "The LLM is able to extract that information just by itself. The LLM would actually need a tool that would allow it to look into the order's database.",
     "keywords": [
-      "would",
       "LLM",
-      "need",
+      "information",
+      "able",
       "tool",
       "order",
-      "information"
+      "database"
     ],
     "segments": [
       {
@@ -10125,7 +9982,34 @@
             "prob": 0.989
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_12_0414s.jpg",
+      "rel": "keyframe_12_0414s.jpg",
+      "time": 414.07000000000005,
+      "score": 0.3916015625
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The presenter explains steps involving LLMs for extracting key information, finding customer records, and writing responses.",
+    "headline_en": "LLM",
+    "headline_zh": "大语言模型"
+  },
+  {
+    "start": 423.55,
+    "end": 444.09,
+    "text": "But in order to actually send that email.\nIt would need to have access to another tool that allows it to send the email.\nMake sense?\nThis is how the building blocks are coming together here.\nYou have the large language models.\nAnd the different tools that it requires.\nOf course, the type of large language model you want to use on each of these steps.\nCould vary depending on what it's supposed to be doing exactly.\nAnd how it is that you're actually going to build this type of tool.",
+    "headline": "send",
+    "summary": "It would need to have access to another tool that allows it to send the email. You have the large language models. the type of large language model you want to use on each of these steps.",
+    "keywords": [
+      "send",
+      "email",
+      "order",
+      "access",
+      "tool",
+      "allows"
+    ],
+    "segments": [
       {
         "start": 423.55,
         "end": 425.31,
@@ -10473,47 +10357,7 @@
             "prob": 0.997
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "编写并发送邮件",
-    "headline_en": "Writing and Sending Emails",
-    "summary_zh": "The LLM would actually need a tool that would allow it to look into the order's database。So it would need to provide that with that tool for order's database query。The LLM would be able to draft the response。",
-    "summary_en": "The LLM would require a tool to query the order's database. So it needs a tool for database queries. The LLM can then draft the response.",
-    "text_zh": "Well, for the first one, extracting key information.\nThe LLM is able to extract that information just by itself.\nBut for the next step, which is finding a relevant customer record.\nThe LLM would actually need a tool that would allow it to look into the order's database.\nSo it would need to provide that with that tool for order's database query.\nAnd then finally for writing and sending the response.\nThe LLM would be able to draft the response.\nBut in order to actually send that email.\nIt would need to have access to another tool that allows it to send the email.\nMake sense?\nThis is how the building blocks are coming together here.\nYou have the large language models.\nAnd the different tools that it requires.",
-    "text_en": "The LLM can extract key information but needs tools for database queries and email sending to complete the task.",
-    "keywords_zh": [
-      "would",
-      "LLM",
-      "need",
-      "tool",
-      "order",
-      "information"
-    ],
-    "keywords_en": [
-      "would",
-      "LLM",
-      "need",
-      "tool",
-      "order",
-      "information"
-    ]
-  },
-  {
-    "start": 435.81,
-    "end": 472.81,
-    "text": "Of course, the type of large language model you want to use on each of these steps.\nCould vary depending on what it's supposed to be doing exactly.\nAnd how it is that you're actually going to build this type of tool.\nAlso varies as well.\nBut don't worry too much about this.\nWe're going to go into a lot more detail later in the video.\nBut here what I want to just make really clear.\nIs that you're basically taking a goal.\nAnd then translating that into a sequence of steps.\nIn which you will then use the building blocks of models and tools.\nIn order to accomplish those steps.\nSo the ideal situation after your AI system goes through these steps.\nIs that it would come up with a wonderful email.\nThat says something like.\nThank you so much for emailing the company.\nAfter looking at your order number.",
-    "headline": "选择模型类型",
-    "summary": "the type of large language model you want to use on each of these steps。But here what I want to just make really clear。In order to accomplish those steps。So the ideal situation after your AI system goes through these steps。",
-    "keywords": [
-      "steps",
-      "re",
-      "type",
-      "want",
-      "use",
-      "these"
-    ],
-    "segments": [
+      },
       {
         "start": 435.81,
         "end": 438.79,
@@ -10804,7 +10648,34 @@
             "prob": 0.996
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_13_0428s.jpg",
+      "rel": "keyframe_13_0428s.jpg",
+      "time": 428.1144444444445,
+      "score": 0.422607421875
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The presenter explains how an LLM tool can be used to extract key information, find relevant customer records, and send emails.",
+    "headline_en": "send",
+    "headline_zh": "发送"
+  },
+  {
+    "start": 444.09,
+    "end": 491.43,
+    "text": "Also varies as well.\nBut don't worry too much about this.\nWe're going to go into a lot more detail later in the video.\nBut here what I want to just make really clear.\nIs that you're basically taking a goal.\nAnd then translating that into a sequence of steps.\nIn which you will then use the building blocks of models and tools.\nIn order to accomplish those steps.\nSo the ideal situation after your AI system goes through these steps.\nIs that it would come up with a wonderful email.\nThat says something like.\nThank you so much for emailing the company.\nAfter looking at your order number.\nWe did notice that it does correspond to a blue blender.\nAnd we apologize that you received a red toaster instead.\nWe will send you a blender with expedited shipping.\nSo that you can get it tomorrow.\nAnd make it for your daughter's birthday on the weekend.\nAnd you can keep the red toaster as well.\nThen the customer Susan Jones would probably be very happy.",
+    "headline": "steps",
+    "summary": "Also varies as well. But don't worry too much about this. And then translating that into a sequence of steps. In order to accomplish those steps. And we apologize that you received a red toaster instead. And you can keep the red toaster as well.",
+    "keywords": [
+      "steps",
+      "order",
+      "blender",
+      "Also",
+      "varies",
+      "well"
+    ],
+    "segments": [
       {
         "start": 444.09,
         "end": 445.41,
@@ -11605,47 +11476,7 @@
             "prob": 1.0
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "选择模型类型",
-    "headline_en": "Selecting Model Types",
-    "summary_zh": "the type of large language model you want to use on each of these steps。But here what I want to just make really clear。In order to accomplish those steps。So the ideal situation after your AI system goes through these steps。",
-    "summary_en": "Choose the appropriate large language model for each step. But importantly, ensure your AI system can complete these tasks.",
-    "text_zh": "Of course, the type of large language model you want to use on each of these steps.\nCould vary depending on what it's supposed to be doing exactly.\nAnd how it is that you're actually going to build this type of tool.\nAlso varies as well.\nBut don't worry too much about this.\nWe're going to go into a lot more detail later in the video.\nBut here what I want to just make really clear.\nIs that you're basically taking a goal.\nAnd then translating that into a sequence of steps.\nIn which you will then use the building blocks of models and tools.\nIn order to accomplish those steps.\nSo the ideal situation after your AI system goes through these steps.\nIs that it would come up with a wonderful email.\nThat says something like.\nThank you so much for emailing the company.\nAfter looking at your order number.",
-    "text_en": "Of course, the type of large language model you want to use on each step can vary based on its specific task and how you plan to build the tool. But don't worry; we'll go into more detail later. The key is translating goals into steps using model building blocks.",
-    "keywords_zh": [
-      "steps",
-      "re",
-      "type",
-      "want",
-      "use",
-      "these"
-    ],
-    "keywords_en": [
-      "steps",
-      "re",
-      "type",
-      "want",
-      "use",
-      "these"
-    ]
-  },
-  {
-    "start": 472.81,
-    "end": 494.55,
-    "text": "We did notice that it does correspond to a blue blender.\nAnd we apologize that you received a red toaster instead.\nWe will send you a blender with expedited shipping.\nSo that you can get it tomorrow.\nAnd make it for your daughter's birthday on the weekend.\nAnd you can keep the red toaster as well.\nThen the customer Susan Jones would probably be very happy.\nBut what happens if your agent doesn't give you this wonderful email.",
-    "headline": "蓝搅拌机道歉",
-    "summary": "We did notice that it does correspond to a blue blender。And we apologize that you received a red toaster instead。",
-    "keywords": [
-      "blender",
-      "did",
-      "notice",
-      "does",
-      "correspond",
-      "blue"
-    ],
-    "segments": [
+      },
       {
         "start": 472.81,
         "end": 476.19,
@@ -12128,7 +11959,34 @@
             "prob": 1.0
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_14_0480s.jpg",
+      "rel": "keyframe_14_0480s.jpg",
+      "time": 480.90999999999997,
+      "score": 0.359130859375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "A customer receives an apology from Company X for receiving the wrong item, with plans to send a blender instead.",
+    "headline_en": "steps",
+    "headline_zh": "步骤"
+  },
+  {
+    "start": 491.59,
+    "end": 535.44,
+    "text": "But what happens if your agent doesn't give you this wonderful email.\nAnd it says something like.\nOh thank you for shopping with us.\nAs you can see we are so much better than Rival Corp.\nOur competitor.\nOr something like sure we will issue a refund.\nAnd not actually address the issue.\nThat is why you need the third component of Andrew's framework.\nWhich is evaluations.\nEvaluations as his name suggests.\nIs all about evaluating the results of your agent.\nIt's like the other half of building an AI agent.\nNot good enough to just build an agent.\nYou actually got to make sure it works properly right.\nAnd I am so glad that this course covers so much in depth about evals.\nI will be covering this in a lot more detail in module 4.\nBut very briefly.\nAn evaluation in this case.\nIs making sure that.\nYour AI agent doesn't actually talk about your competitors.",
+    "headline": "Agent Result Evaluation",
+    "summary": "But what happens if your agent doesn't give you this wonderful email. Or something like sure we will issue a refund. Is all about evaluating the results of your agent. Your AI agent doesn't actually talk about your competitors.",
+    "keywords": [
+      "agent",
+      "sure",
+      "about",
+      "doesn",
+      "something",
+      "issue"
+    ],
+    "segments": [
       {
         "start": 491.59,
         "end": 494.55,
@@ -12215,47 +12073,7 @@
             "prob": 0.987
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "蓝搅拌机道歉",
-    "headline_en": "Blue Blender Apology",
-    "summary_zh": "We did notice that it does correspond to a blue blender。And we apologize that you received a red toaster instead。",
-    "summary_en": "We noticed it corresponds to a blue blender. We apologize for sending a red toaster instead.",
-    "text_zh": "We did notice that it does correspond to a blue blender.\nAnd we apologize that you received a red toaster instead.\nWe will send you a blender with expedited shipping.\nSo that you can get it tomorrow.\nAnd make it for your daughter's birthday on the weekend.\nAnd you can keep the red toaster as well.\nThen the customer Susan Jones would probably be very happy.\nBut what happens if your agent doesn't give you this wonderful email.",
-    "text_en": "We noticed the blue blender corresponds to your order, but you received a red toaster instead. We’ll send you a blender with expedited shipping for your daughter’s birthday, and you can keep the red toaster.",
-    "keywords_zh": [
-      "blender",
-      "did",
-      "notice",
-      "does",
-      "correspond",
-      "blue"
-    ],
-    "keywords_en": [
-      "blender",
-      "did",
-      "notice",
-      "does",
-      "correspond",
-      "blue"
-    ]
-  },
-  {
-    "start": 494.69,
-    "end": 535.44,
-    "text": "And it says something like.\nOh thank you for shopping with us.\nAs you can see we are so much better than Rival Corp.\nOur competitor.\nOr something like sure we will issue a refund.\nAnd not actually address the issue.\nThat is why you need the third component of Andrew's framework.\nWhich is evaluations.\nEvaluations as his name suggests.\nIs all about evaluating the results of your agent.\nIt's like the other half of building an AI agent.\nNot good enough to just build an agent.\nYou actually got to make sure it works properly right.\nAnd I am so glad that this course covers so much in depth about evals.\nI will be covering this in a lot more detail in module 4.\nBut very briefly.\nAn evaluation in this case.\nIs making sure that.\nYour AI agent doesn't actually talk about your competitors.",
-    "headline": "竞争对手提及",
-    "summary": "And it says something like。Or something like sure we will issue a refund。Is all about evaluating the results of your agent。It's like the other half of building an AI agent。Your AI agent doesn't actually talk about your competitors。",
-    "keywords": [
-      "like",
-      "so",
-      "agent",
-      "something",
-      "much",
-      "sure"
-    ],
-    "segments": [
+      },
       {
         "start": 494.69,
         "end": 495.93,
@@ -13352,43 +13170,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_15_0501s.jpg",
+      "rel": "keyframe_15_0501s.jpg",
+      "time": 501.33444444444444,
+      "score": 0.39453125
+    },
     "headline_pegasus": "",
-    "headline_zh": "竞争对手提及",
-    "headline_en": "Mention of Competitors",
-    "summary_zh": "And it says something like。Or something like sure we will issue a refund。Is all about evaluating the results of your agent。It's like the other half of building an AI agent。Your AI agent doesn't actually talk about your competitors。",
-    "summary_en": "It's about evaluating your agent's results. It's like the other half of building an AI agent. Your AI agent shouldn't mention competitors.",
-    "text_zh": "And it says something like.\nOh thank you for shopping with us.\nAs you can see we are so much better than Rival Corp.\nOur competitor.\nOr something like sure we will issue a refund.\nAnd not actually address the issue.\nThat is why you need the third component of Andrew's framework.\nWhich is evaluations.\nEvaluations as his name suggests.\nIs all about evaluating the results of your agent.\nIt's like the other half of building an AI agent.\nNot good enough to just build an agent.\nYou actually got to make sure it works properly right.\nAnd I am so glad that this course covers so much in depth about evals.\nI will be covering this in a lot more detail in module 4.\nBut very briefly.\nAn evaluation in this case.\nIs making sure that.\nYour AI agent doesn't actually talk about your competitors.",
-    "text_en": "The email might say something like, ‘Thank you for shopping with us. As you can see, we’re much better than Rival Corp.’ Or it might promise a refund without addressing the issue. This highlights the importance of evaluations in Andrew’s framework, ensuring your AI agent performs correctly.",
-    "keywords_zh": [
-      "like",
-      "so",
-      "agent",
-      "something",
-      "much",
-      "sure"
-    ],
-    "keywords_en": [
-      "like",
-      "so",
-      "agent",
-      "something",
-      "much",
-      "sure"
-    ]
+    "vlm_caption": "A customer service representative addresses a complaint about a wrong item shipped, emphasizing their superiority over competitors.",
+    "headline_en": "Agent Result Evaluation",
+    "headline_zh": "代理结果评估"
   },
   {
     "start": 535.66,
-    "end": 573.98,
-    "text": "Cause that's kind of like in poor taste.\nSo how do we do this.\nWell first we can compile a list of all the competitors.\nThat we don't want to be mentioned.\nLike comp code and rival code.\nOr the other code.\nThen you can actually write a small snippet of code.\nLike this.\nIf competitor is in response.\nThen the num competitor mentions is plus or equal to 1.\nWhat this basically does.\nIs check for the email responses.\nAnd if any of these competitors are mentioned in the response.\nThen you would just increment the counter.\nOf number of competitor mentions.\nTo one more.\nOf course ideally.\nYou want this counter.\nThe number of competitor mentions.\nTo be equal to 0.\nBut you know.\nIf it does show up.\nYou would have a way now of tracking.\nHow many times it shows up.",
-    "headline": "客观评价标准",
-    "summary": "If competitor is in response。Then the num competitor mentions is plus or equal to 1。And if any of these competitors are mentioned in the response。Of number of competitor mentions。If it does show up。",
+    "end": 559.08,
+    "text": "Cause that's kind of like in poor taste.\nSo how do we do this.\nWell first we can compile a list of all the competitors.\nThat we don't want to be mentioned.\nLike comp code and rival code.\nOr the other code.\nThen you can actually write a small snippet of code.\nLike this.\nIf competitor is in response.\nThen the num competitor mentions is plus or equal to 1.\nWhat this basically does.\nIs check for the email responses.\nAnd if any of these competitors are mentioned in the response.",
+    "headline": "code",
+    "summary": "Well first we can compile a list of all the competitors. Like comp code and rival code. And if any of these competitors are mentioned in the response.",
     "keywords": [
       "code",
       "competitor",
-      "mentions",
-      "do",
-      "competitors",
-      "want"
+      "Cause",
+      "poor",
+      "taste",
+      "Well"
     ],
     "segments": [
       {
@@ -14071,7 +13876,34 @@
             "prob": 1.0
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_16_0543s.jpg",
+      "rel": "keyframe_16_0543s.jpg",
+      "time": 543.4666666666667,
+      "score": 0.355224609375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The instructor explains how to use code to track competitor mentions in responses.",
+    "headline_en": "code",
+    "headline_zh": "代码"
+  },
+  {
+    "start": 559.34,
+    "end": 581.96,
+    "text": "Then you would just increment the counter.\nOf number of competitor mentions.\nTo one more.\nOf course ideally.\nYou want this counter.\nThe number of competitor mentions.\nTo be equal to 0.\nBut you know.\nIf it does show up.\nYou would have a way now of tracking.\nHow many times it shows up.\nAnd where it is showing up.\nThis is a very objective way to determine.\nIf these competitors are actually still showing up.\nAnd you can use this counter.",
+    "headline": "counter",
+    "summary": "Then you would just increment the counter. Of number of competitor mentions. You want this counter. If these competitors are actually still showing up.",
+    "keywords": [
+      "counter",
+      "number",
+      "competitor",
+      "mentions",
+      "increment",
+      "course"
+    ],
+    "segments": [
       {
         "start": 559.34,
         "end": 560.86,
@@ -14494,47 +14326,7 @@
             "prob": 1.0
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "客观评价标准",
-    "headline_en": "Objective Evaluation Criteria",
-    "summary_zh": "If competitor is in response。Then the num competitor mentions is plus or equal to 1。And if any of these competitors are mentioned in the response。Of number of competitor mentions。If it does show up。",
-    "summary_en": "If a competitor is mentioned in the response, the number of competitor mentions is at least one. And if any competitors are mentioned, count them.",
-    "text_zh": "Cause that's kind of like in poor taste.\nSo how do we do this.\nWell first we can compile a list of all the competitors.\nThat we don't want to be mentioned.\nLike comp code and rival code.\nOr the other code.\nThen you can actually write a small snippet of code.\nLike this.\nIf competitor is in response.\nThen the num competitor mentions is plus or equal to 1.\nWhat this basically does.\nIs check for the email responses.\nAnd if any of these competitors are mentioned in the response.\nThen you would just increment the counter.\nOf number of competitor mentions.\nTo one more.\nOf course ideally.\nYou want this counter.\nThe number of competitor mentions.\nTo be equal to 0.\nBut you know.\nIf it does show up.\nYou would have a way now of tracking.\nHow many times it shows up.",
-    "text_en": "To avoid mentioning competitors, compile a list of them and use code to track mentions. For example, if 'competitor' is in the response, increment a counter. Ideally, this counter should be zero, but tracking it helps ensure your AI doesn’t discuss competitors.",
-    "keywords_zh": [
-      "code",
-      "competitor",
-      "mentions",
-      "do",
-      "competitors",
-      "want"
-    ],
-    "keywords_en": [
-      "code",
-      "competitor",
-      "mentions",
-      "do",
-      "competitors",
-      "want"
-    ]
-  },
-  {
-    "start": 574.12,
-    "end": 612.7,
-    "text": "And where it is showing up.\nThis is a very objective way to determine.\nIf these competitors are actually still showing up.\nAnd you can use this counter.\nAs a way to then.\nTweak your prompt.\nTweak your system.\nAnd do stuff to it.\nTo try to lower this number.\nSo that it eventually goes to 0.\nDon't worry about it.\nIf any of the details seems a little bit hazy.\nI'll be going to a lot more detail later in the video.\nBut what I just want you to understand here.\nIs that see.\nBy having like an evaluation like this.\nWhere you can measure.\nThe occurrence of this bad behavior.\nYou now have an objective way.\nTo improve your system.\nTo decrease the bad behavior.\nIf you didn't have this eval.\nThis way of measuring the bad behavior.\nThen you can like kind of think.",
-    "headline": "系统改进评估",
-    "summary": "This is a very objective way to determine。If these competitors are actually still showing up。Tweak your prompt。Tweak your system。To decrease the bad behavior。This way of measuring the bad behavior。",
-    "keywords": [
-      "way",
-      "your",
-      "like",
-      "bad",
-      "behavior",
-      "showing"
-    ],
-    "segments": [
+      },
       {
         "start": 574.12,
         "end": 575.62,
@@ -14738,7 +14530,34 @@
             "prob": 1.0
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_17_0561s.jpg",
+      "rel": "keyframe_17_0561s.jpg",
+      "time": 561.8533333333334,
+      "score": 0.406005859375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The presenter explains how to use code to track competitor mentions in an evaluation.",
+    "headline_en": "counter",
+    "headline_zh": "计数器"
+  },
+  {
+    "start": 582.12,
+    "end": 617.48,
+    "text": "As a way to then.\nTweak your prompt.\nTweak your system.\nAnd do stuff to it.\nTo try to lower this number.\nSo that it eventually goes to 0.\nDon't worry about it.\nIf any of the details seems a little bit hazy.\nI'll be going to a lot more detail later in the video.\nBut what I just want you to understand here.\nIs that see.\nBy having like an evaluation like this.\nWhere you can measure.\nThe occurrence of this bad behavior.\nYou now have an objective way.\nTo improve your system.\nTo decrease the bad behavior.\nIf you didn't have this eval.\nThis way of measuring the bad behavior.\nThen you can like kind of think.\nThat you are improving your system.\nBut you don't actually objectively know.\nIf you are improving the system or not.",
+    "headline": "behavior",
+    "summary": "Tweak your prompt. Tweak your system. Don't worry about it. If any of the details seems a little bit hazy. To improve your system. That you are improving your system. If you are improving the system or not.",
+    "keywords": [
+      "behavior",
+      "Tweak",
+      "system",
+      "prompt",
+      "lower",
+      "number"
+    ],
+    "segments": [
       {
         "start": 582.12,
         "end": 583.06,
@@ -15686,47 +15505,7 @@
             "prob": 0.985
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "系统改进评估",
-    "headline_en": "Assessment of System Improvements",
-    "summary_zh": "This is a very objective way to determine。If these competitors are actually still showing up。Tweak your prompt。Tweak your system。To decrease the bad behavior。This way of measuring the bad behavior。",
-    "summary_en": "This chapter describes an objective method to assess behavior. If competitors are still present, refine your prompts and systems to reduce misconduct. This approach measures misconduct.",
-    "text_zh": "And where it is showing up.\nThis is a very objective way to determine.\nIf these competitors are actually still showing up.\nAnd you can use this counter.\nAs a way to then.\nTweak your prompt.\nTweak your system.\nAnd do stuff to it.\nTo try to lower this number.\nSo that it eventually goes to 0.\nDon't worry about it.\nIf any of the details seems a little bit hazy.\nI'll be going to a lot more detail later in the video.\nBut what I just want you to understand here.\nIs that see.\nBy having like an evaluation like this.\nWhere you can measure.\nThe occurrence of this bad behavior.\nYou now have an objective way.\nTo improve your system.\nTo decrease the bad behavior.\nIf you didn't have this eval.\nThis way of measuring the bad behavior.\nThen you can like kind of think.",
-    "text_en": "And where it is showing up. This is a very objective way to determine if these competitors are actually still showing up, and you can use this counter to tweak your prompt and system to try to lower this number to 0. If any details seem hazy, I’ll go into more detail later. But what’s important here is that by evaluating this bad behavior, you now have an objective way to improve your system and decrease the bad behavior.",
-    "keywords_zh": [
-      "way",
-      "your",
-      "like",
-      "bad",
-      "behavior",
-      "showing"
-    ],
-    "keywords_en": [
-      "way",
-      "your",
-      "like",
-      "bad",
-      "behavior",
-      "showing"
-    ]
-  },
-  {
-    "start": 612.88,
-    "end": 667.94,
-    "text": "That you are improving your system.\nBut you don't actually objectively know.\nIf you are improving the system or not.\nThat is why evaluations are so important.\nThis is an example.\nOf a very objective.\nCode based approach.\nFor evaluating a result.\nThere is another one.\nCalled LM as a judge.\nIn which we are actually using.\nAnother large language model.\nTo rate the result.\nAnd evaluate the results.\nOf your AI agent.\nAnyways.\nMore detail in module 4.\nThis course is an excellent introduction.\nTo agentic AI.\nBut when you are ready.\nTo start building your own AI agents.\nWith business impact.\nThere are many other factors.\nThat you do need to consider.\nWhich is why.\nI highly recommend.\nThat you check out the free.\nMaster AI agents resource.\nFrom HubSpot Media.\nIt provides.\nGood practical frameworks.\nAnd examples.\nOn how to get started.\nWith building useful AI agents.\nWith business impact.\nIt also includes.\nReal use cases.\nIn marketing sales.\nAnd operations.\nThat you can directly use.\nTo start implementing.\nYour own agents.\nTo be able to do things like.\nContent production optimization.\nProcess large amounts of data.\nDo customized outreach.\nAnd much much more.\nThere is also.",
-    "headline": "资源推荐",
-    "summary": "That you are improving your system。Of your AI agent。To agentic AI。To start building your own AI agents。Master AI agents resource。With building useful AI agents。Your own agents。There is also。",
-    "keywords": [
-      "AI",
-      "agents",
-      "your",
-      "improving",
-      "system",
-      "But"
-    ],
-    "segments": [
+      },
       {
         "start": 612.88,
         "end": 614.66,
@@ -15879,7 +15658,34 @@
             "prob": 1.0
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_18_0605s.jpg",
+      "rel": "keyframe_18_0605s.jpg",
+      "time": 605.6933333333334,
+      "score": 0.37109375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The presenter explains how to add an evaluation to track errors in a system using code.",
+    "headline_en": "behavior",
+    "headline_zh": "行为"
+  },
+  {
+    "start": 617.62,
+    "end": 667.94,
+    "text": "That is why evaluations are so important.\nThis is an example.\nOf a very objective.\nCode based approach.\nFor evaluating a result.\nThere is another one.\nCalled LM as a judge.\nIn which we are actually using.\nAnother large language model.\nTo rate the result.\nAnd evaluate the results.\nOf your AI agent.\nAnyways.\nMore detail in module 4.\nThis course is an excellent introduction.\nTo agentic AI.\nBut when you are ready.\nTo start building your own AI agents.\nWith business impact.\nThere are many other factors.\nThat you do need to consider.\nWhich is why.\nI highly recommend.\nThat you check out the free.\nMaster AI agents resource.\nFrom HubSpot Media.\nIt provides.\nGood practical frameworks.\nAnd examples.\nOn how to get started.\nWith building useful AI agents.\nWith business impact.\nIt also includes.\nReal use cases.\nIn marketing sales.\nAnd operations.\nThat you can directly use.\nTo start implementing.\nYour own agents.\nTo be able to do things like.\nContent production optimization.\nProcess large amounts of data.\nDo customized outreach.\nAnd much much more.\nThere is also.",
+    "headline": "AI",
+    "summary": "Code based approach. Of your AI agent. To agentic AI. To start building your own AI agents. With business impact. Master AI agents resource. With building useful AI agents. Your own agents.",
+    "keywords": [
+      "AI",
+      "agents",
+      "result",
+      "large",
+      "own",
+      "business"
+    ],
+    "segments": [
       {
         "start": 617.62,
         "end": 619.76,
@@ -17414,43 +17220,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_19_0628s.jpg",
+      "rel": "keyframe_19_0628s.jpg",
+      "time": 628.8022222222222,
+      "score": 0.38720703125
+    },
     "headline_pegasus": "",
-    "headline_zh": "资源推荐",
-    "headline_en": "Resource Recommendations",
-    "summary_zh": "That you are improving your system。Of your AI agent。To agentic AI。To start building your own AI agents。Master AI agents resource。With building useful AI agents。Your own agents。There is also。",
-    "summary_en": "This section explains improving your AI system. Transitioning to more agentic AI. Start building your own AI agents. Master resources for creating useful agents. There is also.",
-    "text_zh": "That you are improving your system.\nBut you don't actually objectively know.\nIf you are improving the system or not.\nThat is why evaluations are so important.\nThis is an example.\nOf a very objective.\nCode based approach.\nFor evaluating a result.\nThere is another one.\nCalled LM as a judge.\nIn which we are actually using.\nAnother large language model.\nTo rate the result.\nAnd evaluate the results.\nOf your AI agent.\nAnyways.\nMore detail in module 4.\nThis course is an excellent introduction.\nTo agentic AI.\nBut when you are ready.\nTo start building your own AI agents.\nWith business impact.\nThere are many other factors.\nThat you do need to consider.\nWhich is why.\nI highly recommend.\nThat you check out the free.\nMaster AI agents resource.\nFrom HubSpot Media.\nIt provides.\nGood practical frameworks.\nAnd examples.\nOn how to get started.\nWith building useful AI agents.\nWith business impact.\nIt also includes.\nReal use cases.\nIn marketing sales.\nAnd operations.\nThat you can directly use.\nTo start implementing.\nYour own agents.\nTo be able to do things like.\nContent production optimization.\nProcess large amounts of data.\nDo customized outreach.\nAnd much much more.\nThere is also.",
-    "text_en": "That you are improving your system but don’t actually know if you are improving it objectively. Evaluations are crucial for this. Another example of a code-based approach is LM as a judge, where another large language model rates the results. More details in module 4. This course is an excellent introduction to agentic AI, but when you’re ready to build your own AI agents with business impact, consider other factors and check out the free Master AI Agents resource from HubSpot Media for practical frameworks and real use cases in marketing, sales, and operations.",
-    "keywords_zh": [
-      "AI",
-      "agents",
-      "your",
-      "improving",
-      "system",
-      "But"
-    ],
-    "keywords_en": [
-      "AI",
-      "agents",
-      "your",
-      "improving",
-      "system",
-      "But"
-    ]
+    "vlm_caption": "The presenter explains how a large language model can be used as an evaluator for essay quality scoring.",
+    "headline_en": "AI",
+    "headline_zh": "人工智能"
   },
   {
     "start": 668.0,
-    "end": 687.26,
-    "text": "A second download.\nIn the resource.\nCalled how to use AI agents.\nThat has an excellent checklist.\nTo guide your organization.\nThrough each phase.\nOf implementing AI agents.\nThis is so useful.\nAnd it is something.\nThat we actually use.\nIn our company.\nWhenever we are launching.\nWe recommend.\nYou check out the resource.\nLinked over here.\nAlso in description.\nThank you so much.\nHubSpot Media.\nFor providing practical.\nFree resources.\nOn building AI agents.",
-    "headline": "设计模式介绍",
-    "summary": "In the resource。Called how to use AI agents。Of implementing AI agents。This is so useful。Free resources。On building AI agents。",
+    "end": 693.98,
+    "text": "A second download.\nIn the resource.\nCalled how to use AI agents.\nThat has an excellent checklist.\nTo guide your organization.\nThrough each phase.\nOf implementing AI agents.\nThis is so useful.\nAnd it is something.\nThat we actually use.\nIn our company.\nWhenever we are launching.\nWe recommend.\nYou check out the resource.\nLinked over here.\nAlso in description.\nThank you so much.\nHubSpot Media.\nFor providing practical.\nFree resources.\nOn building AI agents.\nAnd for sponsoring.\nThis portion of the video.\nNow back to the video.\nBut first.\nLet's move on.\nTo modules two and three.\nWhich are covering.\nWhat are known.",
+    "headline": "AI",
+    "summary": "Called how to use AI agents. That has an excellent checklist. Through each phase. Of implementing AI agents. You check out the resource. On building AI agents.",
     "keywords": [
-      "resource",
-      "use",
       "AI",
       "agents",
-      "so",
-      "second"
+      "resource",
+      "video",
+      "download",
+      "excellent"
     ],
     "segments": [
       {
@@ -18133,47 +17926,7 @@
             "prob": 0.708
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "设计模式介绍",
-    "headline_en": "Introduction to Design Patterns",
-    "summary_zh": "In the resource。Called how to use AI agents。Of implementing AI agents。This is so useful。Free resources。On building AI agents。",
-    "summary_en": "In the resource, learn how to use AI agents. Implementing them is very useful. Free resources available for building AI agents.",
-    "text_zh": "A second download.\nIn the resource.\nCalled how to use AI agents.\nThat has an excellent checklist.\nTo guide your organization.\nThrough each phase.\nOf implementing AI agents.\nThis is so useful.\nAnd it is something.\nThat we actually use.\nIn our company.\nWhenever we are launching.\nWe recommend.\nYou check out the resource.\nLinked over here.\nAlso in description.\nThank you so much.\nHubSpot Media.\nFor providing practical.\nFree resources.\nOn building AI agents.",
-    "text_en": "There’s a second download called how to use AI agents with an excellent checklist to guide your organization through each phase of implementing AI agents. We use this in our company whenever we launch new projects. Check out the resource linked here and thank you to HubSpot Media for providing practical free resources on building AI agents.",
-    "keywords_zh": [
-      "resource",
-      "use",
-      "AI",
-      "agents",
-      "so",
-      "second"
-    ],
-    "keywords_en": [
-      "resource",
-      "use",
-      "AI",
-      "agents",
-      "so",
-      "second"
-    ]
-  },
-  {
-    "start": 687.42,
-    "end": 715.74,
-    "text": "And for sponsoring.\nThis portion of the video.\nNow back to the video.\nBut first.\nLet's move on.\nTo modules two and three.\nWhich are covering.\nWhat are known.\nAs agentic design patterns.\nAnd what are.\nAgentic design patterns.\nYou may ask.\nWell.\nRemember.\nWe talked about earlier.\nAbout sending that email.\nFor the blender.\nAnd the toaster.\nGot to first.\nDecompose that task.\nAnd then translate that.\nSo you could.\nJust kind of like.\nFigure that out.\nYourself.\nWith any type.\nOf tasks.\nThat you want.\nYour agentic AI.",
-    "headline": "提高系统效果",
-    "summary": "This portion of the video。Now back to the video。But first。Let's move on。To modules two and three。As agentic design patterns。Got to first。",
-    "keywords": [
-      "video",
-      "first",
-      "design",
-      "patterns",
-      "sponsoring",
-      "portion"
-    ],
-    "segments": [
+      },
       {
         "start": 687.42,
         "end": 688.3,
@@ -18425,7 +18178,34 @@
             "prob": 0.999
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_20_0670s.jpg",
+      "rel": "keyframe_20_0670s.jpg",
+      "time": 670.8866666666667,
+      "score": 0.47607421875
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The slide introduces a practical checklist for implementing AI agents in 2025.",
+    "headline_en": "AI",
+    "headline_zh": "人工智能"
+  },
+  {
+    "start": 694.08,
+    "end": 752.48,
+    "text": "As agentic design patterns.\nAnd what are.\nAgentic design patterns.\nYou may ask.\nWell.\nRemember.\nWe talked about earlier.\nAbout sending that email.\nFor the blender.\nAnd the toaster.\nGot to first.\nDecompose that task.\nAnd then translate that.\nSo you could.\nJust kind of like.\nFigure that out.\nYourself.\nWith any type.\nOf tasks.\nThat you want.\nYour agentic AI.\nTo do.\nBut luckily.\nWe do have.\nA lot of precedence.\nNow.\nFor specific types.\nOf tasks.\nAnd specific types.\nOf design patterns.\nLike how it is.\nThat we're decomposing it.\nAnd fitting together the pieces.\nThat has proven.\nTo showing really good results.\nBecause more likely than not.\nWhatever it is.\nThat you're trying to accomplish.\nWill converge.\nTo one of these design patterns.\nIn this course.\nAndrew covers.\nFour design patterns.\nTwo that are less autonomous.\nAnd two that are more experimental.\nMore autonomous.\nLet's now talk about.\nThe first design pattern.\nWhich is reflection.\nThe reflection design pattern.\nIs super intuitive.\nFor example.\nIf you tell a human.\nHey.\nGo write this email.\nAnd they're like.\nYou know.\nDistracted or something.\nAnd maybe they just like.\nHad lunch.",
+    "headline": "design",
+    "summary": "As agentic design patterns. Of tasks. For specific types. Of design patterns. To one of these design patterns. Four design patterns. The first design pattern. The reflection design pattern.",
+    "keywords": [
+      "design",
+      "patterns",
+      "agentic",
+      "about",
+      "email",
+      "tasks"
+    ],
+    "segments": [
       {
         "start": 694.08,
         "end": 695.42,
@@ -19052,47 +18832,7 @@
             "prob": 0.353
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "提高系统效果",
-    "headline_en": "Improving System Effectiveness",
-    "summary_zh": "This portion of the video。Now back to the video。But first。Let's move on。To modules two and three。As agentic design patterns。Got to first。",
-    "summary_en": "This part of the video now moves back. But first, let's proceed to modules two and three. As agentic design patterns must come first.",
-    "text_zh": "And for sponsoring.\nThis portion of the video.\nNow back to the video.\nBut first.\nLet's move on.\nTo modules two and three.\nWhich are covering.\nWhat are known.\nAs agentic design patterns.\nAnd what are.\nAgentic design patterns.\nYou may ask.\nWell.\nRemember.\nWe talked about earlier.\nAbout sending that email.\nFor the blender.\nAnd the toaster.\nGot to first.\nDecompose that task.\nAnd then translate that.\nSo you could.\nJust kind of like.\nFigure that out.\nYourself.\nWith any type.\nOf tasks.\nThat you want.\nYour agentic AI.",
-    "text_en": "And for sponsoring this portion of the video. Now back to the video, but first let’s move on to modules two and three, which cover agentic design patterns and what they are. You might wonder, remember we talked about decomposing tasks like sending emails for the blender and toaster to figure out yourself with any type of task you want your agentic AI to handle.",
-    "keywords_zh": [
-      "video",
-      "first",
-      "design",
-      "patterns",
-      "sponsoring",
-      "portion"
-    ],
-    "keywords_en": [
-      "video",
-      "first",
-      "design",
-      "patterns",
-      "sponsoring",
-      "portion"
-    ]
-  },
-  {
-    "start": 715.9,
-    "end": 745.98,
-    "text": "To do.\nBut luckily.\nWe do have.\nA lot of precedence.\nNow.\nFor specific types.\nOf tasks.\nAnd specific types.\nOf design patterns.\nLike how it is.\nThat we're decomposing it.\nAnd fitting together the pieces.\nThat has proven.\nTo showing really good results.\nBecause more likely than not.\nWhatever it is.\nThat you're trying to accomplish.\nWill converge.\nTo one of these design patterns.\nIn this course.\nAndrew covers.\nFour design patterns.\nTwo that are less autonomous.\nAnd two that are more experimental.\nMore autonomous.\nLet's now talk about.\nThe first design pattern.\nWhich is reflection.\nThe reflection design pattern.",
-    "headline": "代码反思改进",
-    "summary": "A lot of precedence.Now。Of design patterns。To one of these design patterns。Four design patterns。More autonomous。The first design pattern。The reflection design pattern。",
-    "keywords": [
-      "design",
-      "patterns",
-      "do",
-      "specific",
-      "types",
-      "re"
-    ],
-    "segments": [
+      },
       {
         "start": 715.9,
         "end": 716.36,
@@ -20001,47 +19741,7 @@
             "prob": 0.931
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "代码反思改进",
-    "headline_en": "Code Reflection and Improvement",
-    "summary_zh": "A lot of precedence.Now。Of design patterns。To one of these design patterns。Four design patterns。More autonomous。The first design pattern。The reflection design pattern。",
-    "summary_en": "Many precedents exist. Of these design patterns, four are more autonomous. The first design pattern is the reflection design pattern.",
-    "text_zh": "To do.\nBut luckily.\nWe do have.\nA lot of precedence.\nNow.\nFor specific types.\nOf tasks.\nAnd specific types.\nOf design patterns.\nLike how it is.\nThat we're decomposing it.\nAnd fitting together the pieces.\nThat has proven.\nTo showing really good results.\nBecause more likely than not.\nWhatever it is.\nThat you're trying to accomplish.\nWill converge.\nTo one of these design patterns.\nIn this course.\nAndrew covers.\nFour design patterns.\nTwo that are less autonomous.\nAnd two that are more experimental.\nMore autonomous.\nLet's now talk about.\nThe first design pattern.\nWhich is reflection.\nThe reflection design pattern.",
-    "text_en": "To do. But luckily, we do have a lot of precedence. Now, for specific types of tasks and design patterns, like decomposition and fitting pieces together, which has shown really good results. Because whatever you're trying to accomplish will likely converge to one of these design patterns. In this course, Andrew covers four design patterns, two less autonomous and two more experimental. Let's now talk about the first design pattern, which is reflection.",
-    "keywords_zh": [
-      "design",
-      "patterns",
-      "do",
-      "specific",
-      "types",
-      "re"
-    ],
-    "keywords_en": [
-      "design",
-      "patterns",
-      "do",
-      "specific",
-      "types",
-      "re"
-    ]
-  },
-  {
-    "start": 746.04,
-    "end": 766.92,
-    "text": "Is super intuitive.\nFor example.\nIf you tell a human.\nHey.\nGo write this email.\nAnd they're like.\nYou know.\nDistracted or something.\nAnd maybe they just like.\nHad lunch.\nSo they just write.\nSome sloppy email.\nBut if you go like.\nHey.\nReflect on this.\nAnd improve the email.\nProbably the result.\nYou're going to get.\nIs going to be a lot better.\nExactly the same with AI.\nIf you tell an AI.\nTo write an email.\nBut if you tell it.",
-    "headline": "无代码方法",
-    "summary": "Go write this email。And they're like。And maybe they just like。So they just write。But if you go like.Hey。To write an email。",
-    "keywords": [
-      "email",
-      "tell",
-      "write",
-      "they",
-      "like",
-      "Hey"
-    ],
-    "segments": [
+      },
       {
         "start": 746.04,
         "end": 746.92,
@@ -20341,7 +20041,34 @@
             "prob": 1.0
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_21_0745s.jpg",
+      "rel": "keyframe_21_0745s.jpg",
+      "time": 745.9911111111111,
+      "score": 0.320068359375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The person is explaining the intuitive nature of reflective design mode while gesturing with their hands.",
+    "headline_en": "design",
+    "headline_zh": "设计"
+  },
+  {
+    "start": 752.66,
+    "end": 774.66,
+    "text": "So they just write.\nSome sloppy email.\nBut if you go like.\nHey.\nReflect on this.\nAnd improve the email.\nProbably the result.\nYou're going to get.\nIs going to be a lot better.\nExactly the same with AI.\nIf you tell an AI.\nTo write an email.\nBut if you tell it.\nTo go back.\nAnd reflect on it.\nAnd improve it.\nYou will end up.\nHaving much better results.\nThe second step.\nAsking to reflect on it.\nAnd come up with another draft.\nIs literally.",
+    "headline": "email",
+    "summary": "Some sloppy email. And improve the email. To write an email. Having much better results. Asking to reflect on it.",
+    "keywords": [
+      "email",
+      "write",
+      "improve",
+      "better",
+      "AI",
+      "sloppy"
+    ],
+    "segments": [
       {
         "start": 752.66,
         "end": 753.34,
@@ -20812,47 +20539,7 @@
             "prob": 0.965
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "无代码方法",
-    "headline_en": "No-Code Approach",
-    "summary_zh": "Go write this email。And they're like。And maybe they just like。So they just write。But if you go like.Hey。To write an email。",
-    "summary_en": "Write this email. They might just do it. So they write. But if you ask. Hey. To write an email.",
-    "text_zh": "Is super intuitive.\nFor example.\nIf you tell a human.\nHey.\nGo write this email.\nAnd they're like.\nYou know.\nDistracted or something.\nAnd maybe they just like.\nHad lunch.\nSo they just write.\nSome sloppy email.\nBut if you go like.\nHey.\nReflect on this.\nAnd improve the email.\nProbably the result.\nYou're going to get.\nIs going to be a lot better.\nExactly the same with AI.\nIf you tell an AI.\nTo write an email.\nBut if you tell it.",
-    "text_en": "Is super intuitive. For example, if you tell a human to write an email, but if you tell them to reflect on it and improve it, the result will be much better. Exactly the same with AI. If you tell an AI to write an email, but ask it to go back and reflect on it, you will end up with much better results. The second step, asking to reflect on it and come up with another draft, is literally the reflection design pattern. Simple but powerful.",
-    "keywords_zh": [
-      "email",
-      "tell",
-      "write",
-      "they",
-      "like",
-      "Hey"
-    ],
-    "keywords_en": [
-      "email",
-      "tell",
-      "write",
-      "they",
-      "like",
-      "Hey"
-    ]
-  },
-  {
-    "start": 767.0,
-    "end": 804.18,
-    "text": "To go back.\nAnd reflect on it.\nAnd improve it.\nYou will end up.\nHaving much better results.\nThe second step.\nAsking to reflect on it.\nAnd come up with another draft.\nIs literally.\nThe reflection design pattern.\nSimple.\nBut powerful.\nAnd remember how it is.\nThat we can actually.\nGo about tweaking this.\nAnd improving this systematically.\nIs by having the whole.\nEvaluation section.\nThe course also provides.\nLike code examples.\nOf how to implement.\nDesign patterns.\nLike the reflection pattern.\nWhich you can see over here.\nBut I'm not going to.\nGo into too much detail.\nAbout this.\nYou can actually.\nGet this code.\nSo I'll link it.\nIn the description.\nBy the way.\nDon't be discouraged.\nAnd rage quit right now.\nIf you don't know how to code.\nThis is absolutely doable.\nWith no code as well.\nThey just don't show it.\nIn the course.",
-    "headline": "工具使用定义",
-    "summary": "You will end up。The reflection design pattern。Like code examples。Like the reflection pattern。Get this code。If you don't know how to code。With no code as well。They just don't show it。",
-    "keywords": [
-      "how",
-      "code",
-      "reflect",
-      "up",
-      "much",
-      "reflection"
-    ],
-    "segments": [
+      },
       {
         "start": 767.0,
         "end": 767.34,
@@ -21149,7 +20836,34 @@
             "prob": 0.875
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_22_0767s.jpg",
+      "rel": "keyframe_22_0767s.jpg",
+      "time": 767.3266666666666,
+      "score": 0.36328125
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The speaker explains the process of generating an email draft using Agentic AI, highlighting the reflection step.",
+    "headline_en": "email",
+    "headline_zh": "邮件"
+  },
+  {
+    "start": 774.74,
+    "end": 804.18,
+    "text": "The reflection design pattern.\nSimple.\nBut powerful.\nAnd remember how it is.\nThat we can actually.\nGo about tweaking this.\nAnd improving this systematically.\nIs by having the whole.\nEvaluation section.\nThe course also provides.\nLike code examples.\nOf how to implement.\nDesign patterns.\nLike the reflection pattern.\nWhich you can see over here.\nBut I'm not going to.\nGo into too much detail.\nAbout this.\nYou can actually.\nGet this code.\nSo I'll link it.\nIn the description.\nBy the way.\nDon't be discouraged.\nAnd rage quit right now.\nIf you don't know how to code.\nThis is absolutely doable.\nWith no code as well.\nThey just don't show it.\nIn the course.",
+    "headline": "code",
+    "summary": "The reflection design pattern. The course also provides. Like code examples. Like the reflection pattern. Get this code. If you don't know how to code. With no code as well.",
+    "keywords": [
+      "code",
+      "reflection",
+      "pattern",
+      "design",
+      "Simple",
+      "powerful"
+    ],
+    "segments": [
       {
         "start": 774.74,
         "end": 775.86,
@@ -22165,43 +21879,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_23_0784s.jpg",
+      "rel": "keyframe_23_0784s.jpg",
+      "time": 784.5533333333333,
+      "score": 0.402587890625
+    },
     "headline_pegasus": "",
-    "headline_zh": "工具使用定义",
-    "headline_en": "Definition of Tools Usage",
-    "summary_zh": "You will end up。The reflection design pattern。Like code examples。Like the reflection pattern。Get this code。If you don't know how to code。With no code as well。They just don't show it。",
-    "summary_en": "You will end up using the reflection design pattern. Like code examples. Get this code. If you don't know how to code, it works without code too. They just don’t show it.",
-    "text_zh": "To go back.\nAnd reflect on it.\nAnd improve it.\nYou will end up.\nHaving much better results.\nThe second step.\nAsking to reflect on it.\nAnd come up with another draft.\nIs literally.\nThe reflection design pattern.\nSimple.\nBut powerful.\nAnd remember how it is.\nThat we can actually.\nGo about tweaking this.\nAnd improving this systematically.\nIs by having the whole.\nEvaluation section.\nThe course also provides.\nLike code examples.\nOf how to implement.\nDesign patterns.\nLike the reflection pattern.\nWhich you can see over here.\nBut I'm not going to.\nGo into too much detail.\nAbout this.\nYou can actually.\nGet this code.\nSo I'll link it.\nIn the description.\nBy the way.\nDon't be discouraged.\nAnd rage quit right now.\nIf you don't know how to code.\nThis is absolutely doable.\nWith no code as well.\nThey just don't show it.\nIn the course.",
-    "text_en": "The second step, asking to reflect on it and come up with another draft, is literally the reflection design pattern. Simple but powerful. Remember, we can tweak and improve this systematically. The course provides code examples of how to implement design patterns like the reflection pattern, which you can see here. But I won't go into too much detail about this. You can actually get this code, so I'll link it in the description. By the way, don't be discouraged and rage quit right now if you don't know how to code. This is absolutely doable with no code as well.",
-    "keywords_zh": [
-      "how",
-      "code",
-      "reflect",
-      "up",
-      "much",
-      "reflection"
-    ],
-    "keywords_en": [
-      "how",
-      "code",
-      "reflect",
-      "up",
-      "much",
-      "reflection"
-    ]
+    "vlm_caption": "The presenter discusses tasks where reflection is beneficial, providing examples and reflection prompts.",
+    "headline_en": "code",
+    "headline_zh": "代码"
   },
   {
     "start": 804.46,
-    "end": 834.54,
-    "text": "We teach the full.\nNo code approach.\nFor doing this.\nIn our agents boot camp.\nOurselves.\nI also do have a video.\nOver here.\nThat covers the basics.\nOf how to implement.\nAgents using.\nNo code approach too.\nOkay.\nLet's go on to the second.\nDesign pattern.\nCalled tool use.\nSo this part.\nI did get a little confused.\nBecause we did talk about tools.\nWhen we talked about.\nTool use.\nAs like.\nA full on.\nDesign pattern.\nBecause he wanted.\nTo emphasize.\nLike how much.\nTool use.\nCan elevate.\nThe performance.\nOf an agent.\nSo we'll go through it.",
-    "headline": "数据库更新示例",
-    "summary": "No code approach。Design pattern。I did get a little confused。Because we did talk about tools。Tool use。Because he wanted。So we'll go through it。",
+    "end": 832.9,
+    "text": "We teach the full.\nNo code approach.\nFor doing this.\nIn our agents boot camp.\nOurselves.\nI also do have a video.\nOver here.\nThat covers the basics.\nOf how to implement.\nAgents using.\nNo code approach too.\nOkay.\nLet's go on to the second.\nDesign pattern.\nCalled tool use.\nSo this part.\nI did get a little confused.\nBecause we did talk about tools.\nWhen we talked about.\nTool use.\nAs like.\nA full on.\nDesign pattern.\nBecause he wanted.\nTo emphasize.\nLike how much.\nTool use.\nCan elevate.\nThe performance.",
+    "headline": "full",
+    "summary": "We teach the full. No code approach. In our agents boot camp. Agents using. Design pattern. When we talked about. Tool use. A full on.",
     "keywords": [
-      "use",
       "full",
-      "No",
       "code",
       "approach",
-      "how"
+      "Design",
+      "pattern",
+      "about"
     ],
     "segments": [
       {
@@ -23064,7 +22765,34 @@
             "prob": 0.963
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_24_0817s.jpg",
+      "rel": "keyframe_24_0817s.jpg",
+      "time": 817.1,
+      "score": 0.323974609375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The video introduces Module 3 focusing on tool use in design.",
+    "headline_en": "full",
+    "headline_zh": "完整"
+  },
+  {
+    "start": 832.94,
+    "end": 864.78,
+    "text": "Of an agent.\nSo we'll go through it.\nFirstly.\nTo define tool use.\nYou're letting your agent.\nHave access.\nTo tools.\nThat's able to.\nImplement.\nAnd do certain things.\nThat it normally.\nCannot do.\nJust as a model.\nItself.\nFor example.\nIf you have an agentic.\nA.I.\nWorkflow.\nIn which you want.\nTo be like.\nOr you can.\nMake it more.\nAutonomous.\nAnd give your agents.\nMore like.\nA selection.\nOf tools.\nThat you can.\nChoose from.\nAnd they can.\nGet to choose.\nWhich tool.",
+    "headline": "Define Tool Use",
+    "summary": "Of an agent. To define tool use. You're letting your agent. To tools. If you have an agentic.A.I. And give your agents. Of tools. Which tool.",
+    "keywords": [
+      "agent",
+      "tools",
+      "through",
+      "Firstly",
+      "define",
+      "tool"
+    ],
+    "segments": [
       {
         "start": 832.94,
         "end": 833.44,
@@ -23136,47 +22864,7 @@
             "prob": 0.895
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "数据库更新示例",
-    "headline_en": "Database Update Example",
-    "summary_zh": "No code approach。Design pattern。I did get a little confused。Because we did talk about tools。Tool use。Because he wanted。So we'll go through it。",
-    "summary_en": "The no-code approach. Design pattern. I got a bit confused because we discussed tools. Tool use. Because he wanted. So we’ll go through it.",
-    "text_zh": "We teach the full.\nNo code approach.\nFor doing this.\nIn our agents boot camp.\nOurselves.\nI also do have a video.\nOver here.\nThat covers the basics.\nOf how to implement.\nAgents using.\nNo code approach too.\nOkay.\nLet's go on to the second.\nDesign pattern.\nCalled tool use.\nSo this part.\nI did get a little confused.\nBecause we did talk about tools.\nWhen we talked about.\nTool use.\nAs like.\nA full on.\nDesign pattern.\nBecause he wanted.\nTo emphasize.\nLike how much.\nTool use.\nCan elevate.\nThe performance.\nOf an agent.\nSo we'll go through it.",
-    "text_en": "We teach the full no-code approach for doing this in our agents boot camp. I also have a video covering the basics of how to implement agents using no-code approach too. Let's go on to the second design pattern, called tool use. So this part, I did get a little confused because we did talk about tools when we talked about tool use as a full-on design pattern. He wanted to emphasize how much tool use can elevate the performance of an agent. So we'll go through it.",
-    "keywords_zh": [
-      "use",
-      "full",
-      "No",
-      "code",
-      "approach",
-      "how"
-    ],
-    "keywords_en": [
-      "use",
-      "full",
-      "No",
-      "code",
-      "approach",
-      "how"
-    ]
-  },
-  {
-    "start": 834.62,
-    "end": 910.48,
-    "text": "Firstly.\nTo define tool use.\nYou're letting your agent.\nHave access.\nTo tools.\nThat's able to.\nImplement.\nAnd do certain things.\nThat it normally.\nCannot do.\nJust as a model.\nItself.\nFor example.\nIf you have an agentic.\nA.I.\nWorkflow.\nIn which you want.\nTo be like.\nOr you can.\nMake it more.\nAutonomous.\nAnd give your agents.\nMore like.\nA selection.\nOf tools.\nThat you can.\nChoose from.\nAnd they can.\nGet to choose.\nWhich tool.\nIt wants.\nTo use.\nTo accomplish.\nA task.\nBut whatever.\nTools.\nIt is.\nThat you.\nChoose.\nTo give.\nYour.\nA.I.\nAgent.\nAnd how.\nMuch.\nYou restrict.\nHow.\nIt's using.\nThe tools.\nThe key.\nHere is.\nThat you.\nDo need.\nTo define.\nThe tools.\nAnd you need.\nTo let.\nYour agent.\nKnow.\nThat you.\nGave them.\nAccess.\nTo these.\nTools.\nAnd what.\nThe tools.\nAre.\nIn the system.\nItself.\nOr else.\nYour agent.\nWill just.\nBe like.\nWhat is.\nThis.\nI don't.\nKnow.\nWhat.\nThis.\nIs.\nLike.\nFor example.\nIf you.\nHave a.\nPersonal.\nAssistant.\nAgentic.\nA.I.\nSystem.\nAnd you.\nTell.\nIt.\nTo find.\nA free.\nSlot.\nOn Thursday.\nIn my.\nCalendar.\nTo make.\nAn appointment.\nWith Alice.\nYou.\nWould.\nNeed.\nTo give.\nIt.\nTools.\nSuch as.\nMake.\nAppointment.\nCheck.\nCalendar.\nAnd.\nDelete.\nAppointment.\nAnd.\nTell.\nIt.\nIn.\nThe.\nSystem.\nPrompt.\nYou.\nHave.\nAccess.\nTo.\nThe.\nTools.\nMake.\nAppointment.\nWhich.\nIs.\nFor.\nMaking.\nAn.\nAppointment.\nBooking.\nCheck.\nCalendar.\nWhich.\nIs.\nFor.\nChecking.\nA.Calendar.\nTo.\nCheck.\nFor.\nAvailabilities.\nDelete.\nAppointment.\nIn.\nOrder.\nTo.\nDelete.\nExisting.\nAppointments.\nThen.\nYou.\nCan.\nTell.",
-    "headline": "潜在失败点",
-    "summary": "To tools。And give your agents。Of tools。Tools。The tools。Your agent。The tools.Are。Appointment。",
-    "keywords": [
-      "tools",
-      "Appointment",
-      "Tools",
-      "Calendar",
-      "agent",
-      "like"
-    ],
-    "segments": [
+      },
       {
         "start": 834.62,
         "end": 835.12,
@@ -23986,7 +23674,34 @@
             "prob": 0.992
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_25_0861s.jpg",
+      "rel": "keyframe_25_0861s.jpg",
+      "time": 861.2422222222222,
+      "score": 0.39208984375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The frame illustrates a set of meeting management functions: schedule, propose time, get calendar, and delete meetings.",
+    "headline_en": "Define Tool Use",
+    "headline_zh": "定义工具使用"
+  },
+  {
+    "start": 864.86,
+    "end": 976.69,
+    "text": "It wants.\nTo use.\nTo accomplish.\nA task.\nBut whatever.\nTools.\nIt is.\nThat you.\nChoose.\nTo give.\nYour.\nA.I.\nAgent.\nAnd how.\nMuch.\nYou restrict.\nHow.\nIt's using.\nThe tools.\nThe key.\nHere is.\nThat you.\nDo need.\nTo define.\nThe tools.\nAnd you need.\nTo let.\nYour agent.\nKnow.\nThat you.\nGave them.\nAccess.\nTo these.\nTools.\nAnd what.\nThe tools.\nAre.\nIn the system.\nItself.\nOr else.\nYour agent.\nWill just.\nBe like.\nWhat is.\nThis.\nI don't.\nKnow.\nWhat.\nThis.\nIs.\nLike.\nFor example.\nIf you.\nHave a.\nPersonal.\nAssistant.\nAgentic.\nA.I.\nSystem.\nAnd you.\nTell.\nIt.\nTo find.\nA free.\nSlot.\nOn Thursday.\nIn my.\nCalendar.\nTo make.\nAn appointment.\nWith Alice.\nYou.\nWould.\nNeed.\nTo give.\nIt.\nTools.\nSuch as.\nMake.\nAppointment.\nCheck.\nCalendar.\nAnd.\nDelete.\nAppointment.\nAnd.\nTell.\nIt.\nIn.\nThe.\nSystem.\nPrompt.\nYou.\nHave.\nAccess.\nTo.\nThe.\nTools.\nMake.\nAppointment.\nWhich.\nIs.\nFor.\nMaking.\nAn.\nAppointment.\nBooking.\nCheck.\nCalendar.\nWhich.\nIs.\nFor.\nChecking.\nA.Calendar.\nTo.\nCheck.\nFor.\nAvailabilities.\nDelete.\nAppointment.\nIn.\nOrder.\nTo.\nDelete.\nExisting.\nAppointments.\nThen.\nYou.\nCan.\nTell.\nYour.\nAgent.\nIf.You.\nUsing.\nCode.\nIs.\nTo.\nLiterally.\nJust.\nLike.\nWrite.\nA.\nFunction.\nFor.It.\nAnd.\nThen.\nGive.\nIt.\nAccess.\nTo.\nA.I.\nAgent.\nThrough.\nSome.\nType.\nOf.\nFramework.\nThe.\nExample.\nIs.\nA.I.Suite.\nBut.\nThere's.\nLike.\nA.Lot.\nOf.Other.\nFramework.\nThat.\nYou.\nCan.\nUse.\nAs.\nWell.\nThere.\nAn.\nAssignment.\nIn.\nDescription.\nSo.\nYeah.\nKeep.\nThat.\nIn.\nMind.\nAnd.\nYou.\nAlso.\nExplains.\nThat.\nThere's.\nOther.\nWays.\nFor.You.\nTo.\nGive.\nYour.\nAgent.\nTools.\nAs.\nWell.\nFor.\nExample.\nThrough.\nSomething.\nCalled.\nMCP.\nWhich.\nIs.The.Model.\nContext.\nProtocol.\nThis.\nIs.A.\nProtocol.\nThat.\nWas.\nDeveloped.\nIn.Mind.\nSo.\nIf.You.\nAre.\nInterested.\nIn.\nLearning.\nMore.\nAbout.\nIt.\nI.\nDo.\nHave.\nA.\nFull.\nVideo.\nWhich.\nI.\nLink.\nOver.\nHere.\nThat.",
+    "headline": "Tools",
+    "summary": "Tools. Agent. Access. Agentic.A.I. Calendar. Appointment. Check. Tools.As.",
+    "keywords": [
+      "Tools",
+      "Appointment",
+      "Agent",
+      "Calendar",
+      "tools",
+      "Access"
+    ],
+    "segments": [
       {
         "start": 864.86,
         "end": 865.1,
@@ -26572,47 +26287,7 @@
             "prob": 0.982
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "潜在失败点",
-    "headline_en": "Potential Failure Points",
-    "summary_zh": "To tools。And give your agents。Of tools。Tools。The tools。Your agent。The tools.Are。Appointment。",
-    "summary_en": "To equip your agents with tools.",
-    "text_zh": "Firstly.\nTo define tool use.\nYou're letting your agent.\nHave access.\nTo tools.\nThat's able to.\nImplement.\nAnd do certain things.\nThat it normally.\nCannot do.\nJust as a model.\nItself.\nFor example.\nIf you have an agentic.\nA.I.\nWorkflow.\nIn which you want.\nTo be like.\nOr you can.\nMake it more.\nAutonomous.\nAnd give your agents.\nMore like.\nA selection.\nOf tools.\nThat you can.\nChoose from.\nAnd they can.\nGet to choose.\nWhich tool.\nIt wants.\nTo use.\nTo accomplish.\nA task.\nBut whatever.\nTools.\nIt is.\nThat you.\nChoose.\nTo give.\nYour.\nA.I.\nAgent.\nAnd how.\nMuch.\nYou restrict.\nHow.\nIt's using.\nThe tools.\nThe key.\nHere is.\nThat you.\nDo need.\nTo define.\nThe tools.\nAnd you need.\nTo let.\nYour agent.\nKnow.\nThat you.\nGave them.\nAccess.\nTo these.\nTools.\nAnd what.\nThe tools.\nAre.\nIn the system.\nItself.\nOr else.\nYour agent.\nWill just.\nBe like.\nWhat is.\nThis.\nI don't.\nKnow.\nWhat.\nThis.\nIs.\nLike.\nFor example.\nIf you.\nHave a.\nPersonal.\nAssistant.\nAgentic.\nA.I.\nSystem.\nAnd you.\nTell.\nIt.\nTo find.\nA free.\nSlot.\nOn Thursday.\nIn my.\nCalendar.\nTo make.\nAn appointment.\nWith Alice.\nYou.\nWould.\nNeed.\nTo give.\nIt.\nTools.\nSuch as.\nMake.\nAppointment.\nCheck.\nCalendar.\nAnd.\nDelete.\nAppointment.\nAnd.\nTell.\nIt.\nIn.\nThe.\nSystem.\nPrompt.\nYou.\nHave.\nAccess.\nTo.\nThe.\nTools.\nMake.\nAppointment.\nWhich.\nIs.\nFor.\nMaking.\nAn.\nAppointment.\nBooking.\nCheck.\nCalendar.\nWhich.\nIs.\nFor.\nChecking.\nA.Calendar.\nTo.\nCheck.\nFor.\nAvailabilities.\nDelete.\nAppointment.\nIn.\nOrder.\nTo.\nDelete.\nExisting.\nAppointments.\nThen.\nYou.\nCan.\nTell.",
-    "text_en": "Firstly, define tool use by allowing your agent access to specific tools that it cannot normally use, such as making appointments or checking calendars. This defines the tools and ensures your agent knows it has access to them.",
-    "keywords_zh": [
-      "tools",
-      "Appointment",
-      "Tools",
-      "Calendar",
-      "agent",
-      "like"
-    ],
-    "keywords_en": [
-      "tools",
-      "Appointment",
-      "Tools",
-      "Calendar",
-      "agent",
-      "like"
-    ]
-  },
-  {
-    "start": 910.5,
-    "end": 1088.55,
-    "text": "Your.\nAgent.\nIf.You.\nUsing.\nCode.\nIs.\nTo.\nLiterally.\nJust.\nLike.\nWrite.\nA.\nFunction.\nFor.It.\nAnd.\nThen.\nGive.\nIt.\nAccess.\nTo.\nA.I.\nAgent.\nThrough.\nSome.\nType.\nOf.\nFramework.\nThe.\nExample.\nIs.\nA.I.Suite.\nBut.\nThere's.\nLike.\nA.Lot.\nOf.Other.\nFramework.\nThat.\nYou.\nCan.\nUse.\nAs.\nWell.\nThere.\nAn.\nAssignment.\nIn.\nDescription.\nSo.\nYeah.\nKeep.\nThat.\nIn.\nMind.\nAnd.\nYou.\nAlso.\nExplains.\nThat.\nThere's.\nOther.\nWays.\nFor.You.\nTo.\nGive.\nYour.\nAgent.\nTools.\nAs.\nWell.\nFor.\nExample.\nThrough.\nSomething.\nCalled.\nMCP.\nWhich.\nIs.The.Model.\nContext.\nProtocol.\nThis.\nIs.A.\nProtocol.\nThat.\nWas.\nDeveloped.\nIn.Mind.\nSo.\nIf.You.\nAre.\nInterested.\nIn.\nLearning.\nMore.\nAbout.\nIt.\nI.\nDo.\nHave.\nA.\nFull.\nVideo.\nWhich.\nI.\nLink.\nOver.\nHere.\nThat.\nGoes.\nInto.\nThe.\nDeaths.\nOf.\nMCP.\nBut.\nProperly.\nDefine.\nIt.\nEvaluations.\nOr.\nEvals.\nAre.\nAgent.\nEvaluation.\nMechanisms.\nThat.\nRefer.\nTo.Processes.\nAnd.\nCriteria.\nUsed.\nTo.\nAssess.\nThe.\nPerformance.\nOf.\nAgents.\nWith.\nA.System.\nWhy.\nWe.\nNeed.\nEvals.\nWhich.\nThen.\nIt.\nConverts.\nTo.\nText.\nThen.\nThe.\nL.M.\nExtracts.\nFor.\nRequired.\nFields.\nLike.\nThe.\nBiller.\nBiller.\nAddress.\nAmount.\nDue.\nAnd.\nDue.\nDate.\nIt.\nHas.\nAccess.\nTo.\nA.\nTool.\nCalled.\nUpdate.\nDatabase.\nWhich.\nWill.\nThen.\nUse.\nIn.\nOrder.\nTo.Update.\nThe.Database.\nWith.\nA.\nNew.\nInvoice.\nAnd.\nThe.\nRecord.\nIs.\nCreated.\nSimple.\nLinear.\nAgentic.\nWorkful.\nHere.\nNow.\nIf.We.\nWant.To.Evaluate.\nThis.\nAgentic.\nSystem.\nOne.\nApproach.\nOf.Doing.\nThis.\nIs.To.\nJust.\nNow.\nTake.\nTen.\nTo.\nTwenty.\nDifferent.\nInvoices.\nAnd.\nInfeed.\nIt.\nThrough.\nThe.\nAgent.\nAnd.\nThen.\nMake.\nA.\nRecord.\nOf.The.\nResults.\nYou.Might.\nNotice.\nThat.\nInvoice.\nOne.\nWas.\nFine.\nAnd.\nIt.\nWas.\nAble.\nTo.\nExtract.\nThe.\nFour.\nRequired.\nFields.\nAnd.\nEverything.\nIs.\nGreat.\nBut.\nYou.\nFound.\nThat.\nInvoice.\nTwo.\nIt.\nActually.\nMakes.\nUp.The.\nDates.\nBetween.\nThe.\nDue.\nDate.\nAnd.The.\nInvoice.\nDate.\nInvoice.\nThree.\nWas.\nOK.\nAs.\nWell.\nAnd.\nThen.\nYou.\nKeep.\nOn.\nGoing.\nAnd.\nYou.\nFind.\nThat.\nInvoice.\n19.\nIt.Also.\nMakes.Up.\nThe.Dates.\nInvoice.\n20.\nIt.\nMakes.Up.\nThe.Dates.\nAs.Well.\nThis.\nIs.\nActually.\nThe.\nMost.\nPractical.\nWay.\nOf.\nDoing.\nThis.\nSo.\nFrom.\nCollecting.\nThis.\nData.\nYou.\nNotice.\nThat.\nIt.\nMakes.",
-    "headline": "客观评价策略",
-    "summary": "Agent。Invoices.And。Invoice.One.Was。Invoice.Two.It。Dates。Invoice。Makes.Up。The.Dates。",
-    "keywords": [
-      "Invoice",
-      "Agent",
-      "Well",
-      "Was",
-      "Makes",
-      "Like"
-    ],
-    "segments": [
+      },
       {
         "start": 910.5,
         "end": 910.58,
@@ -28622,7 +28297,34 @@
             "prob": 0.964
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_26_0964s.jpg",
+      "rel": "keyframe_26_0964s.jpg",
+      "time": 964.2644444444445,
+      "score": 0.385498046875
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The speaker explains MCP as a protocol for defining context that allows interchangeable tools, enabling easy function swapping with different LLMs.",
+    "headline_en": "Tools",
+    "headline_zh": "工具"
+  },
+  {
+    "start": 976.73,
+    "end": 1088.55,
+    "text": "Goes.\nInto.\nThe.\nDeaths.\nOf.\nMCP.\nBut.\nProperly.\nDefine.\nIt.\nEvaluations.\nOr.\nEvals.\nAre.\nAgent.\nEvaluation.\nMechanisms.\nThat.\nRefer.\nTo.Processes.\nAnd.\nCriteria.\nUsed.\nTo.\nAssess.\nThe.\nPerformance.\nOf.\nAgents.\nWith.\nA.System.\nWhy.\nWe.\nNeed.\nEvals.\nWhich.\nThen.\nIt.\nConverts.\nTo.\nText.\nThen.\nThe.\nL.M.\nExtracts.\nFor.\nRequired.\nFields.\nLike.\nThe.\nBiller.\nBiller.\nAddress.\nAmount.\nDue.\nAnd.\nDue.\nDate.\nIt.\nHas.\nAccess.\nTo.\nA.\nTool.\nCalled.\nUpdate.\nDatabase.\nWhich.\nWill.\nThen.\nUse.\nIn.\nOrder.\nTo.Update.\nThe.Database.\nWith.\nA.\nNew.\nInvoice.\nAnd.\nThe.\nRecord.\nIs.\nCreated.\nSimple.\nLinear.\nAgentic.\nWorkful.\nHere.\nNow.\nIf.We.\nWant.To.Evaluate.\nThis.\nAgentic.\nSystem.\nOne.\nApproach.\nOf.Doing.\nThis.\nIs.To.\nJust.\nNow.\nTake.\nTen.\nTo.\nTwenty.\nDifferent.\nInvoices.\nAnd.\nInfeed.\nIt.\nThrough.\nThe.\nAgent.\nAnd.\nThen.\nMake.\nA.\nRecord.\nOf.The.\nResults.\nYou.Might.\nNotice.\nThat.\nInvoice.\nOne.\nWas.\nFine.\nAnd.\nIt.\nWas.\nAble.\nTo.\nExtract.\nThe.\nFour.\nRequired.\nFields.\nAnd.\nEverything.\nIs.\nGreat.\nBut.\nYou.\nFound.\nThat.\nInvoice.\nTwo.\nIt.\nActually.\nMakes.\nUp.The.\nDates.\nBetween.\nThe.\nDue.\nDate.\nAnd.The.\nInvoice.\nDate.\nInvoice.\nThree.\nWas.\nOK.\nAs.\nWell.\nAnd.\nThen.\nYou.\nKeep.\nOn.\nGoing.\nAnd.\nYou.\nFind.\nThat.\nInvoice.\n19.\nIt.Also.\nMakes.Up.\nThe.Dates.\nInvoice.\n20.\nIt.\nMakes.Up.\nThe.Dates.\nAs.Well.\nThis.\nIs.\nActually.\nThe.\nMost.\nPractical.\nWay.\nOf.\nDoing.\nThis.\nSo.\nFrom.\nCollecting.\nThis.\nData.\nYou.\nNotice.\nThat.\nIt.\nMakes.",
+    "headline": "Invoice",
+    "summary": "Invoice.And.The. Invoices.And. Invoice.One.Was. Invoice.Two.It. Makes. Dates. Invoice. The.Dates.",
+    "keywords": [
+      "Invoice",
+      "Makes",
+      "Due",
+      "Date",
+      "Dates",
+      "Evals"
+    ],
+    "segments": [
       {
         "start": 976.73,
         "end": 976.97,
@@ -32617,43 +32319,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_27_1063s.jpg",
+      "rel": "keyframe_27_1063s.jpg",
+      "time": 1063.701111111111,
+      "score": 0.375
+    },
     "headline_pegasus": "",
-    "headline_zh": "客观评价策略",
-    "headline_en": "Objective Evaluation Strategies",
-    "summary_zh": "Agent。Invoices.And。Invoice.One.Was。Invoice.Two.It。Dates。Invoice。Makes.Up。The.Dates。",
-    "summary_en": "Your invoice one was different from invoice two; dates made up the story.",
-    "text_zh": "Your.\nAgent.\nIf.You.\nUsing.\nCode.\nIs.\nTo.\nLiterally.\nJust.\nLike.\nWrite.\nA.\nFunction.\nFor.It.\nAnd.\nThen.\nGive.\nIt.\nAccess.\nTo.\nA.I.\nAgent.\nThrough.\nSome.\nType.\nOf.\nFramework.\nThe.\nExample.\nIs.\nA.I.Suite.\nBut.\nThere's.\nLike.\nA.Lot.\nOf.Other.\nFramework.\nThat.\nYou.\nCan.\nUse.\nAs.\nWell.\nThere.\nAn.\nAssignment.\nIn.\nDescription.\nSo.\nYeah.\nKeep.\nThat.\nIn.\nMind.\nAnd.\nYou.\nAlso.\nExplains.\nThat.\nThere's.\nOther.\nWays.\nFor.You.\nTo.\nGive.\nYour.\nAgent.\nTools.\nAs.\nWell.\nFor.\nExample.\nThrough.\nSomething.\nCalled.\nMCP.\nWhich.\nIs.The.Model.\nContext.\nProtocol.\nThis.\nIs.A.\nProtocol.\nThat.\nWas.\nDeveloped.\nIn.Mind.\nSo.\nIf.You.\nAre.\nInterested.\nIn.\nLearning.\nMore.\nAbout.\nIt.\nI.\nDo.\nHave.\nA.\nFull.\nVideo.\nWhich.\nI.\nLink.\nOver.\nHere.\nThat.\nGoes.\nInto.\nThe.\nDeaths.\nOf.\nMCP.\nBut.\nProperly.\nDefine.\nIt.\nEvaluations.\nOr.\nEvals.\nAre.\nAgent.\nEvaluation.\nMechanisms.\nThat.\nRefer.\nTo.Processes.\nAnd.\nCriteria.\nUsed.\nTo.\nAssess.\nThe.\nPerformance.\nOf.\nAgents.\nWith.\nA.System.\nWhy.\nWe.\nNeed.\nEvals.\nWhich.\nThen.\nIt.\nConverts.\nTo.\nText.\nThen.\nThe.\nL.M.\nExtracts.\nFor.\nRequired.\nFields.\nLike.\nThe.\nBiller.\nBiller.\nAddress.\nAmount.\nDue.\nAnd.\nDue.\nDate.\nIt.\nHas.\nAccess.\nTo.\nA.\nTool.\nCalled.\nUpdate.\nDatabase.\nWhich.\nWill.\nThen.\nUse.\nIn.\nOrder.\nTo.Update.\nThe.Database.\nWith.\nA.\nNew.\nInvoice.\nAnd.\nThe.\nRecord.\nIs.\nCreated.\nSimple.\nLinear.\nAgentic.\nWorkful.\nHere.\nNow.\nIf.We.\nWant.To.Evaluate.\nThis.\nAgentic.\nSystem.\nOne.\nApproach.\nOf.Doing.\nThis.\nIs.To.\nJust.\nNow.\nTake.\nTen.\nTo.\nTwenty.\nDifferent.\nInvoices.\nAnd.\nInfeed.\nIt.\nThrough.\nThe.\nAgent.\nAnd.\nThen.\nMake.\nA.\nRecord.\nOf.The.\nResults.\nYou.Might.\nNotice.\nThat.\nInvoice.\nOne.\nWas.\nFine.\nAnd.\nIt.\nWas.\nAble.\nTo.\nExtract.\nThe.\nFour.\nRequired.\nFields.\nAnd.\nEverything.\nIs.\nGreat.\nBut.\nYou.\nFound.\nThat.\nInvoice.\nTwo.\nIt.\nActually.\nMakes.\nUp.The.\nDates.\nBetween.\nThe.\nDue.\nDate.\nAnd.The.\nInvoice.\nDate.\nInvoice.\nThree.\nWas.\nOK.\nAs.\nWell.\nAnd.\nThen.\nYou.\nKeep.\nOn.\nGoing.\nAnd.\nYou.\nFind.\nThat.\nInvoice.\n19.\nIt.Also.\nMakes.Up.\nThe.Dates.\nInvoice.\n20.\nIt.\nMakes.Up.\nThe.Dates.\nAs.Well.\nThis.\nIs.\nActually.\nThe.\nMost.\nPractical.\nWay.\nOf.\nDoing.\nThis.\nSo.\nFrom.\nCollecting.\nThis.\nData.\nYou.\nNotice.\nThat.\nIt.\nMakes.",
-    "text_en": "Your agent can be given tools through code, which involves writing functions and providing access through frameworks like AI Suite. Other frameworks exist, and evaluations or evals assess agent performance using criteria like date extraction accuracy.",
-    "keywords_zh": [
-      "Invoice",
-      "Agent",
-      "Well",
-      "Was",
-      "Makes",
-      "Like"
-    ],
-    "keywords_en": [
-      "Invoice",
-      "Agent",
-      "Well",
-      "Was",
-      "Makes",
-      "Like"
-    ]
+    "vlm_caption": "The instructor discusses the issue of mixed-up dates on invoices 19 and 20.",
+    "headline_en": "Invoice",
+    "headline_zh": "发票"
   },
   {
     "start": 1088.55,
     "end": 1146.12,
     "text": "Many.Examples.\nThrough.\nIt.\nIs.Actually.\nKinda.\nHard.To.\nThink.\nThrough.\nLike.\nWhat.\nAre.The.Potential.\nLike.\nPlaces.\nOf.Failure.\nFor.Your.\nSystem.\nUntil.\nYou.\nTry.\nIt.Out.\nSo.\nThat's.\nWhy.\nI.Do.\nLike.\nGeneral.\nRecommendation.\nIs.\nJust.\nLike.Build.\nSomething.\nQuickly.\nQuick.\nAnd.\nDirty.\nAnd.\nThen.\nJust.\nLike.\nStart.\nPassing.\nThrough.\nDifferent.\nExamples.\nAnd.\nCollecting.\nThat.\nData.\nTo.\nDecide.\nWhat.\nThe.\nEval.\nShould.\nBe.\nSay.\nWe.\nWant.\nTo.Create.\nAn.Eval.\nNow.\nFor.Date.\nExtraction.\nBecause.\nWe.\nNotice.\nThat.\nIt.\nGets.A.\nDate.\nExtraction.\nWrong.\nLot.\nHow.\nDo.\nWe.\nGo.\nAbout.\nDoing.\nThis.\nWell.\nStep.\nNumber.\nOne.\nIs.\nTo.\nManually.\nExtract.\nDue.Date.\nFrom.\nThe.\nTen.\nTo.\nTwenty.\nInvoices.\nThat.\nYou.\nPass.\nThrough.\nThen.\nYou.\nWant.\nTo.\nSpecify.\nThe.\nOutput.\nFormat.\nOf.\nThe.\nData.\nIn.\nThe.\nPrompt.\nItself.\nThen.\nYou.\nCan.Extract.\nThe.Date.\nFrom.The.\nLM.\nResponse.\nUsing.\nCode.\nAnd.\nFinally.\nCompare.\nThe.Large.\nLanguage.\nModel.\nResults.\nTo.The.\nGround.\nTruth.\nDoes.\nThe.\nExtracted.\nData.\nEqual.\nTo.\nThe.\nActual.\nData.\nThis.\nIs.An.\nExample.\nOf.Evaluation.\nThat.\nUses.\nCode.\nIf.\nYou.\nActually.\nWant.\nTo.\nImplement.\nEvaluation.\nUsing.\nCode.\nYourself.\nBy.\nThe.\nWay.\nAlso.\nIn.\nThe.\nCourse.\nThere.\nIs.\nThe.\nCode.\nFor.\nThis.\nThat.\nYou.\nCan.\nRun.\nYourself.\nAnyways.\nThis.\nIs.An.\nExample.",
-    "headline": "事件计数方法",
-    "summary": "Through。Like。Like.Build。Data.To。Want。Date。Data。Code。",
+    "headline": "Through",
+    "summary": "Through. Data.To. For.Date. Date. Due.Date. The.Date. Data. Code.",
     "keywords": [
-      "Like",
       "Through",
       "Data",
       "Date",
       "Code",
-      "Want"
+      "Examples",
+      "Eval"
     ],
     "segments": [
       {
@@ -36224,43 +35913,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_28_1101s.jpg",
+      "rel": "keyframe_28_1101s.jpg",
+      "time": 1101.3433333333332,
+      "score": 0.38671875
+    },
     "headline_pegasus": "",
-    "headline_zh": "事件计数方法",
-    "headline_en": "Event Counting Methods",
-    "summary_zh": "Through。Like。Like.Build。Data.To。Want。Date。Data。Code。",
-    "summary_en": "Build data through like events; want date data for your code.",
-    "text_zh": "Many.Examples.\nThrough.\nIt.\nIs.Actually.\nKinda.\nHard.To.\nThink.\nThrough.\nLike.\nWhat.\nAre.The.Potential.\nLike.\nPlaces.\nOf.Failure.\nFor.Your.\nSystem.\nUntil.\nYou.\nTry.\nIt.Out.\nSo.\nThat's.\nWhy.\nI.Do.\nLike.\nGeneral.\nRecommendation.\nIs.\nJust.\nLike.Build.\nSomething.\nQuickly.\nQuick.\nAnd.\nDirty.\nAnd.\nThen.\nJust.\nLike.\nStart.\nPassing.\nThrough.\nDifferent.\nExamples.\nAnd.\nCollecting.\nThat.\nData.\nTo.\nDecide.\nWhat.\nThe.\nEval.\nShould.\nBe.\nSay.\nWe.\nWant.\nTo.Create.\nAn.Eval.\nNow.\nFor.Date.\nExtraction.\nBecause.\nWe.\nNotice.\nThat.\nIt.\nGets.A.\nDate.\nExtraction.\nWrong.\nLot.\nHow.\nDo.\nWe.\nGo.\nAbout.\nDoing.\nThis.\nWell.\nStep.\nNumber.\nOne.\nIs.\nTo.\nManually.\nExtract.\nDue.Date.\nFrom.\nThe.\nTen.\nTo.\nTwenty.\nInvoices.\nThat.\nYou.\nPass.\nThrough.\nThen.\nYou.\nWant.\nTo.\nSpecify.\nThe.\nOutput.\nFormat.\nOf.\nThe.\nData.\nIn.\nThe.\nPrompt.\nItself.\nThen.\nYou.\nCan.Extract.\nThe.Date.\nFrom.The.\nLM.\nResponse.\nUsing.\nCode.\nAnd.\nFinally.\nCompare.\nThe.Large.\nLanguage.\nModel.\nResults.\nTo.The.\nGround.\nTruth.\nDoes.\nThe.\nExtracted.\nData.\nEqual.\nTo.\nThe.\nActual.\nData.\nThis.\nIs.An.\nExample.\nOf.Evaluation.\nThat.\nUses.\nCode.\nIf.\nYou.\nActually.\nWant.\nTo.\nImplement.\nEvaluation.\nUsing.\nCode.\nYourself.\nBy.\nThe.\nWay.\nAlso.\nIn.\nThe.\nCourse.\nThere.\nIs.\nThe.\nCode.\nFor.\nThis.\nThat.\nYou.\nCan.\nRun.\nYourself.\nAnyways.\nThis.\nIs.An.\nExample.",
-    "text_en": "General advice is to build something quickly and dirty, then start passing through different examples to collect data on potential failures. For instance, manually extract due dates and specify output formats to evaluate large language model results against ground truth.",
-    "keywords_zh": [
-      "Like",
-      "Through",
-      "Data",
-      "Date",
-      "Code",
-      "Want"
-    ],
-    "keywords_en": [
-      "Like",
-      "Through",
-      "Data",
-      "Date",
-      "Code",
-      "Want"
-    ]
+    "vlm_caption": "The speaker suggests starting with a quick and dirty approach while processing different examples.",
+    "headline_en": "Through",
+    "headline_zh": "通过"
   },
   {
     "start": 1146.16,
-    "end": 1261.2,
-    "text": "Of.Eval.\nThat.You.\nCan.Implement.\nSo.\nThat.\nIn.The.\nFuture.\nAs.You.\nAre.\nLike.\nTweaking.\nYour.\nPrompt.\nAnd.\nThinking.\nThings.\nAround.\nYou.\nCan.\nActually.\nMeasure.\nIf.\nYour.Invoice.\nAgent.\nSystem.\nIs.\nBecoming.\nMore.\nAccurate.\nOr.\nLess.\nAccurate.\nAt.\nDate.\nExtraction.\nHopefully.\nMore.\nAccurate.\nThere.\nAre.\nA Lot.\nOf.Other.\nTypes.\nOf.Doing.\nIt.\nAnd.\nThe.\nWay.\nThat.\nThe.\nCourse.\nThrough.Code.\nItself.\nAnother.Type.\nOf.Eval.\nIs.A.\nSubjective.\nEval.\nThis.\nIs.\nWhen.The.\nResult.\nIsn't.\nJust.\nLike.\nA.Yes.\nWe're.No.\nBinary.\nKind.\nOf.Situation.\nAn.Example.\nOf.A.Subject.\nEval.\nIs.\nIf.You're.\nTrying.\nTo.\nSay.\nAssess.The.\nResults.\nOf.A.Research.\nAgent.\nThe.Agent.\nIs.Supposed.\nTo.Research.\nOn.A.Certain.\nTopic.\nAnd.Then.\nOutput.\nLike.\nSome.Sort.\nOf.Essay.\nAt.The.End.\nSay.\nIf.You.\nGive.It.A.\nPrompt.\nLike.\nResearch.\nAnd.Write.\nAn.Essay.\nAbout.\nRecent.\nBlack.\nCole.Science.\nThere's.\nNo.\nWay.To.\nObjectively.\nEvaluate.\nHow.Good.\nThe.Research.\nAnd.How.\nGood.\nThe.Essay.\nEnds.Up.\nYou.\nCan't.\nJust.\nLike.\nYou.\nKnow.\nCount.The.\nNumber.\nOf.Words.\nOr.\nSomething.\nLike.\nThat.\nRight.\nSo.\nWhat.\nNeed.\nTo.\nCreate.\nThis.\nKind.\nOn.Truth.\nAnnotation.\nWhich.\nAre.\nLike.\nGolden.\nStandard.\nTalking.\nPoints.\nThat.\nYou.\nKnow.\nNeed.\nTo.\nResearched.\nAnd.\nNeed.\nTo.\nPart.\nOf.\nThe.\nFinal.\nEssay.\nAs.\nWell.\nBut.\nThen.\nIs.Manual.\nBut.\nThen.\nThe.\nSecond.\nPart.\nIs.\nWhen.\nYou.\nCan.\nUse.\nThe.\nLM.\nAs.\nA.\nJudge.\nSo.\nYou.\nHave.\nAnother.\nType.\nOf.\nLM.\nTo.\nCount.\nHow.\nMany.\nOf.\nThese.\nTopics.\nActually.\nAppear.\nIn.\nThe.\nResearch.\nAnd.\nThe.\nFinal.\nResults.\nThe.\nReason.\nWhy.\nYou.\nNeed.",
-    "headline": "矩阵评估分类",
-    "summary": "Of.Eval。Like。More。Eval。Eval.Is。Research。Like.You。Need。",
+    "end": 1210.9,
+    "text": "Of.Eval.\nThat.You.\nCan.Implement.\nSo.\nThat.\nIn.The.\nFuture.\nAs.You.\nAre.\nLike.\nTweaking.\nYour.\nPrompt.\nAnd.\nThinking.\nThings.\nAround.\nYou.\nCan.\nActually.\nMeasure.\nIf.\nYour.Invoice.\nAgent.\nSystem.\nIs.\nBecoming.\nMore.\nAccurate.\nOr.\nLess.\nAccurate.\nAt.\nDate.\nExtraction.\nHopefully.\nMore.\nAccurate.\nThere.\nAre.\nA Lot.\nOf.Other.\nTypes.\nOf.Doing.\nIt.\nAnd.\nThe.\nWay.\nThat.\nThe.\nCourse.\nThrough.Code.\nItself.\nAnother.Type.\nOf.Eval.\nIs.A.\nSubjective.\nEval.\nThis.\nIs.\nWhen.The.\nResult.\nIsn't.\nJust.\nLike.\nA.Yes.\nWe're.No.\nBinary.\nKind.\nOf.Situation.\nAn.Example.\nOf.A.Subject.\nEval.\nIs.\nIf.You're.\nTrying.\nTo.\nSay.\nAssess.The.\nResults.\nOf.A.Research.\nAgent.\nThe.Agent.\nIs.Supposed.\nTo.Research.\nOn.A.Certain.\nTopic.\nAnd.Then.\nOutput.\nLike.\nSome.Sort.\nOf.Essay.\nAt.The.End.\nSay.\nIf.You.\nGive.It.A.\nPrompt.\nLike.\nResearch.\nAnd.Write.\nAn.Essay.\nAbout.\nRecent.\nBlack.\nCole.Science.\nThere's.\nNo.\nWay.To.\nObjectively.\nEvaluate.\nHow.Good.\nThe.Research.\nAnd.How.\nGood.\nThe.Essay.\nEnds.Up.\nYou.\nCan't.\nJust.\nLike.\nYou.\nKnow.",
+    "headline": "Eval",
+    "summary": "Of.Eval. Agent. Eval. Eval.Is. Of.A.Research. Research. Evaluate. The.Research.",
     "keywords": [
-      "Like",
-      "Research",
       "Eval",
+      "Research",
+      "Agent",
+      "Accurate",
       "Essay",
-      "Need",
-      "So"
+      "Prompt"
     ],
     "segments": [
       {
@@ -38890,7 +38566,34 @@
             "prob": 0.959
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_29_1189s.jpg",
+      "rel": "keyframe_29_1189s.jpg",
+      "time": 1189.3200000000002,
+      "score": 0.363525390625
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The presenter explains how to count gold-standard talking points in a text using an LLM-as-judge approach.",
+    "headline_en": "Eval",
+    "headline_zh": "评估"
+  },
+  {
+    "start": 1210.9,
+    "end": 1269.58,
+    "text": "Count.The.\nNumber.\nOf.Words.\nOr.\nSomething.\nLike.\nThat.\nRight.\nSo.\nWhat.\nNeed.\nTo.\nCreate.\nThis.\nKind.\nOn.Truth.\nAnnotation.\nWhich.\nAre.\nLike.\nGolden.\nStandard.\nTalking.\nPoints.\nThat.\nYou.\nKnow.\nNeed.\nTo.\nResearched.\nAnd.\nNeed.\nTo.\nPart.\nOf.\nThe.\nFinal.\nEssay.\nAs.\nWell.\nBut.\nThen.\nIs.Manual.\nBut.\nThen.\nThe.\nSecond.\nPart.\nIs.\nWhen.\nYou.\nCan.\nUse.\nThe.\nLM.\nAs.\nA.\nJudge.\nSo.\nYou.\nHave.\nAnother.\nType.\nOf.\nLM.\nTo.\nCount.\nHow.\nMany.\nOf.\nThese.\nTopics.\nActually.\nAppear.\nIn.\nThe.\nResearch.\nAnd.\nThe.\nFinal.\nResults.\nThe.\nReason.\nWhy.\nYou.\nNeed.\nTo.\nThe.\nLM.\nTo.\nCount.\nThis.\nAnd.\nNot.\nJust.\nLike.\nObjectively.\nUse.\nCode.\nTo.\nCount.\nThis.\nIs.\nBecause.\nA.\nCertain.\nTerm.\nCan.\nAppear.\nIn.A.\nLot.\nOf.\nDifferent.\nIterations.\nLike.\nA.\nTerm.",
+    "headline": "Count",
+    "summary": "Count.The. Final. Type.Of.LM.To. Count.How. Need.To.The.LM.To. Count. Appear. Term.",
+    "keywords": [
+      "Count",
+      "LM",
+      "Final",
+      "Appear",
+      "Term",
+      "Number"
+    ],
+    "segments": [
       {
         "start": 1210.9,
         "end": 1211.34,
@@ -40438,47 +40141,7 @@
             "prob": 0.995
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "矩阵评估分类",
-    "headline_en": "Matrix Evaluation Classification",
-    "summary_zh": "Of.Eval。Like。More。Eval。Eval.Is。Research。Like.You。Need。",
-    "summary_en": "For evaluation, like more detailed evaluation; eval is research, like you need.",
-    "text_zh": "Of.Eval.\nThat.You.\nCan.Implement.\nSo.\nThat.\nIn.The.\nFuture.\nAs.You.\nAre.\nLike.\nTweaking.\nYour.\nPrompt.\nAnd.\nThinking.\nThings.\nAround.\nYou.\nCan.\nActually.\nMeasure.\nIf.\nYour.Invoice.\nAgent.\nSystem.\nIs.\nBecoming.\nMore.\nAccurate.\nOr.\nLess.\nAccurate.\nAt.\nDate.\nExtraction.\nHopefully.\nMore.\nAccurate.\nThere.\nAre.\nA Lot.\nOf.Other.\nTypes.\nOf.Doing.\nIt.\nAnd.\nThe.\nWay.\nThat.\nThe.\nCourse.\nThrough.Code.\nItself.\nAnother.Type.\nOf.Eval.\nIs.A.\nSubjective.\nEval.\nThis.\nIs.\nWhen.The.\nResult.\nIsn't.\nJust.\nLike.\nA.Yes.\nWe're.No.\nBinary.\nKind.\nOf.Situation.\nAn.Example.\nOf.A.Subject.\nEval.\nIs.\nIf.You're.\nTrying.\nTo.\nSay.\nAssess.The.\nResults.\nOf.A.Research.\nAgent.\nThe.Agent.\nIs.Supposed.\nTo.Research.\nOn.A.Certain.\nTopic.\nAnd.Then.\nOutput.\nLike.\nSome.Sort.\nOf.Essay.\nAt.The.End.\nSay.\nIf.You.\nGive.It.A.\nPrompt.\nLike.\nResearch.\nAnd.Write.\nAn.Essay.\nAbout.\nRecent.\nBlack.\nCole.Science.\nThere's.\nNo.\nWay.To.\nObjectively.\nEvaluate.\nHow.Good.\nThe.Research.\nAnd.How.\nGood.\nThe.Essay.\nEnds.Up.\nYou.\nCan't.\nJust.\nLike.\nYou.\nKnow.\nCount.The.\nNumber.\nOf.Words.\nOr.\nSomething.\nLike.\nThat.\nRight.\nSo.\nWhat.\nNeed.\nTo.\nCreate.\nThis.\nKind.\nOn.Truth.\nAnnotation.\nWhich.\nAre.\nLike.\nGolden.\nStandard.\nTalking.\nPoints.\nThat.\nYou.\nKnow.\nNeed.\nTo.\nResearched.\nAnd.\nNeed.\nTo.\nPart.\nOf.\nThe.\nFinal.\nEssay.\nAs.\nWell.\nBut.\nThen.\nIs.Manual.\nBut.\nThen.\nThe.\nSecond.\nPart.\nIs.\nWhen.\nYou.\nCan.\nUse.\nThe.\nLM.\nAs.\nA.\nJudge.\nSo.\nYou.\nHave.\nAnother.\nType.\nOf.\nLM.\nTo.\nCount.\nHow.\nMany.\nOf.\nThese.\nTopics.\nActually.\nAppear.\nIn.\nThe.\nResearch.\nAnd.\nThe.\nFinal.\nResults.\nThe.\nReason.\nWhy.\nYou.\nNeed.",
-    "text_en": "Measure your invoice agent system’s accuracy over time by tweaking prompts and implementing subjective evals for non-binary situations, like assessing research essays. Use golden standard annotations and LM judges to count topic appearances in final results.",
-    "keywords_zh": [
-      "Like",
-      "Research",
-      "Eval",
-      "Essay",
-      "Need",
-      "So"
-    ],
-    "keywords_en": [
-      "Like",
-      "Research",
-      "Eval",
-      "Essay",
-      "Need",
-      "So"
-    ]
-  },
-  {
-    "start": 1261.24,
-    "end": 1297.52,
-    "text": "To.\nThe.\nLM.\nTo.\nCount.\nThis.\nAnd.\nNot.\nJust.\nLike.\nObjectively.\nUse.\nCode.\nTo.\nCount.\nThis.\nIs.\nBecause.\nA.\nCertain.\nTerm.\nCan.\nAppear.\nIn.A.\nLot.\nOf.\nDifferent.\nIterations.\nLike.\nA.\nTerm.\nEvent.\nHorizon.\nCould.\nBe.\nLike.\nEvent.\nHorizon.\nBut.\nIt.\nCould.\nAlso.\nIn.On.\nThe.\nType.\nOf.Event.\nAt.\nThe.\nHorizon.\nOr.\nLike.\nWhen.\nThe.\nHorizon.\nIs.\nNear.\nSomething.\nLike.\nThat.\nRight.\nThere's.\nLike.\nSo.\nMany.\nDifferent.\nTypes.\nOf.\nThis.\nLM.\nTo.\nCount.\nAll.The.\nDifferent.Types.\nOf.\nThese.\nIterations.\nThen.\nYou.\nCan.\nGet.\nThe.\nLM.\nTo.\nGive.\nYou.\nA.\nFinal.\nScore.\nFor.\nEach.\nProper.\nBased.\nUpon.\nHow.\nMany.\nOf.\nThese.\nTerms.\nWere.\nCaptured.\nIn.\nFinal.\nResult.\nThis.\nOn.\nScreen.\nNow.\nIs.\nAn.\nExample.\nOf.\nA.\nPrompt.\nFor.\nThe.\nLM.\nAs.\nA.\nJudge.\nThat's.\nThe.\nFirst.",
-    "headline": "通用评价指标",
-    "summary": "To.The.LM.To。Count。Like。Event。Horizon。Like.So。This.LM.To。Different.Types.Of。",
-    "keywords": [
-      "Like",
-      "LM",
-      "Horizon",
-      "Count",
-      "Different",
-      "Event"
-    ],
-    "segments": [
+      },
       {
         "start": 1261.24,
         "end": 1261.32,
@@ -41039,7 +40702,34 @@
             "prob": 0.992
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_30_1230s.jpg",
+      "rel": "keyframe_30_1230s.jpg",
+      "time": 1230.46,
+      "score": 0.372314453125
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The speaker instructs viewers to select 3-5 key discussion points for each topic.",
+    "headline_en": "Count",
+    "headline_zh": "计数"
+  },
+  {
+    "start": 1269.64,
+    "end": 1333.48,
+    "text": "Event.\nHorizon.\nCould.\nBe.\nLike.\nEvent.\nHorizon.\nBut.\nIt.\nCould.\nAlso.\nIn.On.\nThe.\nType.\nOf.Event.\nAt.\nThe.\nHorizon.\nOr.\nLike.\nWhen.\nThe.\nHorizon.\nIs.\nNear.\nSomething.\nLike.\nThat.\nRight.\nThere's.\nLike.\nSo.\nMany.\nDifferent.\nTypes.\nOf.\nThis.\nLM.\nTo.\nCount.\nAll.The.\nDifferent.Types.\nOf.\nThese.\nIterations.\nThen.\nYou.\nCan.\nGet.\nThe.\nLM.\nTo.\nGive.\nYou.\nA.\nFinal.\nScore.\nFor.\nEach.\nProper.\nBased.\nUpon.\nHow.\nMany.\nOf.\nThese.\nTerms.\nWere.\nCaptured.\nIn.\nFinal.\nResult.\nThis.\nOn.\nScreen.\nNow.\nIs.\nAn.\nExample.\nOf.\nA.\nPrompt.\nFor.\nThe.\nLM.\nAs.\nA.\nJudge.\nThat's.\nThe.\nFirst.\nAxis.\nOf.\nThis.\nTwo.\nBy.\nTwo.\nMatrix.\nFor.The.\nDifferent.\nTypes.\nOf.Evals.\nAnd.\nThis.\nOne.\nIs.\nObjective.\nVersus.\nSubjective.\nThe.\nSecond.\nAxis.\nIs.\nWhether.\nSomething.\nHas.A.\nPer.\nExample.\nGround.\nTruth.\nOr.\nDoes.\nNot.\nHave.\nA.\nPer.\nExample.\nLike.\nThe.\nInvoice.\nExtraction.\nHas.A.\nSpecific.\nDate.\nThat.\nIs.\nThe.Correct.\nResult.\nThat.\nIs.\nDifferent.\nFor.\nAll.\nThe.\nDifferent.\nExamples.\nAnd.\nThe.\nTopics.\nFor.The.\nResearch.\nAgent.\nAre.",
+    "headline": "Horizon",
+    "summary": "Event. Horizon. Horizon.But.It. Types.Of. This.LM.To. Different.Types.Of. Types. Example.",
+    "keywords": [
+      "Horizon",
+      "Event",
+      "Types",
+      "LM",
+      "Example",
+      "Something"
+    ],
+    "segments": [
       {
         "start": 1269.64,
         "end": 1269.94,
@@ -42704,47 +42394,7 @@
             "prob": 0.992
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "通用评价指标",
-    "headline_en": "General Evaluation Metrics",
-    "summary_zh": "To.The.LM.To。Count。Like。Event。Horizon。Like.So。This.LM.To。Different.Types.Of。",
-    "summary_en": "To use the LM, count like event horizon; this LM can handle different types of.",
-    "text_zh": "To.\nThe.\nLM.\nTo.\nCount.\nThis.\nAnd.\nNot.\nJust.\nLike.\nObjectively.\nUse.\nCode.\nTo.\nCount.\nThis.\nIs.\nBecause.\nA.\nCertain.\nTerm.\nCan.\nAppear.\nIn.A.\nLot.\nOf.\nDifferent.\nIterations.\nLike.\nA.\nTerm.\nEvent.\nHorizon.\nCould.\nBe.\nLike.\nEvent.\nHorizon.\nBut.\nIt.\nCould.\nAlso.\nIn.On.\nThe.\nType.\nOf.Event.\nAt.\nThe.\nHorizon.\nOr.\nLike.\nWhen.\nThe.\nHorizon.\nIs.\nNear.\nSomething.\nLike.\nThat.\nRight.\nThere's.\nLike.\nSo.\nMany.\nDifferent.\nTypes.\nOf.\nThis.\nLM.\nTo.\nCount.\nAll.The.\nDifferent.Types.\nOf.\nThese.\nIterations.\nThen.\nYou.\nCan.\nGet.\nThe.\nLM.\nTo.\nGive.\nYou.\nA.\nFinal.\nScore.\nFor.\nEach.\nProper.\nBased.\nUpon.\nHow.\nMany.\nOf.\nThese.\nTerms.\nWere.\nCaptured.\nIn.\nFinal.\nResult.\nThis.\nOn.\nScreen.\nNow.\nIs.\nAn.\nExample.\nOf.\nA.\nPrompt.\nFor.\nThe.\nLM.\nAs.\nA.\nJudge.\nThat's.\nThe.\nFirst.",
-    "text_en": "To count this and not just like objectively use code to count this is because a certain term can appear in a lot of different iterations like event horizon could be like event horizon but it could also in on the type of event at the horizon or like when the horizon is near something like that right there's like so many different types of this LM to count all the different types of these iterations then you can get the LM to give you a final score for each proper based upon how many of these terms were captured in final result this on screen now is an example of a prompt for the LM as a judge that's the first",
-    "keywords_zh": [
-      "Like",
-      "LM",
-      "Horizon",
-      "Count",
-      "Different",
-      "Event"
-    ],
-    "keywords_en": [
-      "Like",
-      "LM",
-      "Horizon",
-      "Count",
-      "Different",
-      "Event"
-    ]
-  },
-  {
-    "start": 1297.6,
-    "end": 1353.1,
-    "text": "Axis.\nOf.\nThis.\nTwo.\nBy.\nTwo.\nMatrix.\nFor.The.\nDifferent.\nTypes.\nOf.Evals.\nAnd.\nThis.\nOne.\nIs.\nObjective.\nVersus.\nSubjective.\nThe.\nSecond.\nAxis.\nIs.\nWhether.\nSomething.\nHas.A.\nPer.\nExample.\nGround.\nTruth.\nOr.\nDoes.\nNot.\nHave.\nA.\nPer.\nExample.\nLike.\nThe.\nInvoice.\nExtraction.\nHas.A.\nSpecific.\nDate.\nThat.\nIs.\nThe.Correct.\nResult.\nThat.\nIs.\nDifferent.\nFor.\nAll.\nThe.\nDifferent.\nExamples.\nAnd.\nThe.\nTopics.\nFor.The.\nResearch.\nAgent.\nAre.\nDifferent.\nLess.\nThan.\nTen.\nWords.\nSo.\nLike.\nThe.\nNumber.\nTen.\nIs.\nLike.",
-    "headline": "规划设计模式",
-    "summary": "Axis.Of。Different。Axis.Is。Example。Like.The。Different.For.All.The。Than.Ten。Like。",
-    "keywords": [
-      "Different",
-      "Like",
-      "Axis",
-      "Two",
-      "Per",
-      "Example"
-    ],
-    "segments": [
+      },
       {
         "start": 1297.6,
         "end": 1297.8,
@@ -43926,7 +43576,34 @@
             "prob": 0.992
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_31_1276s.jpg",
+      "rel": "keyframe_31_1276s.jpg",
+      "time": 1276.7333333333333,
+      "score": 0.376708984375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The video demonstrates a sunset scene with text explaining \"At the horizon\" and its potential meaning in an event context.",
+    "headline_en": "Horizon",
+    "headline_zh": "地平线"
+  },
+  {
+    "start": 1350.46,
+    "end": 1380.94,
+    "text": "Different.\nLess.\nThan.\nTen.\nWords.\nSo.\nLike.\nThe.\nNumber.\nTen.\nIs.\nLike.\nThe.Universal.\nMagical.\nNumber.\nThis.\nIs.\nAlso.\nAn.\nObjective.\nEval.\nSo.\nYou.\nCan.\nActually.\nWrite.\nCode.\nSo.\nYou.\nCan.\nLiterally.\nJust.\nWrite.\nIf.\nThe.Length.\nOf.The.\nText.\nIs.Less.\nThan.\nOr.Equal.\nTo.Ten.\nThen.\nThat.\nIs.Good.\nIf.\nIt's.\nNot.\nThen.\nIt's.\nBad.\nThe.\nFinal.\nQuadrant.\nOf.This.\nTwo.By.\nTwo.\nMatrix.\nIs.\nWhen.\nYou.\nSomething.\nThat.\nIs.\nSubjective.\nAnd.\nDoes.\nNot.\nHave.\nA.\nPer.\nExample.\nGround.\nTruth.\nSay.\nYou.\nHave.\nAn.\nAgentic.\nSystem.\nThat.\nIs.\nSupposed.\nTo.\nCreate.\nDifferent.\nGraphs.\nThe.\nJudging.\nOf.The.\nGraph.\nIs.\nSubjective.\nThe.\nResult.\nOf.The.\nGraph.\nIs.\nSubjective.\nAnd.\nThe.\nWay.\nThat.\nYou.\nJudge.\nIt.\nIs.\nBased.\nOff.\nThis.",
+    "headline": "Ten",
+    "summary": "Than.Ten. Number.Ten.Is. Number. Write. Write.If. To.Ten. Subjective.And. Subjective.The.",
+    "keywords": [
+      "Ten",
+      "Subjective",
+      "Number",
+      "Write",
+      "Graph",
+      "Words"
+    ],
+    "segments": [
       {
         "start": 1350.46,
         "end": 1350.66,
@@ -44148,47 +43825,7 @@
             "prob": 0.915
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "规划设计模式",
-    "headline_en": "Introduction to Design Patterns in Planning",
-    "summary_zh": "Axis.Of。Different。Axis.Is。Example。Like.The。Different.For.All.The。Than.Ten。Like。",
-    "summary_en": "Different axes is an example; like the different for all, than ten like.",
-    "text_zh": "Axis.\nOf.\nThis.\nTwo.\nBy.\nTwo.\nMatrix.\nFor.The.\nDifferent.\nTypes.\nOf.Evals.\nAnd.\nThis.\nOne.\nIs.\nObjective.\nVersus.\nSubjective.\nThe.\nSecond.\nAxis.\nIs.\nWhether.\nSomething.\nHas.A.\nPer.\nExample.\nGround.\nTruth.\nOr.\nDoes.\nNot.\nHave.\nA.\nPer.\nExample.\nLike.\nThe.\nInvoice.\nExtraction.\nHas.A.\nSpecific.\nDate.\nThat.\nIs.\nThe.Correct.\nResult.\nThat.\nIs.\nDifferent.\nFor.\nAll.\nThe.\nDifferent.\nExamples.\nAnd.\nThe.\nTopics.\nFor.The.\nResearch.\nAgent.\nAre.\nDifferent.\nLess.\nThan.\nTen.\nWords.\nSo.\nLike.\nThe.\nNumber.\nTen.\nIs.\nLike.",
-    "text_en": "Axis of this two by two matrix for the different types of evals and this one is objective versus subjective the second axis is whether something has a per example ground truth or does not have a per example like the invoice extraction has a specific date that is the correct result that is different for all the different examples and the topics for the research agent are less than ten words so like the number ten is like",
-    "keywords_zh": [
-      "Different",
-      "Like",
-      "Axis",
-      "Two",
-      "Per",
-      "Example"
-    ],
-    "keywords_en": [
-      "Different",
-      "Like",
-      "Axis",
-      "Two",
-      "Per",
-      "Example"
-    ]
-  },
-  {
-    "start": 1353.1,
-    "end": 1519.15,
-    "text": "The.Universal.\nMagical.\nNumber.\nThis.\nIs.\nAlso.\nAn.\nObjective.\nEval.\nSo.\nYou.\nCan.\nActually.\nWrite.\nCode.\nSo.\nYou.\nCan.\nLiterally.\nJust.\nWrite.\nIf.\nThe.Length.\nOf.The.\nText.\nIs.Less.\nThan.\nOr.Equal.\nTo.Ten.\nThen.\nThat.\nIs.Good.\nIf.\nIt's.\nNot.\nThen.\nIt's.\nBad.\nThe.\nFinal.\nQuadrant.\nOf.This.\nTwo.By.\nTwo.\nMatrix.\nIs.\nWhen.\nYou.\nSomething.\nThat.\nIs.\nSubjective.\nAnd.\nDoes.\nNot.\nHave.\nA.\nPer.\nExample.\nGround.\nTruth.\nSay.\nYou.\nHave.\nAn.\nAgentic.\nSystem.\nThat.\nIs.\nSupposed.\nTo.\nCreate.\nDifferent.\nGraphs.\nThe.\nJudging.\nOf.The.\nGraph.\nIs.\nSubjective.\nThe.\nResult.\nOf.The.\nGraph.\nIs.\nSubjective.\nAnd.\nThe.\nWay.\nThat.\nYou.\nJudge.\nIt.\nIs.\nBased.\nOff.\nThis.\nUniversal.\nCriteria.\nWhere.\nWould.\nAsk.\nThe.\nLM.As.\nA.\nJudge.\nTo.\nGrade.\nThe.\nGraph.To.\nSee.\nWhether.\nIt.\nHas.A.\nAxis.\nLabels.\nAre.\nThe.\nColors.\nEasy.\nTo.\nSee.\nIs.\nThere.\nAny.\nOverlapping.\nText.\nEtcetera.\nEtcetera.\nSo.\nThat.\nWould.\nBe.\nLike.\nA.\nUniversal.\nGrading.\nCriteria.\nOkay.\nGreat.\nThat.\nCovers.\nThe.\nFour.\nGeneral.\nTypes.\nOf.\nEvals.\nThat.\nYou.\nCan.\nAlways.\nContinue.\nTo.\nExpand.\nThe.\nSet.\nOf.\nEvals.\nTo.\nCapture.\nAll.\nThe.\nDifferent.\nTypes.\nOf.\nErrors.\nThat.\nYou.\nCan.\nChange.\nInto.\nEvals.\nAnd.\nFinally.\nYou.\nWant.\nTo.\nLook.\nFor.\nPlaces.\nWhere.\nThe.\nPerformance.\nOf.\nThe.\nAgentic.\nSystem.\nIs.\nWorse.\nThan.\nA.\nHuman.\nThese.\nAre.\nThe.\nBest.\nAreas.\nFor.\nImprovement.\nGreat.\nThat.\nWas.\nThe.\nModule.\nOn.\nEvals.\nEven.\nIf.\nYou.\nImplement.\nJust.\nLike.\nA.\nFew.\nOf.\nThese.\nDifferent.\nEvals.\nYou.\nBe.\nSetting.\nUp.\nA.\nSystem.\nThat.\nWill.\nHelp.\nYou.\nDramatically.\nImprove.\nThe.\nResults.\nOf.\nYour.\nAgents.\nI.\nFeel.\nLike.\nEvals.\nAre.\nSuch.\nAn.\nOpen.\nSecret.\nAnd.\nBy.\nImplement.\nThem.\nMassive.\nReturn.\nOn.\nInvestment.\nAlright.\nWe're.\nAlmost.\nDone.\nWe.\nAre.\nAt.\nModule.\nFive.\nWhich.\nIs.\nThe.\nPatterns.\nFor.\nHighly.\nAutonomous.\nAgents.\nWe're.\nGonna.\nBe.\nCovering.\nTwo.\nOf.\nThe.\nMore.Experimental.\nAgents.\nThat.\nAre.Also.\nMore.\nAutonomous.\nThe.\nTwo.\nPatterns.\nThat.\nCovered.\nEarlier.\nReflection.\nAnd.\nTool.\nUse.\nAre.\nLess.\nAutonomous.\nAnd.\nThey're.\nMore.\nPredictable.\nWhile.\nFor.\nThese.\nExperimental.\nOnes.\nPlanning.\nMulti-agent.\nSystems.\nThese.\nAre.\nLess.\nPredictable.\nLess.\nControllable.\nBut.\nIf.\nYou.\nGet.\nIt.\nRight.\nThe.\nResults.\nCan.\nBe.\nReally.\nReally.\nGood.\nLet's.\nStart.\nOff.\nWith.\nPlanning.\nAnd.\nJump.\n$100.\nYou.See.\nThis.\nIs.Actually.\nA.Pretty.\nDifficult.\nQuery.\nBecause.\nIt.Involves.\nThe.Customer.\nSurvey.\nAgent.\nTo.\nTo.\nThrough.\nThe.Data.\nSet.\nAnd.\nFirst.\nI.\nFind.\nWhat.\nAre.\nThe.\nRound.\nStyles.\nThen.\nThey.\nHas.To.\nPick.\nOut.\nWhich.\nOf.\nThese.\nAre.\nIn.\nStock.\nAnd.\nFinally.\nWhich.\nOf.\nPrices.\nAre.\nGoing.\nTo.\nUnder.\n$100.\nTo.\nBe.\nAble.\nTo.\nCome.",
-    "headline": "库存查询流程",
-    "summary": "Different。Evals。Evals.To。Evals.And。These。Evals.Are。More。These.Are。",
-    "keywords": [
-      "Evals",
-      "These",
-      "Less",
-      "Two",
-      "Universal",
-      "So"
-    ],
-    "segments": [
+      },
       {
         "start": 1353.1,
         "end": 1353.72,
@@ -46033,7 +45670,34 @@
             "prob": 0.671
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_32_1353s.jpg",
+      "rel": "keyframe_32_1353s.jpg",
+      "time": 1353.8466666666668,
+      "score": 0.380126953125
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The speaker explains that the number 10 is a universal standard for text marketing length.",
+    "headline_en": "Ten",
+    "headline_zh": "十"
+  },
+  {
+    "start": 1381.02,
+    "end": 1467.23,
+    "text": "Universal.\nCriteria.\nWhere.\nWould.\nAsk.\nThe.\nLM.As.\nA.\nJudge.\nTo.\nGrade.\nThe.\nGraph.To.\nSee.\nWhether.\nIt.\nHas.A.\nAxis.\nLabels.\nAre.\nThe.\nColors.\nEasy.\nTo.\nSee.\nIs.\nThere.\nAny.\nOverlapping.\nText.\nEtcetera.\nEtcetera.\nSo.\nThat.\nWould.\nBe.\nLike.\nA.\nUniversal.\nGrading.\nCriteria.\nOkay.\nGreat.\nThat.\nCovers.\nThe.\nFour.\nGeneral.\nTypes.\nOf.\nEvals.\nThat.\nYou.\nCan.\nAlways.\nContinue.\nTo.\nExpand.\nThe.\nSet.\nOf.\nEvals.\nTo.\nCapture.\nAll.\nThe.\nDifferent.\nTypes.\nOf.\nErrors.\nThat.\nYou.\nCan.\nChange.\nInto.\nEvals.\nAnd.\nFinally.\nYou.\nWant.\nTo.\nLook.\nFor.\nPlaces.\nWhere.\nThe.\nPerformance.\nOf.\nThe.\nAgentic.\nSystem.\nIs.\nWorse.\nThan.\nA.\nHuman.\nThese.\nAre.\nThe.\nBest.\nAreas.\nFor.\nImprovement.\nGreat.\nThat.\nWas.\nThe.\nModule.\nOn.\nEvals.\nEven.\nIf.\nYou.\nImplement.\nJust.\nLike.\nA.\nFew.\nOf.\nThese.\nDifferent.\nEvals.\nYou.\nBe.\nSetting.\nUp.\nA.\nSystem.\nThat.\nWill.\nHelp.\nYou.\nDramatically.\nImprove.\nThe.\nResults.\nOf.\nYour.\nAgents.\nI.\nFeel.\nLike.\nEvals.\nAre.\nSuch.\nAn.\nOpen.\nSecret.\nAnd.\nBy.\nImplement.\nThem.\nMassive.\nReturn.\nOn.\nInvestment.\nAlright.\nWe're.\nAlmost.\nDone.\nWe.\nAre.\nAt.\nModule.\nFive.\nWhich.\nIs.\nThe.\nPatterns.\nFor.\nHighly.\nAutonomous.\nAgents.\nWe're.\nGonna.\nBe.\nCovering.\nTwo.\nOf.\nThe.\nMore.Experimental.\nAgents.\nThat.\nAre.Also.\nMore.\nAutonomous.\nThe.\nTwo.\nPatterns.\nThat.\nCovered.\nEarlier.\nReflection.\nAnd.\nTool.\nUse.\nAre.\nLess.\nAutonomous.\nAnd.\nThey're.\nMore.\nPredictable.\nWhile.\nFor.\nThese.\nExperimental.\nOnes.\nPlanning.\nMulti-agent.\nSystems.\nThese.\nAre.\nLess.\nPredictable.\nLess.\nControllable.\nBut.\nIf.\nYou.\nGet.\nIt.\nRight.\nThe.",
+    "headline": "Evals",
+    "summary": "Evals. Evals.To. Evals.And. Evals.You.Be. System. Evals.Are. Autonomous. Agents.",
+    "keywords": [
+      "Evals",
+      "Agents",
+      "Autonomous",
+      "Universal",
+      "Criteria",
+      "Etcetera"
+    ],
+    "segments": [
       {
         "start": 1381.02,
         "end": 1381.64,
@@ -50275,7 +49939,34 @@
             "prob": 0.964
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_33_1428s.jpg",
+      "rel": "keyframe_33_1428s.jpg",
+      "time": 1428.9144444444444,
+      "score": 0.365966796875
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The speaker discusses tips for designing end-to-end evaluations, emphasizing areas where performance is worse than human judgment.",
+    "headline_en": "Evals",
+    "headline_zh": "评估"
+  },
+  {
+    "start": 1467.31,
+    "end": 1553.49,
+    "text": "Results.\nCan.\nBe.\nReally.\nReally.\nGood.\nLet's.\nStart.\nOff.\nWith.\nPlanning.\nAnd.\nJump.\n$100.\nYou.See.\nThis.\nIs.Actually.\nA.Pretty.\nDifficult.\nQuery.\nBecause.\nIt.Involves.\nThe.Customer.\nSurvey.\nAgent.\nTo.\nTo.\nThrough.\nThe.Data.\nSet.\nAnd.\nFirst.\nI.\nFind.\nWhat.\nAre.\nThe.\nRound.\nStyles.\nThen.\nThey.\nHas.To.\nPick.\nOut.\nWhich.\nOf.\nThese.\nAre.\nIn.\nStock.\nAnd.\nFinally.\nWhich.\nOf.\nPrices.\nAre.\nGoing.\nTo.\nUnder.\n$100.\nTo.\nBe.\nAble.\nTo.\nCome.\nTo.Answer.\nThese.\nQuestions.\nEach.\nTime.\nYou.\nWould.\nHave.\nTo.\nFigure.\nOut.\nAnd.\nPlan.\nOut.\nWhat.\nIs.\nThe.\nWay.\nTo.\nAnswer.\nThese.\nQuestions.\nThis.\nIs.\nWhere.\nThe.\nPlanning.\nDesign.\nPattern.\nComes.\nIn.\nGoing.\nBack.\nTo.\nThat.\nExample.\nOf.\nAsking.\nA.Question.\nDo.\nYou.\nHave.\nAny.\nRound.\nSun.\nGlasses.\nIn.\nStock.\nThat.\nAre.\nUnder.\n$100.\nThe.\nPlan.\nIn.\nDesign.\nPattern.\nWill.First.\nHave.\nAn.\nL.M.\nFigure.\nOut.\nWhat.\nIs.The.\nActual.\nPlan.\nTo.Answer.\nThis.\nQuestion.\nGiven.\nThe.\nSet.\nOf.\nTools.\nThat.\nIt.\nHas.\nLike.\nIt.\nHas.\nTools.\nLike.\nGet.\nItem.\nDescription.\nCheck.\nInventory.\nProcess.\nItem.\nReturn.\nEtc.\nEtc.\nSo.\nYou.\nWould.\nUse.\nThis.\nInformation.\nAnd.\nInformation.\nOf.The.\nDatabase.\nAnd.\nCome.\nUp.\nThe.\nPlan.\nLike.\nNumber.\nOne.\nHave.\nTo.\nUse.\nGet.Item.\nDescription.",
+    "headline": "$100 Planning Question",
+    "summary": "Planning.And. $100. Questions. Plan.Out. Planning. Plan.In. Plan. Item.",
+    "keywords": [
+      "Plan",
+      "100",
+      "Answer",
+      "Planning",
+      "Round",
+      "Stock"
+    ],
+    "segments": [
       {
         "start": 1467.31,
         "end": 1467.65,
@@ -51490,47 +51181,7 @@
             "prob": 0.986
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "库存查询流程",
-    "headline_en": "Inventory Query Process",
-    "summary_zh": "Different。Evals。Evals.To。Evals.And。These。Evals.Are。More。These.Are。",
-    "summary_en": "Different evaluations; these evaluations are more; these are more.",
-    "text_zh": "The.Universal.\nMagical.\nNumber.\nThis.\nIs.\nAlso.\nAn.\nObjective.\nEval.\nSo.\nYou.\nCan.\nActually.\nWrite.\nCode.\nSo.\nYou.\nCan.\nLiterally.\nJust.\nWrite.\nIf.\nThe.Length.\nOf.The.\nText.\nIs.Less.\nThan.\nOr.Equal.\nTo.Ten.\nThen.\nThat.\nIs.Good.\nIf.\nIt's.\nNot.\nThen.\nIt's.\nBad.\nThe.\nFinal.\nQuadrant.\nOf.This.\nTwo.By.\nTwo.\nMatrix.\nIs.\nWhen.\nYou.\nSomething.\nThat.\nIs.\nSubjective.\nAnd.\nDoes.\nNot.\nHave.\nA.\nPer.\nExample.\nGround.\nTruth.\nSay.\nYou.\nHave.\nAn.\nAgentic.\nSystem.\nThat.\nIs.\nSupposed.\nTo.\nCreate.\nDifferent.\nGraphs.\nThe.\nJudging.\nOf.The.\nGraph.\nIs.\nSubjective.\nThe.\nResult.\nOf.The.\nGraph.\nIs.\nSubjective.\nAnd.\nThe.\nWay.\nThat.\nYou.\nJudge.\nIt.\nIs.\nBased.\nOff.\nThis.\nUniversal.\nCriteria.\nWhere.\nWould.\nAsk.\nThe.\nLM.As.\nA.\nJudge.\nTo.\nGrade.\nThe.\nGraph.To.\nSee.\nWhether.\nIt.\nHas.A.\nAxis.\nLabels.\nAre.\nThe.\nColors.\nEasy.\nTo.\nSee.\nIs.\nThere.\nAny.\nOverlapping.\nText.\nEtcetera.\nEtcetera.\nSo.\nThat.\nWould.\nBe.\nLike.\nA.\nUniversal.\nGrading.\nCriteria.\nOkay.\nGreat.\nThat.\nCovers.\nThe.\nFour.\nGeneral.\nTypes.\nOf.\nEvals.\nThat.\nYou.\nCan.\nAlways.\nContinue.\nTo.\nExpand.\nThe.\nSet.\nOf.\nEvals.\nTo.\nCapture.\nAll.\nThe.\nDifferent.\nTypes.\nOf.\nErrors.\nThat.\nYou.\nCan.\nChange.\nInto.\nEvals.\nAnd.\nFinally.\nYou.\nWant.\nTo.\nLook.\nFor.\nPlaces.\nWhere.\nThe.\nPerformance.\nOf.\nThe.\nAgentic.\nSystem.\nIs.\nWorse.\nThan.\nA.\nHuman.\nThese.\nAre.\nThe.\nBest.\nAreas.\nFor.\nImprovement.\nGreat.\nThat.\nWas.\nThe.\nModule.\nOn.\nEvals.\nEven.\nIf.\nYou.\nImplement.\nJust.\nLike.\nA.\nFew.\nOf.\nThese.\nDifferent.\nEvals.\nYou.\nBe.\nSetting.\nUp.\nA.\nSystem.\nThat.\nWill.\nHelp.\nYou.\nDramatically.\nImprove.\nThe.\nResults.\nOf.\nYour.\nAgents.\nI.\nFeel.\nLike.\nEvals.\nAre.\nSuch.\nAn.\nOpen.\nSecret.\nAnd.\nBy.\nImplement.\nThem.\nMassive.\nReturn.\nOn.\nInvestment.\nAlright.\nWe're.\nAlmost.\nDone.\nWe.\nAre.\nAt.\nModule.\nFive.\nWhich.\nIs.\nThe.\nPatterns.\nFor.\nHighly.\nAutonomous.\nAgents.\nWe're.\nGonna.\nBe.\nCovering.\nTwo.\nOf.\nThe.\nMore.Experimental.\nAgents.\nThat.\nAre.Also.\nMore.\nAutonomous.\nThe.\nTwo.\nPatterns.\nThat.\nCovered.\nEarlier.\nReflection.\nAnd.\nTool.\nUse.\nAre.\nLess.\nAutonomous.\nAnd.\nThey're.\nMore.\nPredictable.\nWhile.\nFor.\nThese.\nExperimental.\nOnes.\nPlanning.\nMulti-agent.\nSystems.\nThese.\nAre.\nLess.\nPredictable.\nLess.\nControllable.\nBut.\nIf.\nYou.\nGet.\nIt.\nRight.\nThe.\nResults.\nCan.\nBe.\nReally.\nReally.\nGood.\nLet's.\nStart.\nOff.\nWith.\nPlanning.\nAnd.\nJump.\n$100.\nYou.See.\nThis.\nIs.Actually.\nA.Pretty.\nDifficult.\nQuery.\nBecause.\nIt.Involves.\nThe.Customer.\nSurvey.\nAgent.\nTo.\nTo.\nThrough.\nThe.Data.\nSet.\nAnd.\nFirst.\nI.\nFind.\nWhat.\nAre.\nThe.\nRound.\nStyles.\nThen.\nThey.\nHas.To.\nPick.\nOut.\nWhich.\nOf.\nThese.\nAre.\nIn.\nStock.\nAnd.\nFinally.\nWhich.\nOf.\nPrices.\nAre.\nGoing.\nTo.\nUnder.\n$100.\nTo.\nBe.\nAble.\nTo.\nCome.",
-    "text_en": "The universal magical number this is also an objective eval so you can actually write code so you can literally just write if the length of the text is less than or equal to ten then that is good if it's not then it's bad the final quadrant of this two by two matrix is when you something that is subjective and does not have a per example ground truth say you have an agentic system that is supposed to create different graphs the judging of the graph is subjective the result of the graph is subjective and the way that you judge it is based off this universal criteria where would ask the LM as a judge to grade the graph to see whether it has an axis labels are the colors easy to see is there any overlapping text etcetera etcetera so that would be like a universal grading criteria okay great that covers the four general types of evals that you can always continue to expand the set of evals to capture all the different types of errors that you can change into evals and finally you want to look for places where the performance of the agentic system is worse than a human these are the best areas for improvement great that was the module on evals even if you implement just like a few of these different evals you be setting up a system that will help you dramatically improve the results of your agents i feel like evals are such an open secret and by implement them massive return on investment alright we're almost done we are at module five which is the patterns for highly autonomous agents we're gonna be covering two of the more experimental agents that are also more autonomous the two patterns that covered earlier reflection and tool use are less autonomous and they're more predictable while for these experimental ones planning multi-agent systems these are less predictable less controllable but if you get it right the results can be really really good let's start off with planning and jump $100 you see this is actually a pretty difficult query because it involves the customer survey agent to to through the data set and first i find what are the round styles then they has to pick out which of these are in stock and finally which of prices are going to under $100 to be able to come",
-    "keywords_zh": [
-      "Evals",
-      "These",
-      "Less",
-      "Two",
-      "Universal",
-      "So"
-    ],
-    "keywords_en": [
-      "Evals",
-      "These",
-      "Less",
-      "Two",
-      "Universal",
-      "So"
-    ]
-  },
-  {
-    "start": 1519.87,
-    "end": 1553.49,
-    "text": "To.Answer.\nThese.\nQuestions.\nEach.\nTime.\nYou.\nWould.\nHave.\nTo.\nFigure.\nOut.\nAnd.\nPlan.\nOut.\nWhat.\nIs.\nThe.\nWay.\nTo.\nAnswer.\nThese.\nQuestions.\nThis.\nIs.\nWhere.\nThe.\nPlanning.\nDesign.\nPattern.\nComes.\nIn.\nGoing.\nBack.\nTo.\nThat.\nExample.\nOf.\nAsking.\nA.Question.\nDo.\nYou.\nHave.\nAny.\nRound.\nSun.\nGlasses.\nIn.\nStock.\nThat.\nAre.\nUnder.\n$100.\nThe.\nPlan.\nIn.\nDesign.\nPattern.\nWill.First.\nHave.\nAn.\nL.M.\nFigure.\nOut.\nWhat.\nIs.The.\nActual.\nPlan.\nTo.Answer.\nThis.\nQuestion.\nGiven.\nThe.\nSet.\nOf.\nTools.\nThat.\nIt.\nHas.\nLike.\nIt.\nHas.\nTools.\nLike.\nGet.\nItem.\nDescription.\nCheck.\nInventory.\nProcess.\nItem.\nReturn.\nEtc.\nEtc.\nSo.\nYou.\nWould.\nUse.\nThis.\nInformation.\nAnd.\nInformation.\nOf.The.\nDatabase.\nAnd.\nCome.\nUp.\nThe.\nPlan.\nLike.\nNumber.\nOne.\nHave.\nTo.\nUse.\nGet.Item.\nDescription.",
-    "headline": "多智能体系统",
-    "summary": "Plan.Out。Plan.In。Figure.Out。Plan。Like.Get。Item。Like。Get.Item。",
-    "keywords": [
-      "Plan",
-      "Answer",
-      "Out",
-      "Like",
-      "These",
-      "Questions"
-    ],
-    "segments": [
+      },
       {
         "start": 1519.87,
         "end": 1520.99,
@@ -53722,43 +53373,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_34_1476s.jpg",
+      "rel": "keyframe_34_1476s.jpg",
+      "time": 1476.8855555555556,
+      "score": 0.4033203125
+    },
     "headline_pegasus": "",
-    "headline_zh": "多智能体系统",
-    "headline_en": "Multi-Agent Systems",
-    "summary_zh": "Plan.Out。Plan.In。Figure.Out。Plan。Like.Get。Item。Like。Get.Item。",
-    "summary_en": "Plan out your plan; in figure out your plan, like get item; like get item.",
-    "text_zh": "To.Answer.\nThese.\nQuestions.\nEach.\nTime.\nYou.\nWould.\nHave.\nTo.\nFigure.\nOut.\nAnd.\nPlan.\nOut.\nWhat.\nIs.\nThe.\nWay.\nTo.\nAnswer.\nThese.\nQuestions.\nThis.\nIs.\nWhere.\nThe.\nPlanning.\nDesign.\nPattern.\nComes.\nIn.\nGoing.\nBack.\nTo.\nThat.\nExample.\nOf.\nAsking.\nA.Question.\nDo.\nYou.\nHave.\nAny.\nRound.\nSun.\nGlasses.\nIn.\nStock.\nThat.\nAre.\nUnder.\n$100.\nThe.\nPlan.\nIn.\nDesign.\nPattern.\nWill.First.\nHave.\nAn.\nL.M.\nFigure.\nOut.\nWhat.\nIs.The.\nActual.\nPlan.\nTo.Answer.\nThis.\nQuestion.\nGiven.\nThe.\nSet.\nOf.\nTools.\nThat.\nIt.\nHas.\nLike.\nIt.\nHas.\nTools.\nLike.\nGet.\nItem.\nDescription.\nCheck.\nInventory.\nProcess.\nItem.\nReturn.\nEtc.\nEtc.\nSo.\nYou.\nWould.\nUse.\nThis.\nInformation.\nAnd.\nInformation.\nOf.The.\nDatabase.\nAnd.\nCome.\nUp.\nThe.\nPlan.\nLike.\nNumber.\nOne.\nHave.\nTo.\nUse.\nGet.Item.\nDescription.",
-    "text_en": "To answer these questions each time you would have to figure out and plan out the way to answer these questions this is where the planning design pattern comes in going back to that example of asking a question do you have any round sun glasses in stock that are under $100 the plan in design pattern will first have an L M figure out what is the actual plan to answer this question given the set of tools that it has like it has tools like get item description check inventory process item etc etc so you would use this information and information of the database and come up the plan like number one have to use get item description",
-    "keywords_zh": [
-      "Plan",
-      "Answer",
-      "Out",
-      "Like",
-      "These",
-      "Questions"
-    ],
-    "keywords_en": [
-      "Plan",
-      "Answer",
-      "Out",
-      "Like",
-      "These",
-      "Questions"
-    ]
+    "vlm_caption": "The instructor explains an inventory database example for customer service agents.",
+    "headline_en": "$100 Planning Question",
+    "headline_zh": "100美元规划问题"
   },
   {
     "start": 1553.65,
-    "end": 1591.87,
-    "text": "Tool.\nTo.\nFind.\nThe.\nRound.\nSun.\nGlasses.\nSecond.\nStep.\nIs.\nTo.\nUse.\nCheck.\nInventory.\nTo.\nSee.\nIf.\nResults.\nAre.\nIn.\nStock.\nThen.\nThird.\nStep.\nIs.\nTo.\nUse.\nGet.Item.Price.\nTo.See.\nIf.\nIn.Stock.\nResults.\nAre.\nLess.\nThan.\n$100.\nThen.\nThe.\nAgent.\nWill.\nTake.\nThat.\nPlan.\nAnd.\nExecute.\nEach.\nOf.\nThese.\nSteps.\nTo.\nGet.\nThe.\nFinal.\nResult.\nBy.\nOf.\nYou.\nWant.\nTo.\nDig.\nInto.\nThis.\nAnd.\nActually.\nImplement.\nThese.\nEvals.\nYourself.\nThere.\nIs.\nAgain.\nAssignments.\nThat.\nYou.\nCan.\nTry.\nOut.\nIn.\nThe.\nCourse.\nWhich.\nI'll.\nLink.\nBelow.\nWhat.\nIs. Cool.\nAbout.\nThis.\nPlanning.\nDesign.\nPattern.\nIs.\nThat.\nThe.\nPlan.\nIs.\nNot.\nPredetermined.\nSo.\nThe.\nAgent.\nSystem.\nHas.\nTo.\nFigure.\nOut.\nThe.\nPlan.\nFirst.\nAnd.\nThen.\nGo.\nAnd.\nExecute.\nAll.\nOf.\nIt.\nWhich.\nMeans.\nOf.Course.\nThat.\nThe.\nDownside.\nOf.\nThis.\nPlanning.\nDesign.\nPattern.\nIs.\nThat.\nYou.\nDon't.\nActually.\nKnow.\nWhat.\nThe.\nPlan.\nIs.\nSo.\nIt's.\nActually.\nVery.\nHard.\nTo.\nTroubleshoot.\nAnd.\nAnticipate.\nWhat.",
-    "headline": "公司任务分配",
-    "summary": "Step.Is.To.Use。Plan.And。Actually。What。Planning。Plan.Is.Not。Plan。Plan.Is.So。",
+    "end": 1586.85,
+    "text": "Tool.\nTo.\nFind.\nThe.\nRound.\nSun.\nGlasses.\nSecond.\nStep.\nIs.\nTo.\nUse.\nCheck.\nInventory.\nTo.\nSee.\nIf.\nResults.\nAre.\nIn.\nStock.\nThen.\nThird.\nStep.\nIs.\nTo.\nUse.\nGet.Item.Price.\nTo.See.\nIf.\nIn.Stock.\nResults.\nAre.\nLess.\nThan.\n$100.\nThen.\nThe.\nAgent.\nWill.\nTake.\nThat.\nPlan.\nAnd.\nExecute.\nEach.\nOf.\nThese.\nSteps.\nTo.\nGet.\nThe.\nFinal.\nResult.\nBy.\nOf.\nYou.\nWant.\nTo.\nDig.\nInto.\nThis.\nAnd.\nActually.\nImplement.\nThese.\nEvals.\nYourself.\nThere.\nIs.\nAgain.\nAssignments.\nThat.\nYou.\nCan.\nTry.\nOut.\nIn.\nThe.\nCourse.\nWhich.\nI'll.\nLink.\nBelow.\nWhat.\nIs. Cool.\nAbout.\nThis.\nPlanning.\nDesign.\nPattern.\nIs.\nThat.\nThe.\nPlan.\nIs.\nNot.\nPredetermined.\nSo.\nThe.\nAgent.\nSystem.\nHas.\nTo.\nFigure.\nOut.\nThe.\nPlan.\nFirst.\nAnd.\nThen.\nGo.\nAnd.\nExecute.\nAll.\nOf.\nIt.\nWhich.\nMeans.\nOf.Course.\nThat.\nThe.\nDownside.\nOf.\nThis.\nPlanning.\nDesign.\nPattern.",
+    "headline": "Stock Plan and Execution",
+    "summary": "Stock. Agent. Plan.And. Course. Planning. Design. Plan.Is.Not. Plan.",
     "keywords": [
       "Plan",
-      "Actually",
       "Step",
-      "Use",
-      "See",
-      "Results"
+      "Results",
+      "Stock",
+      "Agent",
+      "Execute"
     ],
     "segments": [
       {
@@ -56136,7 +55774,34 @@
             "prob": 0.995
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_35_1561s.jpg",
+      "rel": "keyframe_35_1561s.jpg",
+      "time": 1561.0277777777778,
+      "score": 0.36376953125
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The presenter explains a process involving steps and an LLM to check inventory and get item prices.",
+    "headline_en": "Stock Plan and Execution",
+    "headline_zh": "股票计划和执行"
+  },
+  {
+    "start": 1587.01,
+    "end": 1620.69,
+    "text": "Is.\nThat.\nYou.\nDon't.\nActually.\nKnow.\nWhat.\nThe.\nPlan.\nIs.\nSo.\nIt's.\nActually.\nVery.\nHard.\nTo.\nTroubleshoot.\nAnd.\nAnticipate.\nWhat.\nKind.\nOf.\nResult.\nYou're.\nGonna.\nGet.\nUntil.\nIt.\nActually.\nGoes.\nThrough.\nThe.Process.\nItself.\nThe.\nUpside.\nOf.\nThis.\nIs.\nThis.\nIncreased.\nAmount.\nOf.\nFlexibility.\nAnd.\nSometimes.\nLike.\nIt.\nIs.\nPretty.\nMagical.\nTo.\nWitness.\nAn.\nAgent.\nBe.Able.\nTo.Plan.\nOut.\nSuper.\nComplex.\nTask.\nAnd.\nThen.\nExecute.\nIt.\nAnd.\nGet.\nLike.\nCrazy.\nGood.\nResults.\nThe.\nOther.\nMore.\nExperimental.\nAutonomous.\nDesign.\nPattern.\nIs.A.\nMulti-Agentic.\nWorkflow.\nThe.\nIdea.\nOf.A.\nMulti-Agent.",
+    "headline": "Multi-Agent Troubleshooting",
+    "summary": "Don't. Plan.Is.So. Result. Goes. Pretty. Agent. To.Plan.Out. Multi-Agent.",
+    "keywords": [
+      "Plan",
+      "Don",
+      "Troubleshoot",
+      "Anticipate",
+      "Result",
+      "Gonna"
+    ],
+    "segments": [
       {
         "start": 1587.01,
         "end": 1587.21,
@@ -56508,47 +56173,7 @@
             "prob": 0.933
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "公司任务分配",
-    "headline_en": "Company Task Allocation",
-    "summary_zh": "Step.Is.To.Use。Plan.And。Actually。What。Planning。Plan.Is.Not。Plan。Plan.Is.So。",
-    "summary_en": "Steps are to plan and actually what planning means is not just planning but so much more.",
-    "text_zh": "Tool.\nTo.\nFind.\nThe.\nRound.\nSun.\nGlasses.\nSecond.\nStep.\nIs.\nTo.\nUse.\nCheck.\nInventory.\nTo.\nSee.\nIf.\nResults.\nAre.\nIn.\nStock.\nThen.\nThird.\nStep.\nIs.\nTo.\nUse.\nGet.Item.Price.\nTo.See.\nIf.\nIn.Stock.\nResults.\nAre.\nLess.\nThan.\n$100.\nThen.\nThe.\nAgent.\nWill.\nTake.\nThat.\nPlan.\nAnd.\nExecute.\nEach.\nOf.\nThese.\nSteps.\nTo.\nGet.\nThe.\nFinal.\nResult.\nBy.\nOf.\nYou.\nWant.\nTo.\nDig.\nInto.\nThis.\nAnd.\nActually.\nImplement.\nThese.\nEvals.\nYourself.\nThere.\nIs.\nAgain.\nAssignments.\nThat.\nYou.\nCan.\nTry.\nOut.\nIn.\nThe.\nCourse.\nWhich.\nI'll.\nLink.\nBelow.\nWhat.\nIs. Cool.\nAbout.\nThis.\nPlanning.\nDesign.\nPattern.\nIs.\nThat.\nThe.\nPlan.\nIs.\nNot.\nPredetermined.\nSo.\nThe.\nAgent.\nSystem.\nHas.\nTo.\nFigure.\nOut.\nThe.\nPlan.\nFirst.\nAnd.\nThen.\nGo.\nAnd.\nExecute.\nAll.\nOf.\nIt.\nWhich.\nMeans.\nOf.Course.\nThat.\nThe.\nDownside.\nOf.\nThis.\nPlanning.\nDesign.\nPattern.\nIs.\nThat.\nYou.\nDon't.\nActually.\nKnow.\nWhat.\nThe.\nPlan.\nIs.\nSo.\nIt's.\nActually.\nVery.\nHard.\nTo.\nTroubleshoot.\nAnd.\nAnticipate.\nWhat.",
-    "text_en": "Tool. To. Find. The. Round. Sun. Glasses. Second. Step. Is. To. Use. Check. Inventory. To. See. If. Results. Are. In. Stock. Then. Third. Step. Is. To. Use. Get.Item.Price. To.See. If. In.Stock. Results. Are. Less. Than. $100. Then. The. Agent. Will. Take. That. Plan. And. Execute. Each. Of. These. Steps. To. Get. The. Final. Result. By. Of. You. Want. To. Dig. Into. This. And. Actually. Implement. These. Evals. Yourself. There. Is. Again. Assignments. That. You. Can. Try. Out. In. The. Course. Which. I'll. Link. Below. What. Is. Cool. About. This. Planning. Design. Pattern. Is. That. The. Plan. Is. Not. Predetermined. So. The. Agent. System. Has. To. Figure. Out. The. Plan. First. And. Then. Go. And. Execute. All. Of. It. Which. Means. Of. Course. That. The. Downside. Of. This. Planning. Design. Pattern. Is. That. You. Don't. Actually. Know. What. The. Plan. Is. So. It's. Actually. Very. Hard. To. Troubleshoot. And. Anticipate. What.",
-    "keywords_zh": [
-      "Plan",
-      "Actually",
-      "Step",
-      "Use",
-      "See",
-      "Results"
-    ],
-    "keywords_en": [
-      "Plan",
-      "Actually",
-      "Step",
-      "Use",
-      "See",
-      "Results"
-    ]
-  },
-  {
-    "start": 1591.99,
-    "end": 1632.41,
-    "text": "Kind.\nOf.\nResult.\nYou're.\nGonna.\nGet.\nUntil.\nIt.\nActually.\nGoes.\nThrough.\nThe.Process.\nItself.\nThe.\nUpside.\nOf.\nThis.\nIs.\nThis.\nIncreased.\nAmount.\nOf.\nFlexibility.\nAnd.\nSometimes.\nLike.\nIt.\nIs.\nPretty.\nMagical.\nTo.\nWitness.\nAn.\nAgent.\nBe.Able.\nTo.Plan.\nOut.\nSuper.\nComplex.\nTask.\nAnd.\nThen.\nExecute.\nIt.\nAnd.\nGet.\nLike.\nCrazy.\nGood.\nResults.\nThe.\nOther.\nMore.\nExperimental.\nAutonomous.\nDesign.\nPattern.\nIs.A.\nMulti-Agentic.\nWorkflow.\nThe.\nIdea.\nOf.A.\nMulti-Agent.\nSystem.\nIs.To.\nTake.\nAn.\nAgentic.\nSystem.\nAnd.\nActually.\nHave.\nIt.\nLike.\nBe.\nMultiple.\nDifferent.\nAgents.\nWorking.\nTogether.\nTo.\nProduce.\nThe.\nFinal.\nResult.\nThe.\nIntuition.\nFor.\nWhy.\nThis.\nCan.\nBe.\nBetter.\nIs.\nKinda.\nLike.\nA.\nCompany.\nRight.\nIf.\nHave.\nLike.\nOne.\nPerson.\nTrying.\nTo.",
-    "headline": "数据可视化选项",
-    "summary": "Gonna.Get。Like.It.Is。Agent。Like。Multi-Agentic。Agentic。Like.Be。Like.One。",
-    "keywords": [
-      "Like",
-      "Result",
-      "Get",
-      "Actually",
-      "Agent",
-      "Multi"
-    ],
-    "segments": [
+      },
       {
         "start": 1591.99,
         "end": 1592.05,
@@ -57862,7 +57487,34 @@
             "prob": 0.991
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_36_1613s.jpg",
+      "rel": "keyframe_36_1613s.jpg",
+      "time": 1613.2055555555555,
+      "score": 0.4111328125
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The slide introduces the concept of \"Multi Agentic Workflow\" as part of an educational presentation.",
+    "headline_en": "Multi-Agent Troubleshooting",
+    "headline_zh": "多代理故障排除"
+  },
+  {
+    "start": 1620.75,
+    "end": 1681.99,
+    "text": "System.\nIs.To.\nTake.\nAn.\nAgentic.\nSystem.\nAnd.\nActually.\nHave.\nIt.\nLike.\nBe.\nMultiple.\nDifferent.\nAgents.\nWorking.\nTogether.\nTo.\nProduce.\nThe.\nFinal.\nResult.\nThe.\nIntuition.\nFor.\nWhy.\nThis.\nCan.\nBe.\nBetter.\nIs.\nKinda.\nLike.\nA.\nCompany.\nRight.\nIf.\nHave.\nLike.\nOne.\nPerson.\nTrying.\nTo.\nDo.\nAll.\nThe.\nDifferent.Task.\nIn.A.\nCompany.\nIs.Probably.\nNot.\nGoing.\nTo.\nThe.Best.\nJob.\nAnd.\nGet.\nOverwhelmed.\nBecause.\nIt.\nHas.\nTo.Do.\nLike.\nSo.\nMany.\nDifferent.Things.\nAnd.\nJuggle.\nSo.\nMany.\nDifferent.\nThings.\nBut.\nIf.\nYou.Have.\nDifferent.\nPeople.\nIn.\nThat.\nCompany.\nThat.\nSpecialize.\nIn.\nDifferent.\nThings.\nEach.\nPerson.\nWould.\nBe.\nAble.\nTo.\nFocus.\nBetter.\nOn.\nTheir.\nSpecific.\nTask.\nAnd.\nYou.\nPut.\nIt.\nTogether.\nIt's.\nDivide.\nThat.\nInto.\nThree.\nDifferent.\nSub.\nAgents.\nA.\nResearcher.\nA.\nGraphic.\nDesigner.\nAnd.\nA.\nWriter.\nSo.\nThat.\nWhen.\nYou.\nReceive.\nA.\nQuery.\nLike.\nCreate.\nA.\nSummer.\nMarketing.\nCampaign.\nFor.\nSunglasses.\nYour.\nResearch.\nAgent.\nWill.\nFocus.\nOn.\nConducting.\nResearch.\nAnd.\nFigure.\nOut.\nThat.\nHere.\nAre.\nCurrent.\nSunglasses.\nTrends.\nAnd.\nCompetitor.\nOfferings.\nIt.\nWould.\nPass.\nAlong.\nThat.\nInformation.\nTo.A.\nGraphic.\nDesigner.",
+    "headline": "Company",
+    "summary": "System. Agents. Company. Focus. Together. Graphic. Research. Focus.On.",
+    "keywords": [
+      "Company",
+      "System",
+      "Agents",
+      "Together",
+      "Better",
+      "Task"
+    ],
+    "segments": [
       {
         "start": 1620.75,
         "end": 1621.01,
@@ -58645,47 +58297,7 @@
             "prob": 0.994
           }
         ]
-      }
-    ],
-    "headline_pegasus": "",
-    "headline_zh": "数据可视化选项",
-    "headline_en": "Data Visualization Options",
-    "summary_zh": "Gonna.Get。Like.It.Is。Agent。Like。Multi-Agentic。Agentic。Like.Be。Like.One。",
-    "summary_en": "It's going to be like this: the agent is multi-agentic, agentic like being one.",
-    "text_zh": "Kind.\nOf.\nResult.\nYou're.\nGonna.\nGet.\nUntil.\nIt.\nActually.\nGoes.\nThrough.\nThe.Process.\nItself.\nThe.\nUpside.\nOf.\nThis.\nIs.\nThis.\nIncreased.\nAmount.\nOf.\nFlexibility.\nAnd.\nSometimes.\nLike.\nIt.\nIs.\nPretty.\nMagical.\nTo.\nWitness.\nAn.\nAgent.\nBe.Able.\nTo.Plan.\nOut.\nSuper.\nComplex.\nTask.\nAnd.\nThen.\nExecute.\nIt.\nAnd.\nGet.\nLike.\nCrazy.\nGood.\nResults.\nThe.\nOther.\nMore.\nExperimental.\nAutonomous.\nDesign.\nPattern.\nIs.A.\nMulti-Agentic.\nWorkflow.\nThe.\nIdea.\nOf.A.\nMulti-Agent.\nSystem.\nIs.To.\nTake.\nAn.\nAgentic.\nSystem.\nAnd.\nActually.\nHave.\nIt.\nLike.\nBe.\nMultiple.\nDifferent.\nAgents.\nWorking.\nTogether.\nTo.\nProduce.\nThe.\nFinal.\nResult.\nThe.\nIntuition.\nFor.\nWhy.\nThis.\nCan.\nBe.\nBetter.\nIs.\nKinda.\nLike.\nA.\nCompany.\nRight.\nIf.\nHave.\nLike.\nOne.\nPerson.\nTrying.\nTo.",
-    "text_en": "Kind. Of. Result. You're. Gonna. Get. Until. It. Actually. Goes. Through. The. Process. Itself. The. Upside. Of. This. Is. This. Increased. Amount. Of. Flexibility. And. Sometimes. Like. It. Is. Pretty. Magical. To. Witness. An. Agent. Be. Able. To. Plan. Out. Super. Complex. Task. And. Then. Execute. It. And. Get. Like. Crazy. Good. Results. The. Other. More. Experimental. Autonomous. Design. Pattern. Is. A. Multi-Agentic. Workflow. The. Idea. Of. A. Multi-Agent. System. Is. To. Take. An. Agentic. System. And. Actually. Have. It. Like. Be. Multiple. Different. Agents. Working. Together. To. Produce. The. Final. Result. The. Intuition. For. Why. This. Can. Be. Better. Is. Kinda. Like. A. Company. Right. If. Have. Like. One. Person. Trying.",
-    "keywords_zh": [
-      "Like",
-      "Result",
-      "Get",
-      "Actually",
-      "Agent",
-      "Multi"
-    ],
-    "keywords_en": [
-      "Like",
-      "Result",
-      "Get",
-      "Actually",
-      "Agent",
-      "Multi"
-    ]
-  },
-  {
-    "start": 1632.49,
-    "end": 1681.99,
-    "text": "Do.\nAll.\nThe.\nDifferent.Task.\nIn.A.\nCompany.\nIs.Probably.\nNot.\nGoing.\nTo.\nThe.Best.\nJob.\nAnd.\nGet.\nOverwhelmed.\nBecause.\nIt.\nHas.\nTo.Do.\nLike.\nSo.\nMany.\nDifferent.Things.\nAnd.\nJuggle.\nSo.\nMany.\nDifferent.\nThings.\nBut.\nIf.\nYou.Have.\nDifferent.\nPeople.\nIn.\nThat.\nCompany.\nThat.\nSpecialize.\nIn.\nDifferent.\nThings.\nEach.\nPerson.\nWould.\nBe.\nAble.\nTo.\nFocus.\nBetter.\nOn.\nTheir.\nSpecific.\nTask.\nAnd.\nYou.\nPut.\nIt.\nTogether.\nIt's.\nDivide.\nThat.\nInto.\nThree.\nDifferent.\nSub.\nAgents.\nA.\nResearcher.\nA.\nGraphic.\nDesigner.\nAnd.\nA.\nWriter.\nSo.\nThat.\nWhen.\nYou.\nReceive.\nA.\nQuery.\nLike.\nCreate.\nA.\nSummer.\nMarketing.\nCampaign.\nFor.\nSunglasses.\nYour.\nResearch.\nAgent.\nWill.\nFocus.\nOn.\nConducting.\nResearch.\nAnd.\nFigure.\nOut.\nThat.\nHere.\nAre.\nCurrent.\nSunglasses.\nTrends.\nAnd.\nCompetitor.\nOfferings.\nIt.\nWould.\nPass.\nAlong.\nThat.\nInformation.\nTo.A.\nGraphic.\nDesigner.",
-    "headline": "实际部署过程",
-    "summary": "Different.Task。Like.So。Different.Things.And。Juggle.So。Different。Things。Different.Sub。Writer.So。",
-    "keywords": [
-      "Different",
-      "So",
-      "Things",
-      "Do",
-      "Task",
-      "Company"
-    ],
-    "segments": [
+      },
       {
         "start": 1632.49,
         "end": 1632.61,
@@ -61024,43 +60636,30 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_37_1661s.jpg",
+      "rel": "keyframe_37_1661s.jpg",
+      "time": 1661.5766666666666,
+      "score": 0.401123046875
+    },
     "headline_pegasus": "",
-    "headline_zh": "实际部署过程",
-    "headline_en": "Actual Deployment Process",
-    "summary_zh": "Different.Task。Like.So。Different.Things.And。Juggle.So。Different。Things。Different.Sub。Writer.So。",
-    "summary_en": "Different tasks require juggling different things and sub-writers so adeptly.",
-    "text_zh": "Do.\nAll.\nThe.\nDifferent.Task.\nIn.A.\nCompany.\nIs.Probably.\nNot.\nGoing.\nTo.\nThe.Best.\nJob.\nAnd.\nGet.\nOverwhelmed.\nBecause.\nIt.\nHas.\nTo.Do.\nLike.\nSo.\nMany.\nDifferent.Things.\nAnd.\nJuggle.\nSo.\nMany.\nDifferent.\nThings.\nBut.\nIf.\nYou.Have.\nDifferent.\nPeople.\nIn.\nThat.\nCompany.\nThat.\nSpecialize.\nIn.\nDifferent.\nThings.\nEach.\nPerson.\nWould.\nBe.\nAble.\nTo.\nFocus.\nBetter.\nOn.\nTheir.\nSpecific.\nTask.\nAnd.\nYou.\nPut.\nIt.\nTogether.\nIt's.\nDivide.\nThat.\nInto.\nThree.\nDifferent.\nSub.\nAgents.\nA.\nResearcher.\nA.\nGraphic.\nDesigner.\nAnd.\nA.\nWriter.\nSo.\nThat.\nWhen.\nYou.\nReceive.\nA.\nQuery.\nLike.\nCreate.\nA.\nSummer.\nMarketing.\nCampaign.\nFor.\nSunglasses.\nYour.\nResearch.\nAgent.\nWill.\nFocus.\nOn.\nConducting.\nResearch.\nAnd.\nFigure.\nOut.\nThat.\nHere.\nAre.\nCurrent.\nSunglasses.\nTrends.\nAnd.\nCompetitor.\nOfferings.\nIt.\nWould.\nPass.\nAlong.\nThat.\nInformation.\nTo.A.\nGraphic.\nDesigner.",
-    "text_en": "",
-    "keywords_zh": [
-      "Different",
-      "So",
-      "Things",
-      "Do",
-      "Task",
-      "Company"
-    ],
-    "keywords_en": [
-      "Different",
-      "So",
-      "Things",
-      "Do",
-      "Task",
-      "Company"
-    ]
+    "vlm_caption": "The speaker explains a linear marketing team process with roles and responsibilities.",
+    "headline_en": "Company",
+    "headline_zh": "公司"
   },
   {
     "start": 1682.11,
-    "end": 1821.75,
-    "text": "Agent.\nWhich.\nWould.\nThen.\nCome.\nUp.\nWith.\nLike.\nFive.\nDifferent.\nData.\nVisualizations.\nAnd.\nFive.\nDifferent.\nArtwork.\nOptions.\nFor.\nThe.\nReport.\nIt.\nWould.\nThen.\nPass.\nAll.\nThis.\nTo.\nThe.\nFinal.\nWriter.\nAgent.\nWhich.\nWill.\nThen.\nCompile.\nEverything.\nTogether.\nAnd.\nWrite.\nThe.\nFinal.\nReport.\nSo.\nThis.\nWould.\nBe.\nA.\nMarketing.\nTeam.\nAgentic.\nSystem.\nThat's.\nAble.\nTo.\nGenerate.\nReport.\nFor.\nMarketing.\nCampaign.\nOn.\nA.\nSpecific.\nTopic.\nThere's.\nActually.\nQuite.\nA.\nLot.\nOf.\nResearch.\nDone.\nA.\nMulti-agent.\nSystems.\nAnd.\nIn.\nOur.\nBoot.\nCamp.\nAs.\nWell.\nI.\nAlso.\nA.\nVideo.\nAbout.\nMulti-agent.\nSystems.\nI.Also.\nHave.\nA.Video.\nThat.\nCover.\nMulti-agent.\nSystems.\nAs.\nWell.\nWhich.\nYou.\nCan.\nCheck.\nOut.\nAt.\nThe.\nSink.\nOver.\nI.\nCondensed.\nFor.\nGuys.\nHere.\nI.\nThink.\nThis.\nCourse.\nReally.\nWas.\nQuite.\nGood.\nIt.\nHas.A.\nVery.\nGood.\nOverview.\nOf.\nAll.\nOf.\nThe.\nDifferent.\nParts.\nFor.\nBuilding.\nAgentic.\nA.I.\nMy.\nCritique.\nThough.\nIf.\nI.\nMay.\nAndrew.\nApproach.\nFrom.\nA.\nVery.\nResearchy.\nTheoretical.\nPerspective.\nWhich.\nMakes.\nSense.\nGiven.\nHis.\nBackground.\nAs.\nA.Research.\nScientist.\nBut.\nI.\nDo.\nFeel.\nLike.\nHe.\nDidn't.\nReally.\nCover.\nLike.\nThe.\nActual.\nProcess.\nDeployment.\nAnd.\nWhat.\nThat.\nActually.\nLook.\nLike.\nWhen.\nYou.\nPut.\nIt.\nInto.\nThe.World.\nAnd.\nGet.\nUsers.\nTo.\nStart.\nUsing.\nYour.\nAgent.\nAnd.\nThat.\nIs.\nNot.\nTrue.\nSo.\nYou.\nWould.\nHave.\nThe.\nMisconception.\nThat.\nYou.\nHave.\nTo.\nKnow.\nTo.\nCode.\nAnd.\nThat.\nIs.\nNot.\nTrue.\nSo.\nI.\nJust.\nWant.\nTo.\nMake.\nThat.\nSuper.\nClear.\nFor.\nYou.\nGuys.\nToo.\nYou.\nCan.\nDo.\nThis.\nWith.\nNo.\nCode.\nAs.\nPromised.\nHere.\nIs.\nThe.\nLittle.\nAssessment.\nIn.\nWhich.\nIf.\nYou.\nCan.\nAnswer.\nThese.\nQuestions.\nThen.\nCongratulations.\nYou.\nAre.\nAble.\nTo.\nRetain.\nAll.The.\nInformation.\nWe've.\nJust.\nCovered.\nFrom.\nThis.\nEight.\nHour.\nCourse.\nPlease.\nWrite.\nYour.\nAnswers.\nIn.\nThe.\nComments.\nAlright.\nThank.\nYou.\nSo.\nMuch.\nFor.\nWatching.\nUntil.\nThe.\nEnd.\nOf.This.\nVideo.\nI.Really.\nHope.\nThat.\nYou.\nLearned.\nA.Lot.\nAbout.\nAgent.\nA.I.\nAnd.\nYou.\nAre.\nSuper.\nExcited.\nTo.\nStart.\nBuilding.\nYour.\nOwn.\nAgents.\nAs.\nWell.\nAnd.\nI'll.\nSee.\nYou.\nGuys.\nThe.\nNext.\nVideo.\nOr.\nLivestream.",
-    "headline": "",
-    "summary": "Agent。Would。Like。Report.So。Agentic。Multi-agent。Video。Agentic.A.I.My。",
+    "end": 1752.14,
+    "text": "Agent.\nWhich.\nWould.\nThen.\nCome.\nUp.\nWith.\nLike.\nFive.\nDifferent.\nData.\nVisualizations.\nAnd.\nFive.\nDifferent.\nArtwork.\nOptions.\nFor.\nThe.\nReport.\nIt.\nWould.\nThen.\nPass.\nAll.\nThis.\nTo.\nThe.\nFinal.\nWriter.\nAgent.\nWhich.\nWill.\nThen.\nCompile.\nEverything.\nTogether.\nAnd.\nWrite.\nThe.\nFinal.\nReport.\nSo.\nThis.\nWould.\nBe.\nA.\nMarketing.\nTeam.\nAgentic.\nSystem.\nThat's.\nAble.\nTo.\nGenerate.\nReport.\nFor.\nMarketing.\nCampaign.\nOn.\nA.\nSpecific.\nTopic.\nThere's.\nActually.\nQuite.\nA.\nLot.\nOf.\nResearch.\nDone.\nA.\nMulti-agent.\nSystems.\nAnd.\nIn.\nOur.\nBoot.\nCamp.\nAs.\nWell.\nI.\nAlso.\nA.\nVideo.\nAbout.\nMulti-agent.\nSystems.\nI.Also.\nHave.\nA.Video.\nThat.\nCover.\nMulti-agent.\nSystems.\nAs.\nWell.\nWhich.\nYou.\nCan.\nCheck.\nOut.\nAt.\nThe.\nSink.\nOver.\nI.\nCondensed.\nFor.\nGuys.\nHere.\nI.\nThink.\nThis.\nCourse.\nReally.\nWas.\nQuite.\nGood.\nIt.\nHas.A.\nVery.\nGood.\nOverview.\nOf.\nAll.\nOf.\nThe.\nDifferent.\nParts.\nFor.\nBuilding.\nAgentic.\nA.I.\nMy.\nCritique.\nThough.\nIf.\nI.\nMay.\nAndrew.",
+    "headline": "Report",
+    "summary": "Five. Report.It. Report.So. Agentic. Report.For. Multi-agent. Systems. Agentic.A.I.My.",
     "keywords": [
+      "Report",
+      "Multi",
+      "agent",
+      "Systems",
       "Agent",
-      "Would",
-      "Like",
-      "So",
-      "Different",
-      "Report"
+      "Five"
     ],
     "segments": [
       {
@@ -63729,7 +63328,34 @@
             "prob": 0.933
           }
         ]
-      },
+      }
+    ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_38_1728s.jpg",
+      "rel": "keyframe_38_1728s.jpg",
+      "time": 1728.7966666666666,
+      "score": 0.4208984375
+    },
+    "headline_pegasus": "",
+    "vlm_caption": "The video demonstrates a Jupyter notebook with instructions for an AI market research lab, emphasizing the integration of large language models with structured workflows.",
+    "headline_en": "Report",
+    "headline_zh": "报告"
+  },
+  {
+    "start": 1752.2,
+    "end": 1821.75,
+    "text": "Approach.\nFrom.\nA.\nVery.\nResearchy.\nTheoretical.\nPerspective.\nWhich.\nMakes.\nSense.\nGiven.\nHis.\nBackground.\nAs.\nA.Research.\nScientist.\nBut.\nI.\nDo.\nFeel.\nLike.\nHe.\nDidn't.\nReally.\nCover.\nLike.\nThe.\nActual.\nProcess.\nDeployment.\nAnd.\nWhat.\nThat.\nActually.\nLook.\nLike.\nWhen.\nYou.\nPut.\nIt.\nInto.\nThe.World.\nAnd.\nGet.\nUsers.\nTo.\nStart.\nUsing.\nYour.\nAgent.\nAnd.\nThat.\nIs.\nNot.\nTrue.\nSo.\nYou.\nWould.\nHave.\nThe.\nMisconception.\nThat.\nYou.\nHave.\nTo.\nKnow.\nTo.\nCode.\nAnd.\nThat.\nIs.\nNot.\nTrue.\nSo.\nI.\nJust.\nWant.\nTo.\nMake.\nThat.\nSuper.\nClear.\nFor.\nYou.\nGuys.\nToo.\nYou.\nCan.\nDo.\nThis.\nWith.\nNo.\nCode.\nAs.\nPromised.\nHere.\nIs.\nThe.\nLittle.\nAssessment.\nIn.\nWhich.\nIf.\nYou.\nCan.\nAnswer.\nThese.\nQuestions.\nThen.\nCongratulations.\nYou.\nAre.\nAble.\nTo.\nRetain.\nAll.The.\nInformation.\nWe've.\nJust.\nCovered.\nFrom.\nThis.\nEight.\nHour.\nCourse.\nPlease.\nWrite.\nYour.\nAnswers.\nIn.\nThe.\nComments.\nAlright.\nThank.\nYou.\nSo.\nMuch.\nFor.\nWatching.\nUntil.\nThe.\nEnd.\nOf.This.\nVideo.\nI.Really.\nHope.\nThat.\nYou.\nLearned.\nA.Lot.\nAbout.\nAgent.\nA.I.\nAnd.\nYou.\nAre.\nSuper.\nExcited.\nTo.\nStart.\nBuilding.\nYour.\nOwn.\nAgents.\nAs.\nWell.\nAnd.\nI'll.\nSee.\nYou.\nGuys.\nThe.\nNext.\nVideo.\nOr.\nLivestream.",
+    "headline": "Agent",
+    "summary": "Researchy. Agent.And. Code.And. True.So.I. Super. Code.As. Video. Video.Or.",
+    "keywords": [
+      "Agent",
+      "True",
+      "Code",
+      "Super",
+      "Approach",
+      "Researchy"
+    ],
+    "segments": [
       {
         "start": 1752.2,
         "end": 1752.56,
@@ -66899,28 +66525,15 @@
         ]
       }
     ],
+    "keyframe": {
+      "path": "data\\outputs\\BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.keyframes\\keyframe_39_1806s.jpg",
+      "rel": "keyframe_39_1806s.jpg",
+      "time": 1806.2944444444445,
+      "score": 0.40087890625
+    },
     "headline_pegasus": "",
-    "headline_zh": "",
-    "headline_en": "",
-    "summary_zh": "Agent。Would。Like。Report.So。Agentic。Multi-agent。Video。Agentic.A.I.My。",
-    "summary_en": "The agent would like to report so the agentic multi-agent video AI my.",
-    "text_zh": "Agent.\nWhich.\nWould.\nThen.\nCome.\nUp.\nWith.\nLike.\nFive.\nDifferent.\nData.\nVisualizations.\nAnd.\nFive.\nDifferent.\nArtwork.\nOptions.\nFor.\nThe.\nReport.\nIt.\nWould.\nThen.\nPass.\nAll.\nThis.\nTo.\nThe.\nFinal.\nWriter.\nAgent.\nWhich.\nWill.\nThen.\nCompile.\nEverything.\nTogether.\nAnd.\nWrite.\nThe.\nFinal.\nReport.\nSo.\nThis.\nWould.\nBe.\nA.\nMarketing.\nTeam.\nAgentic.\nSystem.\nThat's.\nAble.\nTo.\nGenerate.\nReport.\nFor.\nMarketing.\nCampaign.\nOn.\nA.\nSpecific.\nTopic.\nThere's.\nActually.\nQuite.\nA.\nLot.\nOf.\nResearch.\nDone.\nA.\nMulti-agent.\nSystems.\nAnd.\nIn.\nOur.\nBoot.\nCamp.\nAs.\nWell.\nI.\nAlso.\nA.\nVideo.\nAbout.\nMulti-agent.\nSystems.\nI.Also.\nHave.\nA.Video.\nThat.\nCover.\nMulti-agent.\nSystems.\nAs.\nWell.\nWhich.\nYou.\nCan.\nCheck.\nOut.\nAt.\nThe.\nSink.\nOver.\nI.\nCondensed.\nFor.\nGuys.\nHere.\nI.\nThink.\nThis.\nCourse.\nReally.\nWas.\nQuite.\nGood.\nIt.\nHas.A.\nVery.\nGood.\nOverview.\nOf.\nAll.\nOf.\nThe.\nDifferent.\nParts.\nFor.\nBuilding.\nAgentic.\nA.I.\nMy.\nCritique.\nThough.\nIf.\nI.\nMay.\nAndrew.\nApproach.\nFrom.\nA.\nVery.\nResearchy.\nTheoretical.\nPerspective.\nWhich.\nMakes.\nSense.\nGiven.\nHis.\nBackground.\nAs.\nA.Research.\nScientist.\nBut.\nI.\nDo.\nFeel.\nLike.\nHe.\nDidn't.\nReally.\nCover.\nLike.\nThe.\nActual.\nProcess.\nDeployment.\nAnd.\nWhat.\nThat.\nActually.\nLook.\nLike.\nWhen.\nYou.\nPut.\nIt.\nInto.\nThe.World.\nAnd.\nGet.\nUsers.\nTo.\nStart.\nUsing.\nYour.\nAgent.\nAnd.\nThat.\nIs.\nNot.\nTrue.\nSo.\nYou.\nWould.\nHave.\nThe.\nMisconception.\nThat.\nYou.\nHave.\nTo.\nKnow.\nTo.\nCode.\nAnd.\nThat.\nIs.\nNot.\nTrue.\nSo.\nI.\nJust.\nWant.\nTo.\nMake.\nThat.\nSuper.\nClear.\nFor.\nYou.\nGuys.\nToo.\nYou.\nCan.\nDo.\nThis.\nWith.\nNo.\nCode.\nAs.\nPromised.\nHere.\nIs.\nThe.\nLittle.\nAssessment.\nIn.\nWhich.\nIf.\nYou.\nCan.\nAnswer.\nThese.\nQuestions.\nThen.\nCongratulations.\nYou.\nAre.\nAble.\nTo.\nRetain.\nAll.The.\nInformation.\nWe've.\nJust.\nCovered.\nFrom.\nThis.\nEight.\nHour.\nCourse.\nPlease.\nWrite.\nYour.\nAnswers.\nIn.\nThe.\nComments.\nAlright.\nThank.\nYou.\nSo.\nMuch.\nFor.\nWatching.\nUntil.\nThe.\nEnd.\nOf.This.\nVideo.\nI.Really.\nHope.\nThat.\nYou.\nLearned.\nA.Lot.\nAbout.\nAgent.\nA.I.\nAnd.\nYou.\nAre.\nSuper.\nExcited.\nTo.\nStart.\nBuilding.\nYour.\nOwn.\nAgents.\nAs.\nWell.\nAnd.\nI'll.\nSee.\nYou.\nGuys.\nThe.\nNext.\nVideo.\nOr.\nLivestream.",
-    "text_en": "",
-    "keywords_zh": [
-      "Agent",
-      "Would",
-      "Like",
-      "So",
-      "Different",
-      "Report"
-    ],
-    "keywords_en": [
-      "Agent",
-      "Would",
-      "Like",
-      "So",
-      "Different",
-      "Report"
-    ]
+    "vlm_caption": "The instructor is discussing key concepts from the course, including building blocks of an agent, design patterns, and the importance of evaluations.",
+    "headline_en": "Agent",
+    "headline_zh": "代理"
   }
 ]

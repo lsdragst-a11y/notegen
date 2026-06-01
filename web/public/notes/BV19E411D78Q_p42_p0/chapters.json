@@ -1,56 +1,158 @@
 {
   "chapters": [
     {
-      "title": "以太网中的数据链路层",
+      "title": "PPP协议概述",
       "start": 0.24,
-      "end": 209.58,
+      "end": 119.89,
       "indices": [
         0
       ],
-      "abstract": "本章涵盖 以太网中的数据链路层",
-      "title_zh": "以太网中的数据链路层",
-      "title_en": "Data Link Layer in Ethernet",
-      "abstract_zh": "本章涵盖 以太网中的数据链路层",
-      "abstract_en": "This chapter covers the data link layer in Ethernet."
+      "abstract": "本章介绍PPP协议，重点讲解其作为数据链路层协议的应用，特别是在点对点链路上的格式和子协议定义。",
+      "recap": "- PPP协议属于数据链路层，常用于点对点链路\n- PPP格式需定义固定定界符FF和03\n- PPP支持字符填充和0比特填充实现透明传输",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "PPP协议属于哪一层的协议？",
+            "options": [
+              "物理层",
+              "数据链路层",
+              "网络层",
+              "传输层"
+            ],
+            "answer_idx": 1,
+            "explanation": "PPP协议属于数据链路层的协议，用于点对点的链路"
+          },
+          {
+            "type": "tf",
+            "q": "PPP协议通常被用于点对点的链路。",
+            "answer": true,
+            "explanation": "PPP协议通常被用于点对点的链路，这是其主要用途之一"
+          }
+        ]
+      },
+      "title_zh": "PPP协议概述",
+      "title_en": "Overview of the PPP Protocol",
+      "abstract_zh": "本章介绍PPP协议，重点讲解其作为数据链路层协议的应用，特别是在点对点链路上的格式和子协议定义。",
+      "abstract_en": "This chapter introduces the PPP protocol, focusing on its application as a data link layer protocol, especially in point-to-point links and the format and sub-protocols defined."
     },
     {
-      "title": "关于ppp 协议的数字数字·字节填充法实现透明传输",
-      "start": 210.15,
-      "end": 552.09,
+      "title": "链路层协议细节",
+      "start": 119.91,
+      "end": 356.51,
       "indices": [
         1,
-        2
+        2,
+        3
       ],
-      "abstract": "本章涵盖 关于ppp 协议的数字数字 · 字节填充法实现透明传输",
-      "title_zh": "关于ppp 协议的数字数字·字节填充法实现透明传输",
-      "title_en": "Implementation of Digital Byte Stuffing for Transparent Transmission in PPP Protocol",
-      "abstract_zh": "本章涵盖 关于ppp 协议的数字数字 · 字节填充法实现透明传输",
-      "abstract_en": "This chapter covers the implementation of digital-to-byte stuffing for transparent transmission in the PPP protocol."
+      "abstract": "本章介绍链路层协议细节，重点讲解PPP协议中固定字节标记及透明传输机制，包括字符填充和零比特填充的方法。",
+      "recap": "- PPP协议字段包括定界符，用于检测比特错误\n- PPP帧协议字段支持多种网络层协议\n- PPP帧长度由协议字段决定",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "PPP真定介符的前两个字节值是多少？",
+            "options": [
+              "FF 03",
+              "03 FF",
+              "FF FF",
+              "03 03"
+            ],
+            "answer_idx": 0,
+            "explanation": "开头的这个字节以及末尾的这个字节固定为FF和03"
+          },
+          {
+            "type": "tf",
+            "q": "PPP协议字段需要修改以检测PPP真的比特错误。",
+            "answer": true,
+            "explanation": "PPP协议字段需要修改以检测PPP真的比特错误，确保数据传输的准确性"
+          }
+        ]
+      },
+      "title_zh": "链路层协议细节",
+      "title_en": "Details of the Link Layer Protocol",
+      "abstract_zh": "本章介绍链路层协议细节，重点讲解PPP协议中固定字节标记及透明传输机制，包括字符填充和零比特填充的方法。",
+      "abstract_en": "This chapter details the link layer protocol specifics, focusing on the fixed byte mark and transparent transmission mechanisms in PPP, including character stuffing and null bit stuffing methods."
+    },
+    {
+      "title": "透明传输方法",
+      "start": 356.57,
+      "end": 552.09,
+      "indices": [
+        4,
+        5
+      ],
+      "abstract": "本章介绍字符填充和0比特填充法实现透明传输的原理，重点讲解如何通过添加转译字符来确保PPP帧能够正确传输。",
+      "recap": "- 字符填充法将转译字符后跟相同字符，收到转译字符后开始传输\n- 0比特填充法连续传输PPP真，遇到0比特插入填充",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "PPP协议支持哪种方式实现透明传输？",
+            "options": [
+              "字符填充",
+              "0比特填充",
+              "同步传输",
+              "异步传输"
+            ],
+            "answer_idx": 0,
+            "explanation": "PPP协议支持字符填充和0比特填充这两种方式去实现透明传输"
+          },
+          {
+            "type": "tf",
+            "q": "同步传输是指两个节点之间有统一的时钟信号。",
+            "answer": true,
+            "explanation": "同步传输确实是指两个节点之间有统一的时钟信号，确保数据传输的同步性"
+          }
+        ]
+      },
+      "title_zh": "透明传输方法",
+      "title_en": "Methods of Transparent Transmission",
+      "abstract_zh": "本章介绍字符填充和0比特填充法实现透明传输的原理，重点讲解如何通过添加转译字符来确保PPP帧能够正确传输。",
+      "abstract_en": "This chapter explains the principles of using character stuffing and zero-bit stuffing to achieve transparent transmission, emphasizing how translating characters ensure correct PPP frame transmission."
     }
   ],
   "ablation": {
-    "alpha": 0.3,
-    "text_dists": [
-      0.9090909090909091,
-      0.6666666666666667
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 553.216,
+    "n_chunks": 6,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 2,
+    "vlm_generic_ratio": 0.5,
+    "vlm_degraded_reason": null,
+    "n_chapters": 3,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": false
+  },
+  "overview": {
+    "summary": "本视频首先介绍了PPP协议的基本概念及其在点对点链路上的应用，接着深入探讨了链路层协议的细节，特别是固定字节标记和透明传输机制，最后详细解释了字符填充和零比特填充这两种方法如何确保PPP帧的正确传输。",
+    "takeaways": [
+      "理解PPP协议作为数据链路层协议的应用",
+      "掌握固定字节标记和透明传输机制",
+      "学会使用字符填充和零比特填充实现透明传输"
     ],
-    "visual_dists": [
-      0.07956200838088989,
-      0.02508091926574707
+    "summary_zh": "本视频首先介绍了PPP协议的基本概念及其在点对点链路上的应用，接着深入探讨了链路层协议的细节，特别是固定字节标记和透明传输机制，最后详细解释了字符填充和零比特填充这两种方法如何确保PPP帧的正确传输。",
+    "summary_en": "This chapter first introduces the basic concepts of the PPP protocol and its application on point-to-point links, then delves into the details of link layer protocols, particularly fixed byte marking and transparent transmission mechanisms, and finally explains how character stuffing and zero-bit stuffing ensure the correct transmission of PPP frames.",
+    "takeaways_zh": [
+      "理解PPP协议作为数据链路层协议的应用",
+      "掌握固定字节标记和透明传输机制",
+      "学会使用字符填充和零比特填充实现透明传输"
     ],
-    "fused_dists": [
-      1.0,
-      0.0
-    ],
-    "depth_scores": [
-      0.5,
-      -0.5
-    ],
-    "text_only_boundaries": [
-      1
-    ],
-    "multimodal_boundaries": [
-      1
+    "takeaways_en": [
+      "Understand the PPP protocol as a data link layer protocol",
+      "Master the fixed byte marking and transparent transmission mechanisms",
+      "Learn to use character stuffing and zero-bit stuffing to achieve transparent transmission"
     ]
   }
 }

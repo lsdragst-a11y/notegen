@@ -1,255 +1,228 @@
 {
   "chapters": [
     {
-      "title": "模块与茶文化",
+      "title": "Agentic AI Workflow",
       "start": 30.47,
-      "end": 116.64,
+      "end": 230.67,
       "indices": [
         0,
-        1
-      ],
-      "abstract": "本章介绍模块的重要性及茶文化论文的写作流程。",
-      "title_zh": "模块与茶文化",
-      "title_en": "Modules and Tea Culture",
-      "abstract_zh": "本章介绍模块的重要性及茶文化论文的写作流程。",
-      "abstract_en": "This chapter introduces the importance of modules and the writing process for a thesis on tea culture."
-    },
-    {
-      "title": "最终修订与流程对比",
-      "start": 116.84,
-      "end": 273.73,
-      "indices": [
+        1,
         2,
         3,
-        4,
-        5
+        4
       ],
-      "abstract": "本章对比最终修订与确认过程，探讨线性与自主流程的优缺点及其对创造性结果的影响。",
-      "title_zh": "最终修订与流程对比",
-      "title_en": "Final Revision and Process Comparison",
-      "abstract_zh": "本章对比最终修订与确认过程，探讨线性与自主流程的优缺点及其对创造性结果的影响。",
-      "abstract_en": "This section compares the final revision and confirmation processes, discussing the advantages and disadvantages of linear versus autonomous workflows and their impact on creative outcomes."
+      "abstract": "This chapter introduces agentic AI and its workflow, focusing on how a highly autonomous system can generate great results, such as writing an essay on tea ceremonies, without detailed instructions.",
+      "recap": "- agentic AI workflow 定义了 AI 协助写作茶艺论文的过程\n- LLM 自动完成任务，无需详细指令\n- 更自主版本的 AI 工作流\n- 结果超越想象，AI 提供意想不到的好结果",
+      "title_zh": "代理型AI工作流",
+      "title_en": "Agentic AI Workflow",
+      "abstract_zh": "本章介绍自主AI及其工作流程，强调高度自主系统如何生成优秀成果，例如撰写茶礼仪式论文，无需详细指令。",
+      "abstract_en": "This chapter introduces agentic AI and its workflow, focusing on how a highly autonomous system can generate great results, such as writing an essay on tea ceremonies, without detailed instructions."
     },
     {
-      "title": "构建块与执行",
-      "start": 276.16,
+      "title": "Agentic AI Workflow · agent",
+      "start": 230.75,
       "end": 382.13,
       "indices": [
+        5,
         6,
         7,
         8,
         9
       ],
-      "abstract": "本章介绍构建块的概念及其在执行不同任务中的应用，强调创建系统的步骤和关键信息提取。",
-      "title_zh": "构建块与执行",
-      "title_en": "Building Blocks and Execution",
-      "abstract_zh": "本章介绍构建块的概念及其在执行不同任务中的应用，强调创建系统的步骤和关键信息提取。",
-      "abstract_en": "This chapter explains the concept of building blocks and their application in executing various tasks, emphasizing the steps in creating a system and key information extraction."
+      "abstract": "This chapter explains Andrew's rejection of the binary notion of agency and highlights the importance of wrapping LLM models in an agentic workflow to build effective AI systems.",
+      "recap": "- Andrew 指出二元论错误\n- agentic AI 是将 LLM 包装在工作流中的系统\n- AI 模型包括大型语言模型和其他类型\n- 思考如何构建 agentic 系统\n- 创建 AI 工作流来完成任务",
+      "title_zh": "代理型AI工作流 · 代理",
+      "title_en": "Agentic AI Workflow · agent",
+      "abstract_zh": "本章解释安德鲁对代理概念二分法的拒绝，并强调将LLM模型包裹在自主工作流程中构建有效AI系统的的重要性。",
+      "abstract_en": "This chapter explains Andrew's rejection of the binary notion of agency and highlights the importance of wrapping LLM models in an agentic workflow to build effective AI systems."
     },
     {
-      "title": "寻找客户与邮件",
+      "title": "LLM and Essay Writing",
       "start": 382.49,
-      "end": 494.55,
+      "end": 491.43,
       "indices": [
         10,
         11,
         12,
         13
       ],
-      "abstract": "本章讲述寻找客户记录的方法，编写并发送邮件的过程，以及选择模型类型和蓝搅拌机道歉事件。",
-      "title_zh": "寻找客户与邮件",
-      "title_en": "Finding Customers and Emails",
-      "abstract_zh": "本章讲述寻找客户记录的方法，编写并发送邮件的过程，以及选择模型类型和蓝搅拌机道歉事件。",
-      "abstract_en": "This chapter describes methods for finding customer records, the process of writing and sending emails, and choosing model types and the Blue Blender apology incident."
+      "abstract": "This chapter explains how the LLM can extract information on its own and the steps needed to send an email, including accessing necessary tools.",
+      "recap": "- LLM 自动提取信息\n- LLM 需要工具进行网络研究\n- LLM 需要发送工具\n- 将任务分解为步骤\n- 自主 vs 较少自主版本",
+      "title_zh": "语言模型与论文写作",
+      "title_en": "LLM and Essay Writing",
+      "abstract_zh": "本章解释LLM如何自行提取信息及发送邮件所需步骤，包括访问必要工具。",
+      "abstract_en": "This chapter explains how the LLM can extract information on its own and the steps needed to send an email, including accessing necessary tools."
     },
     {
-      "title": "竞争对手与评估",
-      "start": 494.69,
-      "end": 612.7,
+      "title": "Autonomous vs Less Autonomous",
+      "start": 491.59,
+      "end": 617.48,
       "indices": [
         14,
         15,
-        16
+        16,
+        17
       ],
-      "abstract": "本章提及竞争对手并讨论客观评价标准，重点在于系统改进的评估。",
-      "title_zh": "竞争对手与评估",
-      "title_en": "Competitors and Evaluation",
-      "abstract_zh": "本章提及竞争对手并讨论客观评价标准，重点在于系统改进的评估。",
-      "abstract_en": "This chapter mentions competitors and discusses objective evaluation criteria, focusing on assessing system improvements."
+      "abstract": "This chapter discusses how to evaluate agent results, including handling cases where the agent does not provide expected responses, and introduces methods for compiling and analyzing competitor mentions in prompts and systems.",
+      "recap": "- 如果代理没有提供满意结果\n- 编译竞争对手代码列表\n- 增加竞争者提及计数\n- 改进提示和系统\n- 使用设计模式改进代理",
+      "title_zh": "自主性对比",
+      "title_en": "Autonomous vs Less Autonomous",
+      "abstract_zh": "本章讨论评估代理结果的方法，包括处理代理未提供预期响应的情况，并介绍汇总和分析竞争对手提及的方法。",
+      "abstract_en": "This chapter discusses how to evaluate agent results, including handling cases where the agent does not provide expected responses, and introduces methods for compiling and analyzing competitor mentions in prompts and systems."
     },
     {
-      "title": "资源与设计模式",
-      "start": 612.88,
-      "end": 687.26,
+      "title": "Results Beyond Imagination",
+      "start": 617.62,
+      "end": 693.98,
       "indices": [
-        17,
-        18
+        18,
+        19
       ],
-      "abstract": "本章推荐资源并介绍设计模式，帮助理解和优化系统设计。",
-      "title_zh": "资源与设计模式",
-      "title_en": "Resources and Design Patterns",
-      "abstract_zh": "本章推荐资源并介绍设计模式，帮助理解和优化系统设计。",
-      "abstract_en": "This chapter recommends resources and introduces design patterns to help understand and optimize system design."
+      "abstract": "This chapter provides a code-based approach to building agentic AI agents with business impact, guiding readers through each phase of implementation using an excellent checklist.",
+      "recap": "- 使用代码方法构建 agentic AI\n- 使用 AI 代理的优秀清单\n- 通过每个阶段检查 AI 代理\n- 使用设计模式\n- 使用工具包",
+      "title_zh": "超乎想象的结果",
+      "title_en": "Results Beyond Imagination",
+      "abstract_zh": "本章提供基于代码构建具有商业影响的自主AI代理的方法，引导读者通过每个实施阶段使用优秀的检查表。",
+      "abstract_en": "This chapter provides a code-based approach to building agentic AI agents with business impact, guiding readers through each phase of implementation using an excellent checklist."
     },
     {
-      "title": "提高与代码反思",
-      "start": 687.42,
-      "end": 745.98,
+      "title": "Andrew Rejection Explanation",
+      "start": 694.08,
+      "end": 832.9,
       "indices": [
-        19,
-        20
-      ],
-      "abstract": "本章探讨提高系统效果的方法，通过代码反思进行改进。",
-      "title_zh": "提高与代码反思",
-      "title_en": "Improvement and Code Reflection",
-      "abstract_zh": "本章探讨提高系统效果的方法，通过代码反思进行改进。",
-      "abstract_en": "This chapter explores methods to improve system effectiveness through code reflection and enhancements."
-    },
-    {
-      "title": "无代码与工具使用",
-      "start": 746.04,
-      "end": 804.18,
-      "indices": [
+        20,
         21,
-        22
+        22,
+        23
       ],
-      "abstract": "本章介绍无代码方法及其定义，强调工具使用的必要性。",
-      "title_zh": "无代码与工具使用",
-      "title_en": "No-code and Tool Usage",
-      "abstract_zh": "本章介绍无代码方法及其定义，强调工具使用的必要性。",
-      "abstract_en": "This chapter introduces no-code approaches and defines them, emphasizing the necessity of tool usage."
+      "abstract": "This chapter explains Andrew's rejection through agentic design patterns, focusing on specific types and providing code examples to illustrate the reflection design pattern.",
+      "recap": "- 定义代理使用工具\n- 让代理访问工具\n- 使用代理管理发票\n- 通过数据确定日期\n- 评估研究结果",
+      "title_zh": "安德鲁拒绝解释",
+      "title_en": "Andrew Rejection Explanation",
+      "abstract_zh": "本章通过自主设计模式解释安德鲁的拒绝，聚焦特定类型并提供代码示例来说明反射设计模式。",
+      "abstract_en": "This chapter explains Andrew's rejection through agentic design patterns, focusing on specific types and providing code examples to illustrate the reflection design pattern."
     },
     {
-      "title": "数据库更新与潜在失败",
-      "start": 804.46,
-      "end": 910.48,
+      "title": "Models and Tools",
+      "start": 832.94,
+      "end": 1210.9,
       "indices": [
-        23,
-        24
-      ],
-      "abstract": "本章提供数据库更新示例，讨论潜在失败点及其影响。",
-      "title_zh": "数据库更新与潜在失败",
-      "title_en": "Database Updates and Potential Failures",
-      "abstract_zh": "本章提供数据库更新示例，讨论潜在失败点及其影响。",
-      "abstract_en": "This chapter provides examples of database updates, discussing potential failure points and their impacts."
-    },
-    {
-      "title": "客观评价与事件计数",
-      "start": 910.5,
-      "end": 1146.12,
-      "indices": [
+        24,
         25,
-        26
-      ],
-      "abstract": "本章介绍客观评价策略和事件计数方法，用于衡量系统性能。",
-      "title_zh": "客观评价与事件计数",
-      "title_en": "Objective Evaluation and Event Counting",
-      "abstract_zh": "本章介绍客观评价策略和事件计数方法，用于衡量系统性能。",
-      "abstract_en": "This chapter introduces objective evaluation strategies and event counting methods to measure system performance."
-    },
-    {
-      "title": "矩阵评估与通用指标",
-      "start": 1146.16,
-      "end": 1297.52,
-      "indices": [
+        26,
         27,
         28
       ],
-      "abstract": "本章讨论矩阵评估分类和通用评价指标，以提升系统性能。",
-      "title_zh": "矩阵评估与通用指标",
-      "title_en": "Matrix Evaluation and General Metrics",
-      "abstract_zh": "本章讨论矩阵评估分类和通用评价指标，以提升系统性能。",
-      "abstract_en": "This chapter discusses matrix evaluation classifications and general evaluation metrics to enhance system performance."
+      "abstract": "This chapter outlines how to define tool use for an agent, covering access to tools like an agentic.A.I. calendar and appointments, and discusses evaluating research through date-related data.",
+      "recap": "- 计算特定类型的 LM 出现次数\n- 事件视界，不同类型的 LM\n- 多于十种类型\n- 自主代理评估",
+      "title_zh": "模型与工具",
+      "title_en": "Models and Tools",
+      "abstract_zh": "本章概述定义代理工具使用的方法，涵盖访问如自主A.I.日历和预约等工具，并讨论通过日期相关数据评估研究。",
+      "abstract_en": "This chapter outlines how to define tool use for an agent, covering access to tools like an agentic.A.I. calendar and appointments, and discusses evaluating research through date-related data."
     },
     {
-      "title": "规划设计与库存查询",
-      "start": 1297.6,
-      "end": 1519.15,
+      "title": "Thinking About Agentic System",
+      "start": 1210.9,
+      "end": 1467.23,
       "indices": [
         29,
-        30
-      ],
-      "abstract": "本章介绍规划设计模式和库存查询流程，确保系统高效运行。",
-      "title_zh": "规划设计与库存查询",
-      "title_en": "Design Planning and Inventory Queries",
-      "abstract_zh": "本章介绍规划设计模式和库存查询流程，确保系统高效运行。",
-      "abstract_en": "This chapter explains planning and design patterns and inventory query processes to ensure efficient system operation."
-    },
-    {
-      "title": "多智能体与任务分配",
-      "start": 1519.87,
-      "end": 1591.87,
-      "indices": [
+        30,
         31,
         32
       ],
-      "abstract": "本章探讨多智能体系统及其在公司任务分配中的应用。",
-      "title_zh": "多智能体与任务分配",
-      "title_en": "Multi-Agent Systems and Task Allocation",
-      "abstract_zh": "本章探讨多智能体系统及其在公司任务分配中的应用。",
-      "abstract_en": "This chapter explores multi-agent systems and their application in company task allocation."
+      "abstract": "This chapter explores the concept of an agentic system, focusing on counting types of LM events, evaluating different types of horizons, and considering subjective evaluations of numbers up to ten.",
+      "recap": "- $100 规划问题\n- 股票计划和执行\n- 多代理故障排除\n- 不要过于复杂\n- 规划和执行",
+      "title_zh": "思考代理系统",
+      "title_en": "Thinking About Agentic System",
+      "abstract_zh": "本章探讨自主系统的概念，关注计数不同类型的LM事件，评估不同类型视野，并考虑主观评价数字至十。",
+      "abstract_en": "This chapter explores the concept of an agentic system, focusing on counting types of LM events, evaluating different types of horizons, and considering subjective evaluations of numbers up to ten."
     },
     {
-      "title": "数据可视化",
-      "start": 1591.99,
-      "end": 1632.41,
+      "title": "Task Accomplishment",
+      "start": 1467.31,
+      "end": 1620.69,
       "indices": [
-        33
-      ],
-      "abstract": "本章介绍数据可视化的多种选项及其应用场景。",
-      "title_zh": "数据可视化",
-      "title_en": "Data Visualization",
-      "abstract_zh": "本章介绍数据可视化的多种选项及其应用场景。",
-      "abstract_en": "This chapter introduces multiple options for data visualization and their applications."
-    },
-    {
-      "title": "实际部署",
-      "start": 1632.49,
-      "end": 1681.99,
-      "indices": [
-        34
-      ],
-      "abstract": "本章描述实际部署过程，确保系统顺利上线。",
-      "title_zh": "实际部署",
-      "title_en": "Actual Deployment",
-      "abstract_zh": "本章描述实际部署过程，确保系统顺利上线。",
-      "abstract_en": "This chapter describes the actual deployment process to ensure smooth system launch."
-    },
-    {
-      "title": "Agent与Then",
-      "start": 1682.11,
-      "end": 1821.75,
-      "indices": [
+        33,
+        34,
         35
       ],
-      "abstract": "本章解释Agent和Then的概念及其在系统中的作用。",
-      "title_zh": "Agent与Then",
-      "title_en": "Agent and Then",
-      "abstract_zh": "本章解释Agent和Then的概念及其在系统中的作用。",
-      "abstract_en": "This chapter explains the concepts of Agent and Then and their roles in the system."
+      "abstract": "This chapter covers task accomplishment through planning, including a $100 planning question exercise, stock plan design, and multi-agent troubleshooting.",
+      "recap": "- 公司关注图形研究\n- 五份报告\n- 多代理系统报告\n- agentic AI 系统报告\n- 真实代码或视频",
+      "title_zh": "任务完成",
+      "title_en": "Task Accomplishment",
+      "abstract_zh": "本章涵盖通过规划完成任务，包括$100规划问题练习，股票计划设计和多代理故障排除。",
+      "abstract_en": "This chapter covers task accomplishment through planning, including a $100 planning question exercise, stock plan design, and multi-agent troubleshooting."
+    },
+    {
+      "title": "Agent Result Evaluation",
+      "start": 1620.75,
+      "end": 1821.75,
+      "indices": [
+        36,
+        37,
+        38
+      ],
+      "abstract": "This chapter discusses the evaluation of agent results, focusing on company systems, multi-agent research, and true code implementation through video demonstrations.",
+      "recap": "- 系统聚焦\n- 代理报告\n- 真实代码\n- 视频或真实代码\n- 多代理系统报告",
+      "title_zh": "代理结果评估",
+      "title_en": "Agent Result Evaluation",
+      "abstract_zh": "本章讨论评估代理结果的方法，侧重于公司系统，多代理研究和真实代码实施，通过视频演示展示。",
+      "abstract_en": "This chapter discusses the evaluation of agent results, focusing on company systems, multi-agent research, and true code implementation through video demonstrations."
     }
   ],
   "ablation": {
     "seg_meta": {
       "method": "llm",
-      "llm_attempts": 3,
+      "llm_attempts": 1,
       "llm_pass_via": "repair",
       "llm_repair_used": [
         "repair_missing",
-        "repair_oversize"
+        "repair_oversize",
+        "rebalance_short_tail"
       ],
       "llm_fail_reasons": [
-        "oversize",
-        "oversize",
-        "missing"
+        "oversize"
       ],
-      "fallback_used": false
+      "fallback_used": false,
+      "vl_rescue_used": false
     },
     "duration": 1823.0915,
-    "n_chunks": 36,
-    "lang": "zh",
-    "n_chapters": 16,
-    "max_chunks_per_chapter": 4,
+    "n_chunks": 39,
+    "lang": "en",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 4,
+    "vlm_generic_ratio": 0.923,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 10,
+    "max_chunks_per_chapter": 5,
     "has_wrapup": false
+  },
+  "overview": {
+    "summary": "The video starts by introducing agentic AI and its workflow, then delves into the importance of wrapping LLM models in an agentic workflow. It covers various aspects such as essay writing, autonomous vs less autonomous systems, and practical implementation techniques. The discussion includes code-based approaches, specific design patterns, and task accomplishment strategies.",
+    "takeaways": [
+      "Understand agentic AI and its workflow",
+      "Implement LLM models in an agentic workflow",
+      "Evaluate agent results using specific methods",
+      "Use code-based approaches for building agentic AI",
+      "Apply task accomplishment strategies in multi-agent systems"
+    ],
+    "summary_en": "The video starts by introducing agentic AI and its workflow, then delves into the importance of wrapping LLM models in an agentic workflow. It covers various aspects such as essay writing, autonomous vs less autonomous systems, and practical implementation techniques. The discussion includes code-based approaches, specific design patterns, and task accomplishment strategies.",
+    "summary_zh": "视频首先介绍代理型AI及其工作流程，然后深入探讨将LLM模型纳入代理型工作流程的重要性。它涵盖了论文写作、自主系统与半自主系统、以及实用实现技术等方面。讨论包括基于代码的方法、特定设计模式和任务完成策略。",
+    "takeaways_en": [
+      "Understand agentic AI and its workflow",
+      "Implement LLM models in an agentic workflow",
+      "Evaluate agent results using specific methods",
+      "Use code-based approaches for building agentic AI",
+      "Apply task accomplishment strategies in multi-agent systems"
+    ],
+    "takeaways_zh": [
+      "理解代理型AI及其工作流程",
+      "在代理型工作流程中实现LLM模型",
+      "使用特定方法评估代理结果",
+      "采用代码化方法构建代理型AI",
+      "在多代理系统中应用任务完成策略"
+    ]
   }
 }

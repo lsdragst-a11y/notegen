@@ -1,123 +1,292 @@
 {
   "chapters": [
     {
-      "title": "IP地址",
+      "title": "原理与端口号分配",
       "start": 0.18,
-      "end": 464.89,
+      "end": 272.21,
       "indices": [
         0,
-        1
-      ],
-      "abstract": "本章介绍IP地址的基本概念，探讨NAT和端口号如何影响IP地址的使用。",
-      "title_zh": "IP地址",
-      "title_en": "IP Address",
-      "abstract_zh": "本章介绍IP地址的基本概念，探讨NAT和端口号如何影响IP地址的使用。",
-      "abstract_en": "This chapter introduces basic concepts of IP addresses and explores how NAT and port numbers affect their usage."
-    },
-    {
-      "title": "局域网",
-      "start": 464.89,
-      "end": 1059.16,
-      "indices": [
+        1,
         2,
         3
       ],
-      "abstract": "本章讨论局域网中的IP地址分配，以及NAT功能如何管理和优化局域网内的IP资源。",
-      "title_zh": "局域网",
-      "title_en": "Local Area Network",
-      "abstract_zh": "本章讨论局域网中的IP地址分配，以及NAT功能如何管理和优化局域网内的IP资源。",
-      "abstract_en": "This chapter discusses IP address allocation in local networks and how NAT functions manage and optimize IP resources within these networks."
+      "abstract": "本章介绍了NAT技术及其在IP地址分配中的应用，重点讲解了端口号如何与进程关联以实现精确的通信定位。",
+      "recap": "- NAT 是 IP 地址转换技术\n- 端口号分配给进程，IP 加端口号指向特定进程\n- 微信消息在进程间传递",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "NAT技术的主要目的是什么？",
+            "options": [
+              "增加网络安全性",
+              "提高网络速度",
+              "提升IP地址利用率",
+              "减少网络延迟"
+            ],
+            "answer_idx": 2,
+            "explanation": "提升IP地址利用率，通过NAT技术可以让多个设备共享一个公共IP地址"
+          },
+          {
+            "type": "tf",
+            "q": "每个主机的端口号是独立的，并且可以自由分配。",
+            "answer": true,
+            "explanation": "每个主机的端口号是独立的，NAT技术允许每个主机分配自己的端口号"
+          }
+        ]
+      },
+      "title_zh": "原理与端口号分配",
+      "title_en": "Principles and Port Number Assignment",
+      "abstract_zh": "本章介绍了NAT技术及其在IP地址分配中的应用，重点讲解了端口号如何与进程关联以实现精确的通信定位。",
+      "abstract_en": "This chapter introduces NAT technology and its application in IP address allocation, focusing on how port numbers relate to processes for precise communication."
     },
     {
-      "title": "微信",
-      "start": 1059.16,
-      "end": 1339.6,
+      "title": "技术原理与IP地址分配",
+      "start": 272.21,
+      "end": 691.79,
       "indices": [
         4,
-        5
+        5,
+        6,
+        7,
+        8
       ],
-      "abstract": "本章聚焦微信应用中的端口号使用，同时分析NAT表如何管理IP地址。",
-      "title_zh": "微信",
-      "title_en": "WeChat",
-      "abstract_zh": "本章聚焦微信应用中的端口号使用，同时分析NAT表如何管理IP地址。",
-      "abstract_en": "This chapter focuses on the use of port numbers in WeChat applications and analyzes how NAT tables manage IP addresses."
+      "abstract": "本章介绍NAT技术原理，包括每台主机分配端口号、内网与外网IP地址的区别以及NAT路由器如何工作以解决IP地址不足的问题，重点讲解IP封装过程。",
+      "recap": "- NAT 技术原理：分配端口号，内网 IP 地址加端口号\n- 内网与外网 IP 地址：共享一个全球唯一 IP 地址\n- NAT 路由器工作：转换私有 IP 地址为全局 IP 地址",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "NAT路由器如何处理IP地址和端口号？",
+            "options": [
+              "直接转发原始IP地址和端口号",
+              "修改原始IP地址和端口号",
+              "仅修改目的IP地址和端口号",
+              "仅修改源IP地址和端口号"
+            ],
+            "answer_idx": 1,
+            "explanation": "NAT路由器会修改原始IP地址和端口号，以便正确地路由数据包"
+          },
+          {
+            "type": "tf",
+            "q": "内网IP地址和外网IP地址可以在同一局域网内重复使用。",
+            "answer": false,
+            "explanation": "内网IP地址和外网IP地址在同一局域网内不能重复使用，以确保唯一性"
+          }
+        ]
+      },
+      "title_zh": "技术原理与IP地址分配",
+      "title_en": "Technical Principles and IP Address Allocation",
+      "abstract_zh": "本章介绍NAT技术原理，包括每台主机分配端口号、内网与外网IP地址的区别以及NAT路由器如何工作以解决IP地址不足的问题，重点讲解IP封装过程。",
+      "abstract_en": "This chapter explains the principles of NAT technology, including how each host is assigned port numbers, the difference between internal and external IP addresses, and how NAT routers work to solve IP address shortages, emphasizing the IP encapsulation process."
     },
     {
-      "title": "IP数据报",
-      "start": 1339.98,
-      "end": 1505.79,
+      "title": "转换与传输层首部",
+      "start": 691.79,
+      "end": 985.42,
       "indices": [
-        6
+        9,
+        10,
+        11,
+        12
       ],
-      "abstract": "本章解释IP数据报在NAT环境下的封装过程和路由选择。",
-      "title_zh": "IP数据报",
-      "title_en": "IP Datagram",
-      "abstract_zh": "本章解释IP数据报在NAT环境下的封装过程和路由选择。",
-      "abstract_en": "This chapter explains the encapsulation process and routing selection of IP datagrams in NAT environments."
+      "abstract": "本章介绍NAT转换过程及传输层首部，重点讲解私有IP地址如何通过NAT转换为内网IP，并阐述传输层首部的作用及IP数据报的封装方法。",
+      "recap": "- NAT 转换过程：私有 IP 地址转换为全局 IP 地址\n- NAT 功能：记录外网 IP 和端口号\n- 传输层首部：包含源 IP 地址和目标 IP 地址",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "NAT转换过程中，IP数据报的首部需要包含哪些信息？",
+            "options": [
+              "源IP地址和目的IP地址",
+              "源端口号和目的端口号",
+              "源IP地址和目的端口号",
+              "源端口号和目的IP地址"
+            ],
+            "answer_idx": 0,
+            "explanation": "源IP地址和目的IP地址是必须包含的信息，用于标识数据包的来源和目的地"
+          },
+          {
+            "type": "tf",
+            "q": "NAT路由器能够将内网IP地址转换为外网IP地址。",
+            "answer": true,
+            "explanation": "NAT路由器的功能之一就是将内网IP地址转换为外网IP地址，以便外部网络能够识别"
+          }
+        ]
+      },
+      "title_zh": "转换与传输层首部",
+      "title_en": "Conversion and Transport Layer Header",
+      "abstract_zh": "本章介绍NAT转换过程及传输层首部，重点讲解私有IP地址如何通过NAT转换为内网IP，并阐述传输层首部的作用及IP数据报的封装方法。",
+      "abstract_en": "This chapter covers the NAT conversion process and transport layer headers, focusing on how private IP addresses are converted to internal IP addresses via NAT and explaining the role of transport layer headers and IP data packet encapsulation methods."
     },
     {
-      "title": "路由器",
-      "start": 1505.79,
+      "title": "IP地址转换",
+      "start": 985.42,
+      "end": 1235.71,
+      "indices": [
+        13,
+        14,
+        15
+      ],
+      "abstract": "本章介绍IP地址转换，重点讲解NAT路由器如何进行端口号转换，以及内网IP与外网IP之间的映射关系。",
+      "recap": "- NAT 端口号转换：记录外网 IP 和端口号\n- IP 与端口：手机分配内网 IP 和端口号\n- 内网与外网 IP 地址：相同内网 IP 地址可被允许",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "微信进程通信时，发送的数据包需要包含哪些信息？",
+            "options": [
+              "源IP地址和目的IP地址",
+              "源端口号和目的端口号",
+              "源IP地址和目的端口号",
+              "源端口号和目的IP地址"
+            ],
+            "answer_idx": 2,
+            "explanation": "源IP地址和目的端口号是必须包含的信息，用于标识数据包的来源和目的地的进程"
+          },
+          {
+            "type": "tf",
+            "q": "NAT路由器可以同时处理内网和外网的数据包。",
+            "answer": true,
+            "explanation": "NAT路由器能够处理内外网的数据包，进行必要的转换和路由"
+          }
+        ]
+      },
+      "title_zh": "IP地址转换",
+      "title_en": "IP Address Translation",
+      "abstract_zh": "本章介绍IP地址转换，重点讲解NAT路由器如何进行端口号转换，以及内网IP与外网IP之间的映射关系。",
+      "abstract_en": "This chapter discusses IP address translation, focusing on how NAT routers perform port number conversion and the mapping relationship between internal and external IP addresses."
+    },
+    {
+      "title": "路由器与传输层处理",
+      "start": 1235.71,
       "end": 1704.59,
       "indices": [
-        7
+        16,
+        17,
+        18,
+        19,
+        20
       ],
-      "abstract": "本章介绍路由器如何处理NAT，强调其对IP地址转换的关键作用。",
-      "title_zh": "路由器",
-      "title_en": "Router",
-      "abstract_zh": "本章介绍路由器如何处理NAT，强调其对IP地址转换的关键作用。",
-      "abstract_en": "This chapter describes how routers handle NAT and emphasizes its critical role in IP address conversion."
+      "abstract": "本章详细介绍了NAT路由器如何处理公网与私网间的IP地址和端口号转换，重点讲解了传输层首部的修改过程及NAT技术的具体实现步骤。",
+      "recap": "- NAT 路由器处理：转换内网 IP 和端口号\n- 传输层首部修改：修改目的 IP 地址和端口号\n- NAT 技术详解：封装 IP 数据报，修改首部信息",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "NAT路由器的主要功能是什么？",
+            "options": [
+              "提供高速网络连接",
+              "增强网络安全防护",
+              "实现IP地址转换",
+              "优化网络流量管理"
+            ],
+            "answer_idx": 2,
+            "explanation": "实现IP地址转换是NAT路由器的主要功能之一，通过转换内网IP地址和端口号来实现"
+          },
+          {
+            "type": "tf",
+            "q": "NAT路由器可以将外网IP地址转换为内网IP地址。",
+            "answer": true,
+            "explanation": "NAT路由器可以将外网IP地址转换为内网IP地址，以便内部网络能够访问外部资源"
+          }
+        ]
+      },
+      "title_zh": "路由器与传输层处理",
+      "title_en": "Routers and Transport Layer Processing",
+      "abstract_zh": "本章详细介绍了NAT路由器如何处理公网与私网间的IP地址和端口号转换，重点讲解了传输层首部的修改过程及NAT技术的具体实现步骤。",
+      "abstract_en": "This chapter provides detailed explanations of how NAT routers handle IP address and port number conversions between public and private networks, focusing on modifying transport layer headers and the specific implementation steps of NAT technology."
     },
     {
-      "title": "默认网关",
+      "title": "IP数据报转发与路由器功能 · 本节复习",
       "start": 1705.53,
-      "end": 1961.08,
-      "indices": [
-        8,
-        9
-      ],
-      "abstract": "本章讲解默认网关在IP地址配置中的重要性，同时涉及Web服务器的IP地址配置。",
-      "title_zh": "默认网关",
-      "title_en": "Default Gateway",
-      "abstract_zh": "本章讲解默认网关在IP地址配置中的重要性，同时涉及Web服务器的IP地址配置。",
-      "abstract_en": "This chapter highlights the importance of default gateways in IP address configuration and involves Web server IP address settings."
-    },
-    {
-      "title": "路由器区别 · 本节复习",
-      "start": 1961.08,
       "end": 2187.61,
       "indices": [
-        10
+        21,
+        22,
+        23,
+        24,
+        25
       ],
-      "abstract": "本章比较不同类型的路由器，特别突出NAT路由器在IP地址管理方面的独特之处。",
-      "title_zh": "路由器区别 · 本节复习",
-      "title_en": "Router Differences · Review This Section",
-      "abstract_zh": "本章比较不同类型的路由器，特别突出NAT路由器在IP地址管理方面的独特之处。",
-      "abstract_en": "This chapter compares different types of routers, particularly emphasizing the unique aspects of NAT routers in IP address management."
+      "abstract": "本章介绍IP数据报通过NAT路由器的转发过程，重点讲解NAT技术如何修改IP地址和端口号以实现地址转换，并讨论其在微信进程通信中的应用。",
+      "recap": "- NAT 技术模拟：处理 IP 数据报\n- 微信进程通信：发送数据到服务器\n- NAT 路由器功能：转发 IP 数据报，修改首部信息",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "NAT技术模拟过程中，IP数据报需要经过哪些步骤？",
+            "options": [
+              "封装成IP数据报 -> 添加IP首部 -> 发送到默认网关",
+              "封装成IP数据报 -> 修改IP首部 -> 发送到NAT路由器",
+              "封装成IP数据报 -> 修改IP首部 -> 发送到默认网关",
+              "封装成IP数据报 -> 添加IP首部 -> 发送到NAT路由器"
+            ],
+            "answer_idx": 3,
+            "explanation": "封装成IP数据报 -> 添加IP首部 -> 发送到NAT路由器是正确的步骤"
+          },
+          {
+            "type": "tf",
+            "q": "NAT路由器可以将内网IP地址转换为外网IP地址。",
+            "answer": true,
+            "explanation": "NAT路由器的功能之一就是将内网IP地址转换为外网IP地址，以便外部网络能够识别"
+          }
+        ]
+      },
+      "title_zh": "IP数据报转发与路由器功能 · 本节复习",
+      "title_en": "IP Datagram Forwarding and Router Functions · Review of This Section",
+      "abstract_zh": "本章介绍IP数据报通过NAT路由器的转发过程，重点讲解NAT技术如何修改IP地址和端口号以实现地址转换，并讨论其在微信进程通信中的应用。",
+      "abstract_en": "This chapter describes the forwarding process of IP datagrams through NAT routers, focusing on how NAT technology modifies IP addresses and port numbers to achieve address translation and discussing its application in WeChat process communication."
     }
   ],
   "ablation": {
     "seg_meta": {
       "method": "llm",
       "llm_attempts": 2,
-      "llm_pass_via": "attempt_2",
-      "llm_repair_used": [],
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_oversize"
+      ],
       "llm_fail_reasons": [
-        "dominant_chapter"
+        "missing",
+        "oversize"
       ],
       "fallback_used": false,
       "vl_rescue_used": false
     },
     "duration": 2188.224,
-    "n_chunks": 11,
+    "n_chunks": 26,
     "lang": "zh",
     "keyframes": true,
     "vlm_captions": true,
-    "vlm_captions_used": true,
-    "vlm_max_prefix_run": 1,
-    "vlm_degraded_reason": null,
-    "n_chapters": 7,
-    "max_chunks_per_chapter": 2,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 3,
+    "vlm_generic_ratio": 0.692,
+    "vlm_degraded_reason": "n_chunks_gt_15",
+    "n_chapters": 6,
+    "max_chunks_per_chapter": 5,
     "has_wrapup": true
+  },
+  "overview": {
+    "summary": "本视频从NAT技术的基本原理出发，逐步深入讲解端口号分配、IP地址转换、传输层首部修改及路由器处理过程，最终展示了IP数据报如何通过NAT路由器实现地址转换。",
+    "takeaways": [
+      "理解NAT技术及其在IP地址分配中的作用",
+      "掌握端口号与进程的关联方式",
+      "熟悉IP地址转换及传输层首部的修改",
+      "了解NAT路由器的工作流程"
+    ],
+    "summary_zh": "本视频从NAT技术的基本原理出发，逐步深入讲解端口号分配、IP地址转换、传输层首部修改及路由器处理过程，最终展示了IP数据报如何通过NAT路由器实现地址转换。",
+    "summary_en": "This section begins with the basic principles of NAT technology and gradually delves into port number allocation, IP address translation, modifications to the transport layer header, and how routers handle these processes. It concludes by showing how IP datagrams are converted through a NAT router.",
+    "takeaways_zh": [
+      "理解NAT技术及其在IP地址分配中的作用",
+      "掌握端口号与进程的关联方式",
+      "熟悉IP地址转换及传输层首部的修改",
+      "了解NAT路由器的工作流程"
+    ],
+    "takeaways_en": [
+      "Understand NAT technology and its role in IP address allocation",
+      "Master the association between port numbers and processes",
+      "Familiarize yourself with IP address translation and modifications to the transport layer header",
+      "Understand the workflow of a NAT router"
+    ]
   }
 }
