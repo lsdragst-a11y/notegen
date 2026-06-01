@@ -605,6 +605,43 @@ def _promote_oversized(outline: dict, max_chunks_per_top: int = 5) -> dict:
     return {"chapters": out_chapters}
 
 
+def _repair_overlap(parsed: dict, n_chunks: int) -> tuple[dict, bool]:
+    """去除跨章 chunk 重叠：LLM 常把边界 chunk 同时写进相邻两章
+    （e.g. ch[i]={0,1}, ch[i+1]={1,2,3} 共享 chunk 1）。按章序左→右扫描，
+    重叠 chunk 保留在更早出现的章、从靠后章剔除（剔的是靠后章的头部，各章
+    仍是连续区间）。被更早的章吃光的整章丢弃。返回 (outline, changed)。
+
+    Motivation: _diagnose_outline 的 oversize 检查在重叠检查之前（重叠是循环
+    后才查），单章超 cap 时先报 oversize 掩盖了重叠；而 _repair_oversize 只拆
+    超长章、不解重叠，拆完残留的跨章重叠让 repair 后 _diagnose 仍 fail → 整段
+    fallback 到 TextTiling。p79（王道计网三次握手 n=17）实测：LLM 边界 chunk
+    全程重叠 [1,2,3,4,5,7,10] + 第 6 章 7-chunk oversize，旧链路无法修复退化成
+    8 章 texttile。必须在 _repair_oversize 之前跑。
+    """
+    chapters = parsed.get("chapters")
+    if not isinstance(chapters, list) or not chapters:
+        return parsed, False
+    assigned: set[int] = set()
+    new_chapters: list[dict] = []
+    changed = False
+    for ch in chapters:
+        chs = sorted(set(c for c in (ch.get("chunks") or []) if isinstance(c, int)))
+        kept = [c for c in chs if c not in assigned]
+        if len(kept) != len(chs):
+            changed = True
+        if not kept:
+            # 整章被更早的章占完 → 丢弃这一章（其 chunks 已被覆盖，不会变 missing）
+            changed = True
+            continue
+        assigned.update(kept)
+        new_ch = dict(ch)
+        new_ch["chunks"] = kept
+        new_chapters.append(new_ch)
+    if not changed:
+        return parsed, False
+    return {**parsed, "chapters": new_chapters}, True
+
+
 def _repair_oversize(parsed: dict, chunks: list[dict],
                       max_chunks_per_top: int = 5) -> dict:
     """把 chunks > max 的 catch-all 顶层程序化拆成 ≤ max 的子段。
@@ -1462,10 +1499,16 @@ def segment_hierarchical(chunks: list[dict],
             break
     if not ok and parsed is not None:
         # 最后一次努力：程序化修复
+        # Step 0：去除跨章 chunk 重叠（LLM 把边界 chunk 同时写进相邻两章）。必须
+        #         在 oversize 之前——否则 _diagnose 先报 oversize 掩盖重叠，
+        #         _repair_oversize 拆完仍残留重叠 → fallback TextTiling（p79 实测）
         # Step 1：把漏的 chunk 并入时间最近顶层（_repair_missing_chunks）
         # Step 2：把 catch-all 顶层（>5 chunks 无 children）按 keyword Jaccard
         #         距离拆成 ≤5 子段（_repair_oversize）—— 救 Qwen 在长英文视频
         #         上的 catch-all bias
+        parsed, overlap_fixed = _repair_overlap(parsed, n)
+        if overlap_fixed and "repair_overlap" not in meta["repair_used"]:
+            meta["repair_used"].append("repair_overlap")
         repaired = _repair_missing_chunks(parsed, n)
         if repaired is not None:
             meta["repair_used"].append("repair_missing")
