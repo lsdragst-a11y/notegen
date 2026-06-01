@@ -919,6 +919,74 @@ def _dedupe_common_topic_token(titles: list[str]) -> list[str]:
     return out
 
 
+# 「你将学到」要点的套路化引导动词——分词会把它们留进签名稀释 Jaccard
+# (理解X / 掌握X 共享 X 但动词不同 → union 变大)，去重前先剥掉。
+_TAKEAWAY_VERBS = frozenset(
+    "理解 掌握 熟悉 了解 学会 认识 学习 能够 知道 运用 区分 分析 学到 明白 弄懂 搞懂 领会 "
+    "MASTER UNDERSTAND LEARN KNOW GRASP COMPREHEND APPLY GAIN ACQUIRE RECOGNIZE".split()
+)
+
+
+def _dedupe_takeaways(takeaways: list[str]) -> list[str]:
+    """「你将学到」要点去重：丢掉落在同一子主题的冗余条。
+
+    与 _dedupe_common_topic_token 不同——那里是从所有标题"剥离"共享主题词，
+    这里是"丢整条"。难点：全片主题词（如中断系统视频里的"中断"）出现在每条
+    takeaway 里，不能当冗余信号。做法：用 doc-frequency 把主题词排除，只在
+    **区分词**（df ≤ N//2）重叠时判两条讲同一子主题 → 保留靠前的，丢靠后的。
+
+    针对 p68 实测：takeaway 1「理解中断优先级的概念」与 5「掌握中断优先级设定」
+    都落在"优先级"（df=2，N=5，是区分词）→ 丢 5。DOC_OVERVIEW_SYSTEM rule 2
+    已写"不要都挤在一个主题上"但 LLM 不稳遵守，搬 Python 给二值判定。
+
+    保守：仅 N≥4 触发（留得下 ≥3 条），且去重后不低于 3 条。
+    """
+    n = len(takeaways)
+    if n < 4:
+        return takeaways
+    en_re = re.compile(r"[A-Za-z][A-Za-z0-9]+|[A-Z]{2,}")
+    sigs: list[set[str]] = []
+    for t in takeaways:
+        toks = {w.upper() for w in en_re.findall(t)}
+        toks |= _extract_zh_topic_tokens(t)
+        toks -= _TAKEAWAY_VERBS
+        sigs.append(toks)
+    df: dict[str, int] = {}
+    for s in sigs:
+        for tok in s:
+            df[tok] = df.get(tok, 0) + 1
+    distinctive_cap = max(1, n // 2)  # df ≤ 此值才算"区分词"；主题词 df 高被排除
+    distinctive = [
+        {tok for tok in s if df[tok] <= distinctive_cap} for s in sigs
+    ]
+    keep: list[int] = []
+    dropped: list[int] = []
+    for i in range(n):
+        # 与每条已保留的做成对 Jaccard：≥0.5 判同一子主题。只用"共享任一区分词"会
+        # 误杀——"TCP 拥塞控制"vs"TCP 流量控制"共享 TCP+control 但是两个子主题
+        # (Jaccard=0.4 放过)；p68 {优先级} vs {优先级,设定} Jaccard=0.5 命中。
+        # 区分词为空无法证明冗余 → 保留。去重后不得少于 3 条。
+        di = distinctive[i]
+        is_dup = False
+        if di and (n - len(dropped) - 1) >= 3:
+            for k in keep:
+                dk = distinctive[k]
+                if not dk:
+                    continue
+                inter = len(di & dk)
+                if inter and inter / len(di | dk) >= 0.5:
+                    is_dup = True
+                    break
+        if is_dup:
+            dropped.append(i)
+            continue
+        keep.append(i)
+    if dropped:
+        print(f"      [takeaway-dedup] 丢 {len(dropped)} 条子主题冗余 takeaway "
+              f"(剩 {n - len(dropped)} 条)", flush=True)
+    return [takeaways[i] for i in keep]
+
+
 def _diagnose_outline(parsed: dict, n_chunks: int,
                        chunks: Optional[list[dict]] = None,
                        category: str = "teaching") -> Optional[str]:
@@ -2598,7 +2666,8 @@ def _parse_overview_obj(raw: str) -> Optional[dict]:
             takeaways.append(t)
     if not summary or not takeaways:
         return None
-    return {"summary": summary, "takeaways": takeaways[:6]}
+    takeaways = _dedupe_takeaways(takeaways[:6])
+    return {"summary": summary, "takeaways": takeaways}
 
 
 def generate_doc_overview(chapters: list[dict],

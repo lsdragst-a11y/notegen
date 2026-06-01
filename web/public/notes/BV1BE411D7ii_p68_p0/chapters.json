@@ -336,8 +336,7 @@
       "理解中断优先级的概念",
       "掌握中断屏蔽技术的应用",
       "熟悉中断处理流程",
-      "了解中断服务程序的运行机制",
-      "掌握中断优先级设定"
+      "了解中断服务程序的运行机制"
     ],
     "summary_zh": "本视频从程序中断机制出发，依次展开中断优先级、中断屏蔽技术的应用，深入探讨中断处理流程及中断服务程序的运行，最终总结中断系统的运作原理。",
     "summary_en": "This section begins with the mechanism of program interrupts and sequentially explores interrupt priorities, interrupt masking techniques, and delves into interrupt handling processes and the operation of interrupt service routines, ultimately summarizing the functioning principles of interrupt systems.",
@@ -345,15 +344,13 @@
       "理解中断优先级的概念",
       "掌握中断屏蔽技术的应用",
       "熟悉中断处理流程",
-      "了解中断服务程序的运行机制",
-      "掌握中断优先级设定"
+      "了解中断服务程序的运行机制"
     ],
     "takeaways_en": [
       "Understand the concept of interrupt priorities",
       "Master the application of interrupt masking techniques",
       "Familiarize yourself with the interrupt handling process",
-      "Understand the operation mechanism of interrupt service routines",
-      "Master the setting of interrupt priorities"
+      "Understand the operation mechanism of interrupt service routines"
     ]
   }
 }
