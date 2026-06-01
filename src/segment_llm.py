@@ -987,6 +987,54 @@ def _dedupe_takeaways(takeaways: list[str]) -> list[str]:
     return [takeaways[i] for i in keep]
 
 
+def _dedupe_cross_chapter_quizzes(quizzes: list[dict],
+                                  threshold: float = 0.67) -> list[dict]:
+    """跨章自测题去重：丢掉与靠前章节近似重复的题。
+
+    病因：generate_chapter_quizzes 一次喂全 K 章，相邻章内容重叠时 LLM 退化成
+    把同一道通用判断题（如 p68"中断服务程序的执行不需要保存任何寄存器→False"
+    被复读 5 章）原样搬到多个章节。CHAPTER_QUIZ_SYSTEM 已写"禁跨章复读"但 LLM
+    不稳遵守，搬 Python 给二值判定（同 [[feedback-prompt-vs-python]]）。
+
+    判定：q 文本 token（jieba 中文词 + 英文/缩写）成对 Jaccard ≥ threshold 判重复。
+    阈值 0.67 经 12 个 quiz-note 实测标定——legit 区分题 ≤0.64（p44 存储转发测两
+    个不同事实）、egregious ≥0.70（p81 窗口模板、p51/p61/p68 字面雷同），0.67 落
+    在空隙。保留首现章的题，丢靠后章的重复。
+
+    保守守卫：决不把某章去到 0 题——若某章一道都没留且后面无候选，即使重复也留。
+    """
+    en_re = re.compile(r"[A-Za-z][A-Za-z0-9]+|[A-Z]{2,}")
+
+    def _sig(q: dict) -> set[str]:
+        s = q.get("q") or q.get("question") or ""
+        return {w.upper() for w in en_re.findall(s)} | _extract_zh_topic_tokens(s)
+
+    kept_sigs: list[set[str]] = []
+    n_drop = 0
+    for ch in quizzes:
+        qs = ch.get("questions") or []
+        new_qs: list[dict] = []
+        for idx, q in enumerate(qs):
+            sig = _sig(q)
+            is_dup = False
+            if sig:
+                for ks in kept_sigs:
+                    if ks and len(sig & ks) / len(sig | ks) >= threshold:
+                        is_dup = True
+                        break
+            remaining = len(qs) - idx - 1
+            # 守卫：本章还没留题且后面没候选 → 即使重复也留，避免空章
+            if is_dup and not (not new_qs and remaining == 0):
+                n_drop += 1
+                continue
+            new_qs.append(q)
+            kept_sigs.append(sig)
+        ch["questions"] = new_qs
+    if n_drop:
+        print(f"      [quiz-dedup] 丢 {n_drop} 道跨章重复题", flush=True)
+    return quizzes
+
+
 def _diagnose_outline(parsed: dict, n_chunks: int,
                        chunks: Optional[list[dict]] = None,
                        category: str = "teaching") -> Optional[str]:
@@ -2944,6 +2992,9 @@ CHAPTER_QUIZ_SYSTEM = """你是教学视频的**自测题**生成助手。给定
 4. **答案唯一明确**：避免模糊选项；判断题必须有明确对/错
 5. **解析 1 句话**：说明为什么对，引用本章具体概念
 6. **难度适中**：考点级（不是死记硬背，也不是 trick question）
+7. **每章考点必须互不相同**：题目只能考本章独有内容，**禁止跨章复读同一考点**。\
+尤其判断题——不要把"中断服务程序要保存寄存器""窗口大小指字节数"这类通用命题\
+原样搬到多个章节。每章另起炉灶，问该章真正新增的知识点
 
 ## 输出格式（绝对硬约束）
 
@@ -3124,6 +3175,8 @@ def generate_chapter_quizzes(chapters: list[dict],
     user_prompt = (f"共 {K} 章，按顺序为每章生成 2-3 道自测题。\n"
                    f"**输出数组必须有 {K} 个元素**——每章对应一个 questions "
                    f"对象，禁止合并章。\n"
+                   f"**各章题目考点必须互不相同**——同一命题（尤其判断题）"
+                   f"不得在多个章节重复出现，每章只问该章新增的知识点。\n"
                    f"{drop_clause}\n{body}\n\n"
                    f"输出 JSON 数组（必须 {K} 个元素）：")
     model, tok = load_model(model_id)
@@ -3167,6 +3220,7 @@ def generate_chapter_quizzes(chapters: list[dict],
         total_kept += len(qs_clean)
         total_drop += len(qs_raw) - len(qs_clean)
         result.append({"questions": qs_clean})
+    _dedupe_cross_chapter_quizzes(result)
     print(f"      [llm-chapter-quiz] generated {K} chapters, "
           f"{total_kept} questions kept, {total_drop} dropped", flush=True)
     return result

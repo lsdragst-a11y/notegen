@@ -182,12 +182,6 @@
             ],
             "answer_idx": 2,
             "explanation": "实现IP地址转换是NAT路由器的主要功能之一，通过转换内网IP地址和端口号来实现"
-          },
-          {
-            "type": "tf",
-            "q": "NAT路由器可以将外网IP地址转换为内网IP地址。",
-            "answer": true,
-            "explanation": "NAT路由器可以将外网IP地址转换为内网IP地址，以便内部网络能够访问外部资源"
           }
         ]
       },
@@ -222,12 +216,6 @@
             ],
             "answer_idx": 3,
             "explanation": "封装成IP数据报 -> 添加IP首部 -> 发送到NAT路由器是正确的步骤"
-          },
-          {
-            "type": "tf",
-            "q": "NAT路由器可以将内网IP地址转换为外网IP地址。",
-            "answer": true,
-            "explanation": "NAT路由器的功能之一就是将内网IP地址转换为外网IP地址，以便外部网络能够识别"
           }
         ]
       },
