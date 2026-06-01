@@ -44,6 +44,15 @@ export interface Chapter {
   abstract_zh?: string;
   abstract_en?: string;
   children?: Chapter[];
+  quiz?: Quiz;
+}
+
+export type QuizQuestion =
+  | { type: "mc"; q: string; options: string[]; answer_idx: number; explanation?: string }
+  | { type: "tf"; q: string; answer: boolean; explanation?: string };
+
+export interface Quiz {
+  questions: QuizQuestion[];
 }
 
 export interface Overview {
