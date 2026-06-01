@@ -126,5 +126,31 @@
     "n_chapters": 7,
     "max_chunks_per_chapter": 3,
     "has_wrapup": true
+  },
+  "overview": {
+    "summary": "本视频从拥塞控制与窗口机制出发，逐步深入探讨拥塞控制原理、与流量控制的关系、拥塞窗口与SSTHRESH的作用，以及拥塞避免算法和窗口RTT的关系。最终通过MSS与拥塞窗口的关系复习，全面解析TCP拥塞控制机制。",
+    "summary_zh": "本视频从拥塞控制与窗口机制出发，逐步深入探讨拥塞控制原理、与流量控制的关系、拥塞窗口与SSTHRESH的作用，以及拥塞避免算法和窗口RTT的关系。最终通过MSS与拥塞窗口的关系复习，全面解析TCP拥塞控制机制。",
+    "takeaways": [
+      "理解拥塞控制与窗口机制的基本概念",
+      "掌握拥塞窗口与SSTHRESH的作用",
+      "熟悉拥塞避免算法及其与RTT的关系",
+      "了解MSS与拥塞窗口的关系",
+      "掌握快重传机制和窗口增长过程"
+    ],
+    "takeaways_zh": [
+      "理解拥塞控制与窗口机制的基本概念",
+      "掌握拥塞窗口与SSTHRESH的作用",
+      "熟悉拥塞避免算法及其与RTT的关系",
+      "了解MSS与拥塞窗口的关系",
+      "掌握快重传机制和窗口增长过程"
+    ],
+    "summary_en": "This section begins with congestion control and window mechanisms, delving into the principles of congestion control, its relationship with flow control, the roles of congestion window and SSTHRESH, and the congestion avoidance algorithm and window RTT. It concludes with a review of the relationship between MSS and the congestion window, providing a comprehensive analysis of TCP congestion control.",
+    "takeaways_en": [
+      "Understand the basic concepts of congestion control and window mechanisms",
+      "Master the roles of the congestion window and SSTHRESH",
+      "Familiarize yourself with the congestion avoidance algorithm and its relationship with RTT",
+      "Understand the relationship between MSS and the congestion window",
+      "Master the fast retransmit mechanism and the process of window growth"
+    ]
   }
 }

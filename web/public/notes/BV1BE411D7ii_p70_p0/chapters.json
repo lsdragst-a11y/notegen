@@ -188,5 +188,28 @@
     "n_chapters": 4,
     "max_chunks_per_chapter": 5,
     "has_wrapup": false
+  },
+  "overview": {
+    "summary": "本视频从DMA传输方式及其特点出发，依次展开系统总线与优先级、控制器组成与传输原理，最终探讨传输优化与占用问题，全面解析DMA的工作机制。",
+    "summary_zh": "本视频从DMA传输方式及其特点出发，依次展开系统总线与优先级、控制器组成与传输原理，最终探讨传输优化与占用问题，全面解析DMA的工作机制。",
+    "takeaways": [
+      "理解DMA传输方式及其特点",
+      "掌握系统总线与DMA传输优先级的交互",
+      "分析DMA传输过程中CPU与DMA控制器的协作机制",
+      "计算DMA传输速率及每次传输占用CPU的时间比例"
+    ],
+    "takeaways_zh": [
+      "理解DMA传输方式及其特点",
+      "掌握系统总线与DMA传输优先级的交互",
+      "分析DMA传输过程中CPU与DMA控制器的协作机制",
+      "计算DMA传输速率及每次传输占用CPU的时间比例"
+    ],
+    "summary_en": "This section begins with an exploration of DMA transfer methods and their characteristics, then delves into system bus and priority, controller composition, and transmission principles, ultimately discussing transmission optimization and resource usage, providing a comprehensive analysis of DMA mechanisms.",
+    "takeaways_en": [
+      "Understand the DMA transfer method and its characteristics",
+      "Master the interaction between system bus and DMA transfer priority",
+      "Analyze the collaboration mechanism between CPU and DMA controller during DMA transfer",
+      "Calculate the DMA transfer rate and the proportion of CPU time used per transfer"
+    ]
   }
 }

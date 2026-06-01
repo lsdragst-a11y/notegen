@@ -143,5 +143,28 @@
     "n_chapters": 3,
     "max_chunks_per_chapter": 3,
     "has_wrapup": false
+  },
+  "overview": {
+    "summary": "本视频首先介绍了中断处理与服务的基本概念，强调了CPU与I/O设备的并行工作方式；接着探讨了通信总线与字符传输，分析了数据传输方式及字符传输时间；最后详细计算了中断周期，并展示了服务程序的应用，揭示了中断响应时间对CPU工作效率的影响。",
+    "summary_zh": "本视频首先介绍了中断处理与服务的基本概念，强调了CPU与I/O设备的并行工作方式；接着探讨了通信总线与字符传输，分析了数据传输方式及字符传输时间；最后详细计算了中断周期，并展示了服务程序的应用，揭示了中断响应时间对CPU工作效率的影响。",
+    "takeaways": [
+      "理解中断处理与服务的基本流程",
+      "掌握通信总线的数据传输方式",
+      "学会计算中断周期和响应时间",
+      "应用服务程序进行中断处理"
+    ],
+    "takeaways_zh": [
+      "理解中断处理与服务的基本流程",
+      "掌握通信总线的数据传输方式",
+      "学会计算中断周期和响应时间",
+      "应用服务程序进行中断处理"
+    ],
+    "summary_en": "This chapter introduces basic concepts of interrupt handling and service, emphasizing parallel work between CPU and I/O devices. It then discusses communication buses and character transmission, analyzing data transfer methods and character transmission times. Finally, it calculates interrupt cycles and demonstrates the application of service programs, revealing the impact of interrupt response time on CPU efficiency.",
+    "takeaways_en": [
+      "Understand the basic flow of interrupt handling and servicing",
+      "Master the data transmission methods of communication buses",
+      "Learn to calculate interrupt cycles and response times",
+      "Apply service programs for interrupt handling"
+    ]
   }
 }

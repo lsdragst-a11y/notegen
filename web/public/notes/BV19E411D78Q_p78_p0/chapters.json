@@ -81,5 +81,31 @@
     "n_chapters": 4,
     "max_chunks_per_chapter": 4,
     "has_wrapup": true
+  },
+  "overview": {
+    "summary": "本视频从TCP首部组成出发，依次展开紧急数据编号和标志位的功能，接着解释接收窗口和校验和的作用，最后回顾MSS预留缓冲区的概念和报文段格式，全面解析TCP报文段的关键要素。",
+    "summary_zh": "本视频从TCP首部组成出发，依次展开紧急数据编号和标志位的功能，接着解释接收窗口和校验和的作用，最后回顾MSS预留缓冲区的概念和报文段格式，全面解析TCP报文段的关键要素。",
+    "takeaways": [
+      "理解TCP首部中的序号和确认号字段",
+      "掌握TCP标志位的功能及其应用场景",
+      "了解接收窗口在流量控制中的作用",
+      "熟悉校验和确保数据传输准确性的方法",
+      "掌握MSS预留缓冲区的概念"
+    ],
+    "takeaways_zh": [
+      "理解TCP首部中的序号和确认号字段",
+      "掌握TCP标志位的功能及其应用场景",
+      "了解接收窗口在流量控制中的作用",
+      "熟悉校验和确保数据传输准确性的方法",
+      "掌握MSS预留缓冲区的概念"
+    ],
+    "summary_en": "This section begins with the composition of the TCP header and sequentially explores the functions of urgent pointer and flag, then explains the roles of receive window and checksum, and finally reviews the concept of MSS reserved buffer and segment format, providing a comprehensive analysis of key TCP segment elements.",
+    "takeaways_en": [
+      "Understand the sequence and acknowledgment numbers in the TCP header",
+      "Master the functions of TCP flags and their application scenarios",
+      "Understand the role of the receive window in flow control",
+      "Familiarize yourself with checksum methods to ensure accurate data transmission",
+      "Master the concept of the MSS reserved buffer"
+    ]
   }
 }

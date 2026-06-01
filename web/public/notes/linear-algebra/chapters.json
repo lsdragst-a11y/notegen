@@ -43,5 +43,28 @@
       "abstract_en": "This chapter analyzes past exam questions in detail to teach effective problem-solving methods and techniques."
     }
   ],
-  "ablation": null
+  "ablation": null,
+  "overview": {
+    "summary": "本视频从线性代数的基础概念出发，逐步深入到特征值的应用，并通过历年真题解析，帮助学生掌握解题方法和技巧。",
+    "summary_zh": "本视频从线性代数的基础概念出发，逐步深入到特征值的应用，并通过历年真题解析，帮助学生掌握解题方法和技巧。",
+    "takeaways": [
+      "理解线性代数的基本概念",
+      "掌握特征值的相关应用",
+      "学会分析和解答综合题目",
+      "掌握有效解题方法和技巧"
+    ],
+    "takeaways_zh": [
+      "理解线性代数的基本概念",
+      "掌握特征值的相关应用",
+      "学会分析和解答综合题目",
+      "掌握有效解题方法和技巧"
+    ],
+    "summary_en": "This section begins with fundamental concepts in linear algebra and gradually delves into the applications of eigenvalues, using past exam questions to help students master problem-solving methods and techniques.",
+    "takeaways_en": [
+      "Grasp fundamental concepts of linear algebra",
+      "Master applications related to eigenvalues",
+      "Learn to analyze and solve complex problems",
+      "Acquire effective problem-solving methods and techniques"
+    ]
+  }
 }

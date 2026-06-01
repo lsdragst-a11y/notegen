@@ -206,5 +206,28 @@
     "n_chapters": 5,
     "max_chunks_per_chapter": 4,
     "has_wrapup": false
+  },
+  "overview": {
+    "summary": "本视频从IO系统的组成出发，详细介绍了程序查询方式下的CPU管理和外设数据传输流程，通过查询过程解析、接口结构与数据传输、时钟周期与硬盘查询时间的计算，最终讨论了程序查询管理对CPU性能的影响。",
+    "summary_zh": "本视频从IO系统的组成出发，详细介绍了程序查询方式下的CPU管理和外设数据传输流程，通过查询过程解析、接口结构与数据传输、时钟周期与硬盘查询时间的计算，最终讨论了程序查询管理对CPU性能的影响。",
+    "takeaways": [
+      "理解程序查询方式下的CPU管理和外设数据传输流程",
+      "掌握查询过程中的接口设计简化方法",
+      "学会计算时钟周期与硬盘查询时间",
+      "分析程序查询管理对CPU性能的影响"
+    ],
+    "takeaways_zh": [
+      "理解程序查询方式下的CPU管理和外设数据传输流程",
+      "掌握查询过程中的接口设计简化方法",
+      "学会计算时钟周期与硬盘查询时间",
+      "分析程序查询管理对CPU性能的影响"
+    ],
+    "summary_en": "This section begins with the composition of I/O systems and details the CPU management and peripheral data transfer process under program query methods. It analyzes the query process, interface structure, data transmission, and calculates clock cycles and hard disk query times, ultimately discussing the impact of program query management on CPU performance.",
+    "takeaways_en": [
+      "Understand CPU management and peripheral data transfer in program query mode",
+      "Master simplified interface design methods in the query process",
+      "Learn to calculate clock cycles and hard disk query times",
+      "Analyze the impact of program query management on CPU performance"
+    ]
   }
 }

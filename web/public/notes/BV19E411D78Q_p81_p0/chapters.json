@@ -218,5 +218,31 @@
     "n_chapters": 5,
     "max_chunks_per_chapter": 5,
     "has_wrapup": false
+  },
+  "overview": {
+    "summary": "本视频从TCP流量控制与首部字段出发，依次展开TCP确认与重传机制、从进程视角探讨窗口操作，进一步讨论发送与接收窗口的应用，最终总结数据传输与连接建立的过程，揭示TCP可靠传输背后的机制。",
+    "summary_zh": "本视频从TCP流量控制与首部字段出发，依次展开TCP确认与重传机制、从进程视角探讨窗口操作，进一步讨论发送与接收窗口的应用，最终总结数据传输与连接建立的过程，揭示TCP可靠传输背后的机制。",
+    "takeaways": [
+      "理解TCP流量控制与首部字段的作用",
+      "掌握TCP确认与重传机制的工作原理",
+      "从进程视角理解TCP窗口操作",
+      "熟悉发送与接收窗口的应用",
+      "总结数据传输与连接建立的过程"
+    ],
+    "takeaways_zh": [
+      "理解TCP流量控制与首部字段的作用",
+      "掌握TCP确认与重传机制的工作原理",
+      "从进程视角理解TCP窗口操作",
+      "熟悉发送与接收窗口的应用",
+      "总结数据传输与连接建立的过程"
+    ],
+    "summary_en": "This section begins with TCP flow control and header fields, then explores the acknowledgment and retransmission mechanisms, examines window operations from a process perspective, discusses the application of send and receive windows, and finally summarizes the data transfer and connection establishment process, revealing the mechanisms behind TCP's reliable transmission.",
+    "takeaways_en": [
+      "Understand the role of TCP flow control and header fields",
+      "Master the working principle of TCP acknowledgment and retransmission mechanisms",
+      "Grasp TCP window operations from a process perspective",
+      "Familiarize yourself with the application of sending and receiving windows",
+      "Summarize the process of data transmission and connection establishment"
+    ]
   }
 }

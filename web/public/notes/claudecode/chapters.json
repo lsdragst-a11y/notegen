@@ -57,5 +57,25 @@
     "multimodal_boundaries": [
       2
     ]
+  },
+  "overview": {
+    "summary": "本视频首先介绍了如何在10分钟内学会手动打开Claude Code，接着深入讲解了Claude Code的技能命令(ineed)，帮助用户快速掌握基础操作和实用技能。",
+    "summary_zh": "本视频首先介绍了如何在10分钟内学会手动打开Claude Code，接着深入讲解了Claude Code的技能命令(ineed)，帮助用户快速掌握基础操作和实用技能。",
+    "takeaways": [
+      "学会手动打开Claude Code",
+      "理解并运用ineed命令",
+      "掌握Claude Code的基础操作"
+    ],
+    "takeaways_zh": [
+      "学会手动打开Claude Code",
+      "理解并运用ineed命令",
+      "掌握Claude Code的基础操作"
+    ],
+    "summary_en": "This section introduces how to manually open Claude Code in just 10 minutes and then delves into its skill commands (ineed), helping users quickly master basic operations and practical skills.",
+    "takeaways_en": [
+      "Learn to manually open Claude Code",
+      "Understand and use the ineed command",
+      "Master the basic operations of Claude Code"
+    ]
   }
 }
