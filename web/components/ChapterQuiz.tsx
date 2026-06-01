@@ -8,8 +8,7 @@ import { useLang } from "./LangContext";
 const GREEN = "#30d158";
 const RED = "#ff375f";
 
-function Explanation({ text }: { text?: string }) {
-  if (!text) return null;
+function Explanation({ text }: { text: string }) {
   return (
     <motion.div
       key="exp"
@@ -55,7 +54,9 @@ function McQuestion({ q, idx }: { q: Extract<QuizQuestion, { type: "mc" }>; idx:
           );
         })}
       </div>
-      <AnimatePresence>{answered && <Explanation text={q.explanation} />}</AnimatePresence>
+      <AnimatePresence>
+        {answered && q.explanation && <Explanation text={q.explanation} />}
+      </AnimatePresence>
     </div>
   );
 }
@@ -95,7 +96,9 @@ function TfQuestion({ q, idx }: { q: Extract<QuizQuestion, { type: "tf" }>; idx:
           );
         })}
       </div>
-      <AnimatePresence>{answered && <Explanation text={q.explanation} />}</AnimatePresence>
+      <AnimatePresence>
+        {answered && q.explanation && <Explanation text={q.explanation} />}
+      </AnimatePresence>
     </div>
   );
 }
@@ -105,8 +108,8 @@ export default function ChapterQuiz({ quiz }: { quiz: Quiz }) {
     <div className="mt-3 flex flex-col gap-2">
       {quiz.questions.map((q, i) =>
         q.type === "mc"
-          ? <McQuestion key={i} q={q} idx={i} />
-          : <TfQuestion key={i} q={q} idx={i} />
+          ? <McQuestion key={`${q.type}-${i}`} q={q} idx={i} />
+          : <TfQuestion key={`${q.type}-${i}`} q={q} idx={i} />
       )}
     </div>
   );
