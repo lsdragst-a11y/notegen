@@ -6,6 +6,7 @@ import type { Chapter, Chunk, Category, Overview } from "@/lib/types";
 import { chunkMarks, overviewKeywords, buildGlossary, filterStopwords, formatTime } from "@/lib/notes";
 import { useLang, pickByLang } from "./LangContext";
 import GlossaryList from "./GlossaryList";
+import ChapterQuiz from "./ChapterQuiz";
 import Lightbox, { LightboxItem } from "./Lightbox";
 import VlogTimeline from "./VlogTimeline";
 import OverviewHero from "./OverviewHero";
@@ -318,6 +319,22 @@ export default function NotesContent({
                   })}
                 </div>
               )}
+              {ch.quiz?.questions?.length ? (
+                <details className="group mt-3">
+                  <summary className="flex cursor-pointer list-none items-center gap-2
+                                      text-sm font-semibold text-[var(--fg)]">
+                    <ChevronDown
+                      size={14}
+                      className="transition-transform group-open:rotate-0 -rotate-90"
+                    />
+                    {lang === "en" ? "🎓 Chapter Quiz" : "🎓 本章自测"}
+                    <span className="text-xs font-normal text-[var(--fg-tertiary)]">
+                      {ch.quiz.questions.length} {lang === "en" ? "questions" : "题"}
+                    </span>
+                  </summary>
+                  <ChapterQuiz quiz={ch.quiz} />
+                </details>
+              ) : null}
             </motion.div>
           );
         })}
