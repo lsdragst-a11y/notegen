@@ -702,6 +702,7 @@ class PipelineConfig:
     lang: str = "auto"
     vlm_captions: bool = False
     quality: str = "best"
+    force_outline: str | None = None
 
 
 @dataclass
@@ -1112,19 +1113,49 @@ def _stage_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
         _do_texttile_chapters(cfg, state)
 
 
+def _load_forced_outline(path: str, summaries: list[dict]) -> dict:
+    """从 JSON 读人工指定的章节 partition，构造成 segment_hierarchical 同形的 outline。
+    JSON 格式：list of {"title": str, "indices": [chunk_idx, ...]}（每章连续区间）。
+    start/end 由各章首末 chunk 的时间填，children 留空（顶层切分由人工负责）。
+    """
+    spec = json.loads(Path(path).read_text(encoding="utf-8"))
+    n = len(summaries)
+    chapters = []
+    for c in spec:
+        idx = [int(i) for i in c["indices"]]
+        if not idx or min(idx) < 0 or max(idx) >= n:
+            raise ValueError(f"force-outline 章 {c.get('title')!r} 的 indices {idx} 越界（n={n}）")
+        chapters.append({
+            "title": c["title"],
+            "indices": idx,
+            "start": summaries[idx[0]]["start"],
+            "end": summaries[idx[-1]]["end"],
+            "children": [],
+        })
+    return {"chapters": chapters,
+            "_meta": {"attempts_used": 0, "pass_via": "forced_outline",
+                      "repair_used": [], "fail_reasons": []}}
+
+
 def _do_llm_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
     """LLM 层级章节切分（替代 TextTiling 章节路径）。失败时不写 state.chapter_list。"""
-    print("[chapters] LLM 层级章节切分（Qwen2.5-7B-AWQ）...", flush=True)
-    try:
-        from segment_llm import segment_hierarchical
-        outline = segment_hierarchical(state.summaries,
-                                        visual_sims=state.visual_sims_for_llm,
-                                        visual_captions=state.visual_captions_for_llm,
-                                        lang=state.resolved_lang,
-                                        category=state.inferred_category)
-    except Exception as e:
-        print(f"      [llm-chapters] 异常：{e}，fallback TextTiling", flush=True)
-        outline = None
+    if cfg.force_outline:
+        outline = _load_forced_outline(cfg.force_outline, state.summaries)
+        print(f"[chapters] 人工固定 partition：{len(outline['chapters'])} 章"
+              f"（--force-outline，跳过 LLM 自动分段）", flush=True)
+        state.seg_meta["forced_outline"] = True
+    else:
+        print("[chapters] LLM 层级章节切分（Qwen2.5-7B-AWQ）...", flush=True)
+        try:
+            from segment_llm import segment_hierarchical
+            outline = segment_hierarchical(state.summaries,
+                                            visual_sims=state.visual_sims_for_llm,
+                                            visual_captions=state.visual_captions_for_llm,
+                                            lang=state.resolved_lang,
+                                            category=state.inferred_category)
+        except Exception as e:
+            print(f"      [llm-chapters] 异常：{e}，fallback TextTiling", flush=True)
+            outline = None
     # VL 救援：用了 VL caption 但 LLM 3 attempts + repair 都失败时，
     # 自动 retry 一次不带 caption（仅 sim cue）。
     vl_rescue_triggered = False
@@ -1494,7 +1525,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         confidence_threshold: float = 0.5,
         lang: str = "auto",
         vlm_captions: bool = False,
-        quality: str = "best") -> Path:
+        quality: str = "best",
+        force_outline: str | None = None) -> Path:
     """Orchestrator：把 17 个 kwarg 装进 PipelineConfig，依次跑 18 个 stage。"""
     cfg = PipelineConfig(
         source=source, is_local=is_local, chunk_chars=chunk_chars,
@@ -1503,7 +1535,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         keyframes=keyframes, mm_alpha=mm_alpha, chunker=chunker,
         learning_mode=learning_mode, dedupe_asr=dedupe_asr,
         llm_chapters=llm_chapters, confidence_threshold=confidence_threshold,
-        lang=lang, vlm_captions=vlm_captions, quality=quality)
+        lang=lang, vlm_captions=vlm_captions, quality=quality,
+        force_outline=force_outline)
     state = PipelineState()
     for stage in _STAGES:
         stage(cfg, state)
@@ -1568,6 +1601,11 @@ def main():
                         "给每个关键帧生 1 句 caption，喂 segment LLM 做更精准切分。"
                         "需要 models/Qwen2.5-VL-7B-Instruct-AWQ/（~5GB），跟 instruct "
                         "互斥占 VRAM，跑完会 free 让 instruct 加载回来。")
+    p.add_argument("--force-outline", default=None, metavar="PATH",
+                   help="人工修订分段用：从 JSON 读固定章节 partition（list of "
+                        "{\"title\", \"indices\": [chunk_idx...]}），跳过 LLM 自动分段，"
+                        "其余章节内容（abstract/recap/quiz/双语）仍由 LLM 重新生成。"
+                        "需配合 --llm-chapters。")
     args = p.parse_args()
     extra_terms = {}
     for t in args.term:
@@ -1581,7 +1619,8 @@ def main():
         learning_mode=args.learning_mode, dedupe_asr=args.dedupe_asr,
         confidence_threshold=args.confidence_threshold,
         llm_chapters=args.llm_chapters, lang=args.lang,
-        vlm_captions=args.vlm_captions, quality=args.quality)
+        vlm_captions=args.vlm_captions, quality=args.quality,
+        force_outline=args.force_outline)
 
 
 if __name__ == "__main__":

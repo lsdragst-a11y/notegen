@@ -3666,6 +3666,31 @@ MAC frame → MAC 帧、cut-through → 直通交换、HTTP request → HTTP 请
 5. 不要 markdown / 解释 / 前言"""
 
 
+_CJK_RE = re.compile(r'[一-鿿]')
+
+# retry 时追加到 system prompt 末尾，明确禁止残留源语言。
+_STRICT_RETRY_SUFFIX = {
+    "en": ("\n\nCRITICAL: the previous attempt left Chinese characters in the output. "
+           "Translate EVERY word into English. The result MUST NOT contain any Chinese "
+           "character. Keep only widely-used acronyms (TCP, ACK, MSL, RTT, IP) as-is."),
+    "zh": ("\n\n重要：上一次输出残留了未翻译的英文。请把每个词都翻成中文，结果不得保留"
+           "成句英文（仅 TCP/ACK/MSL/RTT/IP 等通用缩写可保留）。"),
+}
+
+
+def _detect_untranslated(strs: list[str], tgt_lang: str) -> list[int]:
+    """返回疑似未翻译/漏译的条目下标。
+    zh->en：英文译文里仍含 CJK 字符即判漏（部分残留或整条没翻）；
+    en->zh：非空中文译文里完全不含 CJK 即判漏（整条英文没翻）。
+    其它语言对不校验（返回空）。
+    """
+    if tgt_lang == "en":
+        return [i for i, s in enumerate(strs) if s.strip() and _CJK_RE.search(s)]
+    if tgt_lang == "zh":
+        return [i for i, s in enumerate(strs) if s.strip() and not _CJK_RE.search(s)]
+    return []
+
+
 def translate_bilingual(items: list[str], src_lang: str, tgt_lang: str,
                          model_id: str = _DEFAULT_MODEL,
                          max_new_tokens: Optional[int] = None,
@@ -3682,8 +3707,6 @@ def translate_bilingual(items: list[str], src_lang: str, tgt_lang: str,
     if not items:
         return None
     n = len(items)
-    if max_new_tokens is None:
-        max_new_tokens = max(800, 200 * n)
     if src_lang == "zh" and tgt_lang == "en":
         system = TRANSLATE_SYSTEM_ZH2EN
     elif src_lang == "en" and tgt_lang == "zh":
@@ -3691,43 +3714,68 @@ def translate_bilingual(items: list[str], src_lang: str, tgt_lang: str,
     else:
         print(f"      [translate] unsupported pair {src_lang}->{tgt_lang}", flush=True)
         return None
-    user_prompt = (f"Translate the following {n} strings. "
-                   f"Output a JSON array of exactly {n} strings:\n\n"
-                   + json.dumps(items, ensure_ascii=False, indent=2))
     model, tok = load_model(model_id)
-    messages = [
-        {"role": "system", "content": system},
-        {"role": "user", "content": user_prompt},
-    ]
-    text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
     import torch
-    inputs = tok(text, return_tensors="pt").to(model.device)
-    print(f"      [translate] {src_lang}->{tgt_lang} {n} items "
-          f"(input {inputs['input_ids'].shape[1]} tokens) ...", flush=True)
-    with torch.no_grad():
-        out = model.generate(
-            **inputs, max_new_tokens=max_new_tokens, do_sample=True,
-            temperature=0.1, top_p=0.9, pad_token_id=tok.eos_token_id,
-        )
-    gen_ids = out[0][inputs["input_ids"].shape[1]:]
-    raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
-    arr = _parse_titles_array(raw, n)
-    if arr is None:
-        # 容错：长文本翻译时 LLM 常在字符串里吐**真实换行** → JSON array 非法，
-        # _parse_titles_array 跨不过（与 recap 同型，见 _recover_recaps_lenient）。
-        # 用容忍换行的正则抓顶层引号字符串元素；恰好 n 个才采纳（保对齐）。
-        elems = re.findall(r'"((?:[^"\\]|\\.)*)"', raw, re.DOTALL)
-        if len(elems) == n:
-            def _un(s: str) -> str:
-                return (s.replace("\\n", "\n").replace("\\t", "\t")
-                         .replace('\\"', '"').replace("\\\\", "\\")).strip()
-            arr = [_un(e) for e in elems]
-            print(f"      [translate] lenient recovery: {n} 元素", flush=True)
-        else:
-            print(f"      [translate] parse failed, raw len={len(raw)}, "
-                  f"got {len(elems)} elems vs n={n}, head: {raw[:200]}", flush=True)
-            return None
-    out_strs = [str(s).strip().strip('"').strip("'") for s in arr]
+
+    def _pass(pass_items: list[str], sys_prompt: str) -> Optional[list[str]]:
+        """单次翻译：build prompt → generate → decode → parse。失败返回 None。"""
+        m = len(pass_items)
+        budget = max_new_tokens if max_new_tokens is not None else max(800, 200 * m)
+        user_prompt = (f"Translate the following {m} strings. "
+                       f"Output a JSON array of exactly {m} strings:\n\n"
+                       + json.dumps(pass_items, ensure_ascii=False, indent=2))
+        messages = [
+            {"role": "system", "content": sys_prompt},
+            {"role": "user", "content": user_prompt},
+        ]
+        text = tok.apply_chat_template(messages, tokenize=False, add_generation_prompt=True)
+        inputs = tok(text, return_tensors="pt").to(model.device)
+        with torch.no_grad():
+            out = model.generate(
+                **inputs, max_new_tokens=budget, do_sample=True,
+                temperature=0.1, top_p=0.9, pad_token_id=tok.eos_token_id,
+            )
+        gen_ids = out[0][inputs["input_ids"].shape[1]:]
+        raw = tok.decode(gen_ids, skip_special_tokens=True).strip()
+        arr = _parse_titles_array(raw, m)
+        if arr is None:
+            # 容错：长文本翻译时 LLM 常在字符串里吐**真实换行** → JSON array 非法，
+            # _parse_titles_array 跨不过（与 recap 同型，见 _recover_recaps_lenient）。
+            # 用容忍换行的正则抓顶层引号字符串元素；恰好 m 个才采纳（保对齐）。
+            elems = re.findall(r'"((?:[^"\\]|\\.)*)"', raw, re.DOTALL)
+            if len(elems) == m:
+                def _un(s: str) -> str:
+                    return (s.replace("\\n", "\n").replace("\\t", "\t")
+                             .replace('\\"', '"').replace("\\\\", "\\")).strip()
+                arr = [_un(e) for e in elems]
+                print(f"      [translate] lenient recovery: {m} 元素", flush=True)
+            else:
+                print(f"      [translate] parse failed, raw len={len(raw)}, "
+                      f"got {len(elems)} elems vs m={m}, head: {raw[:200]}", flush=True)
+                return None
+        return [str(s).strip().strip('"').strip("'") for s in arr]
+
+    print(f"      [translate] {src_lang}->{tgt_lang} {n} items ...", flush=True)
+    out_strs = _pass(items, system)
+    if out_strs is None:
+        return None
+    # 目标语言校验 + 定向 retry：LLM 偶发把源语言原样留在译文里（p80 ch0
+    # "...and挥手过程termination process"），或整条没翻（title_en == 中文）。
+    # 只对漏译条目用更严的提示 retry 一次，不打扰已译好的条目。
+    bad = _detect_untranslated(out_strs, tgt_lang)
+    if bad:
+        print(f"      [translate] {len(bad)} 条疑似漏译（目标 {tgt_lang}），定向 retry ...",
+              flush=True)
+        retry = _pass([items[i] for i in bad], system + _STRICT_RETRY_SUFFIX[tgt_lang])
+        if retry and len(retry) == len(bad):
+            for j, i in enumerate(bad):
+                cand = retry[j]
+                if cand and not _detect_untranslated([cand], tgt_lang):
+                    out_strs[i] = cand
+        still = _detect_untranslated(out_strs, tgt_lang)
+        if still:
+            print(f"      [translate] retry 后仍 {len(still)} 条漏译（保留 best-effort）",
+                  flush=True)
     n_filled = sum(1 for s in out_strs if s)
     print(f"      [translate] got {n_filled}/{n} translations", flush=True)
     return out_strs
