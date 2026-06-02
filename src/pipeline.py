@@ -198,6 +198,14 @@ _DOMAIN_CORRECTIONS: dict[str, dict[str, str]] = {
         "拥筛": "拥塞",
         # ACK 听成 AKK：p78 26 处 + p85 11 处。AKK 不是合法术语，全局替换安全
         "AKK": "ACK",
+        # ACK 也常被识成裸 "AK"：p80 "AK段"×3 / "AK等于1"、p79 "有AK,SYN和FIN"
+        # （列举 ACK/SYN/FIN 三个标志位）。裸 "AK" 用 plain-substring 替换会误伤
+        # PEAK/BREAK（"峰值速率 peak"）等英文词，故锚定到带中文/标志名的右邻上下文：
+        # "AK段"/"AK等于" 含中文字符，英文词不可能含；"AK,SYN" 是 ACK,SYN 标志列举
+        # 习语，无英文词含此串。idempotent: 三个 wrong 均非各自 right 的连续子串
+        "AK段": "ACK段",
+        "AK等于": "ACK等于",
+        "AK,SYN": "ACK,SYN",
         # p78 (TCP 报文段) 实测："校验和" 6 处错听成"校验核"。"校验核"
         # 非术语，应回"校验和"（TCP/UDP 首部字段标准译名）
         "校验核": "校验和",
