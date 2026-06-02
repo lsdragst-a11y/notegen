@@ -3,68 +3,260 @@
     {
       "title": "线性代数基础与强化",
       "start": 0.24,
-      "end": 558.19,
+      "end": 190.78,
       "indices": [
         0,
         1
       ],
-      "abstract": "本章从线性代数的基础概念入手，帮助学生打下坚实的学习基础。",
+      "abstract": "本章介绍线性代数的基础知识，并通过李永乐老师的强化课程帮助读者更好地理解和掌握这门学科。",
+      "recap": "- 线性代数基础与强化\n- 基础阶段理解线性代数\n- 强化阶段掌握技巧",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "线性代数强化阶段的主要目标是什么？",
+            "options": [
+              "掌握基础概念",
+              "熟悉考研真题",
+              "提高解题速度",
+              "深入理解矩阵"
+            ],
+            "answer_idx": 3,
+            "explanation": "强化阶段的重点在于深入理解矩阵，提高解题能力"
+          },
+          {
+            "type": "tf",
+            "q": "基础阶段的学习不需要做配套习题。",
+            "answer": true,
+            "explanation": "基础阶段主要是熟悉概念，无需大量习题练习"
+          }
+        ]
+      },
       "title_zh": "线性代数基础与强化",
-      "title_en": "Fundamentals and Reinforcement of Linear Algebra",
-      "abstract_zh": "本章从线性代数的基础概念入手，帮助学生打下坚实的学习基础。",
-      "abstract_en": "This chapter introduces fundamental concepts of linear algebra to help students build a solid foundation."
+      "title_en": "Linear Algebra Fundamentals and Reinforcement",
+      "abstract_zh": "本章介绍线性代数的基础知识，并通过李永乐老师的强化课程帮助读者更好地理解和掌握这门学科。",
+      "abstract_en": "This chapter introduces basic linear algebra concepts and uses Li Yongle's advanced courses to help readers better understand and master the subject."
     },
     {
-      "title": "特征值与综合题解",
-      "start": 558.19,
-      "end": 719.66,
+      "title": "基础阶段与行列式计算",
+      "start": 191.18,
+      "end": 491.33,
       "indices": [
         2,
-        3
+        3,
+        4
       ],
-      "abstract": "本章聚焦于特征值及其应用，通过综合题目加深学生对知识点的理解。",
-      "title_zh": "特征值与综合题解",
-      "title_en": "Eigenvalues and Comprehensive Problem Solutions",
-      "abstract_zh": "本章聚焦于特征值及其应用，通过综合题目加深学生对知识点的理解。",
-      "abstract_en": "This chapter focuses on eigenvalues and their applications, deepening students' understanding through comprehensive problems."
+      "abstract": "本章介绍基础阶段的学习重点，强调通过理解课程内容来掌握行列式计算，并采用轻基础重强化的方法。",
+      "recap": "- 基础阶段与行列式计算\n- 考研老师讲解基础\n- 掌握行列式计算方法",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "考研老师的特点是什么？",
+            "options": [
+              "通常有丰富的教学经验",
+              "往往是从零基础开始教",
+              "擅长解答疑难问题",
+              "注重理论深度"
+            ],
+            "answer_idx": 1,
+            "explanation": "考研老师通常是从零基础开始教，适合初学者"
+          },
+          {
+            "type": "tf",
+            "q": "江小千老师的基础课主要教授行列式计算。",
+            "answer": true,
+            "explanation": "江小千老师的基础课确实重点讲解了行列式计算"
+          }
+        ]
+      },
+      "title_zh": "基础阶段与行列式计算",
+      "title_en": "Fundamentals and Determinant Calculations",
+      "abstract_zh": "本章介绍基础阶段的学习重点，强调通过理解课程内容来掌握行列式计算，并采用轻基础重强化的方法。",
+      "abstract_en": "This chapter highlights key learning points in the foundational stage, emphasizing understanding course content to grasp determinant calculations, using a light foundation and heavy reinforcement approach."
     },
     {
-      "title": "真题解析与方法",
+      "title": "特征值与矩阵基础",
+      "start": 491.33,
+      "end": 719.66,
+      "indices": [
+        5,
+        6
+      ],
+      "abstract": "本章介绍特征值与矩阵的基础概念，通过强化阶段的练习加深对行列式和线性相关的理解，重点在于行列式等于零时特征值的意义及解题技巧。",
+      "recap": "- 特征值与矩阵基础\n- 强化阶段解决特征值问题\n- 理解矩阵相关概念",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "特征值与矩阵的关系是什么？",
+            "options": [
+              "特征值是矩阵的行向量",
+              "特征值是矩阵的列向量",
+              "特征值是矩阵的行列式的值",
+              "特征值是矩阵的对角线元素"
+            ],
+            "answer_idx": 2,
+            "explanation": "特征值是矩阵的行列式的值，即行列式等于0时的值"
+          },
+          {
+            "type": "tf",
+            "q": "强化阶段需要解决的是卡住的条件。",
+            "answer": true,
+            "explanation": "强化阶段的重点在于解决卡住的条件，提高解题能力"
+          }
+        ]
+      },
+      "title_zh": "特征值与矩阵基础",
+      "title_en": "Eigenvalues and Matrix Basics",
+      "abstract_zh": "本章介绍特征值与矩阵的基础概念，通过强化阶段的练习加深对行列式和线性相关的理解，重点在于行列式等于零时特征值的意义及解题技巧。",
+      "abstract_en": "This chapter introduces fundamental concepts of eigenvalues and matrices, deepening understanding of determinants and linear dependence through advanced practice, focusing on the significance of eigenvalues when determinants equal zero and problem-solving techniques."
+    },
+    {
+      "title": "真题与压题策略",
       "start": 720.44,
       "end": 1036.17,
       "indices": [
-        4,
-        5
+        7,
+        8,
+        9
       ],
-      "abstract": "本章通过对历年真题的详细解析，传授有效的解题方法和技巧。",
-      "title_zh": "真题解析与方法",
-      "title_en": "True Exam Questions Analysis and Methods",
-      "abstract_zh": "本章通过对历年真题的详细解析，传授有效的解题方法和技巧。",
-      "abstract_en": "This chapter analyzes past exam questions in detail to teach effective problem-solving methods and techniques."
+      "abstract": "本章介绍真题与压题策略，包括24年考研真题及李林108题的使用，并探讨条件导向推理题目的选取方法。",
+      "recap": "- 真题与压题策略\n- 分析24年真题特征值\n- 每日练习20道题目",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "真题与压题策略的核心是什么？",
+            "options": [
+              "大量做题",
+              "熟悉考试流程",
+              "掌握解题技巧",
+              "分析历年真题"
+            ],
+            "answer_idx": 3,
+            "explanation": "分析历年真题是掌握解题技巧的关键"
+          },
+          {
+            "type": "tf",
+            "q": "李林108题是针对24年考研真题的。",
+            "answer": true,
+            "explanation": "李林108题确实是针对24年考研真题的"
+          }
+        ]
+      },
+      "title_zh": "真题与压题策略",
+      "title_en": "Exam Questions and Prediction Strategies",
+      "abstract_zh": "本章介绍真题与压题策略，包括24年考研真题及李林108题的使用，并探讨条件导向推理题目的选取方法。",
+      "abstract_en": "This chapter covers exam question strategies, including 24-year graduate entrance exam questions and Li Lin's 108 questions, and discusses methods for selecting conditional reasoning questions."
     }
   ],
-  "ablation": null,
+  "ablation": {
+    "alpha": 0.3,
+    "text_dists": [
+      1.0,
+      0.8,
+      0.8,
+      0.9090909090909091,
+      1.0,
+      0.9090909090909091,
+      1.0,
+      1.0,
+      0.9090909090909091
+    ],
+    "visual_dists": [
+      0.03669404983520508,
+      0.049900591373443604,
+      0.024420499801635742,
+      0.11581653356552124,
+      0.06877493858337402,
+      0.021045207977294922,
+      0.10154259204864502,
+      0.043380916118621826,
+      0.08576065301895142
+    ],
+    "fused_dists": [
+      0.7495366349287012,
+      0.09134213291958045,
+      0.010684535021720138,
+      0.6818181818181817,
+      0.8510891516283972,
+      0.3818181818181816,
+      0.9548156319595169,
+      0.7707040067320796,
+      0.5866758578292985
+    ],
+    "depth_scores": [
+      0.32909725100456033,
+      -0.28876845205563023,
+      -0.37589562234716095,
+      0.250931338493123,
+      0.3192709698102155,
+      -0.5211342099757754,
+      0.3785545376843863,
+      -4.1738162328108785e-05,
+      -0.09201407445139054
+    ],
+    "text_only_boundaries": [
+      3,
+      5,
+      7
+    ],
+    "multimodal_boundaries": [
+      2,
+      5,
+      7
+    ],
+    "seg_meta": {
+      "method": "texttile",
+      "llm_attempts": 3,
+      "llm_pass_via": "repair",
+      "llm_repair_used": [
+        "repair_missing",
+        "repair_too_few"
+      ],
+      "llm_fail_reasons": [
+        "too_few_chapters",
+        "too_few_chapters",
+        "too_few_chapters"
+      ],
+      "fallback_used": true,
+      "vl_rescue_used": false
+    },
+    "duration": 1036.95675,
+    "n_chunks": 10,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": false,
+    "vlm_max_prefix_run": 2,
+    "vlm_generic_ratio": 1.0,
+    "vlm_degraded_reason": "generic_ratio_high",
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 3,
+    "has_wrapup": false
+  },
   "overview": {
-    "summary": "本视频从线性代数的基础概念出发，逐步深入到特征值的应用，并通过历年真题解析，帮助学生掌握解题方法和技巧。",
-    "summary_zh": "本视频从线性代数的基础概念出发，逐步深入到特征值的应用，并通过历年真题解析，帮助学生掌握解题方法和技巧。",
+    "summary": "本视频从线性代数的基础知识出发，通过李永乐老师的强化课程逐步深入，讲解了行列式计算、特征值与矩阵等核心概念，并结合历年真题和压题策略进行实战演练，旨在帮助考生全面掌握线代知识点。",
     "takeaways": [
-      "理解线性代数的基本概念",
-      "掌握特征值的相关应用",
-      "学会分析和解答综合题目",
-      "掌握有效解题方法和技巧"
+      "理解行列式的计算方法",
+      "掌握特征值与矩阵的基本概念",
+      "学会运用强化课程中的解题技巧",
+      "熟悉历年真题和压题策略"
     ],
+    "summary_zh": "本视频从线性代数的基础知识出发，通过李永乐老师的强化课程逐步深入，讲解了行列式计算、特征值与矩阵等核心概念，并结合历年真题和压题策略进行实战演练，旨在帮助考生全面掌握线代知识点。",
+    "summary_en": "This section starts with basic linear algebra concepts and gradually delves into determinants, eigenvalues, and matrices through Li Yongle's advanced courses, using past exam questions and prediction strategies for practical training, aiming to help students fully grasp linear algebra knowledge.",
     "takeaways_zh": [
-      "理解线性代数的基本概念",
-      "掌握特征值的相关应用",
-      "学会分析和解答综合题目",
-      "掌握有效解题方法和技巧"
+      "理解行列式的计算方法",
+      "掌握特征值与矩阵的基本概念",
+      "学会运用强化课程中的解题技巧",
+      "熟悉历年真题和压题策略"
     ],
-    "summary_en": "This section begins with fundamental concepts in linear algebra and gradually delves into the applications of eigenvalues, using past exam questions to help students master problem-solving methods and techniques.",
     "takeaways_en": [
-      "Grasp fundamental concepts of linear algebra",
-      "Master applications related to eigenvalues",
-      "Learn to analyze and solve complex problems",
-      "Acquire effective problem-solving methods and techniques"
+      "Understand the methods for calculating determinants",
+      "Master the basic concepts of eigenvalues and matrices",
+      "Learn to apply problem-solving techniques from advanced courses",
+      "Familiarize yourself with past exam questions and prediction strategies"
     ]
   }
 }

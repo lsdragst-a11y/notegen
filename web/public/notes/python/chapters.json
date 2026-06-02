@@ -1,118 +1,205 @@
 {
   "chapters": [
     {
-      "title": "python 基础：python 基础·python 教程",
+      "title": "变量类型及运算",
       "start": 0.66,
-      "end": 417.82,
+      "end": 212.72,
       "indices": [
         0,
-        1
+        1,
+        2
       ],
-      "abstract": "本章涵盖 python 基础：python 基础 · python 教程：如何写一个随机数",
-      "title_zh": "python 基础：python 基础·python 教程",
-      "title_en": "Python Basics: Python Tutorial",
-      "abstract_zh": "本章涵盖 python 基础：python 基础 · python 教程：如何写一个随机数",
-      "abstract_en": "This chapter covers Python basics: how to write a random number."
+      "abstract": "本章介绍变量的命名规则和数据类型，重点讲解字符串与整数的运算方法，包括如何进行类型转换以及使用嵌套小括号改变运算顺序。",
+      "recap": "- 变量名遵循特定命名规则，赋值用等号，基础数据类型包括数字、布尔等\n- 字符串和整数运算需明确类型转换，使用括号指定范围\n- 布尔类型支持逻辑运算，嵌套小括号改变运算顺序\n- 字符串支持加号拼接和乘号复制",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在 Python 中，变量名的命名规则是什么？",
+            "options": [
+              "可以包含数字和特殊字符",
+              "必须以字母或下划线开头",
+              "不能包含空格",
+              "以上都是"
+            ],
+            "answer_idx": 1,
+            "explanation": "变量名必须以字母或下划线开头，后续可以跟字母、数字或下划线"
+          },
+          {
+            "type": "tf",
+            "q": "字符串和整数可以直接进行数学运算。",
+            "answer": false,
+            "explanation": "字符串和整数需要先转换类型才能进行数学运算"
+          }
+        ]
+      },
+      "title_zh": "变量类型及运算",
+      "title_en": "Variable Types and Operations",
+      "abstract_zh": "本章介绍变量的命名规则和数据类型，重点讲解字符串与整数的运算方法，包括如何进行类型转换以及使用嵌套小括号改变运算顺序。",
+      "abstract_en": "This chapter introduces variable naming conventions and data types, focusing on string and integer operations, including type conversion and using nested parentheses to change the order of operations."
     },
     {
-      "title": "字符串切取的哪一段下标为1·python中的字符串列表",
-      "start": 417.82,
-      "end": 834.74,
+      "title": "流程控制与循环结构",
+      "start": 212.72,
+      "end": 605.54,
       "indices": [
-        2,
         3,
-        4
-      ],
-      "abstract": "本章涵盖 字符串切取的哪一段下标为1 · python中的字符串列表 · python的排序排序排序方法",
-      "title_zh": "字符串切取的哪一段下标为1·python中的字符串列表",
-      "title_en": "Substring Indexing in Python · Python String Lists",
-      "abstract_zh": "本章涵盖 字符串切取的哪一段下标为1 · python中的字符串列表 · python的排序排序排序方法",
-      "abstract_en": "This section covers string slicing, index positions in Python strings, and sorting methods in Python."
-    },
-    {
-      "title": "python 基础内容的理解",
-      "start": 834.74,
-      "end": 1252.04,
-      "indices": [
+        4,
         5,
         6,
         7
       ],
-      "abstract": "本章涵盖 空的集合字典 · 函数也叫方法这个de 就是一个方法 · python 3 基础内容的理解",
-      "title_zh": "python 基础内容的理解",
-      "title_en": "Understanding Python Basics Content",
-      "abstract_zh": "本章涵盖 空的集合字典 · 函数也叫方法这个de 就是一个方法 · python 3 基础内容的理解",
-      "abstract_en": "This chapter covers empty sets and dictionaries, functions as methods in Python, and understanding Python 3 basics."
+      "abstract": "本章介绍流程控制条件语句、while循环详解、字符串切片与替换、列表嵌套与遍历及列表操作与复制，重点讲解条件语句的使用方法和while循环的应用。",
+      "recap": "- 使用if语句实现条件判断，等价于两个等号，不等于用感叹号等于\n- while循环通过条件表达式控制循环次数，true表示死循环\n- 字符串切片用冒号指定范围，替换用replace方法\n- 列表嵌套通过索引访问元素，无限嵌套，遍历时使用for循环",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在 while 循环中，如何退出循环？",
+            "options": [
+              "使用 break 语句",
+              "使用 continue 语句",
+              "循环条件变为 False",
+              "以上都是"
+            ],
+            "answer_idx": 0,
+            "explanation": "使用 break 语句可以立即退出当前循环"
+          },
+          {
+            "type": "tf",
+            "q": "while True 会创建一个无限循环。",
+            "answer": true,
+            "explanation": "while True 会持续执行直到遇到 break 语句"
+          }
+        ]
+      },
+      "title_zh": "流程控制与循环结构",
+      "title_en": "Flow Control and Loop Structures",
+      "abstract_zh": "本章介绍流程控制条件语句、while循环详解、字符串切片与替换、列表嵌套与遍历及列表操作与复制，重点讲解条件语句的使用方法和while循环的应用。",
+      "abstract_en": "This chapter covers flow control conditional statements, detailed while loops, string slicing and replacement, nested lists and traversal, and list operations and copying, emphasizing the use of conditional statements and applications of while loops."
+    },
+    {
+      "title": "列表操作与字典集合",
+      "start": 605.54,
+      "end": 941.38,
+      "indices": [
+        8,
+        9,
+        10,
+        11
+      ],
+      "abstract": "本章介绍列表操作与字典集合的使用，重点讲解如何在列表中插入、删除元素及复制列表，并讨论字典的键值对操作和递归函数的应用。",
+      "recap": "- 字典用大括号表示，键值对存储数据，通过keys获取所有键\n- 列表可直接删除元素，复制使用切片或copy方法\n- 函数参数传递包括位置参数、关键字参数、默认参数\n- 字典和集合支持添加、删除、查找和修改操作",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "如何在字典中获取所有键？",
+            "options": [
+              "使用 keys 方法",
+              "使用 values 方法",
+              "使用 items 方法",
+              "以上都不是"
+            ],
+            "answer_idx": 0,
+            "explanation": "使用 keys 方法可以获取字典中的所有键"
+          },
+          {
+            "type": "tf",
+            "q": "字典和集合都可以使用大括号 {} 来表示。",
+            "answer": true,
+            "explanation": "字典和集合都使用大括号 {} 来表示"
+          }
+        ]
+      },
+      "title_zh": "列表操作与字典集合",
+      "title_en": "List Operations and Dictionary Sets",
+      "abstract_zh": "本章介绍列表操作与字典集合的使用，重点讲解如何在列表中插入、删除元素及复制列表，并讨论字典的键值对操作和递归函数的应用。",
+      "abstract_en": "This chapter discusses list operations and the use of dictionaries and sets, focusing on inserting, deleting elements, and copying lists, and explores dictionary key-value pair operations and recursive function applications."
+    },
+    {
+      "title": "函数参数与调用",
+      "start": 941.38,
+      "end": 1252.04,
+      "indices": [
+        12,
+        13,
+        14
+      ],
+      "abstract": "本章介绍函数参数的不同类型，包括默认参数和位置参数及关键字参数，并通过递归函数演示参数传递的应用。",
+      "recap": "- 默认参数允许函数调用时省略参数，使用外部变量\n- 包裹位置参数按顺序传递参数，包裹关键字参数通过关键字传递\n- 多返回值函数需注意返回值数量一致，递归函数需避免无限循环",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "在函数调用时，哪种参数类型不需要指定参数名称？",
+            "options": [
+              "包裹位置参数",
+              "包裹关键字参数",
+              "默认参数",
+              "不定常参数"
+            ],
+            "answer_idx": 0,
+            "explanation": "包裹位置参数不需要指定参数名称"
+          },
+          {
+            "type": "tf",
+            "q": "默认参数是在函数定义时就已经确定的。",
+            "answer": true,
+            "explanation": "默认参数是在函数定义时已经设定，在调用时可以省略"
+          }
+        ]
+      },
+      "title_zh": "函数参数与调用",
+      "title_en": "Function Parameters and Calls",
+      "abstract_zh": "本章介绍函数参数的不同类型，包括默认参数和位置参数及关键字参数，并通过递归函数演示参数传递的应用。",
+      "abstract_en": "This chapter explains different types of function parameters, including default, positional, and keyword parameters, and demonstrates parameter passing through recursive functions."
     }
   ],
   "ablation": {
-    "alpha": 0.3,
-    "text_dists": [
-      0.9090909090909091,
-      0.9090909090909091,
-      0.8,
-      0.5,
-      0.8,
-      0.9090909090909091,
-      0.8
-    ],
-    "visual_dists": [
-      0.011197805404663086,
-      0.013032019138336182,
-      0.011234045028686523,
-      0.012868225574493408,
-      0.020278096199035645,
-      0.023397326469421387,
-      0.025875329971313477
-    ],
-    "fused_dists": [
-      0.7,
-      0.737490253727949,
-      0.5140740500092049,
-      0.03414240927845099,
-      0.6989291554313809,
-      0.9493510607192748,
-      0.8133333333333335
-    ],
-    "depth_scores": [
-      -0.01874512686397445,
-      0.13045322872334653,
-      0.12825771850600493,
-      -0.5723591934418419,
-      0.207182420432518,
-      0.19321981633691765,
-      -0.06800886369297066
-    ],
-    "text_only_boundaries": [
-      3,
-      6
-    ],
-    "multimodal_boundaries": [
-      2,
-      5
-    ]
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 1,
+      "llm_pass_via": "attempt_1",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 1252.864,
+    "n_chunks": 15,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 3,
+    "vlm_generic_ratio": 0.4,
+    "vlm_degraded_reason": null,
+    "n_chapters": 4,
+    "max_chunks_per_chapter": 5,
+    "has_wrapup": false
   },
   "overview": {
-    "summary": "本视频从介绍Python基础开始，通过编写一个随机数程序来入门；接着深入探讨字符串操作，包括切片和列表；最后总结Python基础内容，强调空集合和字典的概念，以及函数作为方法的应用。",
-    "summary_zh": "本视频从介绍Python基础开始，通过编写一个随机数程序来入门；接着深入探讨字符串操作，包括切片和列表；最后总结Python基础内容，强调空集合和字典的概念，以及函数作为方法的应用。",
+    "summary": "本视频从变量类型及运算开始，介绍了Python中的基本数据类型和运算规则；接着深入流程控制与循环结构，讲解了条件语句和循环的应用；随后探讨了列表操作与字典集合，展示了如何操作这些数据结构；最后通过函数参数与调用，详细说明了函数参数的不同形式及其应用。",
     "takeaways": [
-      "编写Python程序生成随机数",
-      "掌握Python字符串切片和列表操作",
-      "理解Python中的空集合和字典",
-      "学会使用函数作为方法"
+      "理解Python变量命名规则和数据类型",
+      "掌握条件语句和while循环的使用",
+      "学会列表操作和字典的键值对管理",
+      "熟悉函数参数的不同类型及其传递方式"
     ],
+    "summary_zh": "本视频从变量类型及运算开始，介绍了Python中的基本数据类型和运算规则；接着深入流程控制与循环结构，讲解了条件语句和循环的应用；随后探讨了列表操作与字典集合，展示了如何操作这些数据结构；最后通过函数参数与调用，详细说明了函数参数的不同形式及其应用。",
+    "summary_en": "This chapter introduces Python's basic data types and arithmetic rules, then delves into control flow and loop structures, explaining conditional statements and loop applications. It subsequently explores list operations and dictionary sets, demonstrating how to manipulate these data structures. Finally, it details function parameters and calls, illustrating the different forms and uses of function arguments.",
     "takeaways_zh": [
-      "编写Python程序生成随机数",
-      "掌握Python字符串切片和列表操作",
-      "理解Python中的空集合和字典",
-      "学会使用函数作为方法"
+      "理解Python变量命名规则和数据类型",
+      "掌握条件语句和while循环的使用",
+      "学会列表操作和字典的键值对管理",
+      "熟悉函数参数的不同类型及其传递方式"
     ],
-    "summary_en": "This video starts with an introduction to Python basics by writing a random number program; it then delves into string operations, including slicing and lists; finally, it summarizes Python basics, emphasizing empty sets and dictionaries, as well as the use of functions as methods.",
     "takeaways_en": [
-      "Learn to generate random numbers using Python",
-      "Master Python string slicing and list operations",
-      "Understand empty sets and dictionaries in Python",
-      "Learn to use functions as methods"
+      "Understand Python variable naming conventions and data types",
+      "Master the use of conditional statements and while loops",
+      "Learn list operations and manage dictionary key-value pairs",
+      "Familiarize yourself with different function parameter types and their passing methods"
     ]
   }
 }
