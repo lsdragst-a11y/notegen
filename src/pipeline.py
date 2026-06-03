@@ -605,27 +605,32 @@ def _apply_chapter_recaps(chapter_list: list, llm_chapters: bool,
         return
     try:
         from segment_llm import generate_chapter_recaps
-        recaps = generate_chapter_recaps(chapter_list, lang=lang)
     except Exception as e:
-        print(f"      [llm-chapter-recap] 异常：{e}，回退抽取式 recap",
+        print(f"      [llm-chapter-recap] 导入失败：{e}，回退抽取式 recap",
               flush=True)
         return
-    if recaps and len(recaps) == len(chapter_list):
-        for ch, rc in zip(chapter_list, recaps):
-            ch["recap"] = rc
-            first_line = rc.split("\n", 1)[0][:60]
-            print(f"      [chapter recap] L1 -> {first_line}", flush=True)
-    elif recaps:
-        # len mismatch: 之前 silent drop 让 BV19E411D78Q_p81 整批无 recap 但
-        # 跑批 stdout 看不到原因。明确报出来，下次定位 generate_chapter_recaps
-        # 哪步漏数（_parse_titles_array 截断 / I7 fallback per 计算 / LLM 漏章）
-        print(f"      [llm-chapter-recap] ⚠️ len mismatch: 拿到 {len(recaps)} "
-              f"个 recap vs {len(chapter_list)} 章，整批丢弃 → fallback 抽取式",
-              flush=True)
-    else:
-        # recaps is None/empty — generate_chapter_recaps 内部已 print parse 失败 raw
-        print(f"      [llm-chapter-recap] ⚠️ 返回空，fallback 抽取式",
-              flush=True)
+    # 逐章单独调用：一次性喂 K 章会系统性塌缩成 1 个长字符串 → I7 fallback 机械
+    # 切分 → 串台错位（p81/p93 实测）。逐章每次只生成 1 章，结构性消除该 bug；
+    # 单章失败只丢该章（留空 → to_markdown 抽取式 fallback），不再整批丢弃。
+    n = len(chapter_list)
+    n_ok = 0
+    for ci, ch in enumerate(chapter_list):
+        try:
+            r = generate_chapter_recaps([ch], lang=lang)
+        except Exception as e:
+            print(f"      [llm-chapter-recap] ⚠️ 章 {ci + 1}/{n} 异常：{e}，"
+                  f"留空 fallback", flush=True)
+            continue
+        if r and len(r) == 1 and r[0]:
+            ch["recap"] = r[0]
+            n_ok += 1
+            first_line = r[0].split("\n", 1)[0][:60]
+            print(f"      [chapter recap] L1 {ci + 1}/{n} -> {first_line}",
+                  flush=True)
+        else:
+            print(f"      [llm-chapter-recap] ⚠️ 章 {ci + 1}/{n} 返回空，"
+                  f"留空 fallback", flush=True)
+    print(f"      [llm-chapter-recap] per-chapter 完成 {n_ok}/{n} 章", flush=True)
 
 
 def _apply_chapter_quizzes(chapter_list: list, llm_chapters: bool,
