@@ -1078,27 +1078,33 @@ def _stage_vlm_captions(cfg: PipelineConfig, state: PipelineState) -> None:
 # ============ Stage 11b: OCR caption（Qwen2.5-VL 逐字屏上文字） ============
 def _stage_ocr_captions(cfg: PipelineConfig, state: PipelineState) -> None:
     # 屏上逐字文字 ground 章标题/abstract/recap。需 --keyframes + --ocr-captions，
-    # 且仅 teaching/popsci（vlog/talk 屏上无教学文字，跳过）。
-    if not (cfg.ocr_captions and cfg.keyframes and state.summaries):
+    # 且仅 teaching/popsci（vlog/talk 屏上无教学文字，跳过）。本 stage 必须排在
+    # _stage_classify_category_early 之后，否则 inferred_category 还是默认 "teaching"，
+    # category 门控形同虚设。
+    # caption stage 在 --ocr-captions 时不 free VL，留给本 stage 复用同一驻留；故所有
+    # 提前 return 路径都必须 free（finally 兜底）——否则 VL 漏驻留进 _stage_chapters 的
+    # instruct LLM 加载 → 双大模型同驻 → 黑屏事故（见 memory feedback-serial-model-loading）。
+    if not cfg.ocr_captions:
         return
-    if state.inferred_category not in ("teaching", "popsci"):
-        print(f"      [ocr] category={state.inferred_category} 非 teaching/popsci，跳过 OCR",
-              flush=True)
-        return
-    video_for_kf = _resolve_video_for_keyframes(state.video)
-    if video_for_kf is None:
-        print(f"      [ocr] 找不到 {state.video} 视频流，跳过 OCR", flush=True)
-        return
+    from caption_vl import free_vl_model
     try:
+        if not (cfg.keyframes and state.summaries):
+            return
+        if state.inferred_category not in ("teaching", "popsci"):
+            print(f"      [ocr] category={state.inferred_category} 非 teaching/popsci，跳过 OCR",
+                  flush=True)
+            return
+        video_for_kf = _resolve_video_for_keyframes(state.video)
+        if video_for_kf is None:
+            print(f"      [ocr] 找不到 {state.video} 视频流，跳过 OCR", flush=True)
+            return
         import ocr_vl
-        from caption_vl import free_vl_model
         cache_path = OUTPUT_DIR / f"{_output_stem(state.audio, state.tag, cfg.summarizer, cfg.chunker, cfg.chunk_chars, keyframes=True)}.ocr.json"
         print(f"[ocr] Qwen2.5-VL 逐字 OCR {len(state.summaries)} chunks（每段 3 帧 union）...",
               flush=True)
         ocr_texts = ocr_vl.ocr_chunks(
             state.summaries, video_for_kf, lang=state.resolved_lang,
             frames_per_chunk=3, cache_path=cache_path)
-        free_vl_model()
         if ocr_texts and len(ocr_texts) == len(state.summaries):
             for c, t in zip(state.summaries, ocr_texts):
                 c["ocr_text"] = t or ""
@@ -1107,8 +1113,8 @@ def _stage_ocr_captions(cfg: PipelineConfig, state: PipelineState) -> None:
               flush=True)
     except Exception as e:
         print(f"      [ocr] 异常：{e}（跳过 OCR，下游自然省略证据块）", flush=True)
+    finally:
         try:
-            from caption_vl import free_vl_model
             free_vl_model()
         except Exception:
             pass
@@ -1552,8 +1558,8 @@ _STAGES = [
     _stage_llm_headline,
     _stage_visual_sims,
     _stage_vlm_captions,
-    _stage_ocr_captions,
     _stage_classify_category_early,
+    _stage_ocr_captions,
     _stage_example_detection,
     _stage_chapters,
     _stage_bilingual,
