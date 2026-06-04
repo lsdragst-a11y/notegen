@@ -28,7 +28,7 @@
 - **OCR 范围**：广——全 teaching/popsci（含 PPT），ground 章标题 + abstract + recap 多环节。
 - **OCR 引擎**：复用 **Qwen2.5-VL-7B-Instruct-AWQ**（已接入、串行加载已解决、读字能力强、
   零新依赖、不动脆弱的 torch 2.3.1 / autoawq 0.2.6 环境）。
-- **抽帧**：每 chunk 等间距 **2-3 帧**各跑 OCR，行级 union 去重（覆盖幻灯片切换 / 短暂命令，
+- **抽帧**：每 chunk 等间距 **3 帧**各跑 OCR，行级 union 去重（覆盖幻灯片切换 / 短暂命令，
   补单关键帧漏抓）。
 - **grounding 策略**：**混合 C** = B（Python 词表确定性校正 ASR 错字，稳赢）+ A（prompt
   证据块 + 严格反编造约束，补屏上新术语）。
@@ -40,7 +40,7 @@
 pipeline (category ∈ {teaching, popsci} 且 --ocr-captions)
   └─ caption_vl.load_vl_model()            # VL 一次驻留（串行加载已解决）
        ├─ caption pass : 每 chunk 1 张 CLIP 关键帧 → 1 句 caption        [现状]
-       ├─ OCR pass(新) : 每 chunk 2-3 帧 → 逐字 OCR → 行级 union 去重     [新增]
+       ├─ OCR pass(新) : 每 chunk 3 帧 → 逐字 OCR → 行级 union 去重       [新增]
        └─ caption_vl.free_vl_model()
   → chunk["ocr_text"] (+ 落盘缓存)
   → B: 全 chunk OCR → 本视频词表 → Python 保守模糊校正 ASR 错字
@@ -63,7 +63,7 @@ load/free。OCR 抽帧复用 `keyframe.sample_frames_for_ranges`。
   > 返回空字符串。**绝不补全、绝不翻译、绝不解释、绝不描述画面。**
 - **接口**：`ocr_chunks(chunks, video_path, lang="zh", frames_per_chunk=3) -> list[str]`，
   返回与 chunks 等长的 `ocr_text`（每段 union 去重后的多行文字，无文字 → `""`）。
-- **union 去重**：2-3 帧各自 OCR 出的行，按归一化（去空白/小写比较）去重，保留原文；
+- **union 去重**：3 帧各自 OCR 出的行，按归一化（去空白/小写比较）去重，保留原文；
   幻灯片渐进出现（同标题多帧重复）只留一份。
 - **失败降级**：单帧打开/推理失败 → 跳过该帧 union 其余；全帧失败 → 该段 `""`。
 
@@ -100,7 +100,7 @@ load/free。OCR 抽帧复用 `keyframe.sample_frames_for_ranges`。
 
 ## 门控
 
-- **新 CLI flag**：`--ocr-captions`（独立于 `--vlm-captions`，因 OCR 是额外 2-3x 帧推理成本，
+- **新 CLI flag**：`--ocr-captions`（独立于 `--vlm-captions`，因 OCR 是额外 ~3x 帧推理成本，
   用户应能单独开关）。
 - **category-gate**：仅 `category ∈ {teaching, popsci}` 生效；vlog/talk 即使 flag on 也跳过
   （recap/OCR 概念在 vlog 上无意义，同现有 recap 门控）。
