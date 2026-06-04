@@ -52,7 +52,8 @@ def _ocr_one_frame(image, model, processor, max_new_tokens: int = 256) -> list[s
 def ocr_chunks(chunks: list[dict], video_path,
                lang: str = "zh",
                frames_per_chunk: int = 3,
-               model_dir: Optional[str] = None) -> list[str]:
+               model_dir: Optional[str] = None,
+               cache_path=None) -> list[str]:
     """对每个 chunk 抽 frames_per_chunk 帧跑 OCR，union 去重。
     返回 list[str]（与 chunks 等长，无文字段填 ""）。复用 caption_vl 的 VL 单例。"""
     import caption_vl
@@ -61,6 +62,12 @@ def ocr_chunks(chunks: list[dict], video_path,
     n = len(chunks)
     if n == 0:
         return []
+    cache = load_ocr_cache(cache_path) if cache_path else {}
+    if cache:
+        keys = [_range_key(c["start"], c["end"]) for c in chunks]
+        if all(k in cache for k in keys):
+            print(f"      [ocr] 命中缓存 {cache_path}（{n} chunks）", flush=True)
+            return [cache[k] for k in keys]
     if model_dir:
         model, processor = caption_vl.load_vl_model(model_dir)
     else:
@@ -91,4 +98,34 @@ def ocr_chunks(chunks: list[dict], video_path,
             print(f"      [ocr] {i+1}/{n} -> {preview}", flush=True)
     n_ok = sum(1 for t in out if t)
     print(f"      [ocr] OCR 出文字 {n_ok}/{n} chunks", flush=True)
+    if cache_path:
+        try:
+            save_ocr_cache(cache_path, chunks, out)
+        except Exception as e:
+            print(f"      [ocr] 缓存写入失败 {e}", flush=True)
     return out
+
+
+import json
+
+
+def _range_key(start: float, end: float) -> str:
+    return f"{round(float(start), 1)}_{round(float(end), 1)}"
+
+
+def load_ocr_cache(cache_path) -> dict:
+    p = Path(cache_path)
+    if not p.exists():
+        return {}
+    try:
+        return json.loads(p.read_text(encoding="utf-8"))
+    except Exception:
+        return {}
+
+
+def save_ocr_cache(cache_path, chunks: list[dict], ocr_texts: list[str]) -> None:
+    data = {}
+    for c, t in zip(chunks, ocr_texts):
+        data[_range_key(c["start"], c["end"])] = t
+    Path(cache_path).write_text(
+        json.dumps(data, ensure_ascii=False, indent=1), encoding="utf-8")
