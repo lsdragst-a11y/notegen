@@ -2112,6 +2112,13 @@ def _split_shared_prefix_titles(titles: list[str], chapters: list[dict],
             break
     if not hit_prefix:
         return titles
+    # hit_prefix 可能以连接词收尾——cn_prefix 贪心吞掉"中断处理与…"的"与"，
+    # 直接套 f"{kw}与{hit_prefix}" 会产出尾缀悬空的"X与中断处理与"（OCR 让 ch3-5
+    # 共享"中断处理与"前缀时暴露）。剥掉尾部连接词后再用；剥到短于阈值则不拆。
+    while hit_prefix and hit_prefix[-1] in "与和及而或跟、":
+        hit_prefix = hit_prefix[:-1]
+    if len(hit_prefix) < min_prefix_len:
+        return titles
     # 视频整体主题守门：≥70% 章共享前缀 = 主题词（如整集讲"中断"），不拆
     if len(hit_indices) / K >= max_share_ratio:
         print(f"      [llm-chapter-title] J7-C 跳过: prefix={hit_prefix!r} "
@@ -2138,6 +2145,11 @@ def _split_shared_prefix_titles(titles: list[str], chapters: list[dict],
                 kw = str(kw).strip()
                 # 跳过 1 字、共享前缀字、generic、ASR 错字
                 if len(kw) < 2:
+                    continue
+                # 纯数字/二进制串不配做标题锚词：OCR 让幻灯片上的 "20"(20us 计时)、
+                # "1110"/"0100"(屏蔽字) 混进 keywords，曾产出 "20与中断处理" 这类标题。
+                # isalpha 对 CJK 与 DMA/CPU/PC 等有意义词为真，对纯数字为假，正好甄别。
+                if not any(ch.isalpha() for ch in kw):
                     continue
                 if kw in hit_prefix or hit_prefix in kw:
                     continue
