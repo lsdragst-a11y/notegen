@@ -1863,6 +1863,22 @@ def _calibrate_headline_words(headline: str, keywords: list,
     return {"ok": ok, "drop": drop}
 
 
+_OCR_EVIDENCE_CLAUSE = (
+    "\n【屏幕文字】是画面逐字转写，用来：(1) 校正专有名词/命令/术语的准确写法；"
+    "(2) 在讲解明确说明其作用时可引用准确名称。**严禁**为屏幕文字里的 token 编造"
+    "未在讲解中出现的作用/定义；与本段无关的屏幕文字忽略。\n")
+
+
+def _ocr_line(chunk: dict, max_len: int = 120) -> str:
+    """chunk 有 ocr_text 时返回 '    屏幕文字: ...' 行（截断），否则空串。"""
+    import re as _re
+    t = (chunk.get("ocr_text") or "").strip()
+    if not t:
+        return ""
+    t = _re.sub(r"\s+", " ", t)[:max_len]
+    return f"\n    屏幕文字: {t}"
+
+
 def _run_title_one(ch: dict, chunks: list[dict], model, tok, sys_prompt: str,
                    lang: str, max_new_tokens: int = 120) -> Optional[str]:
     """逐章隔离命名：只喂**本章** chunks（段标题 + 高频词 + 内容 snippet），
@@ -1895,6 +1911,9 @@ def _run_title_one(ch: dict, chunks: list[dict], model, tok, sys_prompt: str,
         if snippet:
             snippet = snippet[:120].replace("\n", " ")
             lines.append(f"    内容: {snippet}")
+        ocr_ln = _ocr_line(c)
+        if ocr_ln:
+            lines.append(ocr_ln.lstrip("\n"))
     body = "\n".join(lines)
     drop_clause = (
         "\n⚠️ 标注了「已识别 ASR 错字」的词是 Python 校准过的，**绝对禁止**\n"
@@ -1908,7 +1927,7 @@ def _run_title_one(ch: dict, chunks: list[dict], model, tok, sys_prompt: str,
     user_prompt = (
         "请为下面这**一章**生成 1 个章标题——**只**依据本章「段标题/高频词/内容」，\n"
         "禁止编造本章没出现的概念。\n"
-        f"{drop_clause}{dup_headline_clause}\n"
+        f"{drop_clause}{dup_headline_clause}{_OCR_EVIDENCE_CLAUSE}\n"
         f"{body}\n\n"
         "输出 JSON 数组（恰好 1 个元素）：")
     messages = [
@@ -2629,6 +2648,9 @@ def _run_abstract_batch(chapters_subset: list[dict], model, tok, sys_prompt: str
                 for w in cal["drop"]:
                     snippet = snippet.replace(w, "[?]")
                 lines.append(f"    内容: {snippet}")
+            ocr_ln = _ocr_line(sub_c)
+            if ocr_ln:
+                lines.append(ocr_ln.lstrip("\n"))
     body = "\n".join(lines)
     n = len(chapters_subset)
     drop_clause = (
@@ -2642,7 +2664,7 @@ def _run_abstract_batch(chapters_subset: list[dict], model, tok, sys_prompt: str
                    f"不要从{unit_word}标题字面猜测含义，"
                    f"不要写「内容」里没出现的概念或场景，"
                    f"**不要借用其它{unit_word}的内容**。"
-                   f"{drop_clause}\n{body}\n\n"
+                   f"{drop_clause}{_OCR_EVIDENCE_CLAUSE}\n{body}\n\n"
                    f"输出 JSON 数组（必须 {n} 个元素）：")
     messages = [
         {"role": "system", "content": _system_with_lang(sys_prompt, lang, "abstract")},
@@ -2917,6 +2939,9 @@ def generate_chapter_recaps(chapters: list[dict],
                 for w in cal["drop"]:
                     snippet = snippet.replace(w, "[?]")
                 lines.append(f"    内容: {snippet}")
+            ocr_ln = _ocr_line(sub_c)
+            if ocr_ln:
+                lines.append(ocr_ln.lstrip("\n"))
     body = "\n".join(lines)
     drop_clause = (
         f"\n⚠️ 文本中的 [?] 是 Python 校准过的 ASR 错字 mask"
@@ -2932,7 +2957,7 @@ def generate_chapter_recaps(chapters: list[dict],
                    f"字符串，禁止合并章。\n"
                    f"**每条 bullet 必须含谓词**（命题/定义/因果/步骤），"
                    f"禁止纯名词短语如 `- 距离向量算法`——这种零信息 bullet 会被判 0 分，整批重试。\n"
-                   f"{titles_clause}{drop_clause}\n{body}\n\n"
+                   f"{titles_clause}{drop_clause}{_OCR_EVIDENCE_CLAUSE}\n{body}\n\n"
                    f"输出 JSON 数组（必须 {K} 个元素，每个元素是含 \\n 的多行 "
                    f"bullet 字符串）：")
     model, tok = load_model(model_id)
