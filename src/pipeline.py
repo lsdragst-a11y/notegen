@@ -707,6 +707,7 @@ class PipelineConfig:
     confidence_threshold: float = 0.5
     lang: str = "auto"
     vlm_captions: bool = False
+    ocr_captions: bool = False
     quality: str = "best"
     force_outline: str | None = None
 
@@ -1531,6 +1532,7 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         confidence_threshold: float = 0.5,
         lang: str = "auto",
         vlm_captions: bool = False,
+        ocr_captions: bool = False,
         quality: str = "best",
         force_outline: str | None = None) -> Path:
     """Orchestrator：把 17 个 kwarg 装进 PipelineConfig，依次跑 18 个 stage。"""
@@ -1541,8 +1543,8 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         keyframes=keyframes, mm_alpha=mm_alpha, chunker=chunker,
         learning_mode=learning_mode, dedupe_asr=dedupe_asr,
         llm_chapters=llm_chapters, confidence_threshold=confidence_threshold,
-        lang=lang, vlm_captions=vlm_captions, quality=quality,
-        force_outline=force_outline)
+        lang=lang, vlm_captions=vlm_captions, ocr_captions=ocr_captions,
+        quality=quality, force_outline=force_outline)
     state = PipelineState()
     n_stages = len(_STAGES)
     for idx, stage in enumerate(_STAGES, start=1):
@@ -1610,6 +1612,9 @@ def main():
                         "给每个关键帧生 1 句 caption，喂 segment LLM 做更精准切分。"
                         "需要 models/Qwen2.5-VL-7B-Instruct-AWQ/（~5GB），跟 instruct "
                         "互斥占 VRAM，跑完会 free 让 instruct 加载回来。")
+    p.add_argument("--ocr-captions", action="store_true",
+                   help="对 teaching/popsci 视频每 chunk 抽 3 帧跑 VL OCR，"
+                        "屏上逐字文字 ground 章标题/abstract/recap（默认关，额外 ~3x 帧推理）")
     p.add_argument("--force-outline", default=None, metavar="PATH",
                    help="人工修订分段用：从 JSON 读固定章节 partition（list of "
                         "{\"title\", \"indices\": [chunk_idx...]}），跳过 LLM 自动分段，"
@@ -1628,7 +1633,8 @@ def main():
         learning_mode=args.learning_mode, dedupe_asr=args.dedupe_asr,
         confidence_threshold=args.confidence_threshold,
         llm_chapters=args.llm_chapters, lang=args.lang,
-        vlm_captions=args.vlm_captions, quality=args.quality,
+        vlm_captions=args.vlm_captions, ocr_captions=args.ocr_captions,
+        quality=args.quality,
         force_outline=args.force_outline)
 
 
