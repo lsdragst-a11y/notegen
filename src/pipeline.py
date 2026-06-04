@@ -1015,7 +1015,9 @@ def _stage_vlm_captions(cfg: PipelineConfig, state: PipelineState) -> None:
         from caption_vl import caption_keyframes, caption_redundancy, free_vl_model
         print("[vl-cap] Qwen2.5-VL 给关键帧生 caption ...", flush=True)
         captions = caption_keyframes(state.summaries, lang=state.resolved_lang)
-        free_vl_model()
+        if not cfg.ocr_captions:
+            free_vl_model()
+        # else：留给 _stage_ocr_captions 复用同一驻留，由它跑完 free
         # 把 caption 写回 chunk dict 让 summary.json / 前端 / 论文 §5.4 截图能看
         if captions and len(captions) == len(state.summaries):
             for c, cap in zip(state.summaries, captions):
@@ -1071,6 +1073,45 @@ def _stage_vlm_captions(cfg: PipelineConfig, state: PipelineState) -> None:
                   f"caption 用作切分主信号", flush=True)
     except Exception as e:
         print(f"      [vl-cap] 异常：{e}（跳过 caption，回退 sim cue）", flush=True)
+
+
+# ============ Stage 11b: OCR caption（Qwen2.5-VL 逐字屏上文字） ============
+def _stage_ocr_captions(cfg: PipelineConfig, state: PipelineState) -> None:
+    # 屏上逐字文字 ground 章标题/abstract/recap。需 --keyframes + --ocr-captions，
+    # 且仅 teaching/popsci（vlog/talk 屏上无教学文字，跳过）。
+    if not (cfg.ocr_captions and cfg.keyframes and state.summaries):
+        return
+    if state.inferred_category not in ("teaching", "popsci"):
+        print(f"      [ocr] category={state.inferred_category} 非 teaching/popsci，跳过 OCR",
+              flush=True)
+        return
+    video_for_kf = _resolve_video_for_keyframes(state.video)
+    if video_for_kf is None:
+        print(f"      [ocr] 找不到 {state.video} 视频流，跳过 OCR", flush=True)
+        return
+    try:
+        import ocr_vl
+        from caption_vl import free_vl_model
+        cache_path = OUTPUT_DIR / f"{_output_stem(state.audio, state.tag, cfg.summarizer, cfg.chunker, cfg.chunk_chars, keyframes=True)}.ocr.json"
+        print(f"[ocr] Qwen2.5-VL 逐字 OCR {len(state.summaries)} chunks（每段 3 帧 union）...",
+              flush=True)
+        ocr_texts = ocr_vl.ocr_chunks(
+            state.summaries, video_for_kf, lang=state.resolved_lang,
+            frames_per_chunk=3, cache_path=cache_path)
+        free_vl_model()
+        if ocr_texts and len(ocr_texts) == len(state.summaries):
+            for c, t in zip(state.summaries, ocr_texts):
+                c["ocr_text"] = t or ""
+        n_ok = sum(1 for t in (ocr_texts or []) if t)
+        print(f"      [ocr] 写回 ocr_text，{n_ok}/{len(state.summaries)} 段有屏上文字",
+              flush=True)
+    except Exception as e:
+        print(f"      [ocr] 异常：{e}（跳过 OCR，下游自然省略证据块）", flush=True)
+        try:
+            from caption_vl import free_vl_model
+            free_vl_model()
+        except Exception:
+            pass
 
 
 # ============ Stage 12: 内容大类轻量分类（早期，给 LLM 切分用） ============
@@ -1511,6 +1552,7 @@ _STAGES = [
     _stage_llm_headline,
     _stage_visual_sims,
     _stage_vlm_captions,
+    _stage_ocr_captions,
     _stage_classify_category_early,
     _stage_example_detection,
     _stage_chapters,
