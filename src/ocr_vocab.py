@@ -98,26 +98,27 @@ def correct_headline_and_keywords(chunks: list[dict], vocab: dict) -> int:
         if hl:
             new_hl = hl
             # Pass 1: jieba token-level correction
-            for tok in set(jieba.cut(hl)):
+            for tok in sorted(set(jieba.cut(hl))):
                 fixed = correct_token(tok, vocab)
                 if fixed:
                     new_hl = new_hl.replace(tok, fixed)
                     n_fix += 1
-            # Pass 2: substring scan for multi-token CJK terms (e.g. "数据连络层"→"数据链路层"
-            # where jieba splits the ASR mishearing but vocab has the correct compound form)
-            for vterm in vocab["cjk"]:
-                vlen = len(vterm)
-                if vlen < 3:
-                    continue
-                for start in range(len(new_hl) - vlen + 1):
+            # Pass 2: 多 token CJK 复合术语（jieba 把误听 "数据连络层" 切成 数据+连络+层，
+            # 而词表里有正确复合形 "数据链路层"）。用**全词表**跑 correct_token 保留"唯一候选"
+            # 歧义闸（不退化成 singleton 每词独立命中），并按长度降序 + 位置左→右**确定性**
+            # 遍历，避免 set 迭代顺序导致非确定性与多候选误改。
+            cjk_lens = sorted({len(v) for v in vocab["cjk"] if len(v) >= 3}, reverse=True)
+            for vlen in cjk_lens:
+                start = 0
+                while start <= len(new_hl) - vlen:
                     sub = new_hl[start:start + vlen]
-                    if sub == vterm:
-                        break  # already correct substring present
-                    fixed = correct_token(sub, {"cjk": {vterm}, "en": set()})
-                    if fixed:
+                    fixed = correct_token(sub, vocab) if not sub.isascii() else None
+                    if fixed and fixed != sub:
                         new_hl = new_hl[:start] + fixed + new_hl[start + vlen:]
                         n_fix += 1
-                        break
+                        start += len(fixed)
+                    else:
+                        start += 1
             c["headline"] = new_hl
         kws = c.get("keywords") or []
         if kws:
