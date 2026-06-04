@@ -1108,6 +1108,16 @@ def _stage_ocr_captions(cfg: PipelineConfig, state: PipelineState) -> None:
         if ocr_texts and len(ocr_texts) == len(state.summaries):
             for c, t in zip(state.summaries, ocr_texts):
                 c["ocr_text"] = t or ""
+        # B 路：从本视频 OCR 文字建词表，保守校正 headline/keywords 里的 ASR 错字。
+        try:
+            import ocr_vocab
+            vocab = ocr_vocab.build_vocab(state.summaries)
+            n_fix = ocr_vocab.correct_headline_and_keywords(state.summaries, vocab)
+            print(f"      [ocr-vocab] 词表 cjk={len(vocab['cjk'])} en={len(vocab['en'])}，"
+                  f"校正 headline/keywords {n_fix} 处", flush=True)
+        except Exception as e:
+            print(f"      [ocr-vocab] 校正异常：{e}（跳过 B 路，保留原 headline）",
+                  flush=True)
         n_ok = sum(1 for t in (ocr_texts or []) if t)
         print(f"      [ocr] 写回 ocr_text，{n_ok}/{len(state.summaries)} 段有屏上文字",
               flush=True)
