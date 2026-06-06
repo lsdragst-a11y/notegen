@@ -214,7 +214,7 @@
       "配置Agent权限和插件功能"
     ],
     "summary_zh": "本视频从回滚操作开始，依次介绍了计划模式与终端命令、上下文管理和回滚、Skills与Agents的使用，最后探讨了Agent权限与插件功能，全面展示了ClaudeCode的各项实用技巧。",
-    "summary_en": "This chapter starts with rollback operations and sequentially covers planned mode and terminal commands, context management and rollback, the use of Skills and Agents, and concludes with an exploration of Agent permissions and plugin functions, providing a comprehensive overview of ClaudeCode's practical techniques.",
+    "summary_en": "This chapter starts with rollback operations and sequentially covers Plan Mode and terminal commands, context management and rollback, the use of Skills and Agents, and concludes with an exploration of Agent permissions and plugin functions, providing a comprehensive overview of ClaudeCode's practical techniques.",
     "takeaways_zh": [
       "学习如何使用回滚命令来撤销操作",
       "掌握计划模式和终端命令的使用",
@@ -224,7 +224,7 @@
     ],
     "takeaways_en": [
       "Learn how to use rollback commands to undo operations",
-      "Master the use of scheduled mode and terminal commands",
+      "Master the use of Plan Mode and terminal commands",
       "Understand the application of context management and rollback features",
       "Learn how to create and use Agents",
       "Configure Agent permissions and plugin functions"
