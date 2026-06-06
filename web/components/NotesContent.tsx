@@ -1,18 +1,22 @@
 "use client";
 import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
-import { Sparkles, Target, Clock, Expand, ChevronDown } from "lucide-react";
+import { Sparkles, Target, Clock, Expand, ChevronDown, Play } from "lucide-react";
 import type { Chapter, Chunk, Category, Overview } from "@/lib/types";
-import { chunkMarks, overviewKeywords, buildGlossary, filterStopwords, formatTime } from "@/lib/notes";
+import { chunkMarks, overviewKeywords, buildGlossary, formatTime } from "@/lib/notes";
 import { useLang, pickByLang } from "./LangContext";
 import GlossaryList from "./GlossaryList";
 import ChapterQuiz from "./ChapterQuiz";
 import Lightbox, { LightboxItem } from "./Lightbox";
 import VlogTimeline from "./VlogTimeline";
 import OverviewHero from "./OverviewHero";
+import KeyPointModal from "./KeyPointModal";
+import BookmarkMenu from "./BookmarkMenu";
+import { bookmarkKey } from "@/lib/bookmarks";
 
 interface Props {
   keyframeBase: string;
+  noteId: string;
   title: string;
   summary: Chunk[];
   chapters: Chapter[];
@@ -25,7 +29,7 @@ interface Props {
 }
 
 export default function NotesContent({
-  keyframeBase, title, summary, chapters, overview, currentTime, onSeek, category = "teaching",
+  keyframeBase, noteId, title, summary, chapters, overview, currentTime, onSeek, category = "teaching",
 }: Props) {
   const { lang } = useLang();
   const keywords = overviewKeywords(summary, 8, lang);
@@ -59,6 +63,7 @@ export default function NotesContent({
     [summary, keyframeBase]
   );
   const [lbIdx, setLbIdx] = useState<number | null>(null);
+  const [detailIdx, setDetailIdx] = useState<number | null>(null);
 
   // chunk idx → lightbox idx 映射（用于打开时定位）
   const lbIdxByChunk = useMemo(() => {
@@ -99,15 +104,8 @@ export default function NotesContent({
         )}
       </motion.section>
 
-      {/* 全文总结 hero：散文概览 + 你将学到 + 章节比例条（有 overview 才渲染） */}
-      {overview && (
-        <OverviewHero
-          overview={overview}
-          chapters={chapters}
-          currentTime={currentTime}
-          onSeek={onSeek}
-        />
-      )}
+      {/* 全文总结 hero：散文概览 + 你将学到（有 overview 才渲染） */}
+      {overview && <OverviewHero overview={overview} />}
 
       {/* 中间主区：教学/科普 → 知识点速览卡片；vlog/talk → 时间轴 */}
       {showKnowledgePoints ? (
@@ -115,13 +113,15 @@ export default function NotesContent({
           <h2 className="text-lg font-semibold mb-3 text-[var(--fg)]">
             {lang === "en" ? "💡 Key Points" : "💡 知识点速览"}
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
             {summary.map((c, i) => {
               const marks = showMarks ? chunkMarks(c) : [];
               const isActive = i === currentChunkIdx;
               const kfRel = c.keyframe?.rel;
               const lbi = lbIdxByChunk.get(i);
-              const handleCardActivate = () => onSeek(c.start);
+              const headline = pickByLang(c, "headline", lang) || c.text.slice(0, 30);
+              const caption = pickByLang(c, "summary", lang) || pickByLang(c, "text", lang).slice(0, 80);
+              const handleCardActivate = () => setDetailIdx(i);
               return (
                 <motion.div
                   key={i}
@@ -137,74 +137,100 @@ export default function NotesContent({
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04, type: "spring", stiffness: 200, damping: 24 }}
-                  whileHover={{ y: -2 }}
-                  className={`apple-card p-4 text-left flex gap-3 cursor-pointer
+                  whileHover={{ y: -3 }}
+                  className={`apple-card overflow-hidden text-left flex flex-col cursor-pointer
                               ${isActive ? "ring-2 ring-[var(--accent)]" : ""}`}
                   style={marks.includes("emphasis") ? {
                     boxShadow: "0 0 0 1px rgba(255, 186, 46, 0.45), var(--shadow-md)"
                   } : undefined}
                 >
-                  {kfRel && (
-                    <button
-                      type="button"
-                      onClick={e => {
-                        e.stopPropagation();
-                        if (lbi !== undefined) setLbIdx(lbi);
-                      }}
-                      className="shrink-0 w-20 h-14 rounded-lg overflow-hidden bg-[var(--bg-muted)]
-                                 relative group/kf"
-                      title="查看大图"
-                    >
+                  {/* 幻灯片大图——卡片主体 */}
+                  <div className="relative aspect-video bg-[var(--bg-muted)] overflow-hidden group/kf">
+                    {kfRel ? (
                       <img src={`${keyframeBase}${kfRel}`}
-                           alt="" className="w-full h-full object-cover dark:brightness-90
-                                              transition-transform group-hover/kf:scale-[1.06]" />
-                      <span className="absolute inset-0 bg-black/35 opacity-0
-                                       group-hover/kf:opacity-100 transition-opacity
-                                       flex items-center justify-center text-white">
-                        <Expand size={14} />
-                      </span>
-                    </button>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-1.5 mb-1">
-                      <span className="text-xs text-[var(--fg-tertiary)] tabular-nums">
-                        {formatTime(c.start)}
-                      </span>
-                      {marks.includes("emphasis") && (
-                        <span className="mark-emphasis"><Sparkles size={11} color="#b8851a" /></span>
-                      )}
-                      {marks.includes("hard") && (
-                        <span className="mark-hard"><Target size={11} color="#b86a05" /></span>
+                           alt="" className="h-full w-full object-cover dark:brightness-90
+                                              transition-transform duration-300 group-hover/kf:scale-[1.04]" />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center
+                                      bg-gradient-to-br from-[var(--bg-muted)] to-[var(--bg)]
+                                      text-[var(--fg-tertiary)]">
+                        <Clock size={20} />
+                      </div>
+                    )}
+                    {/* hover 操作浮层：跳转 + 查看大图 */}
+                    <div className="absolute inset-0 flex items-center justify-center gap-2.5
+                                    bg-black/0 opacity-0 transition-all
+                                    group-hover/kf:bg-black/35 group-hover/kf:opacity-100">
+                      <button
+                        type="button"
+                        onClick={e => { e.stopPropagation(); onSeek(c.start); }}
+                        title={lang === "en" ? "Jump to this point" : "跳转到此处"}
+                        aria-label={lang === "en" ? "Jump to this point" : "跳转到此处"}
+                        className="flex h-9 w-9 items-center justify-center rounded-full
+                                   bg-white/90 text-[var(--fg)] shadow-md transition-transform
+                                   hover:scale-110 hover:bg-white"
+                      >
+                        <Play size={15} fill="currentColor" className="translate-x-[1px]" />
+                      </button>
+                      {kfRel && (
+                        <button
+                          type="button"
+                          onClick={e => { e.stopPropagation(); if (lbi !== undefined) setLbIdx(lbi); }}
+                          title={lang === "en" ? "View slide" : "查看大图"}
+                          aria-label={lang === "en" ? "View slide" : "查看大图"}
+                          className="flex h-9 w-9 items-center justify-center rounded-full
+                                     bg-white/90 text-[var(--fg)] shadow-md transition-transform
+                                     hover:scale-110 hover:bg-white"
+                        >
+                          <Expand size={15} />
+                        </button>
                       )}
                     </div>
-                    <div className="text-sm font-medium leading-snug line-clamp-2">
-                      {pickByLang(c, "headline", lang) || c.text.slice(0, 30)}
+                    {/* 时间角标（左下） */}
+                    <span className="pointer-events-none absolute bottom-2 left-2 rounded-md
+                                     bg-black/55 px-1.5 py-0.5 text-[11px] tabular-nums text-white
+                                     backdrop-blur-sm">
+                      {formatTime(c.start)}
+                    </span>
+                    {/* ⭐🎯 角标（右上） */}
+                    {(marks.includes("emphasis") || marks.includes("hard")) && (
+                      <div className="pointer-events-none absolute right-2 top-2 flex gap-1">
+                        {marks.includes("emphasis") && (
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full
+                                           bg-white/90 shadow-sm"><Sparkles size={13} color="#b8851a" /></span>
+                        )}
+                        {marks.includes("hard") && (
+                          <span className="flex h-6 w-6 items-center justify-center rounded-full
+                                           bg-white/90 shadow-sm"><Target size={13} color="#b86a05" /></span>
+                        )}
+                      </div>
+                    )}
+                    {/* 收藏（左上，常显） */}
+                    <BookmarkMenu
+                      size={14}
+                      bm={{
+                        key: bookmarkKey(noteId, "chunk", i),
+                        noteId, noteTitle: title, kind: "chunk", idx: i,
+                        title: c.headline_zh || c.headline || c.text.slice(0, 30),
+                        title_en: c.headline_en,
+                        time: c.start,
+                        keyframeRel: kfRel,
+                      }}
+                      className="absolute left-2 top-2 flex h-7 w-7 items-center justify-center
+                                 rounded-full bg-white/90 text-[var(--fg-secondary)] shadow-sm
+                                 hover:text-[var(--accent)]"
+                    />
+                  </div>
+                  {/* 标题 + 一句话说明 */}
+                  <div className="flex flex-1 flex-col p-3.5">
+                    <div className="text-sm font-semibold leading-snug line-clamp-2 text-[var(--fg)]">
+                      {headline}
                     </div>
-                    {(() => {
-                      const summary_t = pickByLang(c, "summary", lang);
-                      const text_t = pickByLang(c, "text", lang);
-                      const preview = summary_t || text_t.slice(0, 120);
-                      return preview ? (
-                        <div className="mt-1.5 text-xs text-[var(--fg-secondary)] leading-relaxed line-clamp-3">
-                          {preview}
-                        </div>
-                      ) : null;
-                    })()}
-                    {(() => {
-                      const langKws =
-                        (c as unknown as Record<string, unknown>)[`keywords_${lang}`];
-                      const kws = (Array.isArray(langKws) && langKws.length
-                        ? langKws : c.keywords) as string[] | undefined;
-                      if (!kws || !kws.length) return null;
-                      const clean = filterStopwords(kws).slice(0, 3);
-                      return clean.length > 0 ? (
-                        <div className="mt-1.5 flex flex-wrap gap-1">
-                          {clean.map((kw, i) => (
-                            <span key={`${kw}-${i}`} className="text-[10px] text-[var(--fg-tertiary)]">·{kw}</span>
-                          ))}
-                        </div>
-                      ) : null;
-                    })()}
+                    {caption && (
+                      <div className="mt-1.5 text-xs leading-relaxed text-[var(--fg-secondary)] line-clamp-2">
+                        {caption}
+                      </div>
+                    )}
                   </div>
                 </motion.div>
               );
@@ -243,12 +269,25 @@ export default function NotesContent({
                   <span className="text-[var(--fg-tertiary)] mr-2 tabular-nums">{ci + 1}</span>
                   {pickByLang(ch, "title", lang)}
                 </h3>
-                <button
-                  onClick={() => onSeek(ch.start)}
-                  className="shrink-0 text-xs tabular-nums text-[var(--accent)] hover:underline"
-                >
-                  {formatTime(ch.start)}
-                </button>
+                <div className="flex shrink-0 items-center gap-2">
+                  <BookmarkMenu
+                    size={15}
+                    bm={{
+                      key: bookmarkKey(noteId, "chapter", ci),
+                      noteId, noteTitle: title, kind: "chapter", idx: ci,
+                      title: ch.title_zh || ch.title,
+                      title_en: ch.title_en,
+                      time: ch.start,
+                    }}
+                    className="text-[var(--fg-tertiary)] hover:text-[var(--accent)]"
+                  />
+                  <button
+                    onClick={() => onSeek(ch.start)}
+                    className="text-xs tabular-nums text-[var(--accent)] hover:underline"
+                  >
+                    {formatTime(ch.start)}
+                  </button>
+                </div>
               </div>
               {(() => { const ab = pickByLang(ch, "abstract", lang); return ab ? (
                 <p className="text-sm text-[var(--fg-secondary)] leading-relaxed mb-2">
@@ -362,6 +401,17 @@ export default function NotesContent({
         index={lbIdx}
         onClose={() => setLbIdx(null)}
         onIndexChange={setLbIdx}
+        onSeek={onSeek}
+      />
+
+      <KeyPointModal
+        chunk={detailIdx !== null ? summary[detailIdx] : null}
+        chunkIdx={detailIdx ?? -1}
+        noteId={noteId}
+        keyframeBase={keyframeBase}
+        noteTitle={title}
+        marks={detailIdx !== null && showMarks ? chunkMarks(summary[detailIdx]) : []}
+        onClose={() => setDetailIdx(null)}
         onSeek={onSeek}
       />
     </div>

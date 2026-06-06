@@ -20,9 +20,16 @@ interface PageProps {
 export default function NoteDetailPage({ params }: PageProps) {
   const { id } = use(params);
   const { lang } = useLang();
+  // 书签深链：?t=秒 → 播放器就绪后定位 + 初始章节高亮
+  const [startTime] = useState(() => {
+    if (typeof window === "undefined") return 0;
+    const t = new URLSearchParams(window.location.search).get("t");
+    const n = t ? parseFloat(t) : NaN;
+    return Number.isFinite(n) && n > 0 ? n : 0;
+  });
   const [bundle, setBundle] = useState<NoteBundle | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [currentTime, setCurrentTime] = useState(0);
+  const [currentTime, setCurrentTime] = useState(startTime);
   const [spotOpen, setSpotOpen] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [mainInView, setMainInView] = useState(true);
@@ -193,6 +200,7 @@ export default function NoteDetailPage({ params }: PageProps) {
               chapters={bundle.chapters}
               onTimeUpdate={setCurrentTime}
               onPlayStateChange={setIsPlaying}
+              startTime={startTime}
             />
           </div>
           {bundle.chapters.length > 1 && (
@@ -227,6 +235,7 @@ export default function NoteDetailPage({ params }: PageProps) {
         <div className="min-w-0">
           <NotesContent
             keyframeBase={bundle.keyframeBase}
+            noteId={id}
             title={title}
             summary={bundle.summary}
             chapters={bundle.chapters}

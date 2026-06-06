@@ -19,6 +19,8 @@ interface Props {
   onTimeUpdate?: (t: number) => void;
   onPlayStateChange?: (playing: boolean) => void;
   poster?: string;
+  /** 深链初始定位（秒）：从书签页 ?t= 跳转时，播放器就绪后自动 seek 一次。 */
+  startTime?: number;
 }
 
 /**
@@ -28,7 +30,7 @@ interface Props {
  * - 苹果蓝主色（在 globals.css 用 --plyr-color-main 覆盖）
  */
 const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(function VideoPlayer(
-  { src, chapters, onTimeUpdate, onPlayStateChange, poster }, ref
+  { src, chapters, onTimeUpdate, onPlayStateChange, poster, startTime }, ref
 ) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const plyrRef = useRef<Plyr | null>(null);
@@ -60,6 +62,17 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(function VideoPlayer(
         tooltips: { controls: true, seek: true },
       });
       plyrRef.current = player;
+      // 深链定位：就绪/元数据加载后 seek 一次（多事件兜底，首次命中即止）
+      if (startTime && startTime > 0) {
+        let seeked = false;
+        const doSeek = () => {
+          if (seeked) return;
+          try { player.currentTime = startTime; seeked = true; } catch {}
+        };
+        player.once("ready", doSeek);
+        player.once("loadedmetadata", doSeek);
+        player.once("canplay", doSeek);
+      }
       const handler = () => {
         if (onTimeUpdate && plyrRef.current) onTimeUpdate(plyrRef.current.currentTime);
       };

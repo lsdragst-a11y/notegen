@@ -1,22 +1,19 @@
 "use client";
 import { motion } from "framer-motion";
 import { FileText, Sparkles } from "lucide-react";
-import type { Chapter, Overview } from "@/lib/types";
-import { formatTime } from "@/lib/notes";
+import type { Overview } from "@/lib/types";
 import { useLang, pickByLang } from "./LangContext";
 
 interface Props {
   overview: Overview;
-  chapters: Chapter[];
-  currentTime: number;
-  onSeek: (sec: number) => void;
 }
 
 /**
- * 文档级「全文总结」hero：散文概览 + 「你将学到」要点 + 按时长比例的可点击章节条。
+ * 文档级「全文总结」hero：散文概览 + 「你将学到」要点。
  * overview / takeaways 走 lang fallback（缺 _en 回退中文），无 overview 时不渲染。
+ * 章节结构的可视化已交给左栏 ChapterNav + 知识点幻灯片画廊，本卡专注散文总结。
  */
-export default function OverviewHero({ overview, chapters, currentTime, onSeek }: Props) {
+export default function OverviewHero({ overview }: Props) {
   const { lang } = useLang();
   const summary = pickByLang(overview, "summary", lang);
   const takeaways = (() => {
@@ -25,11 +22,6 @@ export default function OverviewHero({ overview, chapters, currentTime, onSeek }
     return overview.takeaways || [];
   })();
   if (!summary && takeaways.length === 0) return null;
-
-  const span = chapters.length
-    ? chapters[chapters.length - 1].end - chapters[0].start
-    : 0;
-  const curIdx = chapters.findIndex(c => currentTime >= c.start && currentTime < c.end);
 
   return (
     <motion.section
@@ -63,37 +55,6 @@ export default function OverviewHero({ overview, chapters, currentTime, onSeek }
               </li>
             ))}
           </ul>
-        </div>
-      )}
-
-      {chapters.length > 1 && span > 0 && (
-        <div className="mt-5">
-          <div className="flex items-center justify-between text-xs text-[var(--fg-tertiary)] mb-1.5">
-            <span>{lang === "en" ? "Chapters" : "章节构成"} · {formatTime(span)}</span>
-            <span>{lang === "en" ? "click to jump" : "点击跳转"}</span>
-          </div>
-          <div className="flex gap-1 h-9">
-            {chapters.map((ch, i) => {
-              const pct = ((ch.end - ch.start) / span) * 100;
-              const active = i === curIdx;
-              return (
-                <button
-                  key={i}
-                  onClick={() => onSeek(ch.start)}
-                  title={`${i + 1}. ${pickByLang(ch, "title", lang)} · ${formatTime(ch.start)}`}
-                  style={{ flexGrow: pct, flexBasis: 0, minWidth: 22 }}
-                  className={`rounded-md transition-all flex items-center justify-center
-                              text-[11px] font-medium tabular-nums
-                              ${active
-                                ? "bg-[var(--accent)] text-white shadow-[var(--shadow-sm)]"
-                                : "bg-[var(--bg-muted)] text-[var(--fg-tertiary)] "
-                                  + "hover:text-[var(--fg)] hover:ring-1 hover:ring-[var(--accent)]"}`}
-                >
-                  {i + 1}
-                </button>
-              );
-            })}
-          </div>
         </div>
       )}
     </motion.section>
