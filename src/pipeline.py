@@ -34,6 +34,7 @@ from asr import (transcribe, apply_term_corrections, dedupe_consecutive_segments
                  _tag_for_model)
 from summarize import chunk_by_chars, chunk_by_texttile, split_oversize_chunks, to_markdown
 from summarize import summarize_chunks as summarize_chunks_extractive
+from progress import emit_progress, STAGE_LABELS
 
 OUTPUT_DIR = Path("data/outputs")
 META_DIR = Path("data/raw")
@@ -1543,7 +1544,10 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         lang=lang, vlm_captions=vlm_captions, quality=quality,
         force_outline=force_outline)
     state = PipelineState()
-    for stage in _STAGES:
+    n_stages = len(_STAGES)
+    for idx, stage in enumerate(_STAGES, start=1):
+        key = stage.__name__.replace("_stage_", "")
+        emit_progress(key, STAGE_LABELS.get(key, key), idx, n_stages)
         stage(cfg, state)
     assert state.md_path is not None
     return state.md_path
