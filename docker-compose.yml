@@ -1,0 +1,12 @@
+# 子项目 #1 只容器化 Redis（一条命令起队列后端）。api / worker / web 原生跑——
+# worker 要直吃本机 GPU，Windows 下 GPU 透传进容器很痛，全容器化留到子项目 #3。
+services:
+  redis:
+    image: redis:7-alpine
+    # 开 AOF 持久化：worker/进程重启后队列与 job 状态不丢
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./data/redis:/data
+    restart: unless-stopped

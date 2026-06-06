@@ -28,3 +28,8 @@ python-multipart
 numpy<2
 tqdm
 pyyaml
+
+# 在线任务队列（service-hardening 子项目）
+rq>=1.16,<2.0
+redis>=5.0,<6.0
+fakeredis>=2.20  # 仅测试用：无需真 Redis 跑集成断言
