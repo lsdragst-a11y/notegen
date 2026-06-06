@@ -83,6 +83,11 @@ def _probe_duration(video_path: Path) -> float:
 _jobs: dict[str, dict] = {}
 _jobs_lock = threading.Lock()
 
+# 串行闸：GPU 只有一块，pipeline 同一时刻只能跑一个。否则同时来两个请求会并行
+# spawn 两个 pipeline → 两份 7B 模型抢同一张卡 → 黑屏/花屏崩溃。抢不到闸的任务停在
+# 「排队中」阻塞等待。这是「并发=1 的最小队列」，后续会被 Redis+RQ 替换。
+_PIPELINE_GATE = threading.Semaphore(1)
+
 
 def _emit(job_id: str, **kwargs):
     """更新 job 状态 + 追加事件到列表（SSE 会消费）。"""
@@ -119,6 +124,23 @@ def _normalize_quality(q: Optional[str]) -> str:
 
 
 def _run_pipeline(job_id: str, source: str, *,
+                  is_local: bool = False,
+                  local_meta: Optional[dict] = None,
+                  quality: str = "best"):
+    """并发=1 闸门：序列化 GPU pipeline 执行。抢不到闸的任务停在「排队中」直到前一个
+    跑完，根治并发上 GPU 的崩溃。真正的工作在 _run_pipeline_impl。"""
+    if not _PIPELINE_GATE.acquire(blocking=False):
+        _emit(job_id, stage="queued", percent=4,
+              msg="前面有任务在跑，排队等待 GPU 空闲…")
+        _PIPELINE_GATE.acquire()
+    try:
+        _run_pipeline_impl(job_id, source, is_local=is_local,
+                           local_meta=local_meta, quality=quality)
+    finally:
+        _PIPELINE_GATE.release()
+
+
+def _run_pipeline_impl(job_id: str, source: str, *,
                   is_local: bool = False,
                   local_meta: Optional[dict] = None,
                   quality: str = "best"):
