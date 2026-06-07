@@ -33,3 +33,4 @@ pyyaml
 rq>=1.16,<2.0
 redis>=5.0,<6.0
 fakeredis>=2.20  # 仅测试用：无需真 Redis 跑集成断言
+bcrypt>=4.1,<5.0
