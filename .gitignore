@@ -22,6 +22,11 @@ data/.cookies/
 # 跑批验证 scratch（dryrun / 新旧对照 / 特征缓存），不入库
 data/_dryrun_*
 data/_compare_*
+# 运行期 SQLite 库（账号/会话/笔记归属/历史），含密码哈希与用户数据，不入库
+data/notegen.db
+data/notegen.db-wal
+data/notegen.db-shm
+data/user_notes/
 models/
 models_msc_cache/
 wheels/
