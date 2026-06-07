@@ -217,18 +217,22 @@ def fetch_metadata(url: str) -> dict:
 _QUALITY_RE = re.compile(r"^(\d{2,4})p$")
 
 
-def _quality_to_format(quality: str) -> str:
-    """画质字符串 → yt-dlp -f 表达式。
-    支持 'best' 或 'NNNp'（任意 height，e.g. '1080p', '720p', '480p'）。
-    NoteGen 实际只用 ASR 音频 + 关键帧 caption，720p 已足 PPT OCR；
-    1080p+ 仅当用户想保留原档观看才有价值。"""
-    if quality in ("best", "", None):
-        return "bv*+ba/b"
-    m = _QUALITY_RE.match(str(quality).lower())
-    if m:
-        h = int(m.group(1))
-        return f"bv*[height<={h}]+ba/b[height<={h}]/b"
-    return "bv*+ba/b"
+def _quality_to_ytdlp_args(quality: str) -> list[str]:
+    """画质字符串 → yt-dlp 选择参数片段。
+    支持 'best' 或 'NNNp'（e.g. '1080p', '720p', '360p'）。
+
+    -f 恒为宽松的 'bv*+ba/b'，保证任何视频都能选到流、绝不让整 job 因画质
+    选择落空而失败。画质封顶改由 -S "res:N" 表达：res = min(width, height) 即
+    短边——横屏按高、竖屏按宽，朝向无关。这修了竖屏 bug：竖屏 height 是长边，
+    旧的 [height<=N] 要么全落空（B 站，整 job 失败）、要么命中长边≤N 的超低档
+    （YouTube 360x640 被压成 144x256）。-S res:N 直接按短边命中目标档。
+    NoteGen 只用 ASR 音频 + 关键帧 OCR，360~720p 已足；'best' 不加 -S。"""
+    base = ["-f", "bv*+ba/b"]
+    if quality not in ("best", "", None):
+        m = _QUALITY_RE.match(str(quality).lower())
+        if m:
+            return base + ["-S", f"res:{int(m.group(1))}"]
+    return base
 
 
 def probe_qualities(url: str) -> dict:
@@ -282,11 +286,10 @@ def download_video(url: str, out_dir: Path | str = RAW_DIR,
                    *, quality: str = "best") -> Path:
     out_dir = Path(out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
-    fmt = _quality_to_format(quality)
 
-    cmd = [
-        sys.executable, "-m", "yt_dlp",
-        "-f", fmt,
+    cmd = [sys.executable, "-m", "yt_dlp"]
+    cmd += _quality_to_ytdlp_args(quality)
+    cmd += [
         "--merge-output-format", "mp4",
         "-o", f"{out_dir.as_posix()}/%(id)s_p%(playlist_index|0)s.%(ext)s",
         "--print", "after_move:filepath",
