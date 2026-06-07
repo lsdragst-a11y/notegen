@@ -16,6 +16,7 @@ NOTES_DIR = WEB_PUBLIC / "notes"
 VIDEOS_DIR = WEB_PUBLIC / "videos"
 DATA_OUTPUTS = ROOT / "data" / "outputs"
 DATA_RAW = ROOT / "data" / "raw"
+USER_NOTES_DIR = ROOT / "data" / "user_notes"
 
 _QUALITY_RE = re.compile(r"^(?:best|\d{2,4}p)$")
 
@@ -62,12 +63,21 @@ def probe_duration(video_path: Path) -> float:
         return 0.0
 
 
-def publish_to_web(stem: str) -> str:
-    """把 data/outputs/{stem}.* + data/raw/{stem}.mp4 copy 到 web/public，返回 note_id。"""
-    NOTES_DIR.mkdir(parents=True, exist_ok=True)
-    VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
-    short_id = stem
-    note_dir = NOTES_DIR / short_id
+def _guess_domain(title: str) -> str:
+    t = (title or "").lower()
+    if "python" in t or "代码" in t or "编程" in t:
+        return "编程教学"
+    if "考研" in t or "操作系统" in t or "计算机网络" in t or "线代" in t or "线性代数" in t:
+        return "考研专业课"
+    if "vlog" in t or "日常" in t or "外卖" in t or "小镇" in t:
+        return "Vlog"
+    if "评测" in t or "iphone" in t or "ios" in t:
+        return "数码评测"
+    return "学习"
+
+
+def _copy_artifacts(stem: str, note_dir: Path) -> None:
+    """把 outputs 的 summary/chapters/keyframes + raw 的 meta.json copy 进 note_dir。"""
     note_dir.mkdir(parents=True, exist_ok=True)
 
     def _pick_latest(pattern: str) -> Optional[Path]:
@@ -85,24 +95,83 @@ def publish_to_web(stem: str) -> str:
         shutil.copy(meta_src, note_dir / "meta.json")
 
     kf_candidates = sorted(
-        [p for p in DATA_OUTPUTS.glob(f"{stem}.large-v3.neural.texttile*.keyframes") if p.is_dir()],
-        key=lambda p: -p.stat().st_mtime,
-    )
-    kf_src = kf_candidates[0] if kf_candidates else None
-    if kf_src:
+        [p for p in DATA_OUTPUTS.glob(f"{stem}.large-v3.neural.texttile*.keyframes")
+         if p.is_dir()], key=lambda p: -p.stat().st_mtime)
+    if kf_candidates:
         kf_dst = note_dir / "keyframes"
         kf_dst.mkdir(parents=True, exist_ok=True)
-        for f in kf_src.iterdir():
+        for f in kf_candidates[0].iterdir():
             if f.is_file():
                 try:
                     shutil.copy(f, kf_dst / f.name)
                 except PermissionError:
                     pass
 
+
+def _find_source_video(stem: str) -> Optional[Path]:
+    meta_stem = stem.split(".")[0]
     for cand in [DATA_RAW / f"{meta_stem}_p0.mp4",
                  DATA_RAW / f"{meta_stem}.mp4",
                  *DATA_RAW.glob(f"{meta_stem}*.mp4")]:
         if cand.exists():
-            shutil.copy(cand, VIDEOS_DIR / f"{short_id}.mp4")
-            break
-    return short_id
+            return cand
+    return None
+
+
+def extract_note_fields(note_dir: Path) -> dict:
+    """从 note_dir 的 summary/chapters/meta 读出列表展示冗余字段。"""
+    import json
+    title = note_dir.name
+    uploader = webpage_url = ""
+    duration_sec = chunks = chapters = 0
+    sp = note_dir / "summary.json"
+    if sp.exists():
+        try:
+            summary = json.loads(sp.read_text(encoding="utf-8"))
+            chunks = len(summary)
+            if summary:
+                duration_sec = int(summary[-1].get("end", 0))
+        except Exception:
+            pass
+    cp = note_dir / "chapters.json"
+    if cp.exists():
+        try:
+            chapters = len(json.loads(cp.read_text(encoding="utf-8")).get("chapters", []))
+        except Exception:
+            pass
+    mp = note_dir / "meta.json"
+    if mp.exists():
+        try:
+            meta = json.loads(mp.read_text(encoding="utf-8"))
+            title = meta.get("title") or title
+            uploader = meta.get("uploader", "")
+            webpage_url = meta.get("webpage_url", "")
+        except Exception:
+            pass
+    return {"title": title, "domain": _guess_domain(title),
+            "duration_sec": duration_sec, "chunks": chunks, "chapters": chapters,
+            "uploader": uploader, "webpage_url": webpage_url}
+
+
+def publish_to_web(stem: str) -> str:
+    """公开发布：copy 产物到 web/public/{notes,videos}/，返回 note_id。
+    （公开展示区/admin 用；新用户生成走 publish_private。）"""
+    NOTES_DIR.mkdir(parents=True, exist_ok=True)
+    VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
+    note_dir = NOTES_DIR / stem
+    _copy_artifacts(stem, note_dir)
+    vid = _find_source_video(stem)
+    if vid:
+        shutil.copy(vid, VIDEOS_DIR / f"{stem}.mp4")
+    return stem
+
+
+def publish_private(stem: str, user_id: str) -> tuple[str, str, dict]:
+    """私有发布：copy 产物 + 视频(video.mp4) 到 data/user_notes/{uid}/{stem}/（公开静态不可达）。
+    返回 (note_id, storage_path, 展示字段 dict)。"""
+    note_dir = USER_NOTES_DIR / user_id / stem
+    _copy_artifacts(stem, note_dir)
+    vid = _find_source_video(stem)
+    if vid:
+        shutil.copy(vid, note_dir / "video.mp4")
+    return stem, str(note_dir), extract_note_fields(note_dir)
