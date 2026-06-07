@@ -54,10 +54,12 @@ def _idem_key(k: str) -> str: return f"idem:{k}"
 
 
 def idempotency_key(source: str, opts: dict) -> str:
-    """稳定 key：归一化 source + quality + is_local（不含 local_meta 等易变字段）。"""
+    """稳定 key：归一化 source + quality + is_local + user_id。
+    含 user_id 使两用户提交同一 URL 各得各自私有笔记，互不复用。"""
     norm = (source or "").strip().lower()
     payload = json.dumps(
-        {"s": norm, "q": opts.get("quality") or "best", "l": bool(opts.get("is_local"))},
+        {"s": norm, "q": opts.get("quality") or "best",
+         "l": bool(opts.get("is_local")), "u": opts.get("user_id") or ""},
         sort_keys=True, ensure_ascii=False)
     return hashlib.sha1(payload.encode("utf-8")).hexdigest()[:16]
 
