@@ -14,6 +14,7 @@ from rq import get_current_job
 
 import jobqueue
 import service_common as SC
+import userdata
 from progress import parse_progress_marker, stage_band, interpolate
 
 
@@ -30,13 +31,32 @@ def _no_retry() -> None:
         job.retries_left = 0
 
 
+def _mirror_job(opts: dict, job_id: str, status: str, *, note_id=None, error=None) -> None:
+    """有 user_id 才镜像 SQLite jobs 终态（无 uid = 旧/公开路径，不写库）。"""
+    if opts.get("user_id"):
+        userdata.jobs_repo.update_status(job_id, status, note_id=note_id, error=error)
+
+
+def _publish(stem: str, opts: dict) -> str:
+    """按 user_id 分流：有 uid → 私有发布 + 写 notes 行；否则公开发布。返回 note_id。"""
+    uid = opts.get("user_id")
+    if uid:
+        note_id, storage_path, fields = SC.publish_private(stem, uid)
+        userdata.notes_repo.upsert(id=note_id, owner_id=uid, visibility="private",
+                                   storage_path=storage_path, **fields)
+        return note_id
+    return SC.publish_to_web(stem)
+
+
 def run_generate(job_id: str, source: str, opts: dict) -> Optional[str]:
     started = time.time()
     jobqueue.set_progress(job_id, stage="running", percent=4, msg="启动 pipeline")
+    _mirror_job(opts, job_id, "running")
     try:
         stem, returncode = _run_pipeline_subprocess(job_id, source, opts)
     except Exception as e:
         jobqueue.set_progress(job_id, stage="failed", percent=0, msg=f"运行错误：{e}")
+        _mirror_job(opts, job_id, "failed", error=f"运行错误：{e}")
         raise
 
     if not stem:
@@ -49,13 +69,15 @@ def run_generate(job_id: str, source: str, opts: dict) -> Optional[str]:
         jobqueue.set_progress(job_id, stage="failed", percent=0,
                               msg=f"pipeline 退出码 {returncode}，未找到输出文件",
                               returncode=returncode)
+        _mirror_job(opts, job_id, "failed", error=f"无输出(rc={returncode})")
         _no_retry()
         raise PipelineFailed(f"job {job_id}: no output (rc={returncode})")
 
     try:
-        note_id = SC.publish_to_web(stem)
+        note_id = _publish(stem, opts)
     except Exception as e:
         jobqueue.set_progress(job_id, stage="failed", percent=0, msg=f"产出复制失败：{e}")
+        _mirror_job(opts, job_id, "failed", error=f"产出复制失败：{e}")
         raise
 
     msg = "完成"
@@ -63,6 +85,7 @@ def run_generate(job_id: str, source: str, opts: dict) -> Optional[str]:
         msg = f"完成（pipeline 退出码 {returncode}，已知 Windows cleanup 问题，不影响输出）"
     jobqueue.set_progress(job_id, stage="done", percent=100, msg=msg,
                           note_id=note_id, returncode=returncode)
+    _mirror_job(opts, job_id, "done", note_id=note_id)
     return note_id
 
 
