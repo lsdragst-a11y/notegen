@@ -104,3 +104,91 @@ def set_email_verified(uid: str) -> None:
         conn.commit()
     finally:
         conn.close()
+
+
+# ---------------- 邮箱验证 token ----------------
+def create_verification_token(user_id: str, ttl: int = 86400) -> str:
+    token = secrets.token_urlsafe(32)
+    conn = db.connect()
+    try:
+        conn.execute(
+            "INSERT INTO email_verifications(token,user_id,expires_at) VALUES(?,?,?)",
+            (token, user_id, time.time() + ttl),
+        )
+        conn.commit()
+        return token
+    finally:
+        conn.close()
+
+
+def consume_verification_token(token: str) -> Optional[str]:
+    """有效且未过期 → 置该用户 email_verified=1，删 token，返回 user_id；否则 None。"""
+    conn = db.connect()
+    try:
+        row = conn.execute(
+            "SELECT user_id, expires_at FROM email_verifications WHERE token=?",
+            (token,)).fetchone()
+        if row is None:
+            return None
+        conn.execute("DELETE FROM email_verifications WHERE token=?", (token,))
+        if row["expires_at"] < time.time():
+            conn.commit()
+            return None
+        conn.execute("UPDATE users SET email_verified=1 WHERE id=?", (row["user_id"],))
+        conn.commit()
+        return row["user_id"]
+    finally:
+        conn.close()
+
+
+# ---------------- 会话 ----------------
+SESSION_TTL = 7 * 86400  # 7 天滑动
+
+
+def create_session(user_id: str, ttl: int = SESSION_TTL) -> str:
+    token = secrets.token_urlsafe(32)
+    now = time.time()
+    conn = db.connect()
+    try:
+        conn.execute(
+            "INSERT INTO sessions(token,user_id,created_at,expires_at,last_seen) "
+            "VALUES(?,?,?,?,?)",
+            (token, user_id, now, now + ttl, now),
+        )
+        conn.commit()
+        return token
+    finally:
+        conn.close()
+
+
+def get_session_user(token: str, ttl: int = SESSION_TTL) -> Optional[dict]:
+    """查会话→未过期则滑动续期(last_seen/expires_at)并返回 public user dict；否则 None。"""
+    if not token:
+        return None
+    now = time.time()
+    conn = db.connect()
+    try:
+        s = conn.execute("SELECT user_id, expires_at FROM sessions WHERE token=?",
+                         (token,)).fetchone()
+        if s is None:
+            return None
+        if s["expires_at"] < now:
+            conn.execute("DELETE FROM sessions WHERE token=?", (token,))
+            conn.commit()
+            return None
+        conn.execute("UPDATE sessions SET last_seen=?, expires_at=? WHERE token=?",
+                     (now, now + ttl, token))
+        urow = conn.execute("SELECT * FROM users WHERE id=?", (s["user_id"],)).fetchone()
+        conn.commit()
+        return _to_user(urow)
+    finally:
+        conn.close()
+
+
+def delete_session(token: str) -> None:
+    conn = db.connect()
+    try:
+        conn.execute("DELETE FROM sessions WHERE token=?", (token,))
+        conn.commit()
+    finally:
+        conn.close()
