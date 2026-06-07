@@ -13,9 +13,11 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 from rq import SimpleWorker  # noqa: E402
 from rq.timeouts import TimerDeathPenalty  # noqa: E402
 import jobqueue  # noqa: E402
+import db  # noqa: E402
 
 
 def main():
+    db.init_db()  # worker 先于 api 起也能写库
     conn = jobqueue.get_rq()
     queue = jobqueue.get_queue()
     print(f"[worker] SimpleWorker 启动，监听 default 队列 @ {jobqueue.REDIS_URL}")

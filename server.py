@@ -17,9 +17,9 @@ import uuid
 from pathlib import Path
 from typing import Optional
 
-from fastapi import FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
+from fastapi.responses import FileResponse, JSONResponse, StreamingResponse
 from pydantic import BaseModel
 
 ROOT = Path(__file__).resolve().parent
@@ -53,9 +53,85 @@ app.add_middleware(
 # 进程天然保证（取代旧的 threading.Semaphore 闸门），契合「大模型串行加载」铁律。
 import jobqueue  # noqa: E402
 import redis as _redis_pkg  # noqa: E402
+import db  # noqa: E402
+import accounts  # noqa: E402
+import authdeps  # noqa: E402
+from authdeps import current_user, require_user  # noqa: E402
+from userdata import notes_repo, jobs_repo  # noqa: E402
+
+db.init_db()  # 启动即建表（幂等）
+
+import os as _os  # noqa: E402
+_COOKIE_SECURE = _os.environ.get("NOTEGEN_COOKIE_SECURE", "0") == "1"
+_VERIFY_BASE = _os.environ.get("NOTEGEN_VERIFY_BASE", "http://localhost:3000")
 
 
 # ============ HTTP endpoints ============
+class RegisterReq(BaseModel):
+    email: str
+    password: str
+    display_name: str
+
+
+class LoginReq(BaseModel):
+    email: str
+    password: str
+
+
+@app.post("/api/auth/register", status_code=201)
+def auth_register(req: RegisterReq):
+    email = (req.email or "").strip()
+    if not email or "@" not in email:
+        raise HTTPException(400, "邮箱格式不正确")
+    if len(req.password or "") < 8:
+        raise HTTPException(400, "密码至少 8 位")
+    try:
+        uid = accounts.create_user(email, req.password, req.display_name or email)
+    except ValueError:
+        raise HTTPException(409, "该邮箱已注册")
+    token = accounts.create_verification_token(uid)
+    # dev：不发真邮件，把验证链接打到控制台
+    print(f"[VERIFY] {_VERIFY_BASE}/verify?token={token}", flush=True)
+    return {"ok": True, "message": "注册成功，请查看控制台验证链接完成邮箱验证"}
+
+
+@app.get("/api/auth/verify")
+def auth_verify(token: str):
+    uid = accounts.consume_verification_token(token)
+    if uid is None:
+        raise HTTPException(400, "验证链接无效或已过期")
+    return {"ok": True, "message": "邮箱验证成功，请登录"}
+
+
+@app.post("/api/auth/login")
+def auth_login(req: LoginReq):
+    user = accounts.verify_login(req.email, req.password)
+    if user is None:
+        raise HTTPException(401, "邮箱或密码错误")
+    if not user["email_verified"]:
+        raise HTTPException(403, "请先验证邮箱（查看控制台验证链接）")
+    token = accounts.create_session(user["id"])
+    resp = JSONResponse(user)
+    resp.set_cookie(authdeps.SESSION_COOKIE, token, httponly=True, samesite="lax",
+                    max_age=accounts.SESSION_TTL, secure=_COOKIE_SECURE, path="/")
+    return resp
+
+
+@app.post("/api/auth/logout")
+def auth_logout(request: Request):
+    token = request.cookies.get(authdeps.SESSION_COOKIE)
+    if token:
+        accounts.delete_session(token)
+    resp = JSONResponse({"ok": True})
+    resp.delete_cookie(authdeps.SESSION_COOKIE, path="/")
+    return resp
+
+
+@app.get("/api/auth/me")
+def auth_me(user: dict = Depends(require_user)):
+    return user
+
+
 class GenerateReq(BaseModel):
     url: str
     quality: Optional[str] = "best"
