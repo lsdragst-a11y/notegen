@@ -115,6 +115,21 @@ class _JobsRepo:
         finally:
             conn.close()
 
+    def reconcile_orphans(self) -> int:
+        """worker 启动时调用：并发=1 下启动期必无真正在跑的任务，故把卡在 'running' 的孤儿
+        标 'interrupted'（上个 worker 崩溃/被杀残留），释放该用户在飞名额。返回处理条数。"""
+        now = time.time()
+        conn = db.connect()
+        try:
+            cur = conn.execute(
+                "UPDATE jobs SET status='interrupted', updated_at=?, "
+                "finished_at=COALESCE(finished_at, ?) WHERE status='running'",
+                (now, now))
+            conn.commit()
+            return cur.rowcount
+        finally:
+            conn.close()
+
     def get(self, job_id: str) -> Optional[dict]:
         conn = db.connect()
         try:

@@ -301,6 +301,8 @@ def list_history(user: dict = Depends(require_user)):
 @app.post("/api/jobs/{job_id}/retry")
 def retry_job(job_id: str, user: dict = Depends(require_user)):
     row = _owned_job_or_404(job_id, user)
+    if row["status"] not in ("failed", "interrupted"):
+        raise HTTPException(409, "只有失败/中断的任务可以重试")
     if jobs_repo.count_active(user["id"]) >= 1:
         raise HTTPException(409, "你已有任务在处理中，请等它完成后再提交")
     opts = {"quality": row["quality"], "user_id": user["id"],
