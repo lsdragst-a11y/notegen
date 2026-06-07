@@ -152,15 +152,21 @@ def probe(req: ProbeReq):
 
 
 @app.post("/api/generate")
-def generate(req: GenerateReq):
+def generate(req: GenerateReq, user: dict = Depends(require_user)):
     url = (req.url or "").strip()
     if not url:
         raise HTTPException(400, "url is required")
     quality = normalize_quality(req.quality)
+    if jobs_repo.count_active(user["id"]) >= 1:
+        raise HTTPException(409, "你已有任务在处理中，请等它完成后再提交")
+    opts = {"quality": quality, "user_id": user["id"]}
     try:
-        job_id, _is_new = jobqueue.enqueue_generate(url, {"quality": quality})
+        job_id, is_new = jobqueue.enqueue_generate(url, opts)
     except _redis_pkg.exceptions.ConnectionError:
         raise HTTPException(503, "队列服务暂不可用，请稍后再试")
+    if is_new:
+        jobs_repo.record(job_id, user["id"], url, is_local=False,
+                         quality=quality, status="queued")
     return {"job_id": job_id}
 
 
@@ -172,6 +178,7 @@ async def upload(
     file: UploadFile = File(...),
     title: Optional[str] = Form(None),
     uploader: Optional[str] = Form(None),
+    user: dict = Depends(require_user),
 ):
     """接收本地视频文件，存到 data/raw/local_<id>.mp4 + 写 meta.json，
     然后启 pipeline (--local) 后台 job。返回 { job_id }，前端继续用
@@ -213,17 +220,33 @@ async def upload(
     (DATA_RAW / f"{safe_id}.meta.json").write_text(
         json.dumps(meta, ensure_ascii=False, indent=2), encoding="utf-8",
     )
-    opts = {"is_local": True, "quality": "best", "local_meta": meta}
+    if jobs_repo.count_active(user["id"]) >= 1:
+        try: dest.unlink(missing_ok=True)
+        except Exception: pass
+        raise HTTPException(409, "你已有任务在处理中，请等它完成后再提交")
+    opts = {"is_local": True, "quality": "best", "local_meta": meta,
+            "user_id": user["id"]}
     try:
-        job_id, _is_new = jobqueue.enqueue_generate(str(dest), opts)
+        job_id, is_new = jobqueue.enqueue_generate(str(dest), opts)
     except _redis_pkg.exceptions.ConnectionError:
         raise HTTPException(503, "队列服务暂不可用，请稍后再试")
+    if is_new:
+        jobs_repo.record(job_id, user["id"], str(dest), is_local=True,
+                         quality="best", status="queued")
     return {"job_id": job_id, "filename": file.filename,
             "duration": dur, "stored_as": dest.name}
 
 
+def _owned_job_or_404(job_id: str, user: dict) -> dict:
+    row = jobs_repo.get(job_id)
+    if row is None or row["user_id"] != user["id"]:
+        raise HTTPException(404, "job not found")
+    return row
+
+
 @app.get("/api/jobs/{job_id}")
-def job_status(job_id: str):
+def job_status(job_id: str, user: dict = Depends(require_user)):
+    _owned_job_or_404(job_id, user)
     st = jobqueue.job_state(job_id)
     if st is None:
         raise HTTPException(404, "job not found")
@@ -234,7 +257,8 @@ def job_status(job_id: str):
 
 
 @app.get("/api/jobs/{job_id}/events")
-async def job_events(job_id: str):
+async def job_events(job_id: str, user: dict = Depends(require_user)):
+    _owned_job_or_404(job_id, user)
     if jobqueue.job_state(job_id) is None:
         raise HTTPException(404, "job not found")
 
@@ -252,73 +276,92 @@ async def job_events(job_id: str):
     return StreamingResponse(gen(), media_type="text/event-stream")
 
 
-def _guess_domain(title: str) -> str:
-    t = (title or "").lower()
-    if "python" in t or "代码" in t or "编程" in t:
-        return "编程教学"
-    if "考研" in t or "操作系统" in t or "计算机网络" in t or "线代" in t or "线性代数" in t:
-        return "考研专业课"
-    if "vlog" in t or "日常" in t or "外卖" in t or "小镇" in t:
-        return "Vlog"
-    if "评测" in t or "iphone" in t or "ios" in t:
-        return "数码评测"
-    return "学习"
+def _note_view(n: dict) -> dict:
+    return {"id": n["id"], "title": n["title"], "domain": n["domain"],
+            "duration_sec": n["duration_sec"], "chunks": n["chunks"],
+            "chapters": n["chapters"], "uploader": n["uploader"],
+            "webpage_url": n["webpage_url"], "visibility": n["visibility"]}
 
 
-@app.get("/api/notes")
-def list_notes():
-    """枚举 web/public/notes/ 下所有 note 目录。"""
-    if not NOTES_DIR.exists():
-        return []
-    items = []
-    for d in sorted(NOTES_DIR.iterdir(), key=lambda p: -p.stat().st_mtime):
-        if not d.is_dir():
-            continue
-        summary_p = d / "summary.json"
-        chapters_p = d / "chapters.json"
-        if not summary_p.exists() or not chapters_p.exists():
-            continue
-        try:
-            summary = json.loads(summary_p.read_text(encoding="utf-8"))
-            chapters = json.loads(chapters_p.read_text(encoding="utf-8"))
-        except Exception:
-            continue
-        meta = {}
-        if (d / "meta.json").exists():
-            try:
-                meta = json.loads((d / "meta.json").read_text(encoding="utf-8"))
-            except Exception:
-                meta = {}
-        items.append({
-            "id": d.name,
-            "title": meta.get("title") or d.name,
-            "domain": _guess_domain(meta.get("title", "")),
-            "duration_sec": int(summary[-1]["end"]) if summary else 0,
-            "chunks": len(summary),
-            "chapters": len(chapters.get("chapters", [])),
-            "uploader": meta.get("uploader", ""),
-            "webpage_url": meta.get("webpage_url", ""),
-        })
-    return items
+@app.get("/api/notes/public")
+def list_public_notes():
+    return [_note_view(n) for n in notes_repo.list_public()]
+
+
+@app.get("/api/notes/mine")
+def list_my_notes(user: dict = Depends(require_user)):
+    return [_note_view(n) for n in notes_repo.list_mine(user["id"])]
+
+
+@app.get("/api/history")
+def list_history(user: dict = Depends(require_user)):
+    return jobs_repo.list_history(user["id"])
+
+
+@app.post("/api/jobs/{job_id}/retry")
+def retry_job(job_id: str, user: dict = Depends(require_user)):
+    row = _owned_job_or_404(job_id, user)
+    if jobs_repo.count_active(user["id"]) >= 1:
+        raise HTTPException(409, "你已有任务在处理中，请等它完成后再提交")
+    opts = {"quality": row["quality"], "user_id": user["id"],
+            "is_local": bool(row["is_local"])}
+    try:
+        new_id, is_new = jobqueue.enqueue_generate(row["source"], opts)
+    except _redis_pkg.exceptions.ConnectionError:
+        raise HTTPException(503, "队列服务暂不可用，请稍后再试")
+    if is_new:
+        jobs_repo.record(new_id, user["id"], row["source"],
+                         is_local=bool(row["is_local"]), quality=row["quality"],
+                         status="queued")
+    return {"job_id": new_id}
+
+
+@app.get("/api/notes/{note_id}/file/{path:path}")
+def note_file(note_id: str, path: str, user: Optional[dict] = Depends(current_user)):
+    """私有笔记鉴权托管（公开笔记走 Next.js 静态，不绕此端点）。
+    非 owner / 未登录 / 不存在 → 一律 404，不泄露存在性。Starlette FileResponse 自带 Range。"""
+    row = notes_repo.get(note_id)
+    if row is None or row["visibility"] != "private":
+        raise HTTPException(404, "not found")
+    if user is None or row["owner_id"] != user["id"]:
+        raise HTTPException(404, "not found")
+    base = Path(row["storage_path"]).resolve()
+    target = (base / path).resolve()
+    if not target.is_relative_to(base) or not target.is_file():
+        raise HTTPException(404, "not found")
+    return FileResponse(str(target))
 
 
 @app.delete("/api/notes/{note_id}")
-def delete_note(note_id: str):
-    """删除笔记 + 关联视频。id 必须是合法的目录名（无路径分隔符），避免越级。"""
+def delete_note(note_id: str, user: dict = Depends(require_user)):
     safe = (note_id or "").strip()
     if not safe or "/" in safe or "\\" in safe or ".." in safe:
         raise HTTPException(400, "invalid note id")
-    note_dir = NOTES_DIR / safe
-    video = VIDEOS_DIR / f"{safe}.mp4"
-    if not note_dir.exists() and not video.exists():
+    row = notes_repo.get(safe)
+    if row is None:
         raise HTTPException(404, "note not found")
+    if row["visibility"] == "private":
+        if row["owner_id"] != user["id"]:
+            raise HTTPException(404, "note not found")
+    else:  # public：仅 admin
+        if user.get("role") != "admin":
+            raise HTTPException(403, "仅管理员可删除公开笔记")
     removed = []
-    if note_dir.exists():
-        shutil.rmtree(note_dir)
-        removed.append(str(note_dir))
-    if video.exists():
-        video.unlink()
-        removed.append(str(video))
+    if row["visibility"] == "private":
+        d = Path(row["storage_path"])
+        if d.exists():
+            shutil.rmtree(d, ignore_errors=True)
+            removed.append(str(d))
+    else:
+        note_dir = NOTES_DIR / safe
+        video = VIDEOS_DIR / f"{safe}.mp4"
+        if note_dir.exists():
+            shutil.rmtree(note_dir, ignore_errors=True)
+            removed.append(str(note_dir))
+        if video.exists():
+            video.unlink()
+            removed.append(str(video))
+    notes_repo.delete(safe)
     return {"deleted": safe, "removed": removed}
 
 
