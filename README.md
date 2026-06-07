@@ -162,3 +162,29 @@ npm run dev
 ## 开源声明
 
 代码、benchmark gold 标注、评估脚本均开源。视频原始素材受版权保护，benchmark 列表（BV 号 / YouTube ID）在 `paper/draft.md` 附录 A.3 供独立复现。
+
+## 在线服务（Redis + RQ 队列模式）
+
+提交 URL/文件 → 异步处理 → 拿笔记。需按顺序起 4 个组件：
+
+1. **Redis**（队列后端，Docker 一条命令）：
+   ```bash
+   docker compose up -d redis
+   ```
+2. **API**（FastAPI）：
+   ```bash
+   .venv/Scripts/python.exe server.py        # http://127.0.0.1:8000
+   ```
+3. **Worker**（消费队列，跑在 GPU 机器上，单进程 = 并发 1）：
+   ```bash
+   .venv/Scripts/python.exe scripts/run_worker.py
+   ```
+4. **Web**（Next.js 前端）：
+   ```bash
+   cd web && npm run dev                      # http://localhost:3000
+   ```
+
+- 健康检查：`GET /api/health` 返回 `{ok, redis, queue_depth}`。
+- Redis 没起时 `/api/generate` 返回 503；起好后重试即可。
+- 自定义 Redis 地址：设 `NOTEGEN_REDIS_URL`（默认 `redis://127.0.0.1:6379/0`）。
+- 单 worker 进程天然保证并发=1（大模型串行加载）；不要起多个 worker。
