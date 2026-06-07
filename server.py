@@ -28,26 +28,17 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 
 ROOT = Path(__file__).resolve().parent
-PY = ROOT / ".venv" / "Scripts" / "python.exe"
-WEB_PUBLIC = ROOT / "web" / "public"
-NOTES_DIR = WEB_PUBLIC / "notes"
-VIDEOS_DIR = WEB_PUBLIC / "videos"
-DATA_OUTPUTS = ROOT / "data" / "outputs"
-DATA_RAW = ROOT / "data" / "raw"
 
 import sys
 SRC_DIR = str(ROOT / "src")
 if SRC_DIR not in sys.path:
     sys.path.insert(0, SRC_DIR)
 
-
-def _estimate_pipeline_seconds(video_duration_sec: float) -> int:
-    """根据视频时长估算 pipeline 总耗时（秒）。经验公式：
-      下载 + 抽音频  ≈ 25s 固定
-      ASR (large-v3 on GPU)  ≈ video_duration × 0.45
-      Pegasus + CLIP keyframes  ≈ 30 + video_duration × 0.04
-    校准对照：Python 20min 视频 → 估算 25 + 540 + 78 = 643s ≈ 11 min（实际 ~12min）"""
-    return int(25 + video_duration_sec * 0.45 + 30 + video_duration_sec * 0.04)
+from service_common import (  # noqa: E402
+    PY, WEB_PUBLIC, NOTES_DIR, VIDEOS_DIR, DATA_OUTPUTS, DATA_RAW,
+    normalize_quality, adaptive_chunk_chars, estimate_pipeline_seconds,
+    probe_duration, publish_to_web,
+)
 
 app = FastAPI()
 app.add_middleware(
@@ -61,23 +52,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-
-def _probe_duration(video_path: Path) -> float:
-    """用 ffprobe 探本地视频时长（秒）。失败返回 0。"""
-    try:
-        ffmpeg_bin = shutil.which("ffmpeg")
-        if ffmpeg_bin:
-            ffprobe = str(Path(ffmpeg_bin).with_name("ffprobe.exe"))
-        else:
-            ffprobe = "ffprobe"
-        r = subprocess.run(
-            [ffprobe, "-v", "error", "-show_entries", "format=duration",
-             "-of", "default=noprint_wrappers=1:nokey=1", str(video_path)],
-            capture_output=True, text=True, timeout=15,
-        )
-        return float((r.stdout or "").strip() or 0)
-    except Exception:
-        return 0.0
 
 # ============ Job state（in-memory，重启丢失，dev 用够了）============
 _jobs: dict[str, dict] = {}
@@ -100,29 +74,6 @@ def _emit(job_id: str, **kwargs):
 
 
 # ============ Pipeline runner (subprocess + stdout 解析) ============
-def _adaptive_chunk_chars(video_duration_sec: float) -> int:
-    """根据视频时长自动选 chunker 字符上限。短视频用细粒度切，避免 3 chunks
-    这种过粗输出；长视频保持 800（论文 main 操作点）。"""
-    if video_duration_sec <= 0:
-        return 800
-    if video_duration_sec < 600:    # < 10min
-        return 400
-    if video_duration_sec < 1500:   # < 25min
-        return 600
-    return 800
-
-
-_QUALITY_RE = re.compile(r"^(?:best|\d{2,4}p)$")
-
-
-def _normalize_quality(q: Optional[str]) -> str:
-    """白名单：'best' or 'NNNp'（任意整 NNN）；非法 → 'best'。"""
-    if not q:
-        return "best"
-    s = q.strip().lower()
-    return s if _QUALITY_RE.match(s) else "best"
-
-
 def _run_pipeline(job_id: str, source: str, *,
                   is_local: bool = False,
                   local_meta: Optional[dict] = None,
@@ -148,7 +99,7 @@ def _run_pipeline_impl(job_id: str, source: str, *,
     URL 模式：source 是视频链接，先 fetch_metadata 拿 duration。
     Local 模式：source 是 data/raw 下的视频文件绝对路径，duration 已经在
                 upload 阶段 ffprobe 出来写进 local_meta，直接复用。"""
-    chunk_chars = 800  # 默认；探测到 duration 后会按 _adaptive_chunk_chars 调整
+    chunk_chars = 800  # 默认；探测到 duration 后会按 adaptive_chunk_chars 调整
 
     # Step 0: 拿 duration 估时间 + 选 chunk_chars
     try:
@@ -158,8 +109,8 @@ def _run_pipeline_impl(job_id: str, source: str, *,
             _emit(job_id, stage="探测", percent=1,
                   msg=f"本地视频：{title or Path(source).name}")
             if dur > 0:
-                chunk_chars = _adaptive_chunk_chars(dur)
-                est = _estimate_pipeline_seconds(dur)
+                chunk_chars = adaptive_chunk_chars(dur)
+                est = estimate_pipeline_seconds(dur)
                 _emit(job_id, stage="探测", percent=3,
                       msg=f"视频 {dur/60:.1f} min · 预计 {est/60:.1f} min · 切分粒度 cc={chunk_chars}",
                       video_duration=dur, est_total_sec=est, video_title=title)
@@ -169,8 +120,8 @@ def _run_pipeline_impl(job_id: str, source: str, *,
             meta = fetch_metadata(source)
             dur = float(meta.get("duration") or 0)
             if dur > 0:
-                chunk_chars = _adaptive_chunk_chars(dur)
-                est = _estimate_pipeline_seconds(dur)
+                chunk_chars = adaptive_chunk_chars(dur)
+                est = estimate_pipeline_seconds(dur)
                 _emit(job_id, stage="探测", percent=3,
                       msg=f"视频 {dur/60:.1f} min · 预计 {est/60:.1f} min · 切分粒度 cc={chunk_chars}",
                       video_duration=dur, est_total_sec=est,
@@ -300,7 +251,7 @@ def _run_pipeline_impl(job_id: str, source: str, *,
 
     # 后处理：copy 产出到 web/public（即便 returncode != 0，文件存在就 publish）
     try:
-        note_id = _publish_to_web(md_path)
+        note_id = publish_to_web(md_path)
     except Exception as e:
         _emit(job_id, stage="error", percent=0, msg=f"产出复制失败：{e}")
         return
@@ -310,64 +261,6 @@ def _run_pipeline_impl(job_id: str, source: str, *,
               note_id=note_id)
     else:
         _emit(job_id, stage="done", percent=100, msg="完成", note_id=note_id)
-
-
-def _publish_to_web(stem: str) -> str:
-    """把 data/outputs/{stem}.* + data/raw/{stem}.mp4 copy 到 web/public。
-    short_id = stem（直接用 BV 号 stem）。
-
-    pipeline 输出文件名有 .mm 变体（多模态视觉 cue 启用时），用 glob 兼容：
-      {stem}.large-v3.neural.texttile.summary.json
-      {stem}.large-v3.neural.texttile.mm.summary.json
-    最近写入的优先（防止旧产物覆盖新的）。
-    """
-    NOTES_DIR.mkdir(parents=True, exist_ok=True)
-    VIDEOS_DIR.mkdir(parents=True, exist_ok=True)
-    short_id = stem  # 直接 stem
-    note_dir = NOTES_DIR / short_id
-    note_dir.mkdir(parents=True, exist_ok=True)
-
-    def _pick_latest(pattern: str) -> Optional[Path]:
-        cands = sorted(DATA_OUTPUTS.glob(pattern), key=lambda p: -p.stat().st_mtime)
-        return cands[0] if cands else None
-
-    for kind in ("summary", "chapters"):
-        # 同名 .mm 与非 .mm 都收，取最新一个
-        src = _pick_latest(f"{stem}.large-v3.neural.texttile*.{kind}.json")
-        if src:
-            shutil.copy(src, note_dir / f"{kind}.json")
-
-    # meta 用 raw/<stem 去掉 .fXXXXX>.meta.json
-    meta_stem = stem.split(".")[0]
-    meta_src = DATA_RAW / f"{meta_stem}.meta.json"
-    if meta_src.exists():
-        shutil.copy(meta_src, note_dir / "meta.json")
-
-    # keyframes：Windows 上 dev server 监视器偶尔锁 keyframes 目录导致 rmtree 失败；
-    # 用文件级 overwrite-copy 避免 dir-level lock。若目标多出文件不算问题（chunks 不变）
-    kf_candidates = sorted(
-        [p for p in DATA_OUTPUTS.glob(f"{stem}.large-v3.neural.texttile*.keyframes") if p.is_dir()],
-        key=lambda p: -p.stat().st_mtime,
-    )
-    kf_src = kf_candidates[0] if kf_candidates else None
-    if kf_src:
-        kf_dst = note_dir / "keyframes"
-        kf_dst.mkdir(parents=True, exist_ok=True)
-        for f in kf_src.iterdir():
-            if f.is_file():
-                try:
-                    shutil.copy(f, kf_dst / f.name)
-                except PermissionError:
-                    pass  # 某张图被锁就跳过，其它图能更新就成
-
-    # video — 找 raw/<stem 或 meta_stem>*.mp4
-    for cand in [DATA_RAW / f"{meta_stem}_p0.mp4",
-                 DATA_RAW / f"{meta_stem}.mp4",
-                 *DATA_RAW.glob(f"{meta_stem}*.mp4")]:
-        if cand.exists():
-            shutil.copy(cand, VIDEOS_DIR / f"{short_id}.mp4")
-            break
-    return short_id
 
 
 # ============ HTTP endpoints ============
@@ -395,7 +288,7 @@ def generate(req: GenerateReq):
     url = (req.url or "").strip()
     if not url:
         raise HTTPException(400, "url is required")
-    quality = _normalize_quality(req.quality)
+    quality = normalize_quality(req.quality)
     job_id = uuid.uuid4().hex[:12]
     with _jobs_lock:
         _jobs[job_id] = {
@@ -446,7 +339,7 @@ async def upload(
         except Exception: pass
         raise HTTPException(500, f"upload write failed: {e}")
     # ffprobe 拿时长（失败也无所谓，pipeline 会自己跑出 ASR duration）
-    dur = _probe_duration(dest)
+    dur = probe_duration(dest)
     display_title = (title or "").strip() or Path(file.filename).stem
     display_uploader = (uploader or "").strip() or "本地上传"
     meta = {
