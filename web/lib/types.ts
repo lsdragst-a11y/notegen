@@ -96,3 +96,40 @@ export interface CatalogItem {
 }
 
 export type Mark = "emphasis" | "hard";
+
+export interface User {
+  id: string;
+  email: string;
+  display_name: string;
+  role: "user" | "admin";
+  email_verified: number;   // SQLite INTEGER 0/1，用 !! 转 bool
+  created_at: number;
+}
+
+export interface NoteView {
+  id: string;
+  title: string;
+  domain: string;
+  duration_sec: number;
+  chunks: number;
+  chapters: number;
+  uploader: string;
+  webpage_url: string;
+  visibility: "public" | "private";
+}
+
+export type JobStatus = "queued" | "running" | "done" | "failed" | "interrupted";
+
+export interface HistoryItem {
+  id: string;
+  user_id: string;
+  source: string;
+  is_local: number;          // 0/1
+  quality: string;
+  status: JobStatus;
+  note_id: string | null;
+  error: string | null;
+  created_at: number;
+  updated_at: number;
+  finished_at: number | null;
+}
