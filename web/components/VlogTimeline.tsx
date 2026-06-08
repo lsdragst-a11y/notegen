@@ -6,7 +6,7 @@ import { formatTime } from "@/lib/notes";
 import { useLang, pickByLang } from "./LangContext";
 
 interface Props {
-  noteId: string;
+  keyframeBase: string;
   summary: Chunk[];
   currentTime: number;
   onSeek: (sec: number) => void;
@@ -18,7 +18,7 @@ interface Props {
 /** 给非教学类视频用的"时间轴亮点"卡片，竖向时间线 + 关键帧 + 时间戳 + headline。
  *  不显示 ⭐ 重难点 / 关键词标签 / "知识点"语义包装。 */
 export default function VlogTimeline({
-  noteId, summary, currentTime, onSeek, onOpenLightbox, variant,
+  keyframeBase, summary, currentTime, onSeek, onOpenLightbox, variant,
 }: Props) {
   const { lang } = useLang();
   const currentIdx = summary.findIndex(
@@ -83,7 +83,7 @@ export default function VlogTimeline({
                                  bg-[var(--bg-muted)] relative group/kf"
                       title={lang === "en" ? "Open" : "查看大图"}
                     >
-                      <img src={`/notes/${noteId}/keyframes/${kfRel}`}
+                      <img src={`${keyframeBase}${kfRel}`}
                            alt="" className="w-full h-full object-cover dark:brightness-90
                                               transition-transform group-hover/kf:scale-[1.06]" />
                       <span className="absolute inset-0 bg-black/35 opacity-0

@@ -12,7 +12,7 @@ import VlogTimeline from "./VlogTimeline";
 import OverviewHero from "./OverviewHero";
 
 interface Props {
-  noteId: string;
+  keyframeBase: string;
   title: string;
   summary: Chunk[];
   chapters: Chapter[];
@@ -25,7 +25,7 @@ interface Props {
 }
 
 export default function NotesContent({
-  noteId, title, summary, chapters, overview, currentTime, onSeek, category = "teaching",
+  keyframeBase, title, summary, chapters, overview, currentTime, onSeek, category = "teaching",
 }: Props) {
   const { lang } = useLang();
   const keywords = overviewKeywords(summary, 8, lang);
@@ -52,11 +52,11 @@ export default function NotesContent({
   // 关键帧 lightbox：扁平所有带 keyframe 的 chunk
   const lightboxItems: LightboxItem[] = useMemo(
     () => summary.flatMap(c => c.keyframe ? [{
-      src: `/notes/${noteId}/keyframes/${c.keyframe.rel}`,
+      src: `${keyframeBase}${c.keyframe.rel}`,
       time: c.start,
       headline: c.headline || c.text.slice(0, 30),
     }] : []),
-    [summary, noteId]
+    [summary, keyframeBase]
   );
   const [lbIdx, setLbIdx] = useState<number | null>(null);
 
@@ -155,7 +155,7 @@ export default function NotesContent({
                                  relative group/kf"
                       title="查看大图"
                     >
-                      <img src={`/notes/${noteId}/keyframes/${kfRel}`}
+                      <img src={`${keyframeBase}${kfRel}`}
                            alt="" className="w-full h-full object-cover dark:brightness-90
                                               transition-transform group-hover/kf:scale-[1.06]" />
                       <span className="absolute inset-0 bg-black/35 opacity-0
@@ -213,7 +213,7 @@ export default function NotesContent({
         </section>
       ) : (
         <VlogTimeline
-          noteId={noteId}
+          keyframeBase={keyframeBase}
           summary={summary}
           currentTime={currentTime}
           onSeek={onSeek}

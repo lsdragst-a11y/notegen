@@ -1,6 +1,7 @@
 import type {
   CatalogItem, Chapter, ChaptersFile, Chunk, NoteMeta, Mark, Overview
 } from "./types";
+import { API_BASE } from "./api";
 const PUBLIC_BASE = ""; // 同源，public/ 静态文件用绝对路径 /notes/... 即可
 
 /** 优先 Next 同源 /api/notes（Node 端 fs 枚举 public/notes/，dev/prod 都在线）；
@@ -23,30 +24,58 @@ export interface NoteBundle {
   overview: Overview | null;
   meta: NoteMeta | null;
   videoUrl: string;
+  keyframeBase: string;   // 末尾带 /，拼 keyframe.rel
+  isPrivate: boolean;
 }
 
 export async function fetchNote(id: string): Promise<NoteBundle> {
-  const base = `${PUBLIC_BASE}/notes/${id}`;
+  // 1) 公开静态优先（既有行为）
+  const pub = `${PUBLIC_BASE}/notes/${id}`;
+  const pubSummary = await fetch(`${pub}/summary.json`, { cache: "no-store" }).catch(() => null);
+  if (pubSummary && pubSummary.ok) {
+    const [chaptersR, metaR] = await Promise.all([
+      fetch(`${pub}/chapters.json`, { cache: "no-store" }),
+      fetch(`${pub}/meta.json`, { cache: "no-store" }).catch(() => null),
+    ]);
+    if (!chaptersR.ok) throw new Error("chapters.json missing");
+    const summary: Chunk[] = await pubSummary.json();
+    const chaptersData: ChaptersFile = await chaptersR.json();
+    let meta: NoteMeta | null = null;
+    if (metaR && metaR.ok) { try { meta = await metaR.json(); } catch { meta = null; } }
+    return {
+      id, summary,
+      chapters: chaptersData.chapters || [],
+      overview: chaptersData.overview || null,
+      meta,
+      videoUrl: `${PUBLIC_BASE}/videos/${id}.mp4`,
+      keyframeBase: `${pub}/keyframes/`,
+      isPrivate: false,
+    };
+  }
+
+  // 2) 私有：经鉴权文件端点（cookie 自动带，same-site）
+  const priv = `${API_BASE}/api/notes/${id}/file`;
   const [summaryR, chaptersR, metaR] = await Promise.all([
-    fetch(`${base}/summary.json`, { cache: "no-store" }),
-    fetch(`${base}/chapters.json`, { cache: "no-store" }),
-    fetch(`${base}/meta.json`, { cache: "no-store" }).catch(() => null),
+    fetch(`${priv}/summary.json`, { credentials: "include", cache: "no-store" }),
+    fetch(`${priv}/chapters.json`, { credentials: "include", cache: "no-store" }),
+    fetch(`${priv}/meta.json`, { credentials: "include", cache: "no-store" }).catch(() => null),
   ]);
-  if (!summaryR.ok) throw new Error("summary.json missing");
+  if (!summaryR.ok) {
+    throw new Error(summaryR.status === 404 ? "笔记不存在或无权访问" : "summary.json missing");
+  }
   if (!chaptersR.ok) throw new Error("chapters.json missing");
   const summary: Chunk[] = await summaryR.json();
   const chaptersData: ChaptersFile = await chaptersR.json();
   let meta: NoteMeta | null = null;
-  if (metaR && metaR.ok) {
-    try { meta = await metaR.json(); } catch { meta = null; }
-  }
+  if (metaR && metaR.ok) { try { meta = await metaR.json(); } catch { meta = null; } }
   return {
-    id,
-    summary,
+    id, summary,
     chapters: chaptersData.chapters || [],
     overview: chaptersData.overview || null,
     meta,
-    videoUrl: `${PUBLIC_BASE}/videos/${id}.mp4`,
+    videoUrl: `${priv}/video.mp4`,
+    keyframeBase: `${priv}/keyframes/`,
+    isPrivate: true,
   };
 }
 

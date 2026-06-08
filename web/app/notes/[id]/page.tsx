@@ -226,7 +226,7 @@ export default function NoteDetailPage({ params }: PageProps) {
         {/* 右：笔记 */}
         <div className="min-w-0">
           <NotesContent
-            noteId={id}
+            keyframeBase={bundle.keyframeBase}
             title={title}
             summary={bundle.summary}
             chapters={bundle.chapters}
