@@ -167,7 +167,7 @@ export default function NotesContent({
                         title={lang === "en" ? "Jump to this point" : "跳转到此处"}
                         aria-label={lang === "en" ? "Jump to this point" : "跳转到此处"}
                         className="flex h-9 w-9 items-center justify-center rounded-full
-                                   bg-white/90 text-[var(--fg)] shadow-md transition-transform
+                                   bg-white/90 text-neutral-900 shadow-md transition-transform
                                    hover:scale-110 hover:bg-white"
                       >
                         <Play size={15} fill="currentColor" className="translate-x-[1px]" />
@@ -179,7 +179,7 @@ export default function NotesContent({
                           title={lang === "en" ? "View slide" : "查看大图"}
                           aria-label={lang === "en" ? "View slide" : "查看大图"}
                           className="flex h-9 w-9 items-center justify-center rounded-full
-                                     bg-white/90 text-[var(--fg)] shadow-md transition-transform
+                                     bg-white/90 text-neutral-900 shadow-md transition-transform
                                      hover:scale-110 hover:bg-white"
                         >
                           <Expand size={15} />
