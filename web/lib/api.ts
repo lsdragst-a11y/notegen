@@ -94,6 +94,17 @@ export function postUpload(
   });
 }
 
+export interface JobStageMetric {
+  stage: string;
+  label: string;
+  i: number;
+  n: number;
+  start_t: number;
+  end_t?: number | null;
+  duration_sec?: number | null;
+  status: "running" | "done" | "failed" | "interrupted" | string;
+}
+
 export interface JobEvent {
   stage: string;
   percent: number;
@@ -102,6 +113,7 @@ export interface JobEvent {
   video_duration?: number;
   est_total_sec?: number;
   video_title?: string;
+  metrics?: JobStageMetric[];
   t: number;
 }
 

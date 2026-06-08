@@ -67,6 +67,13 @@ function GenerateInner() {
   const isError = !!error || ["error", "failed", "interrupted"].includes(progress.stage);
   const isDone = progress.stage === "done";
   const fmtMS = (s: number) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(Math.floor(s) % 60).toString().padStart(2, "0")}`;
+  const metrics = progress.metrics?.length
+    ? progress.metrics
+    : [...history].reverse().find((e) => e.metrics?.length)?.metrics ?? [];
+  const visibleMetrics = metrics.slice(-12);
+  const totalMetricSec = metrics.reduce((sum, item) => (
+    sum + (typeof item.duration_sec === "number" ? item.duration_sec : 0)
+  ), 0);
 
   return (
     <main className="relative min-h-screen">
@@ -168,6 +175,42 @@ function GenerateInner() {
               ASR (faster-whisper large-v3) 是最久的步骤。10 分钟的视频大约要 5-8 分钟。
               页面可以放着不动 — 完成会自动跳转。
             </p>
+          )}
+
+          {/* 阶段耗时 */}
+          {visibleMetrics.length > 0 && (
+            <div className="mt-6 border-t border-[var(--border)] pt-4">
+              <div className="flex items-center justify-between gap-3 text-xs">
+                <span className="font-medium text-[var(--fg-secondary)]">阶段耗时</span>
+                <span className="tabular-nums text-[var(--fg-tertiary)]">
+                  {fmtMS(totalMetricSec)}
+                </span>
+              </div>
+              <div className="mt-3 space-y-1.5">
+                {visibleMetrics.map((item) => {
+                  const isRunning = item.status === "running";
+                  const duration = typeof item.duration_sec === "number"
+                    ? fmtMS(item.duration_sec)
+                    : "运行中";
+                  return (
+                    <div
+                      key={`${item.i}-${item.stage}`}
+                      className="flex items-center gap-3 text-xs text-[var(--fg-secondary)]"
+                    >
+                      <span className="w-5 shrink-0 tabular-nums text-[var(--fg-tertiary)]">
+                        {item.i}
+                      </span>
+                      <span className="min-w-0 flex-1 truncate">
+                        {item.label || item.stage}
+                      </span>
+                      <span className={`shrink-0 tabular-nums ${isRunning ? "text-[var(--accent)]" : "text-[var(--fg-tertiary)]"}`}>
+                        {duration}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           )}
 
           {/* 最近事件日志（折叠） */}
