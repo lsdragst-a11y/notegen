@@ -69,6 +69,7 @@ def create_job(jid: str, source: str, opts: dict) -> None:
         "id": jid, "source": source,
         "is_local": "1" if opts.get("is_local") else "0",
         "quality": opts.get("quality") or "best",
+        "user_id": opts.get("user_id") or "",
         "stage": "queued", "percent": "0", "msg": "排队中",
         "created": str(time.time()),
     })
@@ -123,15 +124,38 @@ def queue_position(jid: str) -> Optional[int]:
         return None
 
 
+def _note_exists(note_id: Optional[str]) -> bool:
+    """done job 的产出 note 是否还在库里。用户删笔记后 idem 仍指向那个 done job，
+    不校验就会把前端导到一个已失踪的 note。DB 不可用时保守返回 True 不阻塞入队。"""
+    if not note_id:
+        return False
+    try:
+        import userdata  # lazy 避免 import 环
+        return userdata.notes_repo.get(note_id) is not None
+    except Exception:
+        return True
+
+
+def _reusable(st: Optional[dict]) -> bool:
+    """命中的 job 能否复用：失败/中断 → 否（放行重提）；私有 done 但 note 已删 → 否（强制
+    新建，否则前端跳到失踪 note）；其余 in-flight（queued/running）及无 user 的公开 done → 是。"""
+    if not st:
+        return False
+    stage = st.get("stage")
+    if stage in ("failed", "interrupted"):
+        return False
+    if stage == "done" and st.get("user_id"):
+        return _note_exists(st.get("note_id"))
+    return True
+
+
 def enqueue_generate(source: str, opts: dict) -> tuple[str, bool]:
     """幂等入队。返回 (job_id, is_new)。命中已有 in-flight/done 任务则复用。"""
     kv = get_kv()
     key = idempotency_key(source, opts)
     existing = kv.get(_idem_key(key))
-    if existing:
-        st = job_state(existing)
-        if st and st.get("stage") not in ("failed", "interrupted"):
-            return existing, False
+    if existing and _reusable(job_state(existing)):
+        return existing, False
     jid = uuid.uuid4().hex[:12]
     create_job(jid, source, opts)
     kv.set(_idem_key(key), jid)

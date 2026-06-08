@@ -166,12 +166,19 @@ def publish_to_web(stem: str) -> str:
     return stem
 
 
+def private_note_id(stem: str, user_id: str) -> str:
+    """私有 note id 加 user 维度。notes.id 是全局主键，不 scope 的话两个用户生成同一
+    视频会 upsert 撞同一行、后者覆盖前者归属（list_mine 变空、owner 被改）。"""
+    return f"{user_id}_{stem}"
+
+
 def publish_private(stem: str, user_id: str) -> tuple[str, str, dict]:
     """私有发布：copy 产物 + 视频(video.mp4) 到 data/user_notes/{uid}/{stem}/（公开静态不可达）。
-    返回 (note_id, storage_path, 展示字段 dict)。"""
+    返回 (note_id, storage_path, 展示字段 dict)。note_id 经 private_note_id 加 user 维度
+    避免撞全局 notes 主键；storage_path/keyframe 取用仍走 storage_path，与 id 解耦。"""
     note_dir = USER_NOTES_DIR / user_id / stem
     _copy_artifacts(stem, note_dir)
     vid = _find_source_video(stem)
     if vid:
         shutil.copy(vid, note_dir / "video.mp4")
-    return stem, str(note_dir), extract_note_fields(note_dir)
+    return private_note_id(stem, user_id), str(note_dir), extract_note_fields(note_dir)

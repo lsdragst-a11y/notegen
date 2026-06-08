@@ -36,9 +36,13 @@ meta_stem = stem.split(".")[0]
 
 note_id, storage_path, fields = SC.publish_private(stem, "u1")
 nd = Path(storage_path)
-check(note_id == stem, "note_id == stem")
+check(note_id == f"u1_{stem}", f"note_id 加 user 维度 == u1_{stem} -> {note_id}")
 check(str(nd).replace("\\", "/").endswith(f"user_notes/u1/{stem}"),
       f"私有目录在 user_notes/u1 下 -> {nd}")
+# 两个用户同 stem -> 不同 note_id（防全局主键覆盖归属）
+nid_u2, _, _ = SC.publish_private(stem, "u2")
+check(note_id != nid_u2 and nid_u2 == f"u2_{stem}",
+      f"不同用户同视频 note_id 不同 -> {note_id} vs {nid_u2}")
 check((nd / "summary.json").exists() and (nd / "chapters.json").exists(),
       "summary/chapters 落位")
 check((nd / "meta.json").exists(), "meta.json 落位")

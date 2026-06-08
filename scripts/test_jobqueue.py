@@ -66,6 +66,19 @@ JQ.set_progress(jid, stage="failed", percent=0, msg="boom")
 jid3, is_new3 = JQ.enqueue_generate("https://y.com/v", {"quality": "best"})
 check(is_new3 is True and jid3 != jid, "(f) failed 后重提 -> 新 job")
 
+# (g) done job：note 还在 -> 复用；note 被删 -> 强制新建（防前端跳到已失踪 note）
+gopts = {"quality": "best", "user_id": "ug"}
+gj, _ = JQ.enqueue_generate("https://g.com/v", gopts)
+JQ.set_progress(gj, stage="done", percent=100, msg="完成", note_id="ug_BVg")
+_orig_ne = JQ._note_exists
+JQ._note_exists = lambda nid: True
+gj2, gnew2 = JQ.enqueue_generate("https://g.com/v", dict(gopts))
+check(gj2 == gj and gnew2 is False, "(g) done 且 note 在 -> 复用同 job")
+JQ._note_exists = lambda nid: False
+gj3, gnew3 = JQ.enqueue_generate("https://g.com/v", dict(gopts))
+check(gnew3 is True and gj3 != gj, "(g) done 但 note 已删 -> 新 job")
+JQ._note_exists = _orig_ne
+
 print()
 if FAILS:
     print(f"=== {len(FAILS)} CHECK(S) FAILED ===")
