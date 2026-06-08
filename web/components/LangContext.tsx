@@ -17,6 +17,8 @@ export function LangProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     try {
       const v = localStorage.getItem(STORAGE_KEY);
+      // 一次性客户端水合：SSR 用默认 "zh"，挂载后读真值。单次 setState，非级联。
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (v === "zh" || v === "en") setLangState(v);
     } catch {}
   }, []);

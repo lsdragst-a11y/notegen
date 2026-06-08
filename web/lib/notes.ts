@@ -277,7 +277,7 @@ export function buildGlossary(summary: Chunk[], topK = 15,
     }
   }
   const candidates = Object.entries(df)
-    .filter(([_, d]) => d >= minDf)
+    .filter(([, d]) => d >= minDf)
     .sort((a, b) => {
       if (b[1] !== a[1]) return b[1] - a[1];
       return (firstIdx[a[0]] ?? 0) - (firstIdx[b[0]] ?? 0);

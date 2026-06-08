@@ -30,6 +30,8 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     const saved = (localStorage.getItem("theme") as Theme | null) || "system";
+    // 一次性客户端水合：layout inline script 已设好 data-theme 防闪，这里只同步高亮态。
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTheme(saved);
   }, []);
 

@@ -20,7 +20,7 @@ export default function ParticleBG({ density = 0.00005, mouseRepelR = 120 }: {
 
     let raf = 0;
     let particles: { x: number; y: number; vx: number; vy: number; r: number; hue: number; sat: number; light: number; alpha: number }[] = [];
-    let dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
     function resize() {
       if (!canvas || !ctx) return;

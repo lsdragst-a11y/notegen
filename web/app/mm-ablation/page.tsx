@@ -106,17 +106,14 @@ export default function MMAblationPage() {
   useEffect(() => {
     fetch("/mm-ablation/manifest.json", { cache: "no-store" })
       .then(r => r.json())
-      .then(setManifest)
+      .then((m: Manifest) => {
+        setManifest(m);
+        // 默认展开最具教学价值的一个 case：EH5jx5qPabU（19→32 章过度切分极端）
+        const t = m.videos.find(v => v.stem === "EH5jx5qPabU_p0");
+        if (t) setExpanded(t.stem);
+      })
       .catch(e => setErr(String(e)));
   }, []);
-
-  // 默认展开最具教学价值的一个 case：EH5jx5qPabU（19→32 章过度切分极端）
-  useEffect(() => {
-    if (manifest && !expanded) {
-      const t = manifest.videos.find(v => v.stem === "EH5jx5qPabU_p0");
-      if (t) setExpanded(t.stem);
-    }
-  }, [manifest, expanded]);
 
   const verdicts = useMemo(() => {
     if (!manifest) return null;

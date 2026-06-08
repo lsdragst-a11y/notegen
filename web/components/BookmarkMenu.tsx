@@ -51,7 +51,6 @@ export default function BookmarkMenu({ bm, size = 14, className = "" }: Props) {
 
   useLayoutEffect(() => {
     if (open) place();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open]);
 
   useEffect(() => {

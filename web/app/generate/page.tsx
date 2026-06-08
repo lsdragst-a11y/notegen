@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import NavBar from "@/components/NavBar";
 import FluidBG from "@/components/FluidBG";
@@ -13,19 +13,27 @@ function GenerateInner() {
   const search = useSearchParams();
   const jobId = search.get("job") || "";
   const [progress, setProgress] = useState<JobEvent>({
-    stage: "连接中", percent: 0, msg: "等待 backend 响应...", t: Date.now() / 1000,
+    stage: "连接中", percent: 0, msg: "等待 backend 响应...", t: 0,
   });
   const [history, setHistory] = useState<JobEvent[]>([]);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(jobId ? null : "缺少 job id");
+  const [elapsed, setElapsed] = useState(0);
   const [meta, setMeta] = useState<{ videoDuration?: number; estTotal?: number; videoTitle?: string }>({});
   const redirectedRef = useRef(false);
-  const startedAtRef = useRef<number>(Date.now());
+  const terminalRef = useRef(false);
+
+  // 计时器：进页面起每秒走一格，到终态（done/失败）停（Date.now 留在 effect 里，不进 render）
+  useEffect(() => {
+    if (!jobId) return;
+    const started = Date.now();
+    const id = setInterval(() => {
+      if (!terminalRef.current) setElapsed(Math.floor((Date.now() - started) / 1000));
+    }, 1000);
+    return () => clearInterval(id);
+  }, [jobId]);
 
   useEffect(() => {
-    if (!jobId) {
-      setError("缺少 job id");
-      return;
-    }
+    if (!jobId) return;
     const unsub = subscribeJob(jobId, (e) => {
       setProgress(e);
       setHistory(h => [...h, e]);
@@ -38,35 +46,26 @@ function GenerateInner() {
         }));
       }
       if (e.stage === "done" && e.note_id && !redirectedRef.current) {
+        terminalRef.current = true;
         redirectedRef.current = true;
         // 给用户看一下 100% 状态再跳
         setTimeout(() => router.push(`/notes/${e.note_id}`), 800);
       }
-      if (e.stage === "error") {
-        setError(e.msg || "未知错误");
+      // 后端真失败发的是 failed/interrupted（不是 error）；纳入错误态并展示后端原因，
+      // 否则会被随后的 SSE 流关闭误判成"连接中断"或卡在"生成中"。
+      if (e.stage === "failed" || e.stage === "interrupted" || e.stage === "error") {
+        terminalRef.current = true;
+        setError(e.msg || (e.stage === "interrupted" ? "任务被中断" : "生成失败"));
       }
     }, () => {
-      // EventSource 错误一般是网络断开，给提示但不一定终止
-      if (!redirectedRef.current) setError("和 backend 的连接中断了。可能 server.py 退出？");
+      // 终态后流会正常关闭并触发 onerror，别用"连接中断"覆盖真实失败原因
+      if (!terminalRef.current) setError("和 backend 的连接中断了。可能 server.py 退出？");
     });
     return unsub;
   }, [jobId, router]);
 
-  const elapsed = Math.floor((Date.now() - startedAtRef.current) / 1000);
-  const isError = !!error || progress.stage === "error";
+  const isError = !!error || ["error", "failed", "interrupted"].includes(progress.stage);
   const isDone = progress.stage === "done";
-  // 剩余时间估算：优先 est_total - elapsed（探测阶段拿到的总估算）
-  // fallback：基于当前 progress.percent 线性外推
-  const remainSec = (() => {
-    if (isDone) return 0;
-    if (meta.estTotal && meta.estTotal > elapsed) return meta.estTotal - elapsed;
-    if (progress.percent > 5 && progress.percent < 99) {
-      const projected = elapsed / (progress.percent / 100);
-      const rem = Math.max(0, projected - elapsed);
-      return rem;
-    }
-    return null;
-  })();
   const fmtMS = (s: number) => `${Math.floor(s / 60).toString().padStart(2, "0")}:${(Math.floor(s) % 60).toString().padStart(2, "0")}`;
 
   return (

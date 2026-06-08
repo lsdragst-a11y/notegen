@@ -342,7 +342,7 @@ export default function LandingPage() {
                   }}
                   onKeyDown={(e) => {
                     if (e.key !== "Enter") return;
-                    probed ? handleSubmit() : handleProbe();
+                    if (probed) handleSubmit(); else handleProbe();
                   }}
                   className="flex-1 bg-transparent outline-none text-sm placeholder:text-[var(--fg-tertiary)] min-w-0"
                 />

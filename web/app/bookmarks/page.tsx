@@ -17,6 +17,24 @@ import { formatTime } from "@/lib/notes";
 const ALL = "__all__";
 const UNCAT = "__uncat__";
 
+function Chip({ active, label, count, color, onSelect }: {
+  active: boolean; label: string; count: number; color?: string; onSelect: () => void;
+}) {
+  return (
+    <button
+      onClick={onSelect}
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors
+        ${active
+          ? "border-transparent bg-[var(--accent)] text-white"
+          : "border-[var(--border)] text-[var(--fg-secondary)] hover:bg-[var(--bg-muted)]"}`}
+    >
+      {color && <span className="h-2 w-2 rounded-full" style={{ background: color }} />}
+      {label}
+      <span className={active ? "text-white/80" : "text-[var(--fg-tertiary)]"}>{count}</span>
+    </button>
+  );
+}
+
 export default function BookmarksPage() {
   const { lang } = useLang();
   const list = useBookmarksList();
@@ -68,23 +86,6 @@ export default function BookmarksPage() {
     idx: b.idx, title: b.title, title_en: b.title_en, time: b.time, keyframeRel: b.keyframeRel,
   });
 
-  const Chip = ({ id, label, count, color }: { id: string; label: string; count: number; color?: string }) => {
-    const active = filter === id;
-    return (
-      <button
-        onClick={() => setFilter(id)}
-        className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors
-          ${active
-            ? "border-transparent bg-[var(--accent)] text-white"
-            : "border-[var(--border)] text-[var(--fg-secondary)] hover:bg-[var(--bg-muted)]"}`}
-      >
-        {color && <span className="h-2 w-2 rounded-full" style={{ background: color }} />}
-        {label}
-        <span className={active ? "text-white/80" : "text-[var(--fg-tertiary)]"}>{count}</span>
-      </button>
-    );
-  };
-
   return (
     <main className="min-h-screen pb-24">
       <NavBar>
@@ -125,12 +126,15 @@ export default function BookmarksPage() {
 
         {/* 分类筛选条 */}
         <div className="mt-5 flex flex-wrap gap-2">
-          <Chip id={ALL} label={lang === "en" ? "All" : "全部"} count={list.length} />
+          <Chip active={filter === ALL} label={lang === "en" ? "All" : "全部"}
+                count={list.length} onSelect={() => setFilter(ALL)} />
           {cats.map(c => (
-            <Chip key={c.id} id={c.id} label={c.name} count={catCounts[c.id] || 0} color={c.color} />
+            <Chip key={c.id} active={filter === c.id} label={c.name}
+                  count={catCounts[c.id] || 0} color={c.color} onSelect={() => setFilter(c.id)} />
           ))}
           {uncatCount > 0 && (
-            <Chip id={UNCAT} label={lang === "en" ? "Uncategorized" : "未分类"} count={uncatCount} />
+            <Chip active={filter === UNCAT} label={lang === "en" ? "Uncategorized" : "未分类"}
+                  count={uncatCount} onSelect={() => setFilter(UNCAT)} />
           )}
         </div>
 

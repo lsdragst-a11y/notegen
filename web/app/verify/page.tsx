@@ -10,11 +10,11 @@ import { apiVerify } from "@/lib/auth";
 function VerifyInner() {
   const search = useSearchParams();
   const token = search.get("token") || "";
-  const [state, setState] = useState<"pending" | "ok" | "fail">("pending");
-  const [msg, setMsg] = useState("");
+  const [state, setState] = useState<"pending" | "ok" | "fail">(token ? "pending" : "fail");
+  const [msg, setMsg] = useState(token ? "" : "缺少验证 token");
 
   useEffect(() => {
-    if (!token) { setState("fail"); setMsg("缺少验证 token"); return; }
+    if (!token) return;
     apiVerify(token)
       .then(r => { setState("ok"); setMsg(r.message); })
       .catch(e => { setState("fail"); setMsg(e?.message || "验证失败"); });
