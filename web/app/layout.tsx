@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { LangProvider } from "@/components/LangContext";
+import { AuthProvider } from "@/components/AuthContext";
 
 export const metadata: Metadata = {
   title: "NoteGen · 教学视频结构化笔记",
@@ -34,7 +35,9 @@ export default function RootLayout({
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body className="min-h-full flex flex-col">
-        <LangProvider>{children}</LangProvider>
+        <AuthProvider>
+          <LangProvider>{children}</LangProvider>
+        </AuthProvider>
       </body>
     </html>
   );
