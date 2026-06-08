@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Sparkles, Layers } from "lucide-react";
+import { Sparkles, Layers, WifiOff } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import LangToggle from "./LangToggle";
 import { useAuth } from "./AuthContext";
@@ -11,7 +11,7 @@ import UserMenu from "./UserMenu";
  * children 是可选的中间内容（如详情页传当前笔记标题）。
  */
 export default function NavBar({ children }: { children?: React.ReactNode }) {
-  const { user, loading } = useAuth();
+  const { user, loading, offline } = useAuth();
   return (
     <header className="sticky top-0 z-30 glass border-b border-[var(--border)]">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center gap-4">
@@ -43,6 +43,12 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
         <ThemeToggle />
         {!loading && (user ? (
           <UserMenu />
+        ) : offline ? (
+          <span className="inline-flex items-center gap-1.5 text-xs text-[var(--fg-tertiary)]
+                           px-2.5 py-1.5 rounded-md bg-[var(--bg-muted)]"
+                title="无法连接服务器，鉴权状态未知">
+            <WifiOff size={13} /> 服务离线
+          </span>
         ) : (
           <div className="flex items-center gap-1.5">
             <Link href="/login"
