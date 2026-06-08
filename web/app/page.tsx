@@ -11,6 +11,7 @@ import { fetchCatalog, formatDuration } from "@/lib/notes";
 import { postGenerate, postProbe, postUpload, deleteNote,
          type DownloadQuality, type ProbeResult } from "@/lib/api";
 import type { CatalogItem } from "@/lib/types";
+import { useAuth } from "@/components/AuthContext";
 
 type SubmitMode = "url" | "file";
 const ACCEPT_EXTS = ".mp4,.mkv,.mov,.avi,.webm,.flv,.m4v,.ts";
@@ -54,6 +55,7 @@ function applySavedOrder(items: CatalogItem[], savedIds: string[]): CatalogItem[
 
 export default function LandingPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [catalog, setCatalog] = useState<CatalogItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [url, setUrl] = useState("");
@@ -218,6 +220,7 @@ export default function LandingPage() {
     const trimmed = url.trim();
     if (!trimmed) { setHint("先粘贴一个视频链接"); return; }
     if (!probed) { setHint("先点查询看可用画质"); return; }
+    if (!user) { router.push("/login?next=/"); return; }
     setHint(null);
     setSubmitting(true);
     try {
@@ -243,6 +246,7 @@ export default function LandingPage() {
 
   async function handleSubmitFile() {
     if (!file) { setHint("先选一个视频文件"); return; }
+    if (!user) { router.push("/login?next=/"); return; }
     setHint(null);
     setSubmitting(true);
     setUploadPct(0);
@@ -605,6 +609,7 @@ export default function LandingPage() {
                 onDragMove={() => reorderByPointer(item.id)}
                 onDragEnd={() => handleDragEnd()}
                 onDelete={() => setConfirmDel(item)}
+                canDelete={user?.role === "admin"}
               />
             ))}
           </div>
@@ -690,7 +695,7 @@ export default function LandingPage() {
   );
 }
 
-function NoteCard({ item, index, cssOrder, isDragged, anyDragging, registerRef, onDragStart, onDragMove, onDragEnd, onDelete }: {
+function NoteCard({ item, index, cssOrder, isDragged, anyDragging, registerRef, onDragStart, onDragMove, onDragEnd, onDelete, canDelete }: {
   item: CatalogItem;
   index: number;
   cssOrder: number;
@@ -701,6 +706,7 @@ function NoteCard({ item, index, cssOrder, isDragged, anyDragging, registerRef, 
   onDragMove: () => void;
   onDragEnd: () => void;
   onDelete: () => void;
+  canDelete: boolean;
 }) {
   const dragControls = useDragControls();
   const ref = useRef<HTMLDivElement>(null);
@@ -778,18 +784,20 @@ function NoteCard({ item, index, cssOrder, isDragged, anyDragging, registerRef, 
           >
             <GripVertical size={13} />
           </button>
-          <button
-            type="button"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(); }}
-            title="删除笔记"
-            className="absolute top-3 right-3 w-7 h-7 rounded-full
-                       bg-[var(--bg-muted)] text-[var(--fg-tertiary)]
-                       hover:bg-[#ff3b30] hover:text-white
-                       inline-flex items-center justify-center
-                       opacity-0 group-hover:opacity-100 transition-all z-10"
-          >
-            <Trash2 size={13} />
-          </button>
+          {canDelete && (
+            <button
+              type="button"
+              onClick={(e) => { e.preventDefault(); e.stopPropagation(); onDelete(); }}
+              title="删除笔记"
+              className="absolute top-3 right-3 w-7 h-7 rounded-full
+                         bg-[var(--bg-muted)] text-[var(--fg-tertiary)]
+                         hover:bg-[#ff3b30] hover:text-white
+                         inline-flex items-center justify-center
+                         opacity-0 group-hover:opacity-100 transition-all z-10"
+            >
+              <Trash2 size={13} />
+            </button>
+          )}
           <div className="flex items-start justify-between gap-3">
             <span className="tag-chip">{item.domain}</span>
             <span className="inline-flex items-center gap-1 text-xs text-[var(--fg-tertiary)] tabular-nums">
