@@ -53,6 +53,77 @@ def _log_key(jid: str) -> str: return f"job:{jid}:log"
 def _idem_key(k: str) -> str: return f"idem:{k}"
 
 
+def _decode_metrics(raw) -> list[dict]:
+    if not raw:
+        return []
+    try:
+        data = json.loads(raw)
+    except (ValueError, TypeError):
+        return []
+    return data if isinstance(data, list) else []
+
+
+def _store_metrics(jid: str, metrics: list[dict]) -> None:
+    get_kv().hset(_job_key(jid), mapping={
+        "metrics_json": json.dumps(metrics, ensure_ascii=False),
+    })
+
+
+def stage_metrics(jid: str) -> list[dict]:
+    return _decode_metrics(get_kv().hget(_job_key(jid), "metrics_json"))
+
+
+def record_stage_start(jid: str, marker: dict, now: Optional[float] = None) -> list[dict]:
+    """Record a pipeline stage boundary from a [PROGRESS] marker."""
+    ts = time.time() if now is None else float(now)
+    metrics = stage_metrics(jid)
+    stage = str(marker.get("stage") or "")
+    label = str(marker.get("label") or stage)
+
+    if metrics and metrics[-1].get("status") == "running":
+        if metrics[-1].get("stage") == stage:
+            return metrics
+        start_t = float(metrics[-1].get("start_t") or ts)
+        metrics[-1]["end_t"] = ts
+        metrics[-1]["duration_sec"] = round(max(0.0, ts - start_t), 3)
+        metrics[-1]["status"] = "done"
+
+    try:
+        i = int(marker.get("i") or len(metrics) + 1)
+    except (ValueError, TypeError):
+        i = len(metrics) + 1
+    try:
+        n = int(marker.get("n") or 0)
+    except (ValueError, TypeError):
+        n = 0
+
+    metrics.append({
+        "stage": stage,
+        "label": label,
+        "i": i,
+        "n": n,
+        "start_t": ts,
+        "end_t": None,
+        "duration_sec": None,
+        "status": "running",
+    })
+    _store_metrics(jid, metrics)
+    return metrics
+
+
+def finish_stage_metrics(jid: str, status: str = "done",
+                         now: Optional[float] = None) -> list[dict]:
+    ts = time.time() if now is None else float(now)
+    metrics = stage_metrics(jid)
+    if metrics and metrics[-1].get("status") == "running":
+        start_t = float(metrics[-1].get("start_t") or ts)
+        metrics[-1]["end_t"] = ts
+        metrics[-1]["duration_sec"] = round(max(0.0, ts - start_t), 3)
+        metrics[-1]["status"] = status
+        _store_metrics(jid, metrics)
+    return metrics
+
+
 def idempotency_key(source: str, opts: dict) -> str:
     """稳定 key：归一化 source + quality + is_local + user_id。
     含 user_id 使两用户提交同一 URL 各得各自私有笔记，互不复用。"""
@@ -71,22 +142,29 @@ def create_job(jid: str, source: str, opts: dict) -> None:
         "quality": opts.get("quality") or "best",
         "user_id": opts.get("user_id") or "",
         "stage": "queued", "percent": "0", "msg": "排队中",
+        "metrics_json": "[]",
         "created": str(time.time()),
     })
 
 
 def set_progress(jid: str, *, stage=None, percent=None, msg=None,
-                 note_id=None, returncode=None) -> None:
+                 note_id=None, returncode=None, metrics=None) -> None:
     """更新 job hash + 追加一条事件（仅含变化字段 + 时间戳）供 SSE 消费。"""
     kv = get_kv()
+    if metrics is None and stage in ("done", "failed", "interrupted"):
+        metrics = finish_stage_metrics(jid, str(stage))
     fields = {}
     for k, v in (("stage", stage), ("percent", percent), ("msg", msg),
                  ("note_id", note_id), ("returncode", returncode)):
         if v is not None:
             fields[k] = str(v)
+    if metrics is not None:
+        fields["metrics_json"] = json.dumps(metrics, ensure_ascii=False)
     if fields:
         kv.hset(_job_key(jid), mapping=fields)
-    ev = dict(fields)
+    ev = {k: v for k, v in fields.items() if k != "metrics_json"}
+    if metrics is not None:
+        ev["metrics"] = metrics
     ev["t"] = time.time()
     kv.rpush(_events_key(jid), json.dumps(ev, ensure_ascii=False))
 
@@ -106,6 +184,7 @@ def job_state(jid: str) -> Optional[dict]:
         h["percent"] = int(h.get("percent", 0))
     except (ValueError, TypeError):
         h["percent"] = 0
+    h["metrics"] = _decode_metrics(h.pop("metrics_json", "[]"))
     h["log"] = kv.lrange(_log_key(jid), 0, -1)
     return h
 

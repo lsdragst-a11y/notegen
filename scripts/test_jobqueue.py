@@ -3,6 +3,7 @@
 Run: .venv/Scripts/python.exe scripts/test_jobqueue.py"""
 import sys
 import os
+import json
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 
 import fakeredis  # noqa: E402
@@ -46,6 +47,22 @@ evs, n = JQ.read_events("job1", 0)
 check(len(evs) == 2 and n == 2, f"(c) 两条事件 -> {len(evs)}")
 evs2, n2 = JQ.read_events("job1", n)
 check(evs2 == [] and n2 == 2, "(c) 增量读：无新事件")
+
+# (c2) stage metrics: marker boundaries are persisted and emitted on terminal events
+JQ.record_stage_start("job1", {"stage": "asr", "label": "ASR", "i": 4, "n": 18}, now=100.0)
+JQ.record_stage_start("job1", {"stage": "chunk", "label": "Chunk", "i": 5, "n": 18}, now=103.25)
+metrics = JQ.finish_stage_metrics("job1", status="done", now=105.0)
+check(len(metrics) == 2 and metrics[0]["duration_sec"] == 3.25 and metrics[1]["status"] == "done",
+      f"(c2) metrics close previous/current stages -> {metrics}")
+st = JQ.job_state("job1")
+check(st["metrics"][0]["stage"] == "asr" and st["metrics"][1]["duration_sec"] == 1.75,
+      f"(c2) job_state exposes parsed metrics -> {st['metrics']}")
+old_n = n2
+JQ.set_progress("job1", stage="done", percent=100, msg="done again")
+evs3, n3 = JQ.read_events("job1", old_n)
+last_event = json.loads(evs3[-1])
+check(n3 == old_n + 1 and last_event["metrics"][1]["stage"] == "chunk",
+      f"(c2) terminal event includes metrics -> {last_event}")
 
 # (d) append_log + LTRIM 500
 for i in range(600):

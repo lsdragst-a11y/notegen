@@ -21,6 +21,7 @@ STAGE_LABELS = {
     "llm_headline": "生成标题",
     "visual_sims": "视觉相似度",
     "vlm_captions": "视觉描述",
+    "ocr_captions": "OCR 识别",
     "classify_category_early": "内容分类",
     "example_detection": "例子检测",
     "chapters": "章节切分",

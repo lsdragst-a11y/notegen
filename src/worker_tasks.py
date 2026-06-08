@@ -153,9 +153,10 @@ def _run_pipeline_subprocess(job_id: str, source: str, opts: dict):
 
         marker = parse_progress_marker(line)
         if marker:
+            metrics = jobqueue.record_stage_start(job_id, marker)
             lo, hi = stage_band(marker["i"], marker["n"])
             jobqueue.set_progress(job_id, stage=marker["label"], percent=lo,
-                                  msg=marker["label"])
+                                  msg=marker["label"], metrics=metrics)
             continue
 
         # 细粒度行：在当前 stage 带内插值
