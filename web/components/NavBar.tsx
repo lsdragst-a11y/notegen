@@ -3,12 +3,15 @@ import Link from "next/link";
 import { Sparkles, Layers } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import LangToggle from "./LangToggle";
+import { useAuth } from "./AuthContext";
+import UserMenu from "./UserMenu";
 
 /**
  * 全站共享导航栏。粘性 glass 风格，左侧 logo + brand，右侧 ThemeToggle。
  * children 是可选的中间内容（如详情页传当前笔记标题）。
  */
 export default function NavBar({ children }: { children?: React.ReactNode }) {
+  const { user, loading } = useAuth();
   return (
     <header className="sticky top-0 z-30 glass border-b border-[var(--border)]">
       <div className="max-w-7xl mx-auto px-6 h-14 flex items-center gap-4">
@@ -38,6 +41,18 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
         </Link>
         <LangToggle />
         <ThemeToggle />
+        {!loading && (user ? (
+          <UserMenu />
+        ) : (
+          <div className="flex items-center gap-1.5">
+            <Link href="/login"
+                  className="text-xs text-[var(--fg-secondary)] hover:text-[var(--fg)]
+                             px-2.5 py-1.5 rounded-md hover:bg-[var(--bg-muted)] transition-colors">
+              登录
+            </Link>
+            <Link href="/register" className="apple-button text-xs">注册</Link>
+          </div>
+        ))}
       </div>
     </header>
   );
