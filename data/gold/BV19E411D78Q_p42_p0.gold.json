@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p42_p0",
+  "local_source": "data/raw/BV19E411D78Q_p42_p0.mp4",
+  "duration": 552.09,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p42 3.7.2_1 PPP协议（咸鱼版）",
+  "boundaries_sec": [
+    119.9,
+    356.6
+  ],
+  "n_segments": 3,
+  "annotated_by": "human",
+  "draft_source": "llm:BV19E411D78Q_p42_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

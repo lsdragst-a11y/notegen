@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1W8AGzwEFW_p0",
+  "local_source": "data/raw/BV1W8AGzwEFW_p0.mp4",
+  "duration": 1006.74,
+  "domain": "vlog",
+  "label": "在上海花2000点外卖都能吃到啥？带你狠狠大吃一顿！",
+  "boundaries_sec": [
+    284.09,
+    368.87,
+    501.98,
+    667.96,
+    805.51
+  ],
+  "n_segments": 6,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1W8AGzwEFW_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

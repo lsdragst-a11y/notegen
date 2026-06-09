@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1SddcBFESs_p0",
+  "local_source": "data/raw/BV1SddcBFESs_p0.mp4",
+  "duration": 654.93,
+  "domain": "learning",
+  "label": "10分钟学会24个ClaudeCode使用技巧",
+  "boundaries_sec": [
+    115.22,
+    264.46,
+    387.11,
+    505.81
+  ],
+  "n_segments": 5,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1SddcBFESs_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

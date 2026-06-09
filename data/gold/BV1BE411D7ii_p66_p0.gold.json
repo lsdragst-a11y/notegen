@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1BE411D7ii_p66_p0",
+  "local_source": "data/raw/BV1BE411D7ii_p66_p0.mp4",
+  "duration": 1400.62,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机组成原理2019版 p66 【2019版】7.3 IO接口",
+  "boundaries_sec": [
+    131.4,
+    342.8,
+    710.1,
+    987.8,
+    1312.5
+  ],
+  "n_segments": 6,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1BE411D7ii_p66_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

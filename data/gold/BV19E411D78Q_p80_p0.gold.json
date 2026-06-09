@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p80_p0",
+  "local_source": "data/raw/BV19E411D78Q_p80_p0.mp4",
+  "duration": 1287.23,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p80 5.3.3_2 TCP连接管理（释放连接）（咸鱼版）",
+  "boundaries_sec": [
+    301.56,
+    657.27,
+    892.5,
+    1078.84
+  ],
+  "n_segments": 5,
+  "annotated_by": "human",
+  "draft_source": "llm:BV19E411D78Q_p80_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

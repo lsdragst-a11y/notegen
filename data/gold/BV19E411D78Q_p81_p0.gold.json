@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p81_p0",
+  "local_source": "data/raw/BV19E411D78Q_p81_p0.mp4",
+  "duration": 1563.77,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p81 5.3.4+5_1 TCP可靠传输、流量控制（咸鱼版）",
+  "boundaries_sec": [
+    59.6,
+    241.2,
+    441.2,
+    808.9,
+    1178.5
+  ],
+  "n_segments": 6,
+  "annotated_by": "human",
+  "draft_source": "llm:BV19E411D78Q_p81_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

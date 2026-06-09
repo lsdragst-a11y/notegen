@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1cwdzBDEL3_p0",
+  "local_source": "data/raw/BV1cwdzBDEL3_p0.mp4",
+  "duration": 930.03,
+  "domain": "vlog",
+  "label": "住日本这种小镇真的省钱吗？咖啡早餐超市，账单让我很意外！",
+  "boundaries_sec": [
+    90.26,
+    480.3,
+    604.19,
+    783.17
+  ],
+  "n_segments": 5,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1cwdzBDEL3_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

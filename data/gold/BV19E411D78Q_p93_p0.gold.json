@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p93_p0",
+  "local_source": "data/raw/BV19E411D78Q_p93_p0.mp4",
+  "duration": 2051.28,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p93 6.5.1 万维网WWW（咸鱼版）",
+  "boundaries_sec": [
+    256.7,
+    445.1,
+    927.2,
+    1402.0,
+    1672.3
+  ],
+  "n_segments": 6,
+  "annotated_by": "human",
+  "draft_source": "llm:BV19E411D78Q_p93_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

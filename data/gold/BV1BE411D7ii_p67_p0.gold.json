@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1BE411D7ii_p67_p0",
+  "local_source": "data/raw/BV1BE411D7ii_p67_p0.mp4",
+  "duration": 1048.96,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机组成原理2019版 p67 【2019版】7.4.1 程序查询方式",
+  "boundaries_sec": [
+    404.28,
+    598.64,
+    926.28
+  ],
+  "n_segments": 4,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1BE411D7ii_p67_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

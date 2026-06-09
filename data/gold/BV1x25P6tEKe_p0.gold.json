@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1x25P6tEKe_p0",
+  "local_source": "data/raw/BV1x25P6tEKe_p0.mp4",
+  "duration": 596.88,
+  "domain": "vlog",
+  "label": "【iPhone用户必看】为什么一定要升级到 iOS 26.5 正式版?  | 50+ 主要变化 | 大耳朵TV",
+  "boundaries_sec": [
+    155.9,
+    316.98
+  ],
+  "n_segments": 3,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1x25P6tEKe_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

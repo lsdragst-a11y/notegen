@@ -1,0 +1,19 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p44_p0",
+  "local_source": "data/raw/BV19E411D78Q_p44_p0.mp4",
+  "duration": 1733.35,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p44 3.8 以太网交换机（咸鱼版）",
+  "boundaries_sec": [
+    163.4,
+    484.6,
+    881.5,
+    1177.7,
+    1482.0
+  ],
+  "n_segments": 6,
+  "annotated_by": "human",
+  "draft_source": "llm:BV19E411D78Q_p44_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

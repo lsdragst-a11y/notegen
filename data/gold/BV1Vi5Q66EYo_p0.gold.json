@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1Vi5Q66EYo_p0",
+  "local_source": "data/raw/BV1Vi5Q66EYo_p0.mp4",
+  "duration": 1036.17,
+  "domain": "learning",
+  "label": "【数一147】|线代从0到满分|各阶段该怎么做|线代真的简单吗？",
+  "boundaries_sec": [
+    191.18,
+    491.33,
+    720.44
+  ],
+  "n_segments": 4,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1Vi5Q66EYo_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

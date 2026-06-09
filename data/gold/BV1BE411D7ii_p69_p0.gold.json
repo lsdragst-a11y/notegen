@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1BE411D7ii_p69_p0",
+  "local_source": "data/raw/BV1BE411D7ii_p69_p0.mp4",
+  "duration": 712.84,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机组成原理2019版 p69 【2019版】7.4.3 程序中断方式",
+  "boundaries_sec": [
+    192.7,
+    459.0
+  ],
+  "n_segments": 3,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1BE411D7ii_p69_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

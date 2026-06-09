@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1QQ5x6eEZh_p0",
+  "local_source": "data/raw/BV1QQ5x6eEZh_p0.mp4",
+  "duration": 373.4,
+  "domain": "vlog",
+  "label": "泡面实力排行！究竟哪款夯到爆！！",
+  "boundaries_sec": [
+    77.14,
+    157.04,
+    256.92,
+    305.74
+  ],
+  "n_segments": 5,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1QQ5x6eEZh_p0.large-v3.neural.texttile.cc400.mm.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1L24y1i7v3_p0",
+  "local_source": "data/raw/BV1L24y1i7v3_p0.mp4",
+  "duration": 310.78,
+  "domain": "learning",
+  "label": "5分钟看懂什么是深度学习",
+  "boundaries_sec": [
+    124.32,
+    203.99
+  ],
+  "n_segments": 3,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1L24y1i7v3_p0.large-v3.neural.texttile.cc400.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "created": "2026-06-09",
+  "description": "frozen 30-video segmentation gold benchmark set",
+  "videos": [
+    {
+      "video_id": "BV1L24y1i7v3_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1L24y1i7v3_p0.gold.json"
+    },
+    {
+      "video_id": "BV1BE411D7ii_p68_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p68_p0.gold.json"
+    },
+    {
+      "video_id": "BV1SddcBFESs_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1SddcBFESs_p0.gold.json"
+    },
+    {
+      "video_id": "BV1Vi5Q66EYo_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1Vi5Q66EYo_p0.gold.json"
+    },
+    {
+      "video_id": "BV1Sz4y1U77N_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1Sz4y1U77N_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p80_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p80_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p79_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p79_p0.gold.json"
+    },
+    {
+      "video_id": "BV1YE411D7nH_p61_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YE411D7nH_p61_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p81_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p81_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p51_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p51_p0.gold.json"
+    },
+    {
+      "video_id": "BV1S6kQBNEJq_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1S6kQBNEJq_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p44_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p44_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p42_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p42_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p93_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p93_p0.gold.json"
+    },
+    {
+      "video_id": "BV1BE411D7ii_p69_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p69_p0.gold.json"
+    },
+    {
+      "video_id": "BV1BE411D7ii_p66_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p66_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p92_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p92_p0.gold.json"
+    },
+    {
+      "video_id": "BV1BE411D7ii_p70_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p70_p0.gold.json"
+    },
+    {
+      "video_id": "BV1BE411D7ii_p67_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p67_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p72_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p72_p0.gold.json"
+    },
+    {
+      "video_id": "BV19E411D78Q_p64_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p64_p0.gold.json"
+    },
+    {
+      "video_id": "BV1yY5E6YE8g_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1yY5E6YE8g_p0.gold.json"
+    },
+    {
+      "video_id": "BV1cwdzBDEL3_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1cwdzBDEL3_p0.gold.json"
+    },
+    {
+      "video_id": "BV1x25P6tEKe_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1x25P6tEKe_p0.gold.json"
+    },
+    {
+      "video_id": "BV1W8AGzwEFW_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1W8AGzwEFW_p0.gold.json"
+    },
+    {
+      "video_id": "BV1QQ5x6eEZh_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1QQ5x6eEZh_p0.gold.json"
+    },
+    {
+      "video_id": "BV13BREBrEjU_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV13BREBrEjU_p0.gold.json"
+    },
+    {
+      "video_id": "FwOTs4UxQS4_p0",
+      "domain": "english",
+      "gold": "data/gold/FwOTs4UxQS4_p0.gold.json"
+    },
+    {
+      "video_id": "EH5jx5qPabU_p0",
+      "domain": "english",
+      "gold": "data/gold/EH5jx5qPabU_p0.gold.json"
+    },
+    {
+      "video_id": "WSPChlfxJyA_p0",
+      "domain": "english",
+      "gold": "data/gold/WSPChlfxJyA_p0.gold.json"
+    }
+  ]
+}

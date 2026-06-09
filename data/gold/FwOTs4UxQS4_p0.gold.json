@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "video_id": "FwOTs4UxQS4_p0",
+  "local_source": "data/raw/FwOTs4UxQS4_p0.mp4",
+  "duration": 607.49,
+  "domain": "english",
+  "label": "AI Agents, Clearly Explained",
+  "boundaries_sec": [
+    64.54,
+    137.72,
+    285.7,
+    361.47,
+    443.83,
+    577.42
+  ],
+  "n_segments": 7,
+  "annotated_by": "human",
+  "draft_source": "llm:FwOTs4UxQS4_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

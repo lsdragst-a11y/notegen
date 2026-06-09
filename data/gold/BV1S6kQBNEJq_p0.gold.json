@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1S6kQBNEJq_p0",
+  "local_source": "data/raw/BV1S6kQBNEJq_p0.mp4",
+  "duration": 1821.75,
+  "domain": "learning",
+  "label": "【AI 产品】Tina Huang｜吴恩达 8 小时 AI Agent 课程精华版",
+  "boundaries_sec": [
+    230.8,
+    325.8,
+    491.6,
+    617.6,
+    694.1,
+    832.9,
+    1210.9,
+    1467.3,
+    1620.8
+  ],
+  "n_segments": 10,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1S6kQBNEJq_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

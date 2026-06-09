@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p51_p0",
+  "local_source": "data/raw/BV19E411D78Q_p51_p0.mp4",
+  "duration": 2187.61,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p51 4.2.6 网络地址转换 NAT（咸鱼版）",
+  "boundaries_sec": [
+    135.2,
+    370.0,
+    617.0,
+    985.4,
+    1235.7,
+    1705.5
+  ],
+  "n_segments": 7,
+  "annotated_by": "human",
+  "draft_source": "llm:BV19E411D78Q_p51_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

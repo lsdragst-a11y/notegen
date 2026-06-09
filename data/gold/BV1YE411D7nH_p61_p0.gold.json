@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1YE411D7nH_p61_p0",
+  "local_source": "data/raw/BV1YE411D7nH_p61_p0.mp4",
+  "duration": 1465.18,
+  "domain": "learning",
+  "label": "王道计算机考研 操作系统 p61 4.1_2_⽂件的逻辑结构",
+  "boundaries_sec": [
+    235.4,
+    833.16,
+    1340.6
+  ],
+  "n_segments": 4,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1YE411D7nH_p61_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

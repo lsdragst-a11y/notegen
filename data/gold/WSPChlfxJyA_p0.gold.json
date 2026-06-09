@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "video_id": "WSPChlfxJyA_p0",
+  "local_source": "data/raw/WSPChlfxJyA_p0.mp4",
+  "duration": 1151.72,
+  "domain": "english",
+  "label": "WSPChlfxJyA_p0",
+  "boundaries_sec": [
+    118.36,
+    239.13,
+    329.56,
+    443.79,
+    553.47,
+    639.41,
+    718.78,
+    823.73,
+    891.39,
+    999.37,
+    1053.54
+  ],
+  "n_segments": 12,
+  "annotated_by": "human",
+  "draft_source": "llm:WSPChlfxJyA_p0.large-v3.neural.texttile.mm.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

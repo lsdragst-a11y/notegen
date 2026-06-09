@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1Sz4y1U77N_p0",
+  "local_source": "data/raw/BV1Sz4y1U77N_p0.mp4",
+  "duration": 1252.04,
+  "domain": "learning",
+  "label": "20分钟学完一遍python基础",
+  "boundaries_sec": [
+    287.9,
+    686.6,
+    834.7
+  ],
+  "n_segments": 4,
+  "annotated_by": "human",
+  "draft_source": "llm:BV1Sz4y1U77N_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}

@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p72_p0",
+  "local_source": "data/raw/BV19E411D78Q_p72_p0.mp4",
+  "duration": 1595.72,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p72 4.6 移动IP（咸鱼版）",
+  "boundaries_sec": [
+    496.9,
+    856.96,
+    1355.1
+  ],
+  "n_segments": 4,
+  "annotated_by": "human",
+  "draft_source": "llm:BV19E411D78Q_p72_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "LLM 草稿经人工核对边界"
+}
