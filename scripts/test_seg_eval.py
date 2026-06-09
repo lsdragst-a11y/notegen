@@ -44,6 +44,40 @@ check(approx(r["F1"], 0.0) and r["fn"] == 1, f"(1f) pred 空 F1=0.0 -> {r}")
 r = E.boundary_prf([100.0], [], tol=15.0)
 check(approx(r["F1"], 0.0) and r["fp"] == 1, f"(1g) gold 空 F1=0.0 -> {r}")
 
+# --- Pk / WindowDiff: 完美切分 = 0 ---
+g = [100.0, 200.0]
+check(approx(E.pk(g, g, duration=300.0), 0.0), "(2a) Pk 完美=0")
+check(approx(E.windowdiff(g, g, duration=300.0), 0.0), "(2b) WD 完美=0")
+
+# --- 退化：双空 -> 0.0（两个单段 mask 一致） ---
+check(approx(E.pk([], [], duration=300.0), 0.0), "(2c) Pk 双空=0")
+check(approx(E.windowdiff([], [], duration=300.0), 0.0), "(2d) WD 双空=0")
+
+# --- gold 单段、pred 有边界：稳定返回（k 钳到 >=1），不抛异常，且 > 0 ---
+v = E.pk([150.0], [], duration=300.0)
+check(0.0 <= v <= 1.0, f"(2e) Pk gold单段稳定 -> {v}")
+v = E.windowdiff([150.0], [], duration=300.0)
+check(0.0 <= v <= 1.0, f"(2f) WD gold单段稳定 -> {v}")
+
+# --- near-miss 惩罚 < 全错 ---
+gold = [100.0, 200.0]
+near = E.pk([105.0, 205.0], gold, duration=300.0)   # 边界各偏 5s
+allwrong = E.pk([10.0, 290.0], gold, duration=300.0)  # 边界放两端
+check(near < allwrong, f"(2g) Pk near-miss({near}) < 全错({allwrong})")
+
+# --- 手算 toy：n=10, k=1, gold=[5], pred=[3]（after-semantics: b 写到 mask[floor(b)-1]）---
+# duration=10 -> n=10。用 k=1 显式核对：windowdiff(pred,gold,duration,k=1)
+# mask_gold[4]=1(u=5->4)，mask_pred[2]=1(u=3->2)，其余 0。窗口宽 1，range(10-1+1)=range(10)。
+# 仅 i=2（pred 有、gold 无）与 i=4（gold 有、pred 无）Δ=1 -> wd=2/10=0.2
+check(approx(E.windowdiff([3.0], [5.0], duration=10.0, k=1), 0.2),
+      f"(2h) WD 手算 k=1 = 0.2 -> {E.windowdiff([3.0],[5.0],10.0,1)}")
+# pk k=1：窗口宽 1，每个单元自身有/无边界。i=2 ref无hyp有, i=4 ref有hyp无 -> err=2/10=0.2
+check(approx(E.pk([3.0], [5.0], duration=10.0, k=1), 0.2),
+      f"(2i) Pk 手算 k=1 = 0.2 -> {E.pk([3.0],[5.0],10.0,1)}")
+
+# --- window_k 钳位：极短视频 k>=1 ---
+check(E.window_k([], duration=1.0) >= 1, "(2j) window_k 钳到 >=1")
+
 print()
 if FAILS:
     print(f"=== {len(FAILS)} CHECK(S) FAILED ===")

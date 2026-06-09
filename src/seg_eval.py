@@ -40,3 +40,70 @@ def boundary_prf(pred: list[float], gold: list[float], tol: float) -> dict:
     R = tp / len(gold) if gold else 0.0
     F1 = (2 * P * R / (P + R)) if (P + R) > 0 else 0.0
     return {"tp": tp, "fp": fp, "fn": fn, "P": P, "R": R, "F1": F1}
+
+
+def _boundaries_to_mask(boundaries: list[float], n: int, duration: float) -> list[int]:
+    """长度 n 的 0/1 mask（after-semantics，对齐 nltk）：mask[j]=1 表示单元 j 之后紧跟段边界。
+    先丢弃 b<=0 或 b>=duration（起点/片尾非内部边界），再 u=floor(b)，保留 1<=u<n，
+    置 mask[u-1]=1（边界落在单元 u-1 与 u 之间）。写 u-1 而非 u 才能让 mask 直接是
+    合法 nltk 输入（B[i:i+k] 计数无 edge off-by-one）。"""
+    mask = [0] * n
+    for b in boundaries:
+        b = float(b)
+        if b <= 0.0 or b >= duration:
+            continue
+        u = int(math.floor(b))
+        if 1 <= u < n:
+            mask[u - 1] = 1
+    return mask
+
+
+def _n_units(duration: float) -> int:
+    return max(1, int(math.ceil(duration)))
+
+
+def window_k(gold: list[float], duration: float) -> int:
+    """k = max(1, round(平均真段长_单元 / 2))；平均段长 = n / (len(gold)+1)。"""
+    n = _n_units(duration)
+    n_seg = len(gold) + 1
+    return max(1, int(round((n / n_seg) / 2.0)))
+
+
+def windowdiff(pred: list[float], gold: list[float], duration: float,
+               k: Optional[int] = None) -> float:
+    """nltk 标准 WindowDiff（unweighted: min(1,|Δ|)）。越低越好。"""
+    n = _n_units(duration)
+    if k is None:
+        k = window_k(gold, duration)
+    k = max(1, min(k, n))
+    ref = _boundaries_to_mask(gold, n, duration)
+    hyp = _boundaries_to_mask(pred, n, duration)
+    positions = n - k + 1
+    if positions <= 0:
+        return 0.0
+    wd = 0
+    for i in range(positions):
+        diff = abs(sum(ref[i:i + k]) - sum(hyp[i:i + k]))
+        wd += 1 if diff > 0 else 0
+    return wd / positions
+
+
+def pk(pred: list[float], gold: list[float], duration: float,
+       k: Optional[int] = None) -> float:
+    """nltk 标准 Pk：窗口内「是否有边界」的 ref/hyp 异同计数。越低越好。"""
+    n = _n_units(duration)
+    if k is None:
+        k = window_k(gold, duration)
+    k = max(1, min(k, n))
+    ref = _boundaries_to_mask(gold, n, duration)
+    hyp = _boundaries_to_mask(pred, n, duration)
+    positions = n - k + 1
+    if positions <= 0:
+        return 0.0
+    err = 0
+    for i in range(positions):
+        r = sum(ref[i:i + k]) > 0
+        h = sum(hyp[i:i + k]) > 0
+        if r != h:
+            err += 1
+    return err / positions
