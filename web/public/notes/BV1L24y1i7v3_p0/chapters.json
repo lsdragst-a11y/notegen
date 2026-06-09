@@ -1,0 +1,161 @@
+{
+  "chapters": [
+    {
+      "title": "人工与深度神经网络",
+      "start": 2.9,
+      "end": 124.32,
+      "indices": [
+        0,
+        1
+      ],
+      "abstract": "本章介绍人工神经网络和深度神经网络的设计原理，重点在于如何通过多层结构学习并识别图片中的物体。",
+      "recap": "- 人工神经网络通过多层节点传递信息，每一层的输入是前一层的输出\n- 深度神经网络用于图像识别，通过大量数据训练来区分不同物体\n- 深度神经网络的学习过程包括输入图片和输出分类结果\n- 多层结构使深度神经网络能够学习复杂模式\n- 训练深度神经网络需要大量标注数据",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "人工神经网络的特点是什么？",
+            "options": [
+              "单层结构",
+              "多层结构",
+              "固定权重",
+              "静态输入"
+            ],
+            "answer_idx": 1,
+            "explanation": "人工神经网络包含多层节点，每一层的输入是前一层或多个层的输出"
+          },
+          {
+            "type": "tf",
+            "q": "深度神经网络不能用于图像识别。",
+            "answer": false,
+            "explanation": "深度神经网络可以用于图像识别，通过大量图片训练来区分物体"
+          }
+        ]
+      },
+      "title_zh": "人工与深度神经网络",
+      "title_en": "Artificial Intelligence and Deep Neural Networks",
+      "abstract_zh": "本章介绍人工神经网络和深度神经网络的设计原理，重点在于如何通过多层结构学习并识别图片中的物体。",
+      "abstract_en": "This chapter introduces the design principles of artificial and deep neural networks, focusing on how they learn and recognize objects in images through multiple layers."
+    },
+    {
+      "title": "知识图谱与机器学习",
+      "start": 124.32,
+      "end": 203.99,
+      "indices": [
+        2
+      ],
+      "abstract": "本章介绍知识图谱及其在机器学习中的应用，重点讲解如何通过大量相互关联的知识点使机器实现知识增强的学习过程。",
+      "recap": "- 知识图谱是存储大量相互关联知识点的数据结构\n- 机器学习能从知识图谱中学习关联性\n- 知识增强使机器能从海量数据和知识中融合学习\n- 机器通过知识图谱联想知识点，提升学习效率\n- 知识图谱与机器学习结合，提高模型泛化能力",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "知识图谱如何帮助机器学习？",
+            "options": [
+              "提供无关联的数据",
+              "减少数据量",
+              "增加数据多样性",
+              "利用已有的知识关联"
+            ],
+            "answer_idx": 3,
+            "explanation": "知识图谱利用已有的知识关联，帮助机器学习过程中联想相关知识点"
+          },
+          {
+            "type": "tf",
+            "q": "知识图谱不能用于机器学习。",
+            "answer": false,
+            "explanation": "知识图谱可以用于机器学习，通过大量相互关联的知识点进行融合学习"
+          }
+        ]
+      },
+      "title_zh": "知识图谱与机器学习",
+      "title_en": "Knowledge Graphs and Machine Learning",
+      "abstract_zh": "本章介绍知识图谱及其在机器学习中的应用，重点讲解如何通过大量相互关联的知识点使机器实现知识增强的学习过程。",
+      "abstract_en": "This chapter introduces knowledge graphs and their applications in machine learning, emphasizing how machines can enhance their learning process through vast amounts of interconnected knowledge points."
+    },
+    {
+      "title": "深度学习技术及应用",
+      "start": 203.99,
+      "end": 310.78,
+      "indices": [
+        3
+      ],
+      "abstract": "本章介绍百度将深度学习框架开源，并牵头成立深度学习技术及应用国家工程实验室，重点讨论超大规模深度学习模型的训练技术。",
+      "recap": "- 深度学习框架开源，百度牵头成立国家工程实验室\n- 深度学习平台提供开发便捷框架和超大规模模型训练技术\n- 非甲负责深度学习技术的规模化应用",
+      "quiz": {
+        "questions": [
+          {
+            "type": "mc",
+            "q": "百度深度学习技术及应用国家工程实验室的关键技术是什么？",
+            "options": [
+              "云计算",
+              "大数据处理",
+              "深度学习",
+              "区块链"
+            ],
+            "answer_idx": 2,
+            "explanation": "实验室的关键技术是深度学习，包括开发便捷的深度学习框架和超大规模深度学习模型训练技术"
+          },
+          {
+            "type": "tf",
+            "q": "非甲深度学习平台不包含深度学习框架。",
+            "answer": false,
+            "explanation": "非甲深度学习平台包含开发便捷的深度学习框架"
+          }
+        ]
+      },
+      "title_zh": "深度学习技术及应用",
+      "title_en": "Deep Learning Techniques and Applications",
+      "abstract_zh": "本章介绍百度将深度学习框架开源，并牵头成立深度学习技术及应用国家工程实验室，重点讨论超大规模深度学习模型的训练技术。",
+      "abstract_en": "This chapter discusses Baidu's open-source deep learning framework and its leadership in establishing the National Engineering Laboratory for Deep Learning Technology and Applications, focusing on training techniques for ultra-large-scale models."
+    }
+  ],
+  "ablation": {
+    "seg_meta": {
+      "method": "llm",
+      "llm_attempts": 2,
+      "llm_pass_via": "attempt_2",
+      "llm_repair_used": [],
+      "llm_fail_reasons": [
+        "too_few_chapters"
+      ],
+      "fallback_used": false,
+      "vl_rescue_used": false
+    },
+    "duration": 315.2,
+    "n_chunks": 4,
+    "lang": "zh",
+    "keyframes": true,
+    "vlm_captions": true,
+    "vlm_captions_used": true,
+    "vlm_max_prefix_run": 1,
+    "vlm_generic_ratio": 0.0,
+    "vlm_degraded_reason": null,
+    "n_chapters": 3,
+    "max_chunks_per_chapter": 2,
+    "has_wrapup": false
+  },
+  "overview": {
+    "summary": "本视频从人工与深度神经网络出发，介绍了其设计原理和在图像识别中的应用；接着探讨了知识图谱在机器学习中的作用，展示了如何利用大量知识点增强机器学习能力；最后，视频讲述了百度在深度学习领域的贡献和技术突破，特别是超大规模模型的训练方法。",
+    "takeaways": [
+      "理解人工神经网络和深度神经网络的基本设计原理",
+      "掌握知识图谱在机器学习中的应用方式",
+      "了解百度在深度学习框架开源和国家工程实验室方面的努力",
+      "认识超大规模深度学习模型的训练技术"
+    ],
+    "summary_zh": "本视频从人工与深度神经网络出发，介绍了其设计原理和在图像识别中的应用；接着探讨了知识图谱在机器学习中的作用，展示了如何利用大量知识点增强机器学习能力；最后，视频讲述了百度在深度学习领域的贡献和技术突破，特别是超大规模模型的训练方法。",
+    "summary_en": "This video starts with human and deep neural network design principles and their application in image recognition, then explores the role of knowledge graphs in machine learning, demonstrating how they enhance learning capabilities with extensive knowledge points. Finally, it discusses Baidu's contributions and technological breakthroughs in deep learning, particularly focusing on training methods for ultra-large models.",
+    "takeaways_zh": [
+      "理解人工神经网络和深度神经网络的基本设计原理",
+      "掌握知识图谱在机器学习中的应用方式",
+      "了解百度在深度学习框架开源和国家工程实验室方面的努力",
+      "认识超大规模深度学习模型的训练技术"
+    ],
+    "takeaways_en": [
+      "Understand the basic design principles of artificial and deep neural networks",
+      "Master the application of knowledge graphs in machine learning",
+      "Learn about Baidu's efforts in open-sourcing deep learning frameworks and establishing national engineering laboratories",
+      "Recognize the training techniques for large-scale deep learning models"
+    ]
+  }
+}
