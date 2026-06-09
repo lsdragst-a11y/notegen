@@ -103,8 +103,8 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 ### Pk / WindowDiff（离散规则写死，保证可复现）
 
 - **单元化**：`n = ceil(duration)`，得到 `n` 个 1s 单元，索引 `0 .. n-1`。
-- **边界映射（写硬）**：每个边界 `b`，先丢弃 `b <= 0` 或 `b >= duration`（起点/片尾不是内部边界），再 `u = floor(b)`，保留 `1 <= u < n`。同一单元多个边界去重为 1。
-- 由此得长度 `n` 的 boundary mask `B`，`B[u]=1` 表示「单元 u 起始处有段边界」。
+- **边界映射（写硬，after-semantics 对齐 nltk）**：每个边界 `b`，先丢弃 `b <= 0` 或 `b >= duration`（起点/片尾不是内部边界），再 `u = floor(b)`，保留 `1 <= u < n`，置 **`B[u-1] = 1`**。语义：边界落在单元 `u-1` 与单元 `u` 之间（= 单元 `u-1` 之后），与 nltk boundary-string「位置 j 之后有边界」一致。同一位置多边界去重为 1。
+  - **为何 `u-1` 而非 `u`**：若写 `B[u]=1`（「单元 u 起始处」语义）再用 nltk 的 `B[i:i+k]` 计数，mask 相对 nltk 约定整体右移 1 位，窗口刚跨边界时会错算（edge off-by-one）。`B[u-1]` 让 mask 直接就是合法 nltk 输入。
 - **窗口** `k = max(1, round(平均真段长_单元 / 2))`，平均段长 = `n / (len(gold)+1)`，每视频按 gold 自算；算出后 clamp 到 `[1, n]`。**单段 gold（gold=[]）也走同一公式**（= `round(n/2)`），不特殊钳到 1。
 - **滑窗（nltk 规范）**：`positions = n - k + 1`，`i = 0 .. n-k`（即 `range(n-k+1)`，**修正草稿里 `n-k-1` 的 off-by-one**）。WindowDiff 比较窗口 `B[i:i+k]` 内 ref/hyp 边界计数差（unweighted: `min(1, |Δ|)`）、Pk 比较该窗口内「是否有边界」的异同，均按 nltk 标准定义。clamp 后 `positions >= 1` 恒有窗口；仅当 `duration <= 0` 致 `n` 退化时按 `0.0` 兜底。
 - **实现来源**：优先复用 `nltk.metrics.segmentation.pk` / `windowdiff`（若环境已装）作为权威实现，否则按上述约定 vendored 实现，并在单测中与 nltk（或手算）对齐，钉死 off-by-one。
@@ -132,6 +132,7 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
   ```
   即评的是**真实生产默认路径**（含 keyframes/VLM 视觉信号，会影响切分），不是裁剪过的纯文本路径。
 - **`chunk_chars` 按视频时长自适应**（与 worker 一致，**非固定 800**）：worker 不用 CLI 默认值，而是调 `SC.adaptive_chunk_chars(dur)`（`worker_tasks.py:118-127` / `service_common.py:34`）——`dur<600s→400`、`600≤dur<1500s→600`、`dur≥1500s→800`。benchmark 须对每个视频用 `gold.duration` 走同一函数算出 `chunk_chars` 再传 `--chunk-chars`，否则切分粒度与生产不符。每视频实际用的 `chunk_chars` 记入结果行（见 §产出）。
+  - **预检（fail-fast）**：因 `chunk_chars` 全靠 `gold.duration`，stale gold（时长写错）会静默跑偏粒度而无报错。跑批启动先对所有 manifest 视频用 `SC.probe_duration(local_source)`（ffprobe）校验 `gold.duration`，偏差超阈值（`> max(30s, 5%)`）即中止并报哪个视频；ffprobe 失败（返回 0）则跳过该校验不阻断。
 - 两个条件：
   - **free-K**：传 **bare `--chapters`**（无数值，与 worker 一致）→ LLM 自适应定 K；LLM 失败时仍能走 TextTiling fallback 出章节。
   - **given-K（oracle）**：约束 LLM 章数 = `n_segments = len(boundaries_sec) + 1`。
@@ -192,7 +193,7 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 - Boundary F1：完美命中、全错、部分容差边界命中、贪心不重复配对。
 - Pk / WindowDiff：toy 序列手算核对、完美切分=0、near-miss 惩罚小于全错。
 - 退化输入：上表三类全覆盖（双空=1.0、单空=0.0、gold 单段稳定返回）。
-- `k` 钳位（极短/单段视频）。
+- `k`/positions 边界情形（极短视频、单段 gold、`k >= n`）：均稳定返回、不抛异常。
 
 ## 范围与 YAGNI
 

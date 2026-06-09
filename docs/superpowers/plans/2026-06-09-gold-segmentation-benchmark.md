@@ -168,7 +168,7 @@ git commit -m "feat(seg_eval): boundary P/R/F1@tol with earliest-compatible matc
 - Modify: `E:\claudeproject\notegen\src\seg_eval.py`
 - Test: `E:\claudeproject\notegen\scripts\test_seg_eval.py:<append>`
 
-> **离散规则（写死，保证可复现）**：`n = max(1, ceil(duration))`，1s 单元 `0..n-1`。边界 `b`：先丢弃 `b<=0` 或 `b>=duration`，再 `u = floor(b)`，保留 `1 <= u < n`（同单元多边界去重）。窗口 `k = max(1, round(n / (len(gold)+1) / 2))`（按 gold 平均段长算，pred/gold 共用），算出后 clamp 到 `[1, n]`；单段 gold 也走同一公式、不特殊钳到 1。滑窗按 **nltk 标准** `range(n - k + 1)`（**修正 spec 草稿里 `i=0..n-k-1` 的 off-by-one——采用 nltk 规范以保证可引用性，已在 Task 7 报表注明**）。WindowDiff 用 `min(1, |Δcount|)`（unweighted）；Pk 比较窗口内「是否有边界」的异同。
+> **离散规则（写死，保证可复现）**：`n = max(1, ceil(duration))`，1s 单元 `0..n-1`。边界 `b`：先丢弃 `b<=0` 或 `b>=duration`，再 `u = floor(b)`，保留 `1 <= u < n`（同单元多边界去重）。**boundary mask 用 after-semantics 对齐 nltk**：边界落在单元 `u-1` 与 `u` 之间，故置 `mask[u-1]=1`（表示「单元 `u-1` 末尾后有边界」），**不是** `mask[u]=1`（起始语义）。这样 mask 直接是合法 nltk 输入，配合标准窗口切片 `B[i:i+k]` 计数无 edge off-by-one。窗口 `k = max(1, round(n / (len(gold)+1) / 2))`（按 gold 平均段长算，pred/gold 共用），算出后 clamp 到 `[1, n]`；单段 gold 也走同一公式、不特殊钳到 1。滑窗按 **nltk 标准** `for i in range(n - k + 1)` 取 `B[i:i+k]`（**修正 spec 草稿里 `i=0..n-k-1` 的 off-by-one——采用 nltk 规范以保证可引用性，已在 Task 7 报表注明**）。WindowDiff 用 `min(1, |Δcount|)`（unweighted）；Pk 比较窗口两端单元的归属是否同段。
 
 - [ ] **Step 1: Write the failing test (append to `scripts/test_seg_eval.py`)**
 
@@ -196,14 +196,13 @@ near = E.pk([105.0, 205.0], gold, duration=300.0)   # 边界各偏 5s
 allwrong = E.pk([10.0, 290.0], gold, duration=300.0)  # 边界放两端
 check(near < allwrong, f"(2g) Pk near-miss({near}) < 全错({allwrong})")
 
-# --- 手算 toy：n=10, k=1, gold=[5], pred=[3] ---
-# duration=10 -> n=10。k = max(1, round(10/2/2)) = round(2.5)=2。
-# 用 k=1 显式核对：windowdiff(pred,gold,duration,k=1)
-# mask_gold[5]=1，mask_pred[3]=1，其余 0。窗口宽 1，range(10-1+1)=range(10)。
-# 仅 i=3（pred 有、gold 无）与 i=5（gold 有、pred 无）Δ=1 -> wd=2/10=0.2
+# --- 手算 toy：n=10, k=1, gold=[5], pred=[3]（after-semantics: b 写到 mask[floor(b)-1]）---
+# duration=10 -> n=10。用 k=1 显式核对：windowdiff(pred,gold,duration,k=1)
+# mask_gold[4]=1(u=5->4)，mask_pred[2]=1(u=3->2)，其余 0。窗口宽 1，range(10-1+1)=range(10)。
+# 仅 i=2（pred 有、gold 无）与 i=4（gold 有、pred 无）Δ=1 -> wd=2/10=0.2
 check(approx(E.windowdiff([3.0], [5.0], duration=10.0, k=1), 0.2),
       f"(2h) WD 手算 k=1 = 0.2 -> {E.windowdiff([3.0],[5.0],10.0,1)}")
-# pk k=1：窗口宽 1，每个单元自身有/无边界。i=3 ref无hyp有, i=5 ref有hyp无 -> err=2/10=0.2
+# pk k=1：窗口宽 1，每个单元自身有/无边界。i=2 ref无hyp有, i=4 ref有hyp无 -> err=2/10=0.2
 check(approx(E.pk([3.0], [5.0], duration=10.0, k=1), 0.2),
       f"(2i) Pk 手算 k=1 = 0.2 -> {E.pk([3.0],[5.0],10.0,1)}")
 
@@ -220,8 +219,10 @@ Expected: FAIL — `AttributeError: module 'seg_eval' has no attribute 'pk'`
 
 ```python
 def _boundaries_to_mask(boundaries: list[float], n: int, duration: float) -> list[int]:
-    """长度 n 的 0/1 mask；mask[u]=1 表示单元 u 起始处有内部边界。
-    先丢弃 b<=0 或 b>=duration（起点/片尾非内部边界），再 u=floor(b)，保留 1<=u<n。"""
+    """长度 n 的 0/1 mask（after-semantics，对齐 nltk）：mask[j]=1 表示单元 j 之后紧跟段边界。
+    先丢弃 b<=0 或 b>=duration（起点/片尾非内部边界），再 u=floor(b)，保留 1<=u<n，
+    置 mask[u-1]=1（边界落在单元 u-1 与 u 之间）。写 u-1 而非 u 才能让 mask 直接是
+    合法 nltk 输入（B[i:i+k] 计数无 edge off-by-one）。"""
     mask = [0] * n
     for b in boundaries:
         b = float(b)
@@ -229,7 +230,7 @@ def _boundaries_to_mask(boundaries: list[float], n: int, duration: float) -> lis
             continue
         u = int(math.floor(b))
         if 1 <= u < n:
-            mask[u] = 1
+            mask[u - 1] = 1
     return mask
 
 
@@ -834,7 +835,9 @@ git commit -m "data(gold): freeze 30-video segmentation gold benchmark set"
 - Test: `E:\claudeproject\notegen\scripts\test_benchmark_helpers.py`（测纯函数 `assemble_row` / `aggregate`）
 - Output: `data/outputs/benchmark_segmentation.json`、`paper/segmentation_benchmark.md`
 
-> 读 manifest → 逐视频读 gold → 算 `chunk_chars = adaptive_chunk_chars(duration)` → 跑 free-K（bare `--chapters`）读 chapters.json → 跑 given-K（`--chapters n_segments`）读 chapters.json → 各算指标组行 → 写 JSON（含 header 元信息）+ 分档报表 md。
+> 读 manifest → **时长 pre-flight**（ffprobe 核对每个 gold.duration，超阈值 fail fast）→ 逐视频读 gold → 算 `chunk_chars = adaptive_chunk_chars(duration)` → 跑 free-K（bare `--chapters`）读 chapters.json → 跑 given-K（`--chapters n_segments`）读 chapters.json → 各算指标组行 → 写 JSON（含 header 元信息）+ 分档报表 md。
+>
+> **时长 pre-flight**：`gold.duration` 既喂 `adaptive_chunk_chars` 又喂 Pk/WD 的 1s 离散与 `n=ceil(duration)`，写错会让整批指标静默失真。跑批启动先对所有 manifest 视频用 `SC.probe_duration(local_source)`（ffprobe）核对，偏差 `> max(30s, 5%)` 即中止（`return 2`）；ffprobe 失败返回 0 时跳过该项不阻断。
 >
 > **关键执行约束**：free-K 与 given-K 用**相同** stem/路径（chapters 数不进文件名），第二次跑会覆盖第一次的 chapters.json —— 必须**先跑 free-K 并读出 pred，再跑 given-K**（顺序读，不并行）。given-K 复用 free-K 已写的 ASR cache（不传 `--force-asr`）；VLM 是否缓存取决于 pipeline 现状，首跑时实测耗时（见风险）。
 
@@ -1016,6 +1019,21 @@ def main() -> int:
 
     manifest = json.loads((GOLD_DIR / "manifest.json").read_text(encoding="utf-8"))
     videos = manifest["videos"][: args.limit] if args.limit else manifest["videos"]
+
+    # --- 时长 pre-flight：gold.duration 既喂 chunk_chars 又喂 Pk/WD 离散，错了整批失真。
+    #     用 ffprobe 实测核对，偏差 > max(30s, 5%) 即 fail fast；ffprobe 返回 0（失败）则跳过不阻断。---
+    mism = []
+    for v in videos:
+        g = json.loads((ROOT / v["gold"]).read_text(encoding="utf-8"))
+        gd = float(g["duration"])
+        probed = SC.probe_duration(ROOT / g["local_source"])
+        if probed > 0 and abs(probed - gd) > max(30.0, 0.05 * gd):
+            mism.append((v["video_id"], gd, probed))
+    if mism:
+        print("[FATAL] gold.duration 与 ffprobe 实测偏差超阈值，中止：", flush=True)
+        for vid, gd, pr in mism:
+            print(f"  {vid}: gold={gd:.0f}s ffprobe={pr:.0f}s", flush=True)
+        return 2
 
     rows = []
     for v in videos:
