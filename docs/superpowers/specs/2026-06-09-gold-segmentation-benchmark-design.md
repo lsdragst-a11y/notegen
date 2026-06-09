@@ -126,7 +126,12 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 
 - 读 `data/gold/manifest.json` → 逐 video 读 gold.json → 用 `local_source` 跑 pipeline（`--local`），复用已有 ASR cache。
 - **画质口径**：`--quality` 在 `--local` 模式下被忽略（仅 URL 下载模式生效，见 `worker_tasks.py:106`、`pipeline.py`），故 benchmark **不声明画质控制**——以 manifest 冻结的 `local_source` 文件本身为准（要 360p 则在准备 local source 时预降采样，不靠运行时 flag）。注：[[feedback-low-quality-for-eval]] 的 360p 偏好针对 URL 模式跑批，本基准走冻结本地源，不适用。
-- **pipeline 参数与 web worker 完全对齐**（`worker_tasks.py:_build_cmd`）：`--chunker texttile --chunk-chars <默认> --chapters --summarizer neural --keyframes --llm-chapters --vlm-captions`。即评的是**真实生产默认路径**（含 keyframes/VLM 视觉信号，会影响切分），不是裁剪过的纯文本路径。
+- **pipeline 参数与 web worker 完全对齐**（`worker_tasks.py:_build_cmd`）。固定 flags：
+  ```
+  --local --chunker texttile --summarizer neural --keyframes --llm-chapters --vlm-captions
+  ```
+  即评的是**真实生产默认路径**（含 keyframes/VLM 视觉信号，会影响切分），不是裁剪过的纯文本路径。
+- **`chunk_chars` 按视频时长自适应**（与 worker 一致，**非固定 800**）：worker 不用 CLI 默认值，而是调 `SC.adaptive_chunk_chars(dur)`（`worker_tasks.py:118-127` / `service_common.py:34`）——`dur<600s→400`、`600≤dur<1500s→600`、`dur≥1500s→800`。benchmark 须对每个视频用 `gold.duration` 走同一函数算出 `chunk_chars` 再传 `--chunk-chars`，否则切分粒度与生产不符。每视频实际用的 `chunk_chars` 记入结果行（见 §产出）。
 - 两个条件：
   - **free-K**：传 **bare `--chapters`**（无数值，与 worker 一致）→ LLM 自适应定 K；LLM 失败时仍能走 TextTiling fallback 出章节。
   - **given-K（oracle）**：约束 LLM 章数 = `n_segments = len(boundaries_sec) + 1`。
@@ -137,11 +142,12 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 
 ### 原始数据 `data/outputs/benchmark_segmentation.json`
 
-逐 video 逐条件（free-K / given-K）记录每个容差下的 **TP/FP/FN/P/R/F1**（@15、@30）、**Pk**、**WindowDiff**，外加 **pred_n_segments**、**gold_n_segments**、**k_error**（= `pred_n_segments - gold_n_segments`，带符号），以及 pred/gold 边界、domain。`k_error` 与 free-K↔given-K 的指标差一起，量化「自适应定 K 的代价」。每行形如：
+逐 video 逐条件（free-K / given-K）记录每个容差下的 **TP/FP/FN/P/R/F1**（@15、@30）、**Pk**、**WindowDiff**，外加 **pred_n_segments**、**gold_n_segments**、**k_error**（= `pred_n_segments - gold_n_segments`，带符号）、**chunk_chars**（该视频自适应算出的值，复现关键），以及 pred/gold 边界、domain。`k_error` 与 free-K↔given-K 的指标差一起，量化「自适应定 K 的代价」。每行形如：
 
 ```json
 {
   "video_id": "...", "domain": "learning", "condition": "free-K",
+  "chunk_chars": 800,
   "pred_boundaries_sec": [...], "gold_boundaries_sec": [...],
   "pred_n_segments": 8, "gold_n_segments": 7, "k_error": 1,
   "tol15": {"tp": 5, "fp": 2, "fn": 1, "P": 0.71, "R": 0.83, "F1": 0.77},
@@ -159,14 +165,18 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
   "commit": "<git short hash>",
   "model": "Qwen2.5-7B-AWQ",
   "provider": "local",
-  "pipeline_args": ["--summarizer","neural","--chunker","texttile","--llm-chapters","--quality","360p"],
+  "static_pipeline_args": ["--local","--chunker","texttile","--summarizer","neural","--keyframes","--llm-chapters","--vlm-captions"],
+  "chunk_chars_rule": "adaptive_chunk_chars(duration): <600s->400, <1500s->600, else 800",
+  "chapters_arg": {"free-K": "--chapters (bare)", "given-K": "--chapters <n_segments>"},
   "results": [ ... ]
 }
 ```
 
 - `commit`：跑批时的 git short hash（结果可追溯到代码版本）。
 - `model`/`provider`：切分所用模型与来源。
-- `pipeline_args`：实际传给 pipeline 的参数。
+- `static_pipeline_args`：所有视频共用的固定 flags（与 `worker_tasks.py:_build_cmd` 一致；**不含** `--chunk-chars` 与 `--chapters`，二者逐视频/逐条件变化）。
+- `chunk_chars_rule`：自适应规则（实际值逐视频记在结果行的 `chunk_chars`）。
+- `chapters_arg`：两条件下 `--chapters` 的形态（bare vs 数值）。
 
 ### 报表 `paper/segmentation_benchmark.md`
 
