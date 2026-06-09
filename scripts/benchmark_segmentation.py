@@ -59,19 +59,28 @@ def assemble_row(video_id: str, domain: str, condition: str, chunk_chars: int,
 
 
 def aggregate(rows: list[dict]) -> dict:
-    """按 (domain, condition) 求均值。返回 {(domain,cond): {F1@15,F1@30,Pk,WD,n}}。"""
+    """按 (domain, condition) 求均值。pipeline_failed 行不计入均值（崩溃跑出的空 pred
+    会拉低 F1/抬高 Pk/WD，污染基线），但单独计数 n_failed。
+    返回 {(domain,cond): {F1@15,F1@30,Pk,WD,n,n_failed}}。"""
     buckets: dict[tuple, list[dict]] = {}
     for r in rows:
         buckets.setdefault((r["domain"], r["condition"]), []).append(r)
     out = {}
     for key, rs in buckets.items():
-        n = len(rs)
+        ok = [x for x in rs if not x.get("pipeline_failed")]
+        n_failed = len(rs) - len(ok)
+        n = len(ok)
+        if n == 0:
+            out[key] = {"F1@15": 0.0, "F1@30": 0.0, "Pk": 0.0, "WD": 0.0,
+                        "n": 0, "n_failed": n_failed}
+            continue
         out[key] = {
-            "F1@15": sum(x["tol15"]["F1"] for x in rs) / n,
-            "F1@30": sum(x["tol30"]["F1"] for x in rs) / n,
-            "Pk": sum(x["pk"] for x in rs) / n,
-            "WD": sum(x["windowdiff"] for x in rs) / n,
+            "F1@15": sum(x["tol15"]["F1"] for x in ok) / n,
+            "F1@30": sum(x["tol30"]["F1"] for x in ok) / n,
+            "Pk": sum(x["pk"] for x in ok) / n,
+            "WD": sum(x["windowdiff"] for x in ok) / n,
             "n": n,
+            "n_failed": n_failed,
         }
     return out
 
@@ -188,11 +197,12 @@ def _write_report(agg: dict, header: dict) -> None:
              f"- metrics_version: {header['metrics_version']}；主容差 ±15s，附 ±30s；Pk/WD 越低越好",
              f"- 滑窗遵 nltk 规范 `range(n-k+1)`；1s 单元离散（见 src/seg_eval.py）", "",
              "## 分档均值（learning 为主指标；vlog/english 作 OOD 参考）", "",
-             "| domain | condition | n | F1@15 | F1@30 | Pk↓ | WD↓ |",
-             "|---|---|---|---|---|---|---|"]
+             "n_fail = 崩溃/无产出被剔除的跑批数（不计入均值）", "",
+             "| domain | condition | n | n_fail | F1@15 | F1@30 | Pk↓ | WD↓ |",
+             "|---|---|---|---|---|---|---|---|"]
     for (dom, cond) in sorted(agg.keys()):
         a = agg[(dom, cond)]
-        lines.append(f"| {dom} | {cond} | {a['n']} | {a['F1@15']:.3f} | "
+        lines.append(f"| {dom} | {cond} | {a['n']} | {a['n_failed']} | {a['F1@15']:.3f} | "
                      f"{a['F1@30']:.3f} | {a['Pk']:.3f} | {a['WD']:.3f} |")
     lines += ["", "## free-K vs given-K（自适应定 K 的代价）", "",
               "given-K 给定 gold 章数作 oracle；free-K↔given-K 的 F1/Pk 差 + 各视频 "

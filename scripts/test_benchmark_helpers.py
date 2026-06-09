@@ -43,6 +43,20 @@ check(abs(agg[("learning", "free-K")]["F1@15"] - 0.7) < 1e-6,
       f"(7f) 均值 F1@15=0.7 -> {agg[('learning','free-K')]['F1@15']}")
 check(agg[("learning", "free-K")]["n"] == 2, "(7g) 计数=2")
 
+# pipeline_failed 行必须排除在均值外（否则崩溃跑批污染基线），但单独计数
+rows_f = [
+    {"domain": "vlog", "condition": "free-K", "pipeline_failed": False,
+     "tol15": {"F1": 0.8}, "tol30": {"F1": 0.8}, "pk": 0.2, "windowdiff": 0.2},
+    {"domain": "vlog", "condition": "free-K", "pipeline_failed": True,
+     "tol15": {"F1": 0.0}, "tol30": {"F1": 0.0}, "pk": 0.9, "windowdiff": 0.9},
+]
+agg_f = B.aggregate(rows_f)
+check(agg_f[("vlog", "free-K")]["n"] == 1,
+      f"(7j) failed 行不计入 n -> {agg_f[('vlog','free-K')]['n']}")
+check(agg_f[("vlog", "free-K")]["n_failed"] == 1, "(7k) n_failed=1")
+check(abs(agg_f[("vlog", "free-K")]["F1@15"] - 0.8) < 1e-6,
+      f"(7l) 均值排除 failed -> {agg_f[('vlog','free-K')]['F1@15']}")
+
 print()
 if FAILS:
     print(f"=== {len(FAILS)} CHECK(S) FAILED ===")
