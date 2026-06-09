@@ -9,6 +9,8 @@ import subprocess
 from pathlib import Path
 from typing import Optional
 
+from object_store import storage_ref
+
 ROOT = Path(__file__).resolve().parent.parent
 PY = ROOT / ".venv" / "Scripts" / "python.exe"
 WEB_PUBLIC = ROOT / "web" / "public"
@@ -181,4 +183,4 @@ def publish_private(stem: str, user_id: str) -> tuple[str, str, dict]:
     vid = _find_source_video(stem)
     if vid:
         shutil.copy(vid, note_dir / "video.mp4")
-    return private_note_id(stem, user_id), str(note_dir), extract_note_fields(note_dir)
+    return private_note_id(stem, user_id), storage_ref(note_dir), extract_note_fields(note_dir)

@@ -1,26 +1,25 @@
 "use client";
 import { useEffect, useState } from "react";
+import { API_BASE } from "./api";
 
 /**
- * 全局书签 + 用户自定义分类（标签式，一个书签可属多个分类）。
- * 纯前端、存浏览器 localStorage（静态站无后端）。知识点（chunk）和章节（chapter）都能收藏。
- * 写入后派发 BOOKMARKS_EVENT，让 NavBar 计数 / 卡片按钮 / 书签页实时同步。
+ * User bookmarks are now backend-synced. localStorage remains as an offline /
+ * anonymous fallback and as an optimistic cache for instant UI updates.
  */
 export interface Bookmark {
-  key: string;                  // `${noteId}:${kind}:${idx}` 唯一
+  key: string;
   noteId: string;
   noteTitle: string;
   kind: "chunk" | "chapter";
   idx: number;
-  title: string;                // 基准/中文标题
+  title: string;
   title_en?: string;
-  time: number;                 // 跳转时间（秒）
-  keyframeRel?: string;         // chunk 缩略图（书签页展示）
-  categoryIds: string[];        // 所属分类（可多个，可空=未分类）
+  time: number;
+  keyframeRel?: string;
+  categoryIds: string[];
   addedAt: number;
 }
 
-/** 收藏时调用方提供的基础字段（不含分类/时间戳，由本模块管理）。 */
 export type BookmarkBase = Omit<Bookmark, "categoryIds" | "addedAt">;
 
 export interface Category {
@@ -30,29 +29,37 @@ export interface Category {
   createdAt: number;
 }
 
+interface BookmarkState {
+  bookmarks: Bookmark[];
+  categories: Category[];
+}
+
 const BM_KEY = "notegen.bookmarks";
 const CAT_KEY = "notegen.bookmarkCategories";
 export const BOOKMARKS_EVENT = "notegen:bookmarks-changed";
 
 const PALETTE = ["#0a84ff", "#bf5af2", "#30d158", "#ff9f0a", "#ff375f", "#5e5ce6", "#64d2ff", "#ffd60a"];
+let remoteInflight: Promise<void> | null = null;
+let lastRemoteSync = 0;
 
 export function bookmarkKey(noteId: string, kind: Bookmark["kind"], idx: number): string {
   return `${noteId}:${kind}:${idx}`;
 }
 
-// ---- 低层读写 ----
+function normalizeBookmark(b: Bookmark): Bookmark {
+  return {
+    ...b,
+    categoryIds: Array.isArray(b.categoryIds) ? b.categoryIds : [],
+    addedAt: Number(b.addedAt || Date.now()),
+  };
+}
 
 function read(): Bookmark[] {
   if (typeof window === "undefined") return [];
   try {
     const raw = localStorage.getItem(BM_KEY);
     const arr = raw ? JSON.parse(raw) : [];
-    if (!Array.isArray(arr)) return [];
-    // 兼容旧数据：补 categoryIds
-    return (arr as Bookmark[]).map(b => ({
-      ...b,
-      categoryIds: Array.isArray(b.categoryIds) ? b.categoryIds : [],
-    }));
+    return Array.isArray(arr) ? (arr as Bookmark[]).map(normalizeBookmark) : [];
   } catch {
     return [];
   }
@@ -70,24 +77,136 @@ function readCats(): Category[] {
 }
 
 function emit(): void {
-  window.dispatchEvent(new Event(BOOKMARKS_EVENT));
+  if (typeof window !== "undefined") window.dispatchEvent(new Event(BOOKMARKS_EVENT));
 }
 
-function writeBookmarks(list: Bookmark[]): void {
+function writeBookmarks(list: Bookmark[], shouldEmit = true): void {
   try {
-    localStorage.setItem(BM_KEY, JSON.stringify(list));
-    emit();
+    localStorage.setItem(BM_KEY, JSON.stringify(list.map(normalizeBookmark)));
+    if (shouldEmit) emit();
   } catch {}
 }
 
-function writeCats(cats: Category[]): void {
+function writeCats(cats: Category[], shouldEmit = true): void {
   try {
     localStorage.setItem(CAT_KEY, JSON.stringify(cats));
-    emit();
+    if (shouldEmit) emit();
   } catch {}
 }
 
-// ---- 书签操作 ----
+function applyState(state: BookmarkState): void {
+  writeCats(state.categories || [], false);
+  writeBookmarks((state.bookmarks || []).map(normalizeBookmark), false);
+  emit();
+}
+
+async function fetchRemoteState(): Promise<BookmarkState | null> {
+  const r = await fetch(`${API_BASE}/api/bookmarks`, {
+    credentials: "include",
+    cache: "no-store",
+  });
+  if (!r.ok) return null;
+  return r.json();
+}
+
+async function putRemoteBookmark(bookmark: Bookmark): Promise<BookmarkState | null> {
+  const r = await fetch(`${API_BASE}/api/bookmarks`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(bookmark),
+  });
+  if (!r.ok) return null;
+  return r.json();
+}
+
+async function deleteRemoteBookmark(key: string): Promise<BookmarkState | null> {
+  const r = await fetch(`${API_BASE}/api/bookmarks/${encodeURIComponent(key)}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!r.ok) return null;
+  return r.json();
+}
+
+async function putRemoteCategory(cat: Category): Promise<BookmarkState | null> {
+  const r = await fetch(`${API_BASE}/api/bookmark-categories`, {
+    method: "PUT",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(cat),
+  });
+  if (!r.ok) return null;
+  return r.json();
+}
+
+async function renameRemoteCategory(id: string, name: string): Promise<BookmarkState | null> {
+  const r = await fetch(`${API_BASE}/api/bookmark-categories/${encodeURIComponent(id)}`, {
+    method: "PATCH",
+    credentials: "include",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ name }),
+  });
+  if (!r.ok) return null;
+  return r.json();
+}
+
+async function deleteRemoteCategory(id: string): Promise<BookmarkState | null> {
+  const r = await fetch(`${API_BASE}/api/bookmark-categories/${encodeURIComponent(id)}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!r.ok) return null;
+  return r.json();
+}
+
+async function pushLocalStateToBackend(): Promise<void> {
+  const cats = readCats();
+  const bookmarks = read();
+  for (const cat of cats) {
+    await putRemoteCategory(cat);
+  }
+  for (const bookmark of bookmarks) {
+    await putRemoteBookmark(bookmark);
+  }
+}
+
+async function refreshFromBackend(force = false): Promise<void> {
+  if (typeof window === "undefined") return;
+  const now = Date.now();
+  if (!force && now - lastRemoteSync < 1200) return;
+  if (remoteInflight) return remoteInflight;
+  remoteInflight = (async () => {
+    try {
+      const state = await fetchRemoteState();
+      if (!state) return;
+      const localHasData = read().length > 0 || readCats().length > 0;
+      const remoteEmpty = (state.bookmarks?.length || 0) === 0 && (state.categories?.length || 0) === 0;
+      if (remoteEmpty && localHasData) {
+        await pushLocalStateToBackend();
+        const next = await fetchRemoteState();
+        if (next) applyState(next);
+      } else {
+        applyState(state);
+      }
+      lastRemoteSync = Date.now();
+    } catch {
+      // Offline / anonymous fallback keeps localStorage usable.
+    } finally {
+      remoteInflight = null;
+    }
+  })();
+  return remoteInflight;
+}
+
+function syncAfterRemote(p: Promise<BookmarkState | null>): void {
+  void p.then(state => {
+    if (state) {
+      applyState(state);
+      lastRemoteSync = Date.now();
+    }
+  }).catch(() => {});
+}
 
 export function getBookmarks(): Bookmark[] {
   return read();
@@ -101,33 +220,35 @@ export function isBookmarked(key: string): boolean {
   return read().some(b => b.key === key);
 }
 
-/** 仅收藏（不分类）；已存在则 no-op。 */
 export function saveBookmark(base: BookmarkBase): void {
   const list = read();
   if (list.some(b => b.key === base.key)) return;
-  list.push({ ...base, categoryIds: [], addedAt: Date.now() });
-  writeBookmarks(list);
+  const bookmark = { ...base, categoryIds: [], addedAt: Date.now() };
+  writeBookmarks([...list, bookmark]);
+  syncAfterRemote(putRemoteBookmark(bookmark));
 }
 
 export function removeBookmark(key: string): void {
   writeBookmarks(read().filter(b => b.key !== key));
+  syncAfterRemote(deleteRemoteBookmark(key));
 }
 
-/** 切换书签在某分类的归属；书签不存在则自动创建。 */
 export function toggleBookmarkCategory(base: BookmarkBase, catId: string): void {
   const list = read();
   const i = list.findIndex(b => b.key === base.key);
+  let bookmark: Bookmark;
   if (i >= 0) {
     const cur = list[i].categoryIds || [];
     const has = cur.includes(catId);
-    list[i] = { ...list[i], categoryIds: has ? cur.filter(c => c !== catId) : [...cur, catId] };
+    bookmark = { ...list[i], categoryIds: has ? cur.filter(c => c !== catId) : [...cur, catId] };
+    list[i] = bookmark;
   } else {
-    list.push({ ...base, categoryIds: [catId], addedAt: Date.now() });
+    bookmark = { ...base, categoryIds: [catId], addedAt: Date.now() };
+    list.push(bookmark);
   }
   writeBookmarks(list);
+  syncAfterRemote(putRemoteBookmark(bookmark));
 }
-
-// ---- 分类操作 ----
 
 export function getCategories(): Category[] {
   return readCats();
@@ -143,8 +264,8 @@ export function addCategory(name: string): Category | null {
     color: PALETTE[cats.length % PALETTE.length],
     createdAt: Date.now(),
   };
-  cats.push(cat);
-  writeCats(cats);
+  writeCats([...cats, cat]);
+  syncAfterRemote(putRemoteCategory(cat));
   return cat;
 }
 
@@ -152,30 +273,27 @@ export function renameCategory(id: string, name: string): void {
   const n = name.trim();
   if (!n) return;
   writeCats(readCats().map(c => (c.id === id ? { ...c, name: n } : c)));
+  syncAfterRemote(renameRemoteCategory(id, n));
 }
 
-/** 删除分类并从所有书签上摘掉该分类（书签本身保留，变未分类）。 */
 export function removeCategory(id: string): void {
   writeCats(readCats().filter(c => c.id !== id));
   const list = read();
-  let changed = false;
-  const next = list.map(b => {
-    if (b.categoryIds?.includes(id)) {
-      changed = true;
-      return { ...b, categoryIds: b.categoryIds.filter(c => c !== id) };
-    }
-    return b;
-  });
-  if (changed) writeBookmarks(next);
+  const next = list.map(b => (
+    b.categoryIds?.includes(id)
+      ? { ...b, categoryIds: b.categoryIds.filter(c => c !== id) }
+      : b
+  ));
+  writeBookmarks(next);
+  syncAfterRemote(deleteRemoteCategory(id));
 }
-
-// ---- 订阅 hooks ----
 
 function useSync<T>(getter: () => T, deps: unknown[] = []): T {
   const [val, setVal] = useState<T>(getter);
   useEffect(() => {
     const sync = () => setVal(getter());
     sync();
+    void refreshFromBackend();
     window.addEventListener(BOOKMARKS_EVENT, sync);
     window.addEventListener("storage", sync);
     return () => {

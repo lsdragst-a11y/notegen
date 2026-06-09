@@ -5,6 +5,7 @@ import sys, os, json, tempfile
 from pathlib import Path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import service_common as SC  # noqa: E402
+from object_store import resolve_ref  # noqa: E402
 
 FAILS = []
 def check(cond, msg):
@@ -35,8 +36,9 @@ meta_stem = stem.split(".")[0]
 (SC.DATA_RAW / f"{meta_stem}.mp4").write_bytes(b"video-bytes")
 
 note_id, storage_path, fields = SC.publish_private(stem, "u1")
-nd = Path(storage_path)
+nd = resolve_ref(storage_path)
 check(note_id == f"u1_{stem}", f"note_id 加 user 维度 == u1_{stem} -> {note_id}")
+check(storage_path.startswith("local:"), f"storage_path 变为 object ref -> {storage_path}")
 check(str(nd).replace("\\", "/").endswith(f"user_notes/u1/{stem}"),
       f"私有目录在 user_notes/u1 下 -> {nd}")
 # 两个用户同 stem -> 不同 note_id（防全局主键覆盖归属）

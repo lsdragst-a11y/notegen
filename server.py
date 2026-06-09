@@ -34,6 +34,7 @@ from service_common import (  # noqa: E402
     normalize_quality, adaptive_chunk_chars, estimate_pipeline_seconds,
     probe_duration, publish_to_web,
 )
+from object_store import default_store  # noqa: E402
 
 app = FastAPI()
 app.add_middleware(
@@ -57,7 +58,7 @@ import db  # noqa: E402
 import accounts  # noqa: E402
 import authdeps  # noqa: E402
 from authdeps import current_user, require_user  # noqa: E402
-from userdata import notes_repo, jobs_repo  # noqa: E402
+from userdata import notes_repo, jobs_repo, bookmarks_repo  # noqa: E402
 
 db.init_db()  # 启动即建表（幂等）
 
@@ -139,6 +140,31 @@ class GenerateReq(BaseModel):
 
 class ProbeReq(BaseModel):
     url: str
+
+
+class BookmarkReq(BaseModel):
+    key: str
+    noteId: str
+    noteTitle: str
+    kind: str
+    idx: int
+    title: str
+    title_en: Optional[str] = None
+    time: float
+    keyframeRel: Optional[str] = None
+    categoryIds: list[str] = []
+    addedAt: Optional[float] = None
+
+
+class BookmarkCategoryReq(BaseModel):
+    id: str
+    name: str
+    color: str
+    createdAt: Optional[float] = None
+
+
+class BookmarkCategoryRenameReq(BaseModel):
+    name: str
 
 
 @app.post("/api/probe")
@@ -293,6 +319,57 @@ def list_my_notes(user: dict = Depends(require_user)):
     return [_note_view(n) for n in notes_repo.list_mine(user["id"])]
 
 
+@app.get("/api/bookmarks")
+def bookmark_state(user: dict = Depends(require_user)):
+    return bookmarks_repo.state(user["id"])
+
+
+@app.put("/api/bookmarks")
+def upsert_bookmark(req: BookmarkReq, user: dict = Depends(require_user)):
+    data = req.model_dump()
+    if data["kind"] not in ("chunk", "chapter"):
+        raise HTTPException(400, "invalid bookmark kind")
+    if not data["key"].strip() or not data["noteId"].strip():
+        raise HTTPException(400, "invalid bookmark")
+    bookmarks_repo.upsert_bookmark(user["id"], data)
+    return bookmarks_repo.state(user["id"])
+
+
+@app.delete("/api/bookmarks/{key:path}")
+def delete_bookmark(key: str, user: dict = Depends(require_user)):
+    bookmarks_repo.delete_bookmark(user["id"], key)
+    return bookmarks_repo.state(user["id"])
+
+
+@app.put("/api/bookmark-categories")
+def upsert_bookmark_category(req: BookmarkCategoryReq,
+                             user: dict = Depends(require_user)):
+    if not req.id.strip() or not req.name.strip():
+        raise HTTPException(400, "invalid category")
+    bookmarks_repo.upsert_category(
+        user["id"], id=req.id, name=req.name.strip(),
+        color=req.color or "#0a84ff", created_at=req.createdAt,
+    )
+    return bookmarks_repo.state(user["id"])
+
+
+@app.patch("/api/bookmark-categories/{category_id}")
+def rename_bookmark_category(category_id: str, req: BookmarkCategoryRenameReq,
+                             user: dict = Depends(require_user)):
+    name = req.name.strip()
+    if not name:
+        raise HTTPException(400, "invalid category name")
+    if not bookmarks_repo.rename_category(user["id"], category_id, name):
+        raise HTTPException(404, "category not found")
+    return bookmarks_repo.state(user["id"])
+
+
+@app.delete("/api/bookmark-categories/{category_id}")
+def delete_bookmark_category(category_id: str, user: dict = Depends(require_user)):
+    bookmarks_repo.delete_category(user["id"], category_id)
+    return bookmarks_repo.state(user["id"])
+
+
 @app.get("/api/history")
 def list_history(user: dict = Depends(require_user)):
     return jobs_repo.list_history(user["id"])
@@ -323,13 +400,15 @@ def note_file(note_id: str, path: str, user: Optional[dict] = Depends(current_us
     """私有笔记鉴权托管（公开笔记走 Next.js 静态，不绕此端点）。
     非 owner / 未登录 / 不存在 → 一律 404，不泄露存在性。Starlette FileResponse 自带 Range。"""
     row = notes_repo.get(note_id)
-    if row is None or row["visibility"] != "private":
+    if row is None:
         raise HTTPException(404, "not found")
-    if user is None or row["owner_id"] != user["id"]:
+    if row["visibility"] == "private" and (user is None or row["owner_id"] != user["id"]):
         raise HTTPException(404, "not found")
-    base = Path(row["storage_path"]).resolve()
-    target = (base / path).resolve()
-    if not target.is_relative_to(base) or not target.is_file():
+    try:
+        target = default_store.file_path(row["storage_path"], path)
+    except ValueError:
+        raise HTTPException(404, "not found")
+    if not target.is_file():
         raise HTTPException(404, "not found")
     return FileResponse(str(target))
 
@@ -350,12 +429,9 @@ def delete_note(note_id: str, user: dict = Depends(require_user)):
             raise HTTPException(403, "仅管理员可删除公开笔记")
     removed = []
     if row["visibility"] == "private":
-        d = Path(row["storage_path"])
-        if d.exists():
-            shutil.rmtree(d, ignore_errors=True)
-            removed.append(str(d))
+        removed.extend(default_store.delete_prefix(row["storage_path"]))
     else:
-        note_dir = NOTES_DIR / safe
+        note_dir = default_store.path_for_ref(row["storage_path"])
         video = VIDEOS_DIR / f"{safe}.mp4"
         if note_dir.exists():
             shutil.rmtree(note_dir, ignore_errors=True)

@@ -4,10 +4,15 @@ import type {
 import { API_BASE } from "./api";
 const PUBLIC_BASE = ""; // 同源，public/ 静态文件用绝对路径 /notes/... 即可
 
-/** 优先 Next 同源 /api/notes（Node 端 fs 枚举 public/notes/，dev/prod 都在线）；
- *  失败再 fallback 到 build-time 写好的 static catalog.json（兜底，可能 stale）。
- *  注意：FastAPI 那个 /api/notes 不再被前端调，避免 backend 不开时少视频。 */
+/** Backend-first notes list; static Next/public APIs remain offline fallback. */
 export async function fetchCatalog(): Promise<CatalogItem[]> {
+  try {
+    const r = await fetch(`${API_BASE}/api/notes/public`, {
+      credentials: "include",
+      cache: "no-store",
+    });
+    if (r.ok) return await r.json();
+  } catch {}
   try {
     const r = await fetch("/api/notes", { cache: "no-store" });
     if (r.ok) return await r.json();
@@ -28,8 +33,48 @@ export interface NoteBundle {
   isPrivate: boolean;
 }
 
+async function loadNoteFromFileBase(
+  id: string,
+  fileBase: string,
+  videoUrl: string,
+  keyframeBase: string,
+  isPrivate: boolean,
+): Promise<NoteBundle | null> {
+  const summaryR = await fetch(`${fileBase}/summary.json`, {
+    credentials: "include",
+    cache: "no-store",
+  }).catch(() => null);
+  if (!summaryR || !summaryR.ok) return null;
+  const [chaptersR, metaR] = await Promise.all([
+    fetch(`${fileBase}/chapters.json`, { credentials: "include", cache: "no-store" }),
+    fetch(`${fileBase}/meta.json`, { credentials: "include", cache: "no-store" }).catch(() => null),
+  ]);
+  if (!chaptersR.ok) throw new Error("chapters.json missing");
+  const summary: Chunk[] = await summaryR.json();
+  const chaptersData: ChaptersFile = await chaptersR.json();
+  let meta: NoteMeta | null = null;
+  if (metaR && metaR.ok) { try { meta = await metaR.json(); } catch { meta = null; } }
+  return {
+    id,
+    summary,
+    chapters: chaptersData.chapters || [],
+    overview: chaptersData.overview || null,
+    meta,
+    videoUrl,
+    keyframeBase,
+    isPrivate,
+  };
+}
+
 export async function fetchNote(id: string): Promise<NoteBundle> {
-  // 1) 公开静态优先（既有行为）
+  // 1) Backend object-file endpoint first: supports public DB notes and private notes.
+  const backendFile = `${API_BASE}/api/notes/${id}/file`;
+  const backend = await loadNoteFromFileBase(
+    id, backendFile, `${backendFile}/video.mp4`, `${backendFile}/keyframes/`, true,
+  );
+  if (backend) return backend;
+
+  // 2) Public static fallback for demo notes not migrated into backend DB.
   const pub = `${PUBLIC_BASE}/notes/${id}`;
   const pubSummary = await fetch(`${pub}/summary.json`, { cache: "no-store" }).catch(() => null);
   if (pubSummary && pubSummary.ok) {
@@ -52,31 +97,7 @@ export async function fetchNote(id: string): Promise<NoteBundle> {
       isPrivate: false,
     };
   }
-
-  // 2) 私有：经鉴权文件端点（cookie 自动带，same-site）
-  const priv = `${API_BASE}/api/notes/${id}/file`;
-  const [summaryR, chaptersR, metaR] = await Promise.all([
-    fetch(`${priv}/summary.json`, { credentials: "include", cache: "no-store" }),
-    fetch(`${priv}/chapters.json`, { credentials: "include", cache: "no-store" }),
-    fetch(`${priv}/meta.json`, { credentials: "include", cache: "no-store" }).catch(() => null),
-  ]);
-  if (!summaryR.ok) {
-    throw new Error(summaryR.status === 404 ? "笔记不存在或无权访问" : "summary.json missing");
-  }
-  if (!chaptersR.ok) throw new Error("chapters.json missing");
-  const summary: Chunk[] = await summaryR.json();
-  const chaptersData: ChaptersFile = await chaptersR.json();
-  let meta: NoteMeta | null = null;
-  if (metaR && metaR.ok) { try { meta = await metaR.json(); } catch { meta = null; } }
-  return {
-    id, summary,
-    chapters: chaptersData.chapters || [],
-    overview: chaptersData.overview || null,
-    meta,
-    videoUrl: `${priv}/video.mp4`,
-    keyframeBase: `${priv}/keyframes/`,
-    isPrivate: true,
-  };
+  throw new Error("笔记不存在或无权访问");
 }
 
 // === 重难点检测（同 backend src/summarize.py:chunk_marks 的 JS 端实现）===

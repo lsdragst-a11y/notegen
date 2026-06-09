@@ -74,9 +74,34 @@ CREATE TABLE IF NOT EXISTS jobs (
   note_id TEXT, error TEXT,
   created_at REAL NOT NULL, updated_at REAL NOT NULL, finished_at REAL
 );
+CREATE TABLE IF NOT EXISTS bookmark_categories (
+  id TEXT NOT NULL,
+  user_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  color TEXT NOT NULL,
+  created_at REAL NOT NULL,
+  PRIMARY KEY(user_id, id)
+);
+CREATE TABLE IF NOT EXISTS bookmarks (
+  user_id TEXT NOT NULL,
+  key TEXT NOT NULL,
+  note_id TEXT NOT NULL,
+  note_title TEXT NOT NULL,
+  kind TEXT NOT NULL,
+  idx INTEGER NOT NULL,
+  title TEXT NOT NULL,
+  title_en TEXT,
+  time_sec REAL NOT NULL,
+  keyframe_rel TEXT,
+  category_ids_json TEXT NOT NULL DEFAULT '[]',
+  added_at REAL NOT NULL,
+  PRIMARY KEY(user_id, key)
+);
 CREATE INDEX IF NOT EXISTS idx_notes_owner ON notes(owner_id, visibility);
 CREATE INDEX IF NOT EXISTS idx_notes_vis ON notes(visibility, created_at);
 CREATE INDEX IF NOT EXISTS idx_jobs_user ON jobs(user_id, created_at);
+CREATE INDEX IF NOT EXISTS idx_bookmarks_user ON bookmarks(user_id, added_at);
+CREATE INDEX IF NOT EXISTS idx_bookmark_categories_user ON bookmark_categories(user_id, created_at);
 """
 
 

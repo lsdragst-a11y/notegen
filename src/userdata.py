@@ -3,6 +3,7 @@ notes 的展示字段是列表冗余（发布时写入），避免列表页逐�
 jobs 只在 enqueue(record) 与终态(update_status) 镜像，实时进度仍在 Redis。"""
 from __future__ import annotations
 
+import json
 import time
 from typing import Optional
 
@@ -15,6 +16,10 @@ _NOTE_COLS = ("id", "owner_id", "visibility", "storage_path", "title", "domain",
               "created_at")
 _JOB_COLS = ("id", "user_id", "source", "is_local", "quality", "status",
              "note_id", "error", "created_at", "updated_at", "finished_at")
+_BOOKMARK_COLS = ("key", "note_id", "note_title", "kind", "idx", "title",
+                  "title_en", "time_sec", "keyframe_rel", "category_ids_json",
+                  "added_at")
+_BOOKMARK_CATEGORY_COLS = ("id", "name", "color", "created_at")
 
 
 def _row(r, cols) -> Optional[dict]:
@@ -159,5 +164,166 @@ class _JobsRepo:
             conn.close()
 
 
+def _bookmark_row(r) -> dict:
+    cats_raw = r["category_ids_json"] if "category_ids_json" in r.keys() else "[]"
+    try:
+        category_ids = json.loads(cats_raw or "[]")
+    except (TypeError, ValueError):
+        category_ids = []
+    if not isinstance(category_ids, list):
+        category_ids = []
+    return {
+        "key": r["key"],
+        "noteId": r["note_id"],
+        "noteTitle": r["note_title"],
+        "kind": r["kind"],
+        "idx": r["idx"],
+        "title": r["title"],
+        "title_en": r["title_en"],
+        "time": r["time_sec"],
+        "keyframeRel": r["keyframe_rel"],
+        "categoryIds": [str(x) for x in category_ids],
+        "addedAt": r["added_at"],
+    }
+
+
+def _category_row(r) -> dict:
+    return {
+        "id": r["id"],
+        "name": r["name"],
+        "color": r["color"],
+        "createdAt": r["created_at"],
+    }
+
+
+class _BookmarksRepo:
+    def state(self, user_id: str) -> dict:
+        conn = db.connect()
+        try:
+            cats = conn.execute(
+                "SELECT * FROM bookmark_categories WHERE user_id=? "
+                "ORDER BY created_at ASC", (user_id,),
+            ).fetchall()
+            bookmarks = conn.execute(
+                "SELECT * FROM bookmarks WHERE user_id=? ORDER BY added_at DESC",
+                (user_id,),
+            ).fetchall()
+            return {
+                "categories": [_category_row(r) for r in cats],
+                "bookmarks": [_bookmark_row(r) for r in bookmarks],
+            }
+        finally:
+            conn.close()
+
+    def upsert_category(self, user_id: str, *, id: str, name: str,
+                        color: str, created_at: Optional[float] = None) -> None:
+        conn = db.connect()
+        try:
+            created = created_at if created_at is not None else time.time()
+            exists = conn.execute(
+                "SELECT created_at FROM bookmark_categories WHERE user_id=? AND id=?",
+                (user_id, id),
+            ).fetchone()
+            if exists:
+                created = exists["created_at"]
+            conn.execute(
+                "INSERT INTO bookmark_categories(id,user_id,name,color,created_at) "
+                "VALUES(?,?,?,?,?) "
+                "ON CONFLICT(user_id,id) DO UPDATE SET "
+                "name=excluded.name,color=excluded.color",
+                (id, user_id, name, color, created),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def rename_category(self, user_id: str, id: str, name: str) -> bool:
+        conn = db.connect()
+        try:
+            cur = conn.execute(
+                "UPDATE bookmark_categories SET name=? WHERE user_id=? AND id=?",
+                (name, user_id, id),
+            )
+            conn.commit()
+            return cur.rowcount > 0
+        finally:
+            conn.close()
+
+    def delete_category(self, user_id: str, id: str) -> bool:
+        conn = db.connect()
+        try:
+            cur = conn.execute(
+                "DELETE FROM bookmark_categories WHERE user_id=? AND id=?",
+                (user_id, id),
+            )
+            rows = conn.execute(
+                "SELECT key, category_ids_json FROM bookmarks WHERE user_id=?",
+                (user_id,),
+            ).fetchall()
+            for row in rows:
+                try:
+                    ids = json.loads(row["category_ids_json"] or "[]")
+                except (TypeError, ValueError):
+                    ids = []
+                if id not in ids:
+                    continue
+                next_ids = [x for x in ids if x != id]
+                conn.execute(
+                    "UPDATE bookmarks SET category_ids_json=? "
+                    "WHERE user_id=? AND key=?",
+                    (json.dumps(next_ids, ensure_ascii=False), user_id, row["key"]),
+                )
+            conn.commit()
+            return cur.rowcount > 0
+        finally:
+            conn.close()
+
+    def upsert_bookmark(self, user_id: str, b: dict) -> None:
+        conn = db.connect()
+        try:
+            exists = conn.execute(
+                "SELECT added_at FROM bookmarks WHERE user_id=? AND key=?",
+                (user_id, b["key"]),
+            ).fetchone()
+            added = float(b.get("addedAt") or time.time())
+            if exists:
+                added = exists["added_at"]
+            category_ids = b.get("categoryIds") or []
+            if not isinstance(category_ids, list):
+                category_ids = []
+            conn.execute(
+                "INSERT INTO bookmarks(user_id,key,note_id,note_title,kind,idx,title,"
+                "title_en,time_sec,keyframe_rel,category_ids_json,added_at) "
+                "VALUES(?,?,?,?,?,?,?,?,?,?,?,?) "
+                "ON CONFLICT(user_id,key) DO UPDATE SET "
+                "note_id=excluded.note_id,note_title=excluded.note_title,"
+                "kind=excluded.kind,idx=excluded.idx,title=excluded.title,"
+                "title_en=excluded.title_en,time_sec=excluded.time_sec,"
+                "keyframe_rel=excluded.keyframe_rel,"
+                "category_ids_json=excluded.category_ids_json",
+                (user_id, b["key"], b["noteId"], b["noteTitle"], b["kind"],
+                 int(b["idx"]), b["title"], b.get("title_en"), float(b["time"]),
+                 b.get("keyframeRel"),
+                 json.dumps([str(x) for x in category_ids], ensure_ascii=False),
+                 added),
+            )
+            conn.commit()
+        finally:
+            conn.close()
+
+    def delete_bookmark(self, user_id: str, key: str) -> bool:
+        conn = db.connect()
+        try:
+            cur = conn.execute(
+                "DELETE FROM bookmarks WHERE user_id=? AND key=?",
+                (user_id, key),
+            )
+            conn.commit()
+            return cur.rowcount > 0
+        finally:
+            conn.close()
+
+
 notes_repo = _NotesRepo()
 jobs_repo = _JobsRepo()
+bookmarks_repo = _BookmarksRepo()
