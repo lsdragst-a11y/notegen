@@ -78,6 +78,23 @@ check(approx(E.pk([3.0], [5.0], duration=10.0, k=1), 0.2),
 # --- window_k 钳位：极短视频 k>=1 ---
 check(E.window_k([], duration=1.0) >= 1, "(2j) window_k 钳到 >=1")
 
+# --- extract_pred_boundaries: 去掉首章起点(≈0)，返回内部边界 ---
+chapters_obj = {"chapters": [
+    {"title": "a", "start": 0.0, "end": 100.0},
+    {"title": "b", "start": 100.0, "end": 250.0},
+    {"title": "c", "start": 250.0, "end": 400.0},
+]}
+b = E.extract_pred_boundaries(chapters_obj)
+check(b == [100.0, 250.0], f"(3a) 去首章起点 -> {b}")
+# 首章 start 略 > 0 但 < eps 仍算起点
+chapters_obj2 = {"chapters": [{"title": "a", "start": 0.4, "end": 50.0},
+                              {"title": "b", "start": 50.0, "end": 100.0}]}
+check(E.extract_pred_boundaries(chapters_obj2) == [50.0], "(3b) start<eps 视为起点")
+# 空 / 单章 -> 无内部边界
+check(E.extract_pred_boundaries({"chapters": []}) == [], "(3c) 空章 -> []")
+check(E.extract_pred_boundaries({"chapters": [{"start": 0.0, "end": 10.0}]}) == [],
+      "(3d) 单章 -> []")
+
 print()
 if FAILS:
     print(f"=== {len(FAILS)} CHECK(S) FAILED ===")

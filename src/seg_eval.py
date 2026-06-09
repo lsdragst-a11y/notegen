@@ -107,3 +107,11 @@ def pk(pred: list[float], gold: list[float], duration: float,
         if r != h:
             err += 1
     return err / positions
+
+
+def extract_pred_boundaries(chapters_obj: dict, start_eps: float = 1.0) -> list[float]:
+    """从 chapters.json 的 dict 取各章 `start` 作为预测边界，去掉首章起点(≈0)。
+    返回升序内部边界（秒）。chapters 已按时间排序时直接用；否则排序后取。"""
+    chs = chapters_obj.get("chapters") or []
+    starts = sorted(float(c.get("start", 0.0)) for c in chs)
+    return [s for s in starts if s >= start_eps]
