@@ -8,7 +8,7 @@
 
 **Tech Stack:** Python 3（stdlib `math`/`json`/`subprocess`），现有 `src/pipeline.py` / `src/segment_llm.py` / `src/service_common.py`；测试用仓库惯例的 `__main__` 断言脚本（非 pytest），跑 `.venv/Scripts/python.exe scripts/test_*.py`。**nltk 未安装**——Pk/WindowDiff 走 vendored 实现，对齐 nltk 的标准算法并以手算单测钉死 off-by-one。
 
-**给 reviewer 的待决项（given-K 深度，见 Task 4）：** 本计划对 given-K 采用 **Option A（软约束）**——`target_chapters` 仅作 prompt 层强提示（把顶层数 hint 钉成「正好 N」），**不**改 `_diagnose_outline` / `_validate_outline`（这两个校验函数各自重算 `_cap_for_category` 上限，内含 p57/BV1q6/NAT 等历史修复，硬改风险高）。残留章数滑移由输出的 `k_error` 量化。备选 **Option B（硬约束）** 会进一步改校验器强制恰好 K 章，但触碰生产 fallback 逻辑、风险大。given-K 是「oracle 参考」非主指标，故选低风险 Option A。**若 reviewer 要 Option B，在执行 Task 4 前提出。**
+**given-K 深度（已敲定，见 Task 4）：** 用户已确认采用 **Option A（软约束）**——`target_chapters` 仅作 prompt 层强提示（把顶层数 hint 钉成「正好 N」），**不**改 `_diagnose_outline` / `_validate_outline`（这两个校验函数各自重算 `_cap_for_category` 上限，内含 p57/BV1q6/NAT 等历史修复，硬改风险高）。残留章数滑移由输出的 `k_error` 量化。备选 Option B（硬改校验器强制恰好 K 章）触碰生产 fallback 逻辑、风险大，**不采用**；given-K 是「oracle 参考」非主指标，低风险 Option A 足够。Task 8 Step 1 检验 Option A 是否够约束住 K。
 
 ---
 
