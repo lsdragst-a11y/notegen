@@ -1306,6 +1306,19 @@ def _format_visual_captions(visual_captions: Optional[list[Optional[str]]], n: i
             + "\n".join(lines) + "\n")
 
 
+def _resolve_top_count(n: int, cap: int, target_chapters: Optional[int] = None):
+    """决定顶层章数提示 (min_tops, max_tops, hint_str)。
+    target_chapters>0 (given-K oracle) 时钉死 K；否则按算术参考给 free-K 区间
+    （与历史 free-K 行为完全一致）。纯函数，便于单测。"""
+    if target_chapters is not None and target_chapters > 0:
+        t = int(target_chapters)
+        return t, t, f"正好 {t}（given-K oracle）"
+    min_tops = -(-n // cap)                       # ceil division
+    max_tops = max(min_tops, min_tops + 2)
+    hint = (f"[{min_tops}, {max_tops}]（见上方算术参考）" if n > 10 else "[3, 6]")
+    return min_tops, max_tops, hint
+
+
 def segment_hierarchical(chunks: list[dict],
                           headlines: Optional[list[str]] = None,
                           model_id: str = _DEFAULT_MODEL,
@@ -1315,6 +1328,7 @@ def segment_hierarchical(chunks: list[dict],
                           visual_captions: Optional[list[Optional[str]]] = None,
                           lang: str = "zh",
                           category: str = "teaching",
+                          target_chapters: Optional[int] = None,
                           ) -> Optional[dict]:
     """对 chunks（按时间排好序）调 LLM 生成层级化章节大纲。
     成功返回 {"chapters": [{"title", "start", "end", "indices", "children"?}, ...]}
@@ -1348,24 +1362,21 @@ def segment_hierarchical(chunks: list[dict],
     chunks_per_top_cap = _cap_for_category(category)
     # 算术 hint：长视频（n > 10）建议顶层数 ≈ ceil(n/cap)
     # 注意：这是"建议"不是"硬约束"——硬约束会让 LLM 为凑数选非连续 chunks（p57 实测 ch1=[0,3,17,18]）
-    min_tops_arith = -(-n // chunks_per_top_cap)  # ceil division
-    # 上界 = 下界 + 2（给主题更细的视频一点余量）。
-    # 旧实现用 min(6, min_tops_arith+2) 把上界钳在 6，但长视频（n>=31, cap=5）
-    # 下界已 >=7，会打印出"7-6 / 8-6"这种倒挂区间，反而把 LLM 往"切太少→oversize
-    # →程序化拆"的 churn 路径上推。校验函数本就不强制 6 上界，这里取 max 防倒挂。
-    max_tops_arith = max(min_tops_arith, min_tops_arith + 2)
+    min_tops_arith, max_tops_arith, top_count_hint = _resolve_top_count(
+        n, chunks_per_top_cap, target_chapters)
     arith_clause = ""
-    if n > 10:
+    if target_chapters is not None and target_chapters > 0:
+        # given-K oracle：章数硬提示（仅 benchmark 传；生产默认 None 不进此分支）
+        arith_clause = (
+            f"\n**章数硬约束（given-K oracle）**：本次必须切成**正好 {int(target_chapters)}** 个"
+            f"顶层章节，不多不少。每章仍须是**连续区间**，宁可章内主题略宽也不要改变章数。\n"
+        )
+    elif n > 10:
         arith_clause = (
             f"\n**算术参考**：{n} 段 / 单顶层 ≤ {chunks_per_top_cap}，"
             f"顶层数典型在 **{min_tops_arith}-{max_tops_arith}** 之间。"
             f"主题更细可超，但每章必须是**连续区间**——宁可少 1 章也不要为凑数跳着选 chunks。\n"
         )
-    # 自检清单的顶层数目标：短视频 [3,6]；长视频（n>10）用算术参考区间，
-    # 避免写死的 "6 上界" 与上面 arith_clause 矛盾（长视频 6 章塞不下会被逼成
-    # 大章 → oversize → 程序化拆，边界反而乱）。
-    top_count_hint = (f"[{min_tops_arith}, {max_tops_arith}]（见上方算术参考）"
-                      if n > 10 else "[3, 6]")
     user_prompt = (
         f"{cat_label}共 {n} 个原子段（chunk_idx 0~{n-1}）：\n\n"
         f"{chunk_text}\n"

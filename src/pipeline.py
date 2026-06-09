@@ -1210,13 +1210,17 @@ def _do_llm_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
         state.seg_meta["forced_outline"] = True
     else:
         print("[chapters] LLM 层级章节切分（Qwen2.5-7B-AWQ）...", flush=True)
+        # given-K oracle：仅当 --chapters N（N>0）显式给定时约束章数；
+        # bare --chapters（const=-1）或 --chapters 缺省走 free-K 自适应（生产默认）。
+        _target_k = cfg.chapters if (cfg.chapters is not None and cfg.chapters > 0) else None
         try:
             from segment_llm import segment_hierarchical
             outline = segment_hierarchical(state.summaries,
                                             visual_sims=state.visual_sims_for_llm,
                                             visual_captions=state.visual_captions_for_llm,
                                             lang=state.resolved_lang,
-                                            category=state.inferred_category)
+                                            category=state.inferred_category,
+                                            target_chapters=_target_k)
         except Exception as e:
             print(f"      [llm-chapters] 异常：{e}，fallback TextTiling", flush=True)
             outline = None
