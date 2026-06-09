@@ -103,10 +103,10 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 ### Pk / WindowDiff（离散规则写死，保证可复现）
 
 - **单元化**：`n = ceil(duration)`，得到 `n` 个 1s 单元，索引 `0 .. n-1`。
-- **边界映射**：每个边界时间 `b` 先 clamp 到 `[0, duration]`，映射到单元 `u = floor(b)`；只保留 `1 <= u <= n-1` 的（`u==0` 是视频起点、不算内部边界，丢弃；落在 `n` 的 clamp 回 `n-1` 后若与片尾重合也丢弃）。同一单元多个边界去重为 1。
+- **边界映射（写硬）**：每个边界 `b`，先丢弃 `b <= 0` 或 `b >= duration`（起点/片尾不是内部边界），再 `u = floor(b)`，保留 `1 <= u < n`。同一单元多个边界去重为 1。
 - 由此得长度 `n` 的 boundary mask `B`，`B[u]=1` 表示「单元 u 起始处有段边界」。
-- **窗口** `k = max(1, round(平均真段长_秒 / 2))`，每视频按 gold 自算。
-- **滑窗**：`i = 0 .. n-k-1`（含两端），比较 ref/hyp 在 `B[i+1 .. i+k]`（含端点）区间内的边界计数差。Pk 比较「窗口两端是否同段」、WindowDiff 比较「窗口内边界数」，均按标准定义。
+- **窗口** `k = max(1, round(平均真段长_单元 / 2))`，平均段长 = `n / (len(gold)+1)`，每视频按 gold 自算；算出后 clamp 到 `[1, n]`。**单段 gold（gold=[]）也走同一公式**（= `round(n/2)`），不特殊钳到 1。
+- **滑窗（nltk 规范）**：`positions = n - k + 1`，`i = 0 .. n-k`（即 `range(n-k+1)`，**修正草稿里 `n-k-1` 的 off-by-one**）。WindowDiff 比较窗口 `B[i:i+k]` 内 ref/hyp 边界计数差（unweighted: `min(1, |Δ|)`）、Pk 比较该窗口内「是否有边界」的异同，均按 nltk 标准定义。clamp 后 `positions >= 1` 恒有窗口；仅当 `duration <= 0` 致 `n` 退化时按 `0.0` 兜底。
 - **实现来源**：优先复用 `nltk.metrics.segmentation.pk` / `windowdiff`（若环境已装）作为权威实现，否则按上述约定 vendored 实现，并在单测中与 nltk（或手算）对齐，钉死 off-by-one。
 - Pk、WindowDiff 越低越好。
 
@@ -116,7 +116,7 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 |---|---|---|
 | `pred == []` 且 `gold == []`（皆单段） | **1.0**（P=R=1.0） | **0.0**（两个单段 mask 完全一致） |
 | 仅一边为空 | **0.0** | 按定义照常计算（一边全无边界、一边有） |
-| `gold` 单段（无边界），pred 有边界 | 照常（R 分母按 len(gold)=0 时 R 定义为 0；F1=0） | 稳定返回：`k` 钳到 1，mask 仅 pred 有边界，给出确定值，不抛异常 |
+| `gold` 单段（无边界），pred 有边界 | 照常（R 分母按 len(gold)=0 时 R 定义为 0；F1=0） | `k` 仍按同一公式算（= `round(n/2)`）再 clamp 到 `[1, n]`；`positions = n-k+1 >= 1` 恒有窗口，得确定值，不抛异常（**不**特殊钳到 1） |
 
 - 所有除零按上表显式处理（`max(denom, eps)` 不足以表达语义时用条件分支）。
 
@@ -137,6 +137,7 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
   - **given-K（oracle）**：约束 LLM 章数 = `n_segments = len(boundaries_sec) + 1`。
 - **关键实现前提（given-K 当前不生效，必须先补）**：`_do_llm_chapters` 调 `segment_hierarchical(...)`（`pipeline.py:1215`）**未传 target K**——现在 `--chapters N` 只在 LLM 失败 fallback TextTiling 时才约束章数（`segment_llm.py`）。实现本基准前须给 `segment_hierarchical` 增加**可选 `target_chapters` 参数**并从 CLI（如 `--chapters N` 的数值形态）透传：**生产默认不传**（保持 free-K 自适应），**仅 benchmark given-K 传**。这是 free-K 与 given-K 能真正区分的前提。
 - pred 边界 = chapters.json 中各 chapter 的 `start`（秒），去掉首章 `start`（≈0，与 gold「不含起点」对齐；阈值在 plan 阶段钉死，如 `< 1.0s` 视为起点）。
+- **产物快照（free-K/given-K 同 stem 会互相覆盖）**：`_output_stem`（`pipeline.py:469`）不编码 `--chapters` 数值或 condition，故同视频两条件写同一个 `*.chapters.json`、后跑覆盖先跑。跑批须**每个 condition 跑完立刻读 pred**，并把该 chapters.json 快照到 condition 专属路径（如 `data/outputs/benchmark/<video_id>.<condition>.chapters.json`）。主结果（pred 边界）已落 benchmark JSON、不依赖最终 chapters.json；快照仅为 debug/replay 方便。
 
 ## 产出
 
@@ -196,7 +197,7 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 ## 范围与 YAGNI
 
 - **不做**：web 标注 UI、txt/mm/vl 多路径全量 ablation（指标库可复用，但不在本基准主线）、动态语料、超过 30 的扩容。
-- **不改**：老 `eval_segmentation.py` 逻辑（仅标 legacy）、生产 pipeline 行为。
+- **不改变生产默认行为**：老 `eval_segmentation.py` 逻辑仅标 legacy（不删不改）；生产 pipeline 默认路径行为不变——新增的 `target_chapters` 仅 benchmark given-K 显式传，默认 `None` 时切分逻辑与现状零差异。
 - 英文视频可能仅 ~2 个，作分档参考，样本少不强求统计显著。
 
 ## 实施顺序（交 writing-plans 细化）

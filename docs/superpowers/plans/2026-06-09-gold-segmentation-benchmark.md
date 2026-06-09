@@ -168,7 +168,7 @@ git commit -m "feat(seg_eval): boundary P/R/F1@tol with earliest-compatible matc
 - Modify: `E:\claudeproject\notegen\src\seg_eval.py`
 - Test: `E:\claudeproject\notegen\scripts\test_seg_eval.py:<append>`
 
-> **离散规则（写死，保证可复现）**：`n = max(1, ceil(duration))`，1s 单元 `0..n-1`。边界 `b` clamp 到 `[0, duration]` → 单元 `u = floor(b)`，仅保留 `1 <= u <= n-1`（`u==0` 为视频起点、丢弃；同单元多边界去重）。窗口 `k = max(1, round(n / (len(gold)+1) / 2))`（按 gold 平均段长算，pred/gold 共用）。滑窗按 **nltk 标准** `range(n - k + 1)`（**修正 spec 草稿里 `i=0..n-k-1` 的 off-by-one——采用 nltk 规范以保证可引用性，已在 Task 7 报表注明**）。WindowDiff 用 `min(1, |Δcount|)`（unweighted）；Pk 比较窗口内「是否有边界」的异同。
+> **离散规则（写死，保证可复现）**：`n = max(1, ceil(duration))`，1s 单元 `0..n-1`。边界 `b`：先丢弃 `b<=0` 或 `b>=duration`，再 `u = floor(b)`，保留 `1 <= u < n`（同单元多边界去重）。窗口 `k = max(1, round(n / (len(gold)+1) / 2))`（按 gold 平均段长算，pred/gold 共用），算出后 clamp 到 `[1, n]`；单段 gold 也走同一公式、不特殊钳到 1。滑窗按 **nltk 标准** `range(n - k + 1)`（**修正 spec 草稿里 `i=0..n-k-1` 的 off-by-one——采用 nltk 规范以保证可引用性，已在 Task 7 报表注明**）。WindowDiff 用 `min(1, |Δcount|)`（unweighted）；Pk 比较窗口内「是否有边界」的异同。
 
 - [ ] **Step 1: Write the failing test (append to `scripts/test_seg_eval.py`)**
 
@@ -221,12 +221,14 @@ Expected: FAIL — `AttributeError: module 'seg_eval' has no attribute 'pk'`
 ```python
 def _boundaries_to_mask(boundaries: list[float], n: int, duration: float) -> list[int]:
     """长度 n 的 0/1 mask；mask[u]=1 表示单元 u 起始处有内部边界。
-    b clamp 到 [0,duration] -> u=floor(b)，仅保留 1<=u<=n-1（u==0 是起点，丢弃）。"""
+    先丢弃 b<=0 或 b>=duration（起点/片尾非内部边界），再 u=floor(b)，保留 1<=u<n。"""
     mask = [0] * n
     for b in boundaries:
-        bb = min(max(float(b), 0.0), float(duration))
-        u = int(math.floor(bb))
-        if 1 <= u <= n - 1:
+        b = float(b)
+        if b <= 0.0 or b >= duration:
+            continue
+        u = int(math.floor(b))
+        if 1 <= u < n:
             mask[u] = 1
     return mask
 
@@ -978,9 +980,11 @@ def _git_commit() -> str:
         return "unknown"
 
 
-def _run_pipeline(local_source: str, chunk_chars: int, chapters_arg: list[str],
-                  run_start: float) -> list[float]:
-    """跑一次 pipeline，返回 pred 边界。靠 mtime 找本次新写的 chapters.json。"""
+def _run_pipeline(video_id: str, local_source: str, chunk_chars: int,
+                  chapters_arg: list[str], condition: str, run_start: float) -> list[float]:
+    """跑一次 pipeline，返回 pred 边界。靠 mtime 找本次新写的 chapters.json，并立即
+    快照到 condition 专属路径（free-K/given-K 同 stem 会互相覆盖，快照便于 debug/replay）。"""
+    import shutil
     stem0 = Path(local_source).stem
     cmd = [str(SC.PY), "src/pipeline.py", local_source, *STATIC_ARGS,
            "--chunk-chars", str(chunk_chars), *chapters_arg]
@@ -994,7 +998,12 @@ def _run_pipeline(local_source: str, chunk_chars: int, chapters_arg: list[str],
         print(f"  [warn] rc={proc.returncode} 未找到 chapters.json", flush=True)
         return []
     cands.sort(key=lambda p: -p.stat().st_mtime)
-    obj = json.loads(cands[0].read_text(encoding="utf-8"))
+    chap = cands[0]
+    obj = json.loads(chap.read_text(encoding="utf-8"))
+    # 立即快照（避免被下个 condition 覆盖后无法追溯）
+    snap_dir = OUTPUTS / "benchmark"
+    snap_dir.mkdir(parents=True, exist_ok=True)
+    shutil.copy(chap, snap_dir / f"{video_id}.{condition}.chapters.json")
     return E.extract_pred_boundaries(obj)
 
 
@@ -1022,7 +1031,7 @@ def main() -> int:
             else:
                 chap_arg = ["--chapters", str(gold["n_segments"])]  # given-K oracle
             t0 = time.time()
-            pred = _run_pipeline(src, cc, chap_arg, t0)
+            pred = _run_pipeline(v["video_id"], src, cc, chap_arg, cond, t0)
             rows.append(assemble_row(v["video_id"], v["domain"], cond, cc,
                                      pred, gold_b, duration))
             print(f"  [{cond}] pred_n={len(pred)+1} F1@15={rows[-1]['tol15']['F1']} "
