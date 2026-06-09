@@ -68,7 +68,7 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 {
   "schema_version": 1,
   "video_id": "BV1BE411D7ii_p68_p0",
-  "audio": "data/raw/BV1BE411D7ii_p68_p0.large-v3.m4a",
+  "local_source": "data/raw/BV1BE411D7ii_p68_p0.mp4",
   "duration": 2705.0,
   "domain": "learning",
   "label": "王道计组 p68 中断系统",
@@ -82,20 +82,32 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 
 - `boundaries_sec`：**段开始时间**，升序，**不含**视频起点 0 与片尾。
 - 不变量：`n_segments == len(boundaries_sec) + 1`。
+- `local_source`：跑 pipeline 用的**本地媒体路径**（视频或音频）。命名用 `local_source` 而非 `audio`，因为生产默认路径含 keyframes/VLM 视觉信号，**纯音频文件不足以跑视觉路径**——benchmark 若评生产默认路径，须指向带画面的视频源。
 - `draft_source`：草稿来源（如 `llm:vl.chapters`），仅审计用。
 
 ## 指标定义（`seg_eval.py`，纯时间制）
 
 ### Boundary P/R/F1 @tolerance
 
-- pred 边界落在某未配对 gold 边界 **±tolerance 秒**内算 TP；贪心一对一配对，gold 不重复占用。
+- TP = pred 与 gold 之间在 **±tolerance 秒**内的**最大一对一匹配数**。每个 pred、每个 gold 至多匹配一次。
+- **匹配算法（写死，避免 nearest-greedy 漏配）**：pred、gold 各自升序排序后，用双指针做 **earliest-compatible** 匹配——遍历 gold（i）与 pred（j）两指针：
+  - 若 `pred[j] < gold[i] - tol`：该 pred 无法再匹配任何后续 gold（gold 递增），`j++` 丢弃；
+  - 否则若 `pred[j] <= gold[i] + tol`：命中，TP++，`i++; j++`；
+  - 否则（`pred[j] > gold[i] + tol`）：该 gold 无 pred 可配，`i++`。
+
+  对一维点集 + 对称容差窗口，该 earliest-compatible 双指针**等于最大二分匹配**。**禁止**实现成「每个 pred 取最近 gold」的 nearest-greedy（会在边界密集时少算 TP）。单测必含一个 nearest-greedy 会漏配、双指针能配满的用例。
+- `FP = len(pred) - TP`，`FN = len(gold) - TP`。
 - `P = TP/len(pred)`，`R = TP/len(gold)`，`F1 = 2PR/(P+R)`。
 - 主容差 **±15s**，附报 **±30s**。
 
-### Pk / WindowDiff
+### Pk / WindowDiff（离散规则写死，保证可复现）
 
-- 把 `[0, duration]` 时间轴按 **1s 网格**离散为 boundary mask（每个 1s 单元末尾是否为段边界）。
-- 按标准定义滑窗计算；窗口 `k = round(平均真段长_秒 / 2)`（文献惯例，每视频按 gold 自算；`k` 最小值钳到 1）。
+- **单元化**：`n = ceil(duration)`，得到 `n` 个 1s 单元，索引 `0 .. n-1`。
+- **边界映射**：每个边界时间 `b` 先 clamp 到 `[0, duration]`，映射到单元 `u = floor(b)`；只保留 `1 <= u <= n-1` 的（`u==0` 是视频起点、不算内部边界，丢弃；落在 `n` 的 clamp 回 `n-1` 后若与片尾重合也丢弃）。同一单元多个边界去重为 1。
+- 由此得长度 `n` 的 boundary mask `B`，`B[u]=1` 表示「单元 u 起始处有段边界」。
+- **窗口** `k = max(1, round(平均真段长_秒 / 2))`，每视频按 gold 自算。
+- **滑窗**：`i = 0 .. n-k-1`（含两端），比较 ref/hyp 在 `B[i+1 .. i+k]`（含端点）区间内的边界计数差。Pk 比较「窗口两端是否同段」、WindowDiff 比较「窗口内边界数」，均按标准定义。
+- **实现来源**：优先复用 `nltk.metrics.segmentation.pk` / `windowdiff`（若环境已装）作为权威实现，否则按上述约定 vendored 实现，并在单测中与 nltk（或手算）对齐，钉死 off-by-one。
 - Pk、WindowDiff 越低越好。
 
 ### 退化定义（明确写死，单测覆盖）
@@ -112,27 +124,41 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 
 `benchmark_segmentation.py`：
 
-- 读 `data/gold/manifest.json` → 逐 video 读 gold.json。
-- 复用 ASR cache（`--local`），跑批 **`--quality 360p`**（[[feedback-low-quality-for-eval]]）。
-- 评**生产默认 LLM 路径**：`--summarizer neural --chunker texttile --llm-chapters`（与 web 默认一致）。txt vs mm 对比留作 `seg_eval` 可复用的后续 ablation，不在本基准主线。
+- 读 `data/gold/manifest.json` → 逐 video 读 gold.json → 用 `local_source` 跑 pipeline（`--local`），复用已有 ASR cache。
+- **画质口径**：`--quality` 在 `--local` 模式下被忽略（仅 URL 下载模式生效，见 `worker_tasks.py:106`、`pipeline.py`），故 benchmark **不声明画质控制**——以 manifest 冻结的 `local_source` 文件本身为准（要 360p 则在准备 local source 时预降采样，不靠运行时 flag）。注：[[feedback-low-quality-for-eval]] 的 360p 偏好针对 URL 模式跑批，本基准走冻结本地源，不适用。
+- **pipeline 参数与 web worker 完全对齐**（`worker_tasks.py:_build_cmd`）：`--chunker texttile --chunk-chars <默认> --chapters --summarizer neural --keyframes --llm-chapters --vlm-captions`。即评的是**真实生产默认路径**（含 keyframes/VLM 视觉信号，会影响切分），不是裁剪过的纯文本路径。
 - 两个条件：
-  - **free-K**：不传 `--chapters`，LLM 自适应定 K。
-  - **given-K（oracle）**：传 `--chapters = n_segments = len(boundaries_sec) + 1`。
-- pred 边界 = chapters.json 中各 chapter 的 `start`（秒），去掉首章 start≈0（与 gold「不含起点」对齐）。
+  - **free-K**：传 **bare `--chapters`**（无数值，与 worker 一致）→ LLM 自适应定 K；LLM 失败时仍能走 TextTiling fallback 出章节。
+  - **given-K（oracle）**：约束 LLM 章数 = `n_segments = len(boundaries_sec) + 1`。
+- **关键实现前提（given-K 当前不生效，必须先补）**：`_do_llm_chapters` 调 `segment_hierarchical(...)`（`pipeline.py:1215`）**未传 target K**——现在 `--chapters N` 只在 LLM 失败 fallback TextTiling 时才约束章数（`segment_llm.py`）。实现本基准前须给 `segment_hierarchical` 增加**可选 `target_chapters` 参数**并从 CLI（如 `--chapters N` 的数值形态）透传：**生产默认不传**（保持 free-K 自适应），**仅 benchmark given-K 传**。这是 free-K 与 given-K 能真正区分的前提。
+- pred 边界 = chapters.json 中各 chapter 的 `start`（秒），去掉首章 `start`（≈0，与 gold「不含起点」对齐；阈值在 plan 阶段钉死，如 `< 1.0s` 视为起点）。
 
 ## 产出
 
 ### 原始数据 `data/outputs/benchmark_segmentation.json`
 
-逐 video 逐条件（free-K / given-K）记录：pred 边界、gold 边界、F1@15、F1@30、Pk、WindowDiff、domain，并在文件头记录**运行元信息**：
+逐 video 逐条件（free-K / given-K）记录每个容差下的 **TP/FP/FN/P/R/F1**（@15、@30）、**Pk**、**WindowDiff**，外加 **pred_n_segments**、**gold_n_segments**、**k_error**（= `pred_n_segments - gold_n_segments`，带符号），以及 pred/gold 边界、domain。`k_error` 与 free-K↔given-K 的指标差一起，量化「自适应定 K 的代价」。每行形如：
+
+```json
+{
+  "video_id": "...", "domain": "learning", "condition": "free-K",
+  "pred_boundaries_sec": [...], "gold_boundaries_sec": [...],
+  "pred_n_segments": 8, "gold_n_segments": 7, "k_error": 1,
+  "tol15": {"tp": 5, "fp": 2, "fn": 1, "P": 0.71, "R": 0.83, "F1": 0.77},
+  "tol30": {"tp": 6, "fp": 1, "fn": 0, "P": 0.86, "R": 1.0, "F1": 0.92},
+  "pk": 0.18, "windowdiff": 0.21
+}
+```
+
+文件头记录**运行元信息**：
 
 ```json
 {
   "metrics_version": 1,
   "run_at": "2026-06-09T...",
   "commit": "<git short hash>",
-  "model": "Qwen2.5-7B-Instruct-AWQ",
-  "provider": "local-vllm",
+  "model": "Qwen2.5-7B-AWQ",
+  "provider": "local",
   "pipeline_args": ["--summarizer","neural","--chunker","texttile","--llm-chapters","--quality","360p"],
   "results": [ ... ]
 }
@@ -166,7 +192,10 @@ scripts/eval_segmentation.py       标注为 legacy，保留（旧 TextTiling �
 ## 实施顺序（交 writing-plans 细化）
 
 1. `src/seg_eval.py` + `scripts/test_seg_eval.py`（指标库先行，TDD，离线可验）。
-2. `scripts/make_gold_draft.py` → 产出 manifest 候选 + silver 草稿 + 带时间戳转写。
-3. 人工校正 gold（用户动作）→ 冻结 `data/gold/manifest.json` + 30 个 `*.gold.json`。
-4. `scripts/benchmark_segmentation.py` 跑批 → JSON + `paper/segmentation_benchmark.md`。
-5. 首轮结果 review，按需迭代容差/k 约定。
+2. **给 `segment_hierarchical` 加可选 `target_chapters`** + CLI `--chapters N` 数值形态透传（生产默认不传，benchmark given-K 才传）；改动需保证 bare `--chapters`（free-K）行为不变。加最小单测验证「传 target_chapters 时 LLM 被约束、不传时自适应」。
+3. `scripts/make_gold_draft.py` → 产出 manifest 候选 + silver 草稿 + 带时间戳转写。
+4. 人工校正 gold（用户动作）→ 冻结 `data/gold/manifest.json` + 30 个 `*.gold.json`。
+5. `scripts/benchmark_segmentation.py` 跑批（free-K + given-K）→ JSON + `paper/segmentation_benchmark.md`。
+6. 首轮结果 review，按需迭代容差/k 约定。
+
+> **风险提示**：评生产默认路径含 `--vlm-captions`，30 视频 × 2 条件跑批 GPU 耗时显著（VLM + LLM 串行，见 [[feedback-serial-model-loading]]）。given-K 复用 free-K 已有 ASR/VLM cache 可省一半重算；plan 阶段需明确 cache 复用策略与预估时长。
