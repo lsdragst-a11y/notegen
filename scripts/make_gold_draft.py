@@ -47,12 +47,11 @@ def build_gold_draft(video_id: str, local_source: str, duration: float,
     }
 
 
-def _transcript_snippets(stem: str, boundaries: list[float], window: float = 8.0) -> list[dict]:
-    """从 summary.json 取每个边界 ±window 秒附近的转写 snippet，辅助人工校正。"""
-    sp = OUTPUTS / f"{stem}.summary.json"
-    cands = sorted(OUTPUTS.glob(f"{Path(stem).name.split('.')[0]}*.summary.json"))
-    if not sp.exists() and cands:
-        sp = cands[0]
+def _transcript_snippets(chap_path: Path, boundaries: list[float], window: float = 8.0) -> list[dict]:
+    """从同一次产出的 summary.json 取每个边界 ±window 秒附近的转写 snippet，辅助人工校正。
+    直接由 chapters 文件名换出 summary（`<base>.chapters.json` -> `<base>.summary.json`），
+    保证 snippet 与抽边界用的 chapters 同一次运行、chunk 起点对齐。"""
+    sp = chap_path.with_name(chap_path.name.replace(".chapters.json", ".summary.json"))
     if not sp.exists():
         return [{"boundary_sec": b, "near_text": "(no summary.json)"} for b in boundaries]
     try:
@@ -113,7 +112,7 @@ def main() -> int:
                 break
         draft = build_gold_draft(stem0, src, duration, domain, title,
                                  boundaries, f"llm:{chap_path.name}")
-        draft["_draft_snippets"] = _transcript_snippets(chap_path.stem, boundaries)
+        draft["_draft_snippets"] = _transcript_snippets(chap_path, boundaries)
         out = GOLD_DIR / f"{stem0}.gold.json"
         out.write_text(json.dumps(draft, ensure_ascii=False, indent=2), encoding="utf-8")
         candidates.append({"video_id": stem0, "domain": domain,
