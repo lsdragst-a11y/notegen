@@ -120,6 +120,26 @@ export interface NoteView {
 
 export type JobStatus = "queued" | "running" | "done" | "failed" | "interrupted";
 
+export interface JobStageMetric {
+  stage: string;
+  label: string;
+  i: number;
+  n: number;
+  start_t: number;
+  end_t?: number | null;
+  duration_sec?: number | null;
+  status: "running" | "done" | "failed" | "interrupted" | string;
+}
+
+export interface JobRuntimeSnapshot {
+  stage: string;
+  percent: number;
+  msg?: string;
+  returncode?: string;
+  metrics: JobStageMetric[];
+  log_tail: string[];
+}
+
 export interface HistoryItem {
   id: string;
   user_id: string;
@@ -132,4 +152,5 @@ export interface HistoryItem {
   created_at: number;
   updated_at: number;
   finished_at: number | null;
+  runtime?: JobRuntimeSnapshot;
 }

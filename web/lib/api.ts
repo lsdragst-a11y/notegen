@@ -1,4 +1,7 @@
 // FastAPI backend base. Dev 默认 :8000，可通过 NEXT_PUBLIC_API_URL 覆盖。
+import type { NoteView, HistoryItem, JobStageMetric } from "./types";
+export type { JobStageMetric } from "./types";
+
 export const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
 
 export class ApiError extends Error {
@@ -94,17 +97,6 @@ export function postUpload(
   });
 }
 
-export interface JobStageMetric {
-  stage: string;
-  label: string;
-  i: number;
-  n: number;
-  start_t: number;
-  end_t?: number | null;
-  duration_sec?: number | null;
-  status: "running" | "done" | "failed" | "interrupted" | string;
-}
-
 export interface JobEvent {
   stage: string;
   percent: number;
@@ -146,8 +138,6 @@ export function subscribeJob(
   es.onerror = (e) => { onError?.(e); };
   return () => es.close();
 }
-
-import type { NoteView, HistoryItem } from "./types";
 
 export async function fetchMyNotes(): Promise<NoteView[]> {
   const r = await fetch(`${API_BASE}/api/notes/mine`, { credentials: "include" });

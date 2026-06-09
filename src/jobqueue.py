@@ -18,6 +18,8 @@ from rq import Queue, Retry
 
 REDIS_URL = os.environ.get("NOTEGEN_REDIS_URL", "redis://127.0.0.1:6379/0")
 JOB_TIMEOUT = 7200  # pipeline 长视频可能跑十几分钟，给足 2h
+REDIS_CONNECT_TIMEOUT = float(os.environ.get("NOTEGEN_REDIS_CONNECT_TIMEOUT", "1.0"))
+REDIS_KV_TIMEOUT = float(os.environ.get("NOTEGEN_REDIS_KV_TIMEOUT", "2.0"))
 
 _kv = None   # decode_responses=True：job hash / list
 _rq = None   # bytes：RQ Queue 专用
@@ -32,14 +34,21 @@ def set_connections(kv=None, rq=None) -> None:
 def get_kv():
     global _kv
     if _kv is None:
-        _kv = redis.Redis.from_url(REDIS_URL, decode_responses=True)
+        _kv = redis.Redis.from_url(
+            REDIS_URL, decode_responses=True,
+            socket_connect_timeout=REDIS_CONNECT_TIMEOUT,
+            socket_timeout=REDIS_KV_TIMEOUT,
+        )
     return _kv
 
 
 def get_rq():
     global _rq
     if _rq is None:
-        _rq = redis.Redis.from_url(REDIS_URL)
+        _rq = redis.Redis.from_url(
+            REDIS_URL,
+            socket_connect_timeout=REDIS_CONNECT_TIMEOUT,
+        )
     return _rq
 
 

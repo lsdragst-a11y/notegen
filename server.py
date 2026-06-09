@@ -370,9 +370,42 @@ def delete_bookmark_category(category_id: str, user: dict = Depends(require_user
     return bookmarks_repo.state(user["id"])
 
 
+def _job_runtime_snapshot(job_id: str) -> tuple[Optional[dict], bool]:
+    try:
+        st = jobqueue.job_state(job_id)
+    except _redis_pkg.exceptions.RedisError:
+        return None, False
+    except Exception:
+        return None, False
+    if not st:
+        return None, True
+    log = st.get("log") or []
+    return {
+        "stage": st.get("stage") or "",
+        "percent": st.get("percent") or 0,
+        "msg": st.get("msg") or "",
+        "returncode": st.get("returncode"),
+        "metrics": st.get("metrics") or [],
+        "log_tail": log[-20:],
+    }, True
+
+
 @app.get("/api/history")
 def list_history(user: dict = Depends(require_user)):
-    return jobs_repo.list_history(user["id"])
+    rows = jobs_repo.list_history(user["id"])
+    out = []
+    can_read_runtime = True
+    for row in rows:
+        item = dict(row)
+        runtime = None
+        if can_read_runtime:
+            runtime, can_read_runtime = _job_runtime_snapshot(item["id"])
+        if runtime:
+            item["runtime"] = runtime
+            if not item.get("error") and runtime.get("stage") in ("failed", "interrupted", "error"):
+                item["error"] = runtime.get("msg")
+        out.append(item)
+    return out
 
 
 @app.post("/api/jobs/{job_id}/retry")
