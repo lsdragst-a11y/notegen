@@ -21,6 +21,15 @@ check(row["k_error"] == 3 - 4, f"(7c) k_error 带符号 -> {row['k_error']}")
 check("tol15" in row and "tol30" in row and "pk" in row and "windowdiff" in row,
       "(7d) 指标字段齐全")
 check(row["tol15"]["tp"] >= 1, f"(7e) tol15 命中 -> {row['tol15']}")
+check(row["pipeline_failed"] is False, "(7e2) pipeline_failed 默认 False")
+
+# 失败/空 pred 路径：pipeline 挂了应能干净组行，pipeline_failed 透传，F1=0（非崩溃）
+frow = B.assemble_row(
+    video_id="v2", domain="learning", condition="given-K", chunk_chars=600,
+    pred=[], gold=[100.0, 200.0], duration=300.0, pipeline_failed=True)
+check(frow["pipeline_failed"] is True, "(7h) pipeline_failed 透传")
+check(frow["pred_n_segments"] == 1 and frow["tol15"]["F1"] == 0.0,
+      f"(7i) 空 pred -> n=1, F1=0 -> {frow['pred_n_segments']}, {frow['tol15']}")
 
 # aggregate：按 domain×condition 求 F1@15 均值
 rows = [

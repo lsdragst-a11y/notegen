@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import subprocess
 import sys
 import os
@@ -36,15 +37,17 @@ TOL15, TOL30 = 15.0, 30.0
 
 
 def assemble_row(video_id: str, domain: str, condition: str, chunk_chars: int,
-                 pred: list[float], gold: list[float], duration: float) -> dict:
-    """组一行结果（纯函数）。"""
+                 pred: list[float], gold: list[float], duration: float,
+                 pipeline_failed: bool = False) -> dict:
+    """组一行结果（纯函数）。pipeline_failed=True 标记本次跑批失败（崩溃/没产出 chapters），
+    供分析时把「真预测了 0 章」与「pipeline 挂了」区分开，避免污染聚合均值。"""
     t15 = E.boundary_prf(pred, gold, TOL15)
     t30 = E.boundary_prf(pred, gold, TOL30)
     pred_n = len(pred) + 1
     gold_n = len(gold) + 1
     return {
         "video_id": video_id, "domain": domain, "condition": condition,
-        "chunk_chars": chunk_chars,
+        "chunk_chars": chunk_chars, "pipeline_failed": pipeline_failed,
         "pred_boundaries_sec": pred, "gold_boundaries_sec": gold,
         "pred_n_segments": pred_n, "gold_n_segments": gold_n,
         "k_error": pred_n - gold_n,
@@ -83,10 +86,11 @@ def _git_commit() -> str:
 
 
 def _run_pipeline(video_id: str, local_source: str, chunk_chars: int,
-                  chapters_arg: list[str], condition: str, run_start: float) -> list[float]:
-    """跑一次 pipeline，返回 pred 边界。靠 mtime 找本次新写的 chapters.json，并立即
+                  chapters_arg: list[str], condition: str,
+                  run_start: float) -> tuple[list[float], bool]:
+    """跑一次 pipeline，返回 (pred 边界, ok)。ok=False 表示本次跑批失败（非零退出码
+    或没找到本次新写的 chapters.json）。靠 mtime 找本次新写的 chapters.json，并立即
     快照到 condition 专属路径（free-K/given-K 同 stem 会互相覆盖，快照便于 debug/replay）。"""
-    import shutil
     stem0 = Path(local_source).stem
     cmd = [str(SC.PY), "src/pipeline.py", local_source, *STATIC_ARGS,
            "--chunk-chars", str(chunk_chars), *chapters_arg]
@@ -96,9 +100,12 @@ def _run_pipeline(video_id: str, local_source: str, chunk_chars: int,
     # 找本次运行新写的 chapters.json（mtime >= run_start，前缀匹配 stem0）
     cands = [p for p in OUTPUTS.glob(f"{stem0}*.chapters.json")
              if p.stat().st_mtime >= run_start - 2]
-    if not cands:
-        print(f"  [warn] rc={proc.returncode} 未找到 chapters.json", flush=True)
-        return []
+    if proc.returncode != 0 or not cands:
+        # rc!=0 但有新文件：保留 pred 供人工复核，仍标失败；无新文件则空 pred + 失败
+        print(f"  [warn] {video_id} [{condition}] pipeline 失败：rc={proc.returncode} "
+              f"新 chapters.json={len(cands)} 个", flush=True)
+        if not cands:
+            return [], False
     cands.sort(key=lambda p: -p.stat().st_mtime)
     chap = cands[0]
     obj = json.loads(chap.read_text(encoding="utf-8"))
@@ -106,7 +113,7 @@ def _run_pipeline(video_id: str, local_source: str, chunk_chars: int,
     snap_dir = OUTPUTS / "benchmark"
     snap_dir.mkdir(parents=True, exist_ok=True)
     shutil.copy(chap, snap_dir / f"{video_id}.{condition}.chapters.json")
-    return E.extract_pred_boundaries(obj)
+    return E.extract_pred_boundaries(obj), proc.returncode == 0
 
 
 def main() -> int:
@@ -148,11 +155,12 @@ def main() -> int:
             else:
                 chap_arg = ["--chapters", str(gold["n_segments"])]  # given-K oracle
             t0 = time.time()
-            pred = _run_pipeline(v["video_id"], src, cc, chap_arg, cond, t0)
+            pred, ok = _run_pipeline(v["video_id"], src, cc, chap_arg, cond, t0)
             rows.append(assemble_row(v["video_id"], v["domain"], cond, cc,
-                                     pred, gold_b, duration))
+                                     pred, gold_b, duration, pipeline_failed=not ok))
+            flag = "" if ok else "  [PIPELINE FAILED]"
             print(f"  [{cond}] pred_n={len(pred)+1} F1@15={rows[-1]['tol15']['F1']} "
-                  f"Pk={rows[-1]['pk']} WD={rows[-1]['windowdiff']}", flush=True)
+                  f"Pk={rows[-1]['pk']} WD={rows[-1]['windowdiff']}{flag}", flush=True)
 
     header = {
         "metrics_version": E.METRICS_VERSION,
