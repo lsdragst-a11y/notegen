@@ -110,8 +110,13 @@ def pk(pred: list[float], gold: list[float], duration: float,
 
 
 def extract_pred_boundaries(chapters_obj: dict, start_eps: float = 1.0) -> list[float]:
-    """从 chapters.json 的 dict 取各章 `start` 作为预测边界，去掉首章起点(≈0)。
-    返回升序内部边界（秒）。chapters 已按时间排序时直接用；否则排序后取。"""
+    """从 chapters.json 的 dict 取各章 `start` 作为预测边界。
+
+    Gold/pred 边界定义为「后续段开始时间」，不含第一章起点。第一章 start
+    可能是 0，也可能因 ASR 首段起点而是几秒，因此必须按章节顺序丢掉第一个
+    start，而不是用时间阈值猜。start_eps 仅保留作兼容旧调用，不参与判断。
+    返回升序内部边界（秒）。
+    """
     chs = chapters_obj.get("chapters") or []
     starts = sorted(float(c.get("start", 0.0)) for c in chs)
-    return [s for s in starts if s >= start_eps]
+    return starts[1:]

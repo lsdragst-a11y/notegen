@@ -90,10 +90,14 @@ check(b == [100.0, 250.0], f"(3a) 去首章起点 -> {b}")
 chapters_obj2 = {"chapters": [{"title": "a", "start": 0.4, "end": 50.0},
                               {"title": "b", "start": 50.0, "end": 100.0}]}
 check(E.extract_pred_boundaries(chapters_obj2) == [50.0], "(3b) start<eps 视为起点")
+# 首章 start 可能显著大于 1s（ASR 首段不从 0 开始），仍必须按首章丢弃
+chapters_obj3 = {"chapters": [{"title": "a", "start": 5.8, "end": 50.0},
+                              {"title": "b", "start": 80.0, "end": 100.0}]}
+check(E.extract_pred_boundaries(chapters_obj3) == [80.0], "(3c) start>eps 仍按首章丢弃")
 # 空 / 单章 -> 无内部边界
-check(E.extract_pred_boundaries({"chapters": []}) == [], "(3c) 空章 -> []")
+check(E.extract_pred_boundaries({"chapters": []}) == [], "(3d) 空章 -> []")
 check(E.extract_pred_boundaries({"chapters": [{"start": 0.0, "end": 10.0}]}) == [],
-      "(3d) 单章 -> []")
+      "(3e) 单章 -> []")
 
 print()
 if FAILS:
