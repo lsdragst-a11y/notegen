@@ -174,3 +174,85 @@ html, body {
   outline-offset: 2px;
   border-radius: 4px;
 }
+
+/* === Warm Fold foundation tokens: START === */
+:root {
+  --wf-canvas: #F6F0E7;
+  --wf-surface: #FFFAF3;
+  --wf-surface-muted: #EDE2D6;
+  --wf-text: #2D2925;
+  --wf-text-secondary: #665D55;
+  --wf-text-tertiary: #877A6E;
+  --wf-brand-coral: #B65C3A;
+  --wf-accent: #A34A2F;
+  --wf-accent-hover: #98492F;
+  --wf-accent-active: #7F3927;
+  --wf-on-accent: #FFFAF3;
+  --wf-caramel: #8B5A35;
+  --wf-border: rgba(45, 41, 37, 0.14);
+  --wf-border-strong: rgba(45, 41, 37, 0.28);
+  --wf-danger: #B43A31;
+  --wf-danger-hover: #9F2E27;
+  --wf-danger-active: #81241F;
+  --wf-on-danger: #FFFAF3;
+  --wf-danger-surface: #F9E2DE;
+  --wf-danger-border: #D98073;
+  --wf-disabled-bg: #E3D8CC;
+  --wf-disabled-fg: #877A6E;
+  --wf-disabled-border: rgba(45, 41, 37, 0.10);
+  --wf-focus: #A34A2F;
+  --wf-shadow-sm: 0 1px 2px rgba(92, 58, 36, 0.08);
+  --wf-shadow-md: 0 8px 24px rgba(92, 58, 36, 0.10);
+  --wf-shadow-lg: 0 18px 48px rgba(72, 43, 28, 0.14);
+  --wf-radius-xs: 8px;
+  --wf-radius-sm: 12px;
+  --wf-radius-md: 18px;
+  --wf-radius-lg: 24px;
+  --wf-radius-full: 999px;
+  --wf-motion-fast: 160ms;
+  --wf-motion-normal: 220ms;
+  --wf-motion-enter: 420ms;
+  --wf-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --wf-font-display: var(--font-dm-serif-display), Georgia, "Songti SC", serif;
+  --wf-font-sans: var(--font-dm-sans), "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+  --wf-font-zh: "PingFang SC", "Microsoft YaHei", "Noto Sans CJK SC", system-ui, sans-serif;
+}
+
+:root[data-theme="dark"] {
+  --wf-canvas: #1E1A17;
+  --wf-surface: #28221E;
+  --wf-surface-muted: #352D27;
+  --wf-text: #F4EADF;
+  --wf-text-secondary: #CBBCAF;
+  --wf-text-tertiary: #A19184;
+  --wf-brand-coral: #E47B59;
+  --wf-accent: #E47B59;
+  --wf-accent-hover: #F08D6B;
+  --wf-accent-active: #C96343;
+  --wf-on-accent: #2B1710;
+  --wf-caramel: #D3A173;
+  --wf-border: rgba(244, 234, 223, 0.14);
+  --wf-border-strong: rgba(244, 234, 223, 0.28);
+  --wf-danger: #FF8A7A;
+  --wf-danger-hover: #FFA094;
+  --wf-danger-active: #E56E61;
+  --wf-on-danger: #2D1210;
+  --wf-danger-surface: #422521;
+  --wf-danger-border: #A94E45;
+  --wf-disabled-bg: #3B332D;
+  --wf-disabled-fg: #A19184;
+  --wf-disabled-border: rgba(244, 234, 223, 0.10);
+  --wf-focus: #E47B59;
+  --wf-shadow-sm: 0 1px 2px rgba(10, 7, 5, 0.32);
+  --wf-shadow-md: 0 6px 18px rgba(10, 7, 5, 0.38);
+  --wf-shadow-lg: 0 14px 36px rgba(10, 7, 5, 0.48);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --wf-motion-fast: 0ms;
+    --wf-motion-normal: 0ms;
+    --wf-motion-enter: 0ms;
+  }
+}
+/* === Warm Fold foundation tokens: END === */
