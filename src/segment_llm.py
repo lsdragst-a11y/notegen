@@ -1024,6 +1024,54 @@ def _dedupe_takeaways(takeaways: list[str]) -> list[str]:
     return [takeaways[i] for i in keep]
 
 
+_ORDINAL_ANSWER_RE = re.compile(
+    r"^第?[一二两三四五六七八九十0-9]+[个号位步条章节]?$")
+_ORDINAL_POSITION_RE = re.compile(
+    r"第[一二两三四五六七八九十0-9]+个?(位置|元素|节点|数据|结点)")
+
+
+def _drop_lowvalue_quizzes(quizzes: list[dict]) -> list[dict]:
+    """无效题过滤（P1 2026-06-12 实测：Q"需要找到哪个数据元素"答"第二个"、
+    Q"插入操作在第二个位置进行"答"对"、解析复述题干）。prompt 已要求概念性
+    考点但 LLM 不稳遵守，照例搬 Python 二值判定：
+      A. mc 正确选项是纯序数（"第二个"）→ 位置题，无概念价值；
+      B. tf 题干是"第 N 个位置/元素"类位置断言 → 同上；
+      C. 解析的内容 token 完全 ⊆ 题干（零新增信息）→ 循环解析。
+    宁缺毋滥：低值题直接丢，某章 quiz 清空则 md 渲染层自然不显示该节。"""
+    en_re = re.compile(r"[A-Za-z][A-Za-z0-9]+|[A-Z]{2,}")
+
+    def _sig(s: str) -> set[str]:
+        return ({w.upper() for w in en_re.findall(s or "")}
+                | _extract_zh_topic_tokens(s or ""))
+
+    n_drop = 0
+    for ch in quizzes:
+        kept = []
+        for q in ch.get("questions") or []:
+            qtext = str(q.get("q") or q.get("question") or "")
+            drop = False
+            if q.get("type") == "mc":
+                opts = q.get("options") or []
+                ai = q.get("answer_idx")
+                if (isinstance(ai, int) and 0 <= ai < len(opts)
+                        and _ORDINAL_ANSWER_RE.match(str(opts[ai]).strip())):
+                    drop = True   # A: 答案是纯序数
+            if not drop and q.get("type") == "tf" and _ORDINAL_POSITION_RE.search(qtext):
+                drop = True       # B: 位置断言判断题
+            if not drop:
+                expl_sig = _sig(str(q.get("explanation") or ""))
+                if expl_sig and not (expl_sig - _sig(qtext)):
+                    drop = True   # C: 解析零新增信息
+            if drop:
+                n_drop += 1
+            else:
+                kept.append(q)
+        ch["questions"] = kept
+    if n_drop:
+        print(f"      [quiz-filter] 丢 {n_drop} 道无效题（位置题/循环解析）", flush=True)
+    return quizzes
+
+
 def _dedupe_cross_chapter_quizzes(quizzes: list[dict],
                                   threshold: float = 0.67) -> list[dict]:
     """跨章自测题去重：丢掉与靠前章节近似重复的题。
@@ -1081,7 +1129,26 @@ def _diagnose_outline(parsed: dict, n_chunks: int,
     见 2026-05-20 audit，NAT p51 一次切 4 章 ch1=48.4%，强制切更细。
 
     category vlog/talk 时单顶层 chunks 上限收紧到 3（教学/科普 5）。
+    
+    P0-1 质量保险丝：先用 segment_validate 做快速结构化检查。
     """
+    # P0-1: 使用新验证器做第一层快速检查
+    try:
+        import sys
+        from pathlib import Path
+        _scripts_dir = str(Path(__file__).parent.parent / "scripts")
+        if _scripts_dir not in sys.path:
+            sys.path.insert(0, _scripts_dir)
+        from segment_validate import validate_outline
+        
+        quality = validate_outline(parsed, n_chunks, category, verbose=False)
+        if not quality.valid:
+            # 将验证器的失败原因转换为现有格式
+            return "; ".join(quality.failures)
+    except Exception as e:
+        # 验证器导入或执行失败时回退到原有逻辑
+        print(f"      [validator] 警告: 验证器执行失败 ({e})，回退到原有检查", flush=True)
+    
     # vlog/talk cap=4（2026-05-21 放宽，原 3 太严）：长 vlog n>=15 时 5 章×3=15<n 必然
     # 需要归并到每章 3-4 chunks。教学/科普仍 5（PPT 章节可能更长）。
     # 上限集中在 _cap_for_category（见文件顶部粒度旋钮）
@@ -3083,6 +3150,12 @@ CHAPTER_QUIZ_SYSTEM = """你是教学视频的**自测题**生成助手。给定
 4. **答案唯一明确**：避免模糊选项；判断题必须有明确对/错
 5. **解析 1 句话**：说明为什么对，引用本章具体概念
 6. **难度适中**：考点级（不是死记硬背，也不是 trick question）
+6b. **必须考概念，禁止位置/流水账题**：题目要测"为什么/是什么/有何区别"级别的
+理解。**禁止**：答案是"第二个/第三个"这类位置序数的题；"XX 操作在第 N 个位置
+进行（对/错）"这类复述操作步骤的题；解析只是把题干换说法重抄一遍的题。
+反例（这些都不合格）：Q"我们需要找到哪个数据元素？"答"第二个"；
+Q"插入操作在第二个位置进行"答"对"。
+正例：Q"单链表插入为什么要先找到前驱节点？"——考的是概念因果。
 7. **每章考点必须互不相同**：题目只能考本章独有内容，**禁止跨章复读同一考点**。\
 尤其判断题——不要把"中断服务程序要保存寄存器""窗口大小指字节数"这类通用命题\
 原样搬到多个章节。每章另起炉灶，问该章真正新增的知识点
@@ -3311,6 +3384,7 @@ def generate_chapter_quizzes(chapters: list[dict],
         total_kept += len(qs_clean)
         total_drop += len(qs_raw) - len(qs_clean)
         result.append({"questions": qs_clean})
+    _drop_lowvalue_quizzes(result)
     _dedupe_cross_chapter_quizzes(result)
     print(f"      [llm-chapter-quiz] generated {K} chapters, "
           f"{total_kept} questions kept, {total_drop} dropped", flush=True)

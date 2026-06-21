@@ -151,6 +151,84 @@ export async function fetchHistory(): Promise<HistoryItem[]> {
   return r.json();
 }
 
+// ============ 视频问答 ============
+export interface QaCitation {
+  chunk_idx: number;
+  start: number;
+  quote: string;
+}
+
+export interface QaResult {
+  answer: string;
+  citations: QaCitation[];
+}
+
+export interface QaState {
+  id: string;
+  status: "queued" | "running" | "done" | "failed";
+  result?: QaResult | null;
+  error?: string;
+  queue_ahead?: number | null;
+}
+
+export interface QaHistoryItem {
+  question: string;
+  answer: string;
+}
+
+export async function postAsk(
+  noteId: string, question: string, lang: "zh" | "en",
+  history?: QaHistoryItem[],
+): Promise<{ qa_id: string }> {
+  const r = await fetch(`${API_BASE}/api/notes/${encodeURIComponent(noteId)}/ask`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ question, lang, history: history?.length ? history : undefined }),
+  });
+  if (!r.ok) throw new ApiError(r.status, await parseError(r));
+  return r.json();
+}
+
+export async function fetchQa(qaId: string): Promise<QaState> {
+  const r = await fetch(`${API_BASE}/api/qa/${encodeURIComponent(qaId)}`, {
+    credentials: "include",
+  });
+  if (!r.ok) throw new ApiError(r.status, await parseError(r));
+  return r.json();
+}
+
+// ============ 分享链接 ============
+export async function postShare(noteId: string): Promise<{ token: string }> {
+  const r = await fetch(`${API_BASE}/api/notes/${encodeURIComponent(noteId)}/share`, {
+    method: "POST", credentials: "include",
+  });
+  if (!r.ok) throw new ApiError(r.status, await parseError(r));
+  return r.json();
+}
+
+export async function getShare(noteId: string): Promise<{ token: string } | null> {
+  const r = await fetch(`${API_BASE}/api/notes/${encodeURIComponent(noteId)}/share`, {
+    credentials: "include",
+  });
+  if (r.status === 404 || r.status === 401) return null;   // 未分享 / 非 owner / 未登录
+  if (!r.ok) throw new ApiError(r.status, await parseError(r));
+  return r.json();
+}
+
+export async function revokeShare(noteId: string): Promise<void> {
+  const r = await fetch(`${API_BASE}/api/notes/${encodeURIComponent(noteId)}/share`, {
+    method: "DELETE", credentials: "include",
+  });
+  if (!r.ok) throw new ApiError(r.status, await parseError(r));
+}
+
+export async function fetchSharedMeta(token: string): Promise<{ id: string; title: string }> {
+  const r = await fetch(`${API_BASE}/api/shared/${encodeURIComponent(token)}`);
+  if (!r.ok) throw new ApiError(r.status, await parseError(r));
+  return r.json();
+}
+
 export async function retryJob(jobId: string): Promise<{ job_id: string }> {
   const r = await fetch(`${API_BASE}/api/jobs/${jobId}/retry`, {
     method: "POST",

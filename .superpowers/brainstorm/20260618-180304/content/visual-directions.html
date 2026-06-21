@@ -1,0 +1,158 @@
+<style>
+  .direction-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:18px; margin-top:24px; }
+  .direction { border:1px solid var(--border); border-radius:18px; overflow:hidden; background:var(--surface); cursor:pointer; transition:.22s ease; }
+  .direction:hover { transform:translateY(-3px); border-color:var(--accent); box-shadow:0 18px 50px rgba(0,0,0,.12); }
+  .direction.selected { outline:3px solid var(--accent); outline-offset:2px; }
+  .direction-head { padding:16px 16px 13px; border-bottom:1px solid var(--border); }
+  .direction-kicker { font-size:11px; letter-spacing:.12em; text-transform:uppercase; opacity:.55; }
+  .direction h3 { margin:5px 0 4px; font-size:18px; }
+  .direction p { margin:0; font-size:12px; line-height:1.55; opacity:.72; }
+  .preview { aspect-ratio: .84; padding:10px; display:grid; grid-template-rows:1fr 1fr; gap:8px; background:#dfe5ee; }
+  .screen { position:relative; overflow:hidden; border-radius:11px; min-height:0; }
+  .mini-nav { position:absolute; inset:0 0 auto; height:22px; display:flex; align-items:center; justify-content:space-between; padding:0 9px; font-size:6px; z-index:3; }
+  .brand { font-size:7px; font-weight:750; letter-spacing:-.02em; }
+  .pill { border:1px solid currentColor; border-radius:99px; padding:2px 6px; opacity:.7; }
+  .tag { font-size:6px; letter-spacing:.09em; text-transform:uppercase; opacity:.65; }
+  .hero-image { position:absolute; object-fit:cover; filter:saturate(.8); }
+  .workspace { display:grid; grid-template-columns:21% 1fr 30%; height:100%; padding-top:22px; }
+  .workspace > div { min-width:0; }
+  .rail { padding:8px 6px; font-size:6px; }
+  .rail-item { padding:5px 6px; border-radius:6px; margin:3px 0; }
+  .content { padding:8px; }
+  .right { padding:7px; }
+  .line { height:4px; border-radius:4px; margin:4px 0; opacity:.68; }
+  .line.lg { height:7px; width:72%; }
+  .line.sm { width:48%; }
+  .thumb { width:100%; aspect-ratio:16/9; object-fit:cover; border-radius:7px; }
+  .tiles { display:grid; grid-template-columns:repeat(2,1fr); gap:5px; margin-top:7px; }
+  .tile { border-radius:7px; overflow:hidden; padding-bottom:5px; }
+  .tile img { width:100%; aspect-ratio:16/9; object-fit:cover; display:block; }
+  .tile span { display:block; font-size:5.5px; padding:4px 5px 0; }
+
+  .cinema .preview { background:#050607; }
+  .cinema .screen { color:#fff; background:#0a0b0c; }
+  .cinema .landing .hero-image { inset:0 0 0 38%; width:62%; height:100%; opacity:.78; }
+  .cinema .landing:after { content:""; position:absolute; inset:0; background:linear-gradient(90deg,#050607 0 35%,rgba(5,6,7,.76) 48%,transparent 74%); }
+  .cinema .hero-copy { position:absolute; z-index:2; left:10px; top:39px; width:63%; }
+  .cinema .hero-copy strong { display:block; font-size:24px; line-height:.86; letter-spacing:-.08em; text-transform:uppercase; }
+  .cinema .hero-copy small { display:block; width:52%; font-size:6px; line-height:1.5; margin-top:9px; opacity:.68; }
+  .cinema .workspace { background:#090a0b; }
+  .cinema .rail { border-right:1px solid #27292c; }
+  .cinema .rail-item.active { background:#f3f5f7; color:#090a0b; }
+  .cinema .content { background:#f2f1ec; color:#111; }
+  .cinema .right { border-left:1px solid #27292c; }
+  .cinema .line { background:currentColor; }
+  .cinema .tile { background:#fff; color:#111; }
+
+  .narrative .preview { background:#ecf2f8; }
+  .narrative .screen { color:#152033; background:#f8fbff; }
+  .narrative .landing { background:linear-gradient(145deg,#07172b 0 46%,#dff2ff 46% 100%); color:#fff; }
+  .narrative .landing .hero-image { right:7px; bottom:7px; width:50%; height:67%; border-radius:10px; box-shadow:0 18px 40px rgba(0,0,0,.28); }
+  .narrative .hero-copy { position:absolute; left:11px; top:38px; width:52%; }
+  .narrative .hero-copy strong { display:block; font-size:21px; line-height:.92; letter-spacing:-.065em; }
+  .narrative .hero-copy strong em { color:#83d5ff; font-style:normal; }
+  .narrative .hero-copy small { display:block; font-size:6px; line-height:1.55; width:78%; margin-top:9px; opacity:.72; }
+  .narrative .workspace { background:#f8fbff; }
+  .narrative .rail { background:#eef4fb; border-right:1px solid #dce7f4; }
+  .narrative .rail-item.active { background:#d9eaff; color:#0b57d0; box-shadow:inset 2px 0 #0b57d0; }
+  .narrative .content { background:#fff; }
+  .narrative .right { background:#f4f8fc; border-left:1px solid #dce7f4; }
+  .narrative .line { background:#516071; }
+  .narrative .tile { background:#f5f8fc; border:1px solid #e1e9f3; }
+  .narrative .pulse { position:absolute; right:30%; top:35%; width:35px; height:35px; border:1px solid #4eacff; border-radius:50%; box-shadow:0 0 0 8px rgba(78,172,255,.10),0 0 0 18px rgba(78,172,255,.05); }
+
+  .motion .preview { background:#11141b; }
+  .motion .screen { color:#edf5ff; background:#0b0d12; }
+  .motion .landing { background:radial-gradient(circle at 72% 28%,#7a3cff 0,rgba(122,60,255,.2) 18%,transparent 46%),linear-gradient(150deg,#080a10,#101a29); }
+  .motion .landing .hero-image { right:10px; top:36px; width:45%; height:58%; border-radius:8px; opacity:.72; mix-blend-mode:screen; }
+  .motion .hero-copy { position:absolute; left:11px; top:39px; width:64%; }
+  .motion .hero-copy strong { display:block; font-size:22px; line-height:.9; letter-spacing:-.07em; }
+  .motion .hero-copy strong em { font-style:normal; background:linear-gradient(90deg,#64e6ff,#bc8cff); -webkit-background-clip:text; color:transparent; }
+  .motion .hero-copy small { display:block; font-size:6px; line-height:1.5; width:62%; margin-top:9px; opacity:.72; }
+  .motion .workspace { background:#0d1118; }
+  .motion .rail { background:rgba(18,24,34,.88); border-right:1px solid #263245; }
+  .motion .rail-item.active { background:linear-gradient(90deg,rgba(92,214,255,.22),rgba(154,97,255,.16)); color:#86e8ff; }
+  .motion .content { background:linear-gradient(180deg,#111722,#0c1018); }
+  .motion .right { border-left:1px solid #263245; }
+  .motion .line { background:#a9bed4; }
+  .motion .tile { background:rgba(255,255,255,.055); border:1px solid rgba(255,255,255,.08); backdrop-filter:blur(8px); }
+
+  .recommend { display:inline-flex; align-items:center; gap:5px; margin-top:9px; padding:4px 7px; border-radius:99px; background:rgba(11,87,208,.1); color:#0b57d0; font-size:10px; font-weight:650; }
+  @media (max-width: 980px) { .direction-grid { grid-template-columns:1fr; } .preview { aspect-ratio:1.45; grid-template-columns:1fr 1fr; grid-template-rows:1fr; } }
+</style>
+
+<h2>NoteGen 的动态化方向</h2>
+<p class="subtitle">三个方向都保留现有功能。请重点比较：动效强度、阅读舒适度，以及它是否仍然像一个学习工具。</p>
+
+<div class="direction-grid">
+  <div class="direction cinema" data-choice="cinematic-scroll" onclick="toggleSelect(this)">
+    <div class="direction-head">
+      <div class="direction-kicker">Direction A</div>
+      <h3>电影化滚动</h3>
+      <p>最接近参考视频。强烈黑白切场、全屏图片、超大标题和滚动接管。</p>
+    </div>
+    <div class="preview">
+      <div class="screen landing">
+        <div class="mini-nav"><span class="brand">NoteGen</span><span class="pill">开始学习</span></div>
+        <img class="hero-image" src="/files/python-04.jpg" alt="Python 教学视频画面">
+        <div class="hero-copy"><span class="tag">Turn video into knowledge</span><strong>看见<br>每一个<br>关键时刻</strong><small>视频不再只是播放，而是一条可以探索的知识路径。</small></div>
+      </div>
+      <div class="screen">
+        <div class="mini-nav"><span class="brand">NoteGen</span><span>变量类型及运算</span></div>
+        <div class="workspace">
+          <div class="rail"><span class="tag">Chapters</span><div class="rail-item active">01 变量类型</div><div class="rail-item">02 流程控制</div><div class="rail-item">03 列表与字典</div></div>
+          <div class="content"><div class="line lg"></div><div class="line sm"></div><div class="tiles"><div class="tile"><img src="/files/python-01.jpg" alt="代码关键帧"><span>变量与数据类型</span></div><div class="tile"><img src="/files/python-08.jpg" alt="代码关键帧"><span>循环结构</span></div></div></div>
+          <div class="right"><img class="thumb" src="/files/python-04.jpg" alt="当前视频"><div class="line lg"></div><div class="line"></div><div class="line sm"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="direction narrative" data-choice="dynamic-learning-narrative" onclick="toggleSelect(this)">
+    <div class="direction-head">
+      <div class="direction-kicker">Direction B</div>
+      <h3>动态学习叙事</h3>
+      <p>首页电影化、工作台克制。动效服务于章节、时间戳和内容层级。</p>
+      <span class="recommend">推荐：视觉记忆点与学习效率最平衡</span>
+    </div>
+    <div class="preview">
+      <div class="screen landing">
+        <div class="mini-nav"><span class="brand">NoteGen</span><span class="pill">观看示例</span></div>
+        <img class="hero-image" src="/files/python-04.jpg" alt="Python 教学视频画面">
+        <div class="hero-copy"><span class="tag">From watching to knowing</span><strong>把长视频<br>变成<em>清晰路径</em></strong><small>章节、关键帧、摘要和问答沿着同一条时间线自然展开。</small></div>
+      </div>
+      <div class="screen">
+        <div class="mini-nav"><span class="brand">NoteGen</span><span>学习工作台 · 20:51</span></div>
+        <div class="workspace">
+          <div class="rail"><span class="tag">学习路径</span><div class="rail-item active">00:00 变量类型</div><div class="rail-item">03:32 流程控制</div><div class="rail-item">10:05 列表与字典</div></div>
+          <div class="content"><div class="line lg"></div><div class="line"></div><div class="line sm"></div><div class="tiles"><div class="tile"><img src="/files/python-01.jpg" alt="代码关键帧"><span>变量与数据类型</span></div><div class="tile"><img src="/files/python-08.jpg" alt="代码关键帧"><span>条件与循环</span></div></div></div>
+          <div class="right"><img class="thumb" src="/files/python-04.jpg" alt="当前视频"><div class="line lg"></div><div class="line"></div><div class="line sm"></div></div>
+        </div>
+        <div class="pulse"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="direction motion" data-choice="motion-os" onclick="toggleSelect(this)">
+    <div class="direction-head">
+      <div class="direction-kicker">Direction C</div>
+      <h3>Motion OS</h3>
+      <p>偏未来工具感。流体光晕、玻璃层、模块重排和更强的系统状态反馈。</p>
+    </div>
+    <div class="preview">
+      <div class="screen landing">
+        <div class="mini-nav"><span class="brand">NoteGen</span><span class="pill">Launch workspace</span></div>
+        <img class="hero-image" src="/files/python-08.jpg" alt="Python 教学视频画面">
+        <div class="hero-copy"><span class="tag">Learning intelligence</span><strong>你的<em>视频知识系统</em></strong><small>把播放、检索、总结、测验和问答组合成一个动态学习操作系统。</small></div>
+      </div>
+      <div class="screen">
+        <div class="mini-nav"><span class="brand">NoteGen OS</span><span>Workspace 01</span></div>
+        <div class="workspace">
+          <div class="rail"><span class="tag">Timeline</span><div class="rail-item active">变量类型</div><div class="rail-item">流程控制</div><div class="rail-item">列表与字典</div></div>
+          <div class="content"><div class="line lg"></div><div class="line sm"></div><div class="tiles"><div class="tile"><img src="/files/python-01.jpg" alt="代码关键帧"><span>Knowledge node 01</span></div><div class="tile"><img src="/files/python-08.jpg" alt="代码关键帧"><span>Knowledge node 02</span></div></div></div>
+          <div class="right"><img class="thumb" src="/files/python-04.jpg" alt="当前视频"><div class="line lg"></div><div class="line"></div><div class="line sm"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "video_id": "BV141Ly6LE7x_p0",
+  "local_source": "data/raw/BV141Ly6LE7x_p0.mp4",
+  "duration": 458.5,
+  "domain": "learning",
+  "label": "Google 发布 Gemini 3.5 Flash 模型【AI 早报 2026-05-20】",
+  "boundaries_sec": [
+    67.47,
+    84.86,
+    190.98,
+    244.44,
+    345.74,
+    429.19
+  ],
+  "n_segments": 7,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV141Ly6LE7x_p0.large-v3.neural.texttile.cc400.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 67.47,
+      "near_text": "Google announced that the AI Ultra subscription will increas"
+    },
+    {
+      "boundary_sec": 84.86,
+      "near_text": "Original support uses a prompt to build an Android original "
+    },
+    {
+      "boundary_sec": 190.98,
+      "near_text": "Anthropic announced that Cloud Managed Agents will launch a "
+    },
+    {
+      "boundary_sec": 244.44,
+      "near_text": "the $2 billion financing carried out on the moon side has en"
+    },
+    {
+      "boundary_sec": 345.74,
+      "near_text": "Google 在 I.O. 开发者大会发布 Wear OS 7. 官房称该系统较 Wear OS 6 最高提升10%续航"
+    },
+    {
+      "boundary_sec": 429.19,
+      "near_text": "辅助起草文档的Docs Live. Google announced that it will expand its c"
+    }
+  ]
+}

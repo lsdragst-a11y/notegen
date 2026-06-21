@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1BTDQBTExm_p0",
+  "local_source": "data/raw/BV1BTDQBTExm_p0.mp4",
+  "duration": 644.6,
+  "domain": "learning",
+  "label": "在全球通货膨胀率最高的国家，100万亿能买多少东西？人们的生活怎么样？",
+  "boundaries_sec": [
+    118.93,
+    192.87,
+    384.22,
+    501.28
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1BTDQBTExm_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 118.93,
+      "near_text": "这个地方是津巴布韦首都哈拉雷的。并不叫津巴布韦。它在殖民时期的名字叫做南罗德西亚。这个首都的名子叫做索尔兹伯利。当地人为"
+    },
+    {
+      "boundary_sec": 192.87,
+      "near_text": "大概就是在100到150美元一个月。建于1936年。整个南部非洲我去了两个国家。南非和津巴布韦。它的教育水平。相比其他非"
+    },
+    {
+      "boundary_sec": 384.22,
+      "near_text": "合人民币的话就是要168人民帕。14人民帐朋友们。40多块钱一公顷。朋友们看下这个抽纸。35块钱一盒的抽纸。这个最便宜最"
+    },
+    {
+      "boundary_sec": 501.28,
+      "near_text": "hello 曼丹。差不多最便宜都得要3美金。3美钱要21块钱。鸡肉配米饭加可乐是4美金的套餐。加了一瓶可乐。一共是4块5"
+    }
+  ]
+}

@@ -4,7 +4,6 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Loader2, CheckCircle2, AlertCircle } from "lucide-react";
 import NavBar from "@/components/NavBar";
-import FluidBG from "@/components/FluidBG";
 import { apiVerify } from "@/lib/auth";
 
 function VerifyInner() {
@@ -22,7 +21,6 @@ function VerifyInner() {
 
   return (
     <main className="relative min-h-screen">
-      <FluidBG />
       <NavBar />
       <section className="relative z-10 max-w-sm mx-auto px-6 pt-24">
         <div className="apple-card p-7 text-center">

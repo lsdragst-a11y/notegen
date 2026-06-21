@@ -2,6 +2,7 @@
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import type { User } from "@/lib/types";
 import { apiLogin, apiLogout, apiMe } from "@/lib/auth";
+import { ApiError } from "@/lib/api";
 
 interface AuthCtx {
   user: User | null;
@@ -38,10 +39,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const login = useCallback(async (email: string, password: string) => {
-    const u = await apiLogin(email, password);
-    setUser(u);
-    setOffline(false);
-    return u;
+    try {
+      const u = await apiLogin(email, password);
+      setUser(u);
+      setOffline(false);
+      return u;
+    } catch (e) {
+      setOffline(!(e instanceof ApiError));
+      throw e;
+    }
   }, []);
 
   const logout = useCallback(async () => {

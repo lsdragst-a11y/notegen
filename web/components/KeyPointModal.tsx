@@ -17,6 +17,7 @@ interface Props {
   marks: Mark[];
   onClose: () => void;
   onSeek: (sec: number) => void;
+  readOnly?: boolean;
 }
 
 /**
@@ -25,6 +26,7 @@ interface Props {
  */
 export default function KeyPointModal({
   chunk, chunkIdx, noteId, keyframeBase, noteTitle, marks, onClose, onSeek,
+  readOnly = false,
 }: Props) {
   const { lang } = useLang();
 
@@ -54,6 +56,7 @@ export default function KeyPointModal({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.18 }}
+          data-overlay
           className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6"
           style={{ background: "rgba(0,0,0,0.6)", backdropFilter: "blur(8px)" }}
           onClick={onClose}
@@ -97,7 +100,8 @@ export default function KeyPointModal({
                   <span className="mark-hard"><Target size={12} color="#b86a05" /></span>
                 )}
                 <div className="ml-auto flex items-center gap-2">
-                  <BookmarkMenu
+                  {!readOnly && (
+                    <BookmarkMenu
                     size={16}
                     bm={{
                       key: bookmarkKey(noteId, "chunk", chunkIdx),
@@ -107,9 +111,10 @@ export default function KeyPointModal({
                       time: chunk.start,
                       keyframeRel: kfRel,
                     }}
-                    className="flex h-8 w-8 items-center justify-center rounded-full
-                               bg-[var(--bg-muted)] text-[var(--fg-secondary)] hover:text-[var(--accent)]"
-                  />
+                      className="flex h-8 w-8 items-center justify-center rounded-full
+                                 bg-[var(--bg-muted)] text-[var(--fg-secondary)] hover:text-[var(--accent)]"
+                    />
+                  )}
                   <button
                     onClick={() => { onSeek(chunk.start); onClose(); }}
                     className="inline-flex items-center gap-1.5 rounded-full bg-[var(--accent)]

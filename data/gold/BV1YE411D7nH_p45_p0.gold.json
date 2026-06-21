@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1YE411D7nH_p45_p0",
+  "local_source": "data/raw/BV1YE411D7nH_p45_p0.mp4",
+  "duration": 626.76,
+  "domain": "learning",
+  "label": "BV1YE411D7nH_p45_p0",
+  "boundaries_sec": [],
+  "n_segments": 1,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1YE411D7nH_p45_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": []
+}

@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p65_p0",
+  "local_source": "data/raw/BV19E411D78Q_p65_p0.mp4",
+  "duration": 1531.07,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p65 4.4.4_2 OSPF的基本工作原理（咸鱼版）",
+  "boundaries_sec": [
+    415.42,
+    852.9,
+    1290.22
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p65_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 415.42,
+      "near_text": "虽然迪捷斯特拉算法的运行结果会得到完整的转发路徑。但是路由期只记录下一条的信息。某一些路由器坏掉了。还是路由气的叛化。自"
+    },
+    {
+      "boundary_sec": 852.9,
+      "near_text": "主干地区。我这儿标了高亮绿色的这几台路由器。那R23 R24 R27这几台路由器。那么就可以把IP數据宝转發给本区的边界"
+    },
+    {
+      "boundary_sec": 1290.22,
+      "near_text": "比如说R1路由器。它探测到的自己身边的这些链路状态信息。每一台路由气会把自己探测到的这个LSA。也就是链路状态信息。你可"
+    }
+  ]
+}

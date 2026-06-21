@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p38_p0",
+  "local_source": "data/raw/BV19E411D78Q_p38_p0.mp4",
+  "duration": 2238.26,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p38 3.6.2 以太网与IEEE 802.3（咸鱼版）",
+  "boundaries_sec": [
+    318.64,
+    911.2,
+    1498.65,
+    1787.4,
+    2080.88
+  ],
+  "n_segments": 6,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p38_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 318.64,
+      "near_text": "它也只支持全双共通性。肯定都只支持全双共通性。就是双绞线或光纤。那光纤以太网通常来说考的不多。同轴电缆和双绞线以太网。首"
+    },
+    {
+      "boundary_sec": 911.2,
+      "near_text": "MAC层的上方直接就是网络层。指明我服务的对象是网络层的哪个协议。这个数据部分应该交给网络层的哪个协议吗。直接和网络层对"
+    },
+    {
+      "boundary_sec": 1498.65,
+      "near_text": "那么每个网线接口都会对应一个Mac地址。可能多个网线接口会共用一个Mac地址。交换机有Mac地址。路由器有Mac地址。还"
+    },
+    {
+      "boundary_sec": 1787.4,
+      "near_text": "也就是上面这条路会转发这个广播帧B节点C节点D节点。所以A节点发送的广播帧会被B C D E F G。还有路由器R会被所"
+    },
+    {
+      "boundary_sec": 2080.88,
+      "near_text": "另外以太网的物理层。一种是VR标准。VR标准的MAC帧。662N4收发斜数验。而VR标准的这两个字节。加8个字节的前导码"
+    }
+  ]
+}

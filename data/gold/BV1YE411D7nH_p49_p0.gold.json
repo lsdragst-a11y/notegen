@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1YE411D7nH_p49_p0",
+  "local_source": "data/raw/BV1YE411D7nH_p49_p0.mp4",
+  "duration": 1310.11,
+  "domain": "learning",
+  "label": "BV1YE411D7nH_p49_p0",
+  "boundaries_sec": [
+    190.36,
+    717.05,
+    1053.95
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1YE411D7nH_p49_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 190.36,
+      "near_text": "刚才我们不是说进程的页面和内存的这个页框。那每一个页面就会对应页表当中的一个页表项。那页表项当中包含了。这些页表项是存在"
+    },
+    {
+      "boundary_sec": 717.05,
+      "near_text": "1号等于逻辑地址除以页面长度。110除以页面大小50。我们可以用逻辑地址。因此这个逻辑地址的页内偏移量应该是10。用32"
+    },
+    {
+      "boundary_sec": 1053.95,
+      "near_text": "它在内存当中的起始地址。那在内存中的起始地址是这一串。页面大小的。和逻辑地址的页内偏移量。页面在内存中的起始地址。页面大"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NoteGen — Final Landing Polish</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#292925}iframe{display:block;width:100%;height:100%;border:0}</style></head><body><iframe id="outer" src="/files/landing-cinematic-timeline-v4.html" title="NoteGen final landing polish"></iframe><script>
+document.getElementById('outer').addEventListener('load',function(){
+  const level1=this.contentDocument.querySelector('iframe');
+  const level2=level1&&level1.contentDocument.querySelector('iframe');
+  const polish=()=>{const d=level2&&level2.contentDocument;if(!d||d.body.dataset.finalPolish)return;d.body.dataset.finalPolish='true';
+    const style=d.createElement('style');style.textContent=`
+      .copy h1{line-height:1.095;letter-spacing:-.052em;margin-bottom:29px}.copy h1 em{margin-top:15px;letter-spacing:-.035em}.lead{margin-top:2px}
+      .note-card{opacity:.34;padding:12px}.note-card:first-child{opacity:.58;box-shadow:none}.note-card h4{font-size:12px;margin-block:6px 3px}.note-card p{font-size:8px}.character{opacity:.55}
+      .generation-status{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 4px}.generation-status span{padding:5px 7px;border:1px solid #575149;border-radius:99px;color:#c2b8ab;font:7px ui-monospace,monospace;letter-spacing:.05em}.generation-status span:first-child{border-color:#8c634f;color:#dc9b81;background:rgba(182,99,75,.08)}
+      .archive-cover{border-bottom:1px solid rgba(255,255,255,.12)}.archive-cover h3{font-size:19px;line-height:1.28}.archive-meta{font-size:10px;color:#746b60}.asset-tags{margin-top:12px}.asset-tag{background:#eee5d8;color:#75695d}.archive-points{gap:0;margin-top:16px}.archive-point{grid-template-columns:48px 1fr;min-height:48px;margin:0;padding-top:12px}.archive-point time{padding-top:1px;font-size:8px;font-weight:700}.archive-point span{font-size:10px;line-height:1.55}.approval{display:none}
+      @media(max-width:620px){.copy h1{font-size:44px;line-height:1.11}.copy h1 em{margin-top:11px}.note{grid-template-columns:1fr}.note-card:nth-child(2){display:none}.generation-status{gap:5px}.archive-cover h3{font-size:18px}}
+    `;d.head.appendChild(style);
+    const notes=d.querySelectorAll('.note-card p');if(notes[0])notes[0].textContent='例子验证抽象观点。';if(notes[1])notes[1].textContent='保留原片时间点。';
+    const go=d.querySelector('.go');if(go)go.textContent='生成知识路径';
+    const outputTitle=d.querySelector('.output-title');if(outputTitle){const old=outputTitle.querySelector('span');if(old)old.textContent='GENERATED';const status=d.createElement('div');status.className='generation-status';status.innerHTML='<span>READY</span><span>8 CHAPTERS</span><span>24 NODES</span><span>01:24:36</span>';outputTitle.after(status)}
+  };
+  if(level2&&level2.contentDocument&&level2.contentDocument.readyState==='complete')polish();else if(level2)level2.addEventListener('load',polish,{once:true});
+});
+</script></body></html>

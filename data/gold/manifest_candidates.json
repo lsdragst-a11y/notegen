@@ -1,0 +1,656 @@
+{
+  "schema_version": 1,
+  "candidates": [
+    {
+      "video_id": "BV1L24y1i7v3_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1L24y1i7v3_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1BE411D7ii_p68_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p68_p0.gold.json",
+      "n_segments_draft": 7,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1QQ5x6eEZh_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1QQ5x6eEZh_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1BpLg6wEMk_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BpLg6wEMk_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19SRSBeE6F_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19SRSBeE6F_p0.gold.json",
+      "n_segments_draft": 2,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1SddcBFESs_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1SddcBFESs_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1Vi5Q66EYo_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1Vi5Q66EYo_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1Sz4y1U77N_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1Sz4y1U77N_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV13BREBrEjU_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV13BREBrEjU_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p80_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p80_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p79_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p79_p0.gold.json",
+      "n_segments_draft": 6,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1YE411D7nH_p61_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YE411D7nH_p61_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p81_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p81_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p51_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p51_p0.gold.json",
+      "n_segments_draft": 6,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1S6kQBNEJq_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1S6kQBNEJq_p0.gold.json",
+      "n_segments_draft": 10,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p44_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p44_p0.gold.json",
+      "n_segments_draft": 6,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p42_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p42_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p93_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p93_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1BE411D7ii_p69_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p69_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1BE411D7ii_p66_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p66_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p92_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p92_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1BE411D7ii_p70_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p70_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1BE411D7ii_p67_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BE411D7ii_p67_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1t55v6DE2v_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1t55v6DE2v_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p72_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p72_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p66_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p66_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p65_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p65_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p60_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p60_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p58_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p58_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p57_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p57_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p64_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p64_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1EBdcBrEea_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1EBdcBrEea_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1tP9WBjEnB_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1tP9WBjEnB_p0.gold.json",
+      "n_segments_draft": 11,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1bmXhBKE5A_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1bmXhBKE5A_p0.gold.json",
+      "n_segments_draft": 10,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1ky97B9EAG_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1ky97B9EAG_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1ZND4BhEYC_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1ZND4BhEYC_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1bi9hBqE5T_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1bi9hBqE5T_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "FwOTs4UxQS4_p0",
+      "domain": "learning",
+      "gold": "data/gold/FwOTs4UxQS4_p0.gold.json",
+      "n_segments_draft": 7,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1G4dnBDEb1_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1G4dnBDEb1_p0.gold.json",
+      "n_segments_draft": 8,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1yY5E6YE8g_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1yY5E6YE8g_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV13QQKBYEbz_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV13QQKBYEbz_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1VGoXB5EJM_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1VGoXB5EJM_p0.gold.json",
+      "n_segments_draft": 11,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1BTDQBTExm_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1BTDQBTExm_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1AYR6BsE9U_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1AYR6BsE9U_p0.gold.json",
+      "n_segments_draft": 8,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1uHL16SEBp_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1uHL16SEBp_p0.gold.json",
+      "n_segments_draft": 7,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1dkLr6UEJ6_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1dkLr6UEJ6_p0.gold.json",
+      "n_segments_draft": 6,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1q6ozBmE8z_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1q6ozBmE8z_p0.gold.json",
+      "n_segments_draft": 8,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1rZ17BiEff_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1rZ17BiEff_p0.gold.json",
+      "n_segments_draft": 1,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1paLF6LEKN_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1paLF6LEKN_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1Q3dHBSEAY_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1Q3dHBSEAY_p0.gold.json",
+      "n_segments_draft": 9,
+      "has_source": true
+    },
+    {
+      "video_id": "BV141Ly6LE7x_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV141Ly6LE7x_p0.gold.json",
+      "n_segments_draft": 7,
+      "has_source": true
+    },
+    {
+      "video_id": "BV175RvBAEgi_p1_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV175RvBAEgi_p1_p0.gold.json",
+      "n_segments_draft": 1,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1eboQBCEqj_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1eboQBCEqj_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1orDVBbEHh_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1orDVBbEHh_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1B3DMByEDP_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1B3DMByEDP_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1L35X62EbN_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1L35X62EbN_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p85_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p85_p0.gold.json",
+      "n_segments_draft": 7,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p78_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p78_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1pB5T6hEWW_p3_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1pB5T6hEWW_p3_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1pB5T6hEWW_p1_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1pB5T6hEWW_p1_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1C8L36jEYN_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1C8L36jEYN_p0.gold.json",
+      "n_segments_draft": 2,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1E7wtzaEdq_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1E7wtzaEdq_p0.gold.json",
+      "n_segments_draft": 6,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p34_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p34_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p48_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p48_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1nBWyzBEp2_p2_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1nBWyzBEp2_p2_p0.gold.json",
+      "n_segments_draft": 8,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1VsTfzdEZE_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1VsTfzdEZE_p0.gold.json",
+      "n_segments_draft": 1,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p47_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p47_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1YE411D7nH_p53_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YE411D7nH_p53_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1YE411D7nH_p47_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YE411D7nH_p47_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1YP5W6ZEP9_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YP5W6ZEP9_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1h5L364Ezv_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1h5L364Ezv_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "WSPChlfxJyA_p0",
+      "domain": "learning",
+      "gold": "data/gold/WSPChlfxJyA_p0.gold.json",
+      "n_segments_draft": 12,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1YE411D7nH_p37_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YE411D7nH_p37_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1GofdBZEW7_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1GofdBZEW7_p0.gold.json",
+      "n_segments_draft": 10,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p46_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p46_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1p5wuzQEz8_p2_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1p5wuzQEz8_p2_p0.gold.json",
+      "n_segments_draft": 6,
+      "has_source": true
+    },
+    {
+      "video_id": "EH5jx5qPabU_p0",
+      "domain": "learning",
+      "gold": "data/gold/EH5jx5qPabU_p0.gold.json",
+      "n_segments_draft": 9,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p49_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p49_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p38_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p38_p0.gold.json",
+      "n_segments_draft": 6,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19vXbBiErt_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19vXbBiErt_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p50_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p50_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1YE411D7nH_p49_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YE411D7nH_p49_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1YE411D7nH_p45_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YE411D7nH_p45_p0.gold.json",
+      "n_segments_draft": 1,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1YE411D7nH_p38_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1YE411D7nH_p38_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1XY546vE1o_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1XY546vE1o_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p37_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p37_p0.gold.json",
+      "n_segments_draft": 6,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1G85V6cE1g_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1G85V6cE1g_p0.gold.json",
+      "n_segments_draft": 2,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p38",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p38.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV19E411D78Q_p39_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV19E411D78Q_p39_p0.gold.json",
+      "n_segments_draft": 4,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1ygo9BeEvV_p0",
+      "domain": "learning",
+      "gold": "data/gold/BV1ygo9BeEvV_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1cwdzBDEL3_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1cwdzBDEL3_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1x25P6tEKe_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1x25P6tEKe_p0.gold.json",
+      "n_segments_draft": 3,
+      "has_source": true
+    },
+    {
+      "video_id": "BV1W8AGzwEFW_p0",
+      "domain": "vlog",
+      "gold": "data/gold/BV1W8AGzwEFW_p0.gold.json",
+      "n_segments_draft": 5,
+      "has_source": true
+    }
+  ]
+}

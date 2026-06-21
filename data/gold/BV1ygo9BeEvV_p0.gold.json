@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1ygo9BeEvV_p0",
+  "local_source": "data/raw/BV1ygo9BeEvV_p0.mp4",
+  "duration": 635.53,
+  "domain": "learning",
+  "label": "多Agent可视化",
+  "boundaries_sec": [
+    93.65,
+    508.66
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1ygo9BeEvV_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 93.65,
+      "near_text": "然后可以从这里填写它的内容。然后这里可以看到是。然后我们可以看到他们的聊天内容这里呢。我们从这里可以看到。然后这里的话是"
+    },
+    {
+      "boundary_sec": 508.66,
+      "near_text": "比如说角色移动四个关卡。我们游戏已经做好了。这个时候我们看到关卡也是四个。我们尝试着把四个关卡全部打完。这是一个2D横版"
+    }
+  ]
+}

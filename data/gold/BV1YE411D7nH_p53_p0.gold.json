@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1YE411D7nH_p53_p0",
+  "local_source": "data/raw/BV1YE411D7nH_p53_p0.mp4",
+  "duration": 1539.42,
+  "domain": "learning",
+  "label": "BV1YE411D7nH_p53_p0",
+  "boundaries_sec": [
+    598.82,
+    971.6
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1YE411D7nH_p53_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 598.82,
+      "near_text": "用于存放这个进程对应的段表。还有这个进程的段表长度到底是多少。那当知道了段表的起始地址。还有段表长度。找到这个段号对应的"
+    },
+    {
+      "boundary_sec": 971.6,
+      "near_text": "方便用户编程。用户在编程的时候就需要显示的给出段名。分页的用户进程。比如说一个用户进程的大小总共是16K。那么用户进程的"
+    }
+  ]
+}

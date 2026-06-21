@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1nBWyzBEp2_p2_p0",
+  "local_source": "data/raw/BV1nBWyzBEp2_p2_p0.mp4",
+  "duration": 1790.41,
+  "domain": "learning",
+  "label": "BV1nBWyzBEp2_p2_p0",
+  "boundaries_sec": [
+    131.82,
+    322.3,
+    489.8,
+    771.44,
+    1017.63,
+    1224.35,
+    1313.4
+  ],
+  "n_segments": 8,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1nBWyzBEp2_p2_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 131.82,
+      "near_text": "features and analytics features which are paid pro features "
+    },
+    {
+      "boundary_sec": 322.3,
+      "near_text": "yeah key market insights and drivers market segmentation by "
+    },
+    {
+      "boundary_sec": 489.8,
+      "near_text": "What exactly is the primary pain point of using something li"
+    },
+    {
+      "boundary_sec": 771.44,
+      "near_text": "And then you can actually click in to these different catego"
+    },
+    {
+      "boundary_sec": 1017.63,
+      "near_text": "And then you're generating notes like needs to improve commu"
+    },
+    {
+      "boundary_sec": 1224.35,
+      "near_text": "Let's now talk about notebook LM。Is between notebook LM。And "
+    },
+    {
+      "boundary_sec": 1313.4,
+      "near_text": "Into your landing page。So what we want to do now。Into the co"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1C8L36jEYN_p0",
+  "local_source": "data/raw/BV1C8L36jEYN_p0.mp4",
+  "duration": 224.37,
+  "domain": "learning",
+  "label": "特厨探店|讲究的淮扬菜是什么样？—二泉园老菜馆",
+  "boundaries_sec": [
+    120.74
+  ],
+  "n_segments": 2,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1C8L36jEYN_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 120.74,
+      "near_text": "花江桂鱼丝。西式干蒸甲鱼258。甲鱼为啥是白的呢。甲鱼非常洗的非常干净。这么白的甲鱼脱了。蒸完的甲鱼的裙边。点出来的都是"
+    }
+  ]
+}

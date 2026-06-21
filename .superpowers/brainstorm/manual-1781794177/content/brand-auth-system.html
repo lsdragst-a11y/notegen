@@ -1,0 +1,35 @@
+<style>
+  .brand-board{background:#f5f8fc;border:1px solid #dce6f2;border-radius:22px;padding:24px;color:#122035}.brand-row{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;margin-top:20px}.panel{background:#fff;border:1px solid #dde6f0;border-radius:18px;padding:18px}.logo-set{display:flex;align-items:end;gap:22px;margin-top:18px}.logo-lockup{display:flex;align-items:center;gap:10px;font-size:22px;font-weight:700}.logo-mark{position:relative;width:52px;height:52px}.page-left,.page-right{position:absolute;top:8px;width:26px;height:37px;background:#11233e}.page-left{left:3px;clip-path:polygon(0 0,100% 12%,100% 100%,66% 88%,0 100%)}.page-right{right:3px;clip-path:polygon(0 12%,100% 0,100% 100%,34% 88%,0 100%)}.play{position:absolute;z-index:3;left:20px;top:19px;width:0;height:0;border-top:8px solid transparent;border-bottom:8px solid transparent;border-left:13px solid #6fc7ff}.logo-mark.small{width:30px;height:30px}.logo-mark.small .page-left,.logo-mark.small .page-right{top:4px;width:15px;height:22px}.logo-mark.small .page-left{left:1px}.logo-mark.small .page-right{right:1px}.logo-mark.small .play{left:11px;top:10px;border-top-width:5px;border-bottom-width:5px;border-left-width:8px}.favicon{display:grid;place-items:center;width:38px;height:38px;border-radius:9px;background:#11233e}.favicon .logo-mark{transform:scale(.52);filter:invert(1)}.auth{position:relative;overflow:hidden;min-height:430px;display:grid;grid-template-columns:1.08fr .92fr;background:#07172b;border-radius:20px;color:#fff}.ribbon{position:absolute;left:-8%;bottom:12%;width:70%;height:70px;border-radius:50%;border-top:13px solid rgba(111,199,255,.28);transform:rotate(-9deg);filter:drop-shadow(0 10px 18px rgba(0,0,0,.2))}.scene{position:relative;padding:30px}.scene h3{font-size:29px;line-height:1.05;margin:42px 0 10px;letter-spacing:-.04em}.scene p{font-size:12px;line-height:1.6;max-width:310px;opacity:.66}.characters{position:absolute;left:26px;bottom:28px;display:flex;align-items:end;gap:15px}.character{position:relative;width:76px;height:105px;background:#f9fbff;border-radius:9px 9px 18px 18px;box-shadow:0 14px 30px rgba(0,0,0,.25);transform:rotate(-3deg)}.character:nth-child(2){height:122px;background:#dff2ff;transform:rotate(2deg)}.character:nth-child(3){height:92px;background:#edf2f8;transform:rotate(5deg)}.fold{position:absolute;right:0;top:0;border-top:21px solid #b9d7ef;border-left:21px solid transparent}.bookmark{position:absolute;right:12px;bottom:-11px;width:14px;height:37px;background:#6fc7ff;clip-path:polygon(0 0,100% 0,100% 100%,50% 74%,0 100%)}.eyes{position:absolute;left:19px;top:39px;display:flex;gap:16px}.eye{width:7px;height:7px;border-radius:50%;background:#122035;box-shadow:2px 0 0 #122035}.stamp{position:absolute;left:14px;bottom:14px;color:#56708d;font:9px ui-monospace,monospace}.form-wrap{position:relative;display:flex;align-items:center;padding:30px;background:#f8fbff;color:#142238}.form{width:100%;background:#fff;border:1px solid #dce6f2;border-radius:18px;padding:25px;box-shadow:0 24px 60px rgba(0,0,0,.2)}.form h4{font-size:21px;margin:0 0 5px}.form>p{font-size:11px;color:#6d7d91;margin:0 0 20px}.field{height:42px;border:1px solid #d8e2ee;border-radius:10px;margin:9px 0;padding:0 12px;display:flex;align-items:center;font-size:11px;color:#8492a4}.field.active{border-color:#0b73ce;box-shadow:0 0 0 3px #dcefff;color:#23364c}.submit{height:42px;border-radius:10px;background:#112f52;color:#fff;display:grid;place-items:center;margin-top:13px;font-size:12px;font-weight:650}.caption{font-size:11px;color:#68788c;margin-top:12px}.roles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}.role{padding:12px;border-radius:12px;background:#f5f8fc}.role strong{display:block;font-size:12px}.role span{font-size:10px;color:#718095}.approved{margin-top:16px;padding:13px 16px;border:1px solid #b7ddc6;background:#effaf3;border-radius:12px;color:#23673d;font-size:12px}@media(max-width:900px){.brand-row{grid-template-columns:1fr}.auth{grid-template-columns:1fr}.scene{min-height:320px}.form-wrap{padding:18px}.roles{grid-template-columns:1fr}}
+</style>
+<h2>品牌视觉系统与认证页构图</h2>
+<p class="subtitle">统一使用“折叠纸页、书签、时间戳、播放指针”四个元素。请确认整体语言是否准确。</p>
+<div class="brand-board">
+  <div class="brand-row">
+    <div class="panel">
+      <div class="label">LOGO SYSTEM</div>
+      <div class="logo-set">
+        <div class="logo-lockup"><div class="logo-mark"><i class="page-left"></i><i class="page-right"></i><i class="play"></i></div>NoteGen</div>
+        <div><div class="logo-mark small"><i class="page-left"></i><i class="page-right"></i><i class="play"></i></div><div class="caption">图形标志</div></div>
+        <div><div class="favicon"><div class="logo-mark"><i class="page-left"></i><i class="page-right"></i><i class="play"></i></div></div><div class="caption">favicon</div></div>
+      </div>
+      <div class="roles"><div class="role"><strong>纸页</strong><span>知识与笔记主体</span></div><div class="role"><strong>播放指针</strong><span>视频与时间定位</span></div><div class="role"><strong>N 形负空间</strong><span>小尺寸品牌识别</span></div></div>
+    </div>
+    <div class="panel">
+      <div class="label">MOTION RULE</div>
+      <h3 style="margin:12px 0 8px">展开，而不是弹跳</h3>
+      <p style="font-size:12px;line-height:1.7;color:#65768a">纸页从折叠态展开，指针沿时间线滑入并停靠。只使用位移、折叠与轻微视线变化，不使用夸张弹性。</p>
+      <div class="approved">静态状态优先；首页与认证反馈才启用完整动效。</div>
+    </div>
+  </div>
+  <div class="auth" style="margin-top:18px">
+    <div class="ribbon"></div>
+    <div class="scene">
+      <div class="label" style="color:#88cfff">YOUR NOTES, IN TIME</div>
+      <h3>把每一段观看<br>折进自己的知识里</h3>
+      <p>三个角色分别代表记录、定位和回顾。它们只通过纸页姿态、书签与时间戳表达情绪。</p>
+      <div class="characters"><div class="character"><i class="fold"></i><i class="bookmark"></i><div class="eyes"><i class="eye"></i><i class="eye"></i></div><span class="stamp">00:12</span></div><div class="character"><i class="fold"></i><i class="bookmark"></i><div class="eyes"><i class="eye"></i><i class="eye"></i></div><span class="stamp">08:42</span></div><div class="character"><i class="fold"></i><i class="bookmark"></i><div class="eyes"><i class="eye"></i><i class="eye"></i></div><span class="stamp">21:05</span></div></div>
+    </div>
+    <div class="form-wrap"><div class="form"><h4>欢迎回来</h4><p>继续整理你的视频笔记</p><div class="field active">name@example.com</div><div class="field">输入密码</div><div class="submit">登录 NoteGen</div><div class="caption">还没有账号？创建账号</div></div></div>
+  </div>
+</div>
+<div class="options" style="margin-top:18px"><div class="option" data-choice="approve-brand-auth-layout" onclick="toggleSelect(this)"><div class="letter">✓</div><div class="content"><h3>确认这套视觉与构图</h3><p>下一步细化角色状态、表单反馈与移动端降级。</p></div></div></div>

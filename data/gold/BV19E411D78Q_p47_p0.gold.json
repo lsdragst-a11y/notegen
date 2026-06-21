@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p47_p0",
+  "local_source": "data/raw/BV19E411D78Q_p47_p0.mp4",
+  "duration": 2438.06,
+  "domain": "learning",
+  "label": "BV19E411D78Q_p47_p0",
+  "boundaries_sec": [
+    1113.16,
+    1478.06,
+    2287.49
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p47_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 1113.16,
+      "near_text": "这个IP数据报当中的原地址就应该是H1的地址。这个IP分组。默认网关的IP地址之后。这个默认网关的IP地址。目的网络的I"
+    },
+    {
+      "boundary_sec": 1478.06,
+      "near_text": "那么首先H1会检查目的网络的这个IP地址。直接说明H6的MAC地址好。所以H5这个节点会收到这个MAC针。H6这个节点也"
+    },
+    {
+      "boundary_sec": 2287.49,
+      "near_text": "还回自检地址。等于127的这个地址范围。原地址设为127.0.0.1。目的地址也设为127.0.0.1。由于它的IP地址"
+    }
+  ]
+}

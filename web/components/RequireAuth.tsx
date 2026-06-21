@@ -22,8 +22,12 @@ export default function RequireAuth({ children }: { children: React.ReactNode })
 
   if (loading) {
     return (
-      <main className="min-h-screen flex items-center justify-center text-[var(--fg-tertiary)]">
-        <Loader2 size={20} className="animate-spin" />
+      <main className="flex min-h-screen flex-col items-center justify-center gap-3 px-6 text-center">
+        <Loader2 size={20} className="animate-spin text-[var(--accent)]" />
+        <div>
+          <p className="text-sm font-medium text-[var(--fg)]">正在检查登录状态</p>
+          <p className="mt-1 text-xs text-[var(--fg-tertiary)]">如果服务未启动，会在稍后显示重试入口。</p>
+        </div>
       </main>
     );
   }

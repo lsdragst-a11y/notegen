@@ -26,11 +26,25 @@ interface Props {
   glossary: GlossaryEntry[];
 }
 
-const KIND_META: Record<Kind, { label: string; icon: React.ComponentType<{ size?: number }> }> = {
-  chapter: { label: "章节", icon: BookOpen },
-  chunk: { label: "知识点", icon: Hash },
-  term: { label: "术语", icon: FileText },
+const KIND_META: Record<Kind, { icon: React.ComponentType<{ size?: number }> }> = {
+  chapter: { icon: BookOpen },
+  chunk: { icon: Hash },
+  term: { icon: FileText },
 };
+
+const KIND_LABELS: Record<DisplayLang, Record<Kind, string>> = {
+  zh: { chapter: "章节", chunk: "知识点", term: "术语" },
+  en: { chapter: "Chapter", chunk: "Key point", term: "Term" },
+};
+
+function pickKeywordsByLang(c: Chunk, lang: DisplayLang): string[] {
+  const v = (c as unknown as Record<string, unknown>)[`keywords_${lang}`];
+  return Array.isArray(v) ? v.map(String) : (c.keywords || []);
+}
+
+function hasCjk(text: string): boolean {
+  return /[\u3400-\u9fff]/.test(text);
+}
 
 function buildItems(
   chapters: Chapter[], summary: Chunk[], glossary: GlossaryEntry[],
@@ -61,16 +75,17 @@ function buildItems(
     out.push({
       kind: "chunk",
       label: pickByLang(c, "headline", lang) || c.text.slice(0, 30),
-      detail: (c.keywords || []).slice(0, 5).join(" · "),
+      detail: pickKeywordsByLang(c, lang).slice(0, 5).join(" · "),
       time: c.start,
       key: `cu-${i}`,
     });
   });
   glossary.forEach(g => {
+    const snippet = lang === "en" && hasCjk(g.snippet) ? "" : g.snippet;
     out.push({
       kind: "term",
       label: g.term,
-      detail: g.snippet || `出现 ${g.df} 次`,
+      detail: snippet || (lang === "en" ? `Appears ${g.df} times` : `出现 ${g.df} 次`),
       time: g.firstStart,
       key: `tm-${g.term}`,
     });
@@ -97,6 +112,7 @@ function Panel({
   const listRef = useRef<HTMLDivElement>(null);
 
   const { lang } = useLang();
+  const labels = KIND_LABELS[lang];
   const items = useMemo(
     () => buildItems(chapters, summary, glossary, lang),
     [chapters, summary, glossary, lang]
@@ -159,6 +175,7 @@ function Panel({
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 0.15 }}
+      data-overlay
       className="fixed inset-0 z-50 flex items-start justify-center pt-[14vh] px-4"
       onClick={onClose}
       style={{ background: "rgba(0,0,0,0.42)", backdropFilter: "blur(8px)" }}
@@ -178,7 +195,9 @@ function Panel({
             ref={inputRef}
             value={q}
             onChange={e => { setQ(e.target.value); setCursor(0); }}
-            placeholder="搜索章节 / 知识点 / 术语…"
+            placeholder={lang === "en"
+              ? "Search chapters / key points / terms..."
+              : "搜索章节 / 知识点 / 术语…"}
             className="flex-1 bg-transparent outline-none text-sm placeholder:text-[var(--fg-tertiary)]"
           />
           <kbd className="text-[10px] text-[var(--fg-tertiary)] px-1.5 py-0.5 rounded
@@ -187,7 +206,7 @@ function Panel({
         <div ref={listRef} className="max-h-[55vh] overflow-y-auto py-1">
           {filtered.length === 0 ? (
             <div className="px-4 py-8 text-center text-sm text-[var(--fg-tertiary)]">
-              没有匹配
+              {lang === "en" ? "No matches" : "没有匹配"}
             </div>
           ) : filtered.map((it, i) => {
             const meta = KIND_META[it.kind];
@@ -203,7 +222,7 @@ function Panel({
                             ${active ? "bg-[var(--bg-muted)]" : ""}`}
               >
                 <span className={`w-7 h-7 rounded-lg inline-flex items-center justify-center shrink-0
-                                   ${active ? "bg-[var(--accent)] text-white"
+                                   ${active ? "bg-[var(--accent)] text-[var(--on-accent)]"
                                             : "bg-[var(--bg-muted)] text-[var(--fg-secondary)]"}`}>
                   <Icon size={14} />
                 </span>
@@ -214,7 +233,7 @@ function Panel({
                   )}
                 </div>
                 <span className="text-[10px] text-[var(--fg-tertiary)] mr-1 shrink-0">
-                  {meta.label}
+                  {labels[it.kind]}
                 </span>
                 <span className="tabular-nums text-xs text-[var(--fg-tertiary)] shrink-0">
                   {formatTime(it.time)}
@@ -230,14 +249,14 @@ function Panel({
             <span className="inline-flex items-center gap-1">
               <kbd className="px-1 rounded border border-[var(--border)]">↑</kbd>
               <kbd className="px-1 rounded border border-[var(--border)]">↓</kbd>
-              导航
+              {lang === "en" ? "Navigate" : "导航"}
             </span>
             <span className="inline-flex items-center gap-1">
               <kbd className="px-1 rounded border border-[var(--border)]">Enter</kbd>
-              跳转
+              {lang === "en" ? "Jump" : "跳转"}
             </span>
           </div>
-          <span>{filtered.length} 项</span>
+          <span>{filtered.length} {lang === "en" ? "items" : "项"}</span>
         </div>
       </motion.div>
     </motion.div>

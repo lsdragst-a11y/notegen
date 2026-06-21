@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19SRSBeE6F_p0",
+  "local_source": "data/raw/BV19SRSBeE6F_p0.mp4",
+  "duration": 709.18,
+  "domain": "learning",
+  "label": "探秘北极超市！物价多离谱？超市都卖些什么？",
+  "boundaries_sec": [
+    307.72
+  ],
+  "n_segments": 2,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19SRSBeE6F_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 307.72,
+      "near_text": "这家超市也还有很多。还有很可爱的北极熊明信片。味道很神奇。它闻着有股漱口水的味道喝着很甜。还有咖喱饭。很浓的番茄味道。泰"
+    }
+  ]
+}

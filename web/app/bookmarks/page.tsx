@@ -25,7 +25,7 @@ function Chip({ active, label, count, color, onSelect }: {
       onClick={onSelect}
       className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-colors
         ${active
-          ? "border-transparent bg-[var(--accent)] text-white"
+          ? "border-transparent bg-[var(--accent)] text-[var(--on-accent)]"
           : "border-[var(--border)] text-[var(--fg-secondary)] hover:bg-[var(--bg-muted)]"}`}
     >
       {color && <span className="h-2 w-2 rounded-full" style={{ background: color }} />}
@@ -180,7 +180,7 @@ export default function BookmarksPage() {
                 type="submit"
                 disabled={!newCat.trim()}
                 className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                           bg-[var(--accent)] text-white transition-opacity hover:opacity-90 disabled:opacity-40"
+                           bg-[var(--accent)] text-[var(--on-accent)] transition-opacity hover:opacity-90 disabled:opacity-40"
               >
                 <Plus size={14} />
               </button>
@@ -206,7 +206,7 @@ export default function BookmarksPage() {
                     : "这个分类下还没有书签。")}
             </p>
             {list.length === 0 && (
-              <Link href="/" className="apple-button mt-2 inline-flex">
+              <Link href="/notebooks" className="apple-button mt-2 inline-flex">
                 {lang === "en" ? "Browse notes" : "去浏览笔记"}
               </Link>
             )}

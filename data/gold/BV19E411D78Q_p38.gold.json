@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p38",
+  "local_source": "data/raw/BV19E411D78Q_p38_p0.mp4",
+  "duration": 2238.6,
+  "domain": "learning",
+  "label": "BV19E411D78Q_p38",
+  "boundaries_sec": [
+    694.86,
+    1634.92,
+    2000.17
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p38.f30280.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 694.86,
+      "near_text": "MAC子层它的上面。MAC真的前六个字节。A节点的MAC地址。应该交给网络层的哪个协议。MAC层的上方直接就是网络层。其"
+    },
+    {
+      "boundary_sec": 1634.92,
+      "near_text": "但是只有F这个节点会接收这个针。接收方是A节点。但是只有F节点会把这个针接收下来。A节点发送了一个广播针。会转发这个广播"
+    },
+    {
+      "boundary_sec": 2000.17,
+      "near_text": "也隔离广播域。也不隔离广播域。它可以工作在半双工模式下。当工作在半双工模式下的时候。半双工模式。工作在半双工模式下。工作"
+    }
+  ]
+}

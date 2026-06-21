@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1BpLg6wEMk_p0",
+  "local_source": "data/raw/BV1BpLg6wEMk_p0.mp4",
+  "duration": 483.86,
+  "domain": "learning",
+  "label": "190块和9000块的炒菜机器人能有什么区别？",
+  "boundaries_sec": [
+    88.42,
+    182.67,
+    359.3,
+    417.98
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1BpLg6wEMk_p0.large-v3.neural.texttile.cc400.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 88.42,
+      "near_text": "红烧排骨和番茄炒蛋。对于会做菜的人确实没什么大用。但对于纯纯的厨房小白来说。哇 这干的不错。如果是对于十年前完全不会做菜"
+    },
+    {
+      "boundary_sec": 182.67,
+      "near_text": "必须弄点米其林大食菜。它这一个套餐大概有10个菜谷。对 49而且不仅只有一个套餐。这边还有米其林。这边又是49。18跟4"
+    },
+    {
+      "boundary_sec": 359.3,
+      "near_text": "这饭碗炒菜烧手费。你别说这个9000和900的档真不一样。哎呦麻婆豆腐这油真多。麻婆豆腐确实要半吃。在家也能做出新级半点"
+    },
+    {
+      "boundary_sec": 417.98,
+      "near_text": "已为您生成洋蔥土豆鸪腿包。切块的还是有点麻烦。我现在有一个土豆一个鸡腿一片面包一个洋葱。土豆我不会切块的。洋蔥的话我也不"
+    }
+  ]
+}

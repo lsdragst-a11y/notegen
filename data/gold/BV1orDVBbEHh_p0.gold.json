@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1orDVBbEHh_p0",
+  "local_source": "data/raw/BV1orDVBbEHh_p0.mp4",
+  "duration": 832.64,
+  "domain": "learning",
+  "label": "花238块逛吃山姆，回出租屋在整一顿无敌大餐快乐直接拉满",
+  "boundaries_sec": [
+    362.66,
+    493.84,
+    713.03
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1orDVBbEHh_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 362.66,
+      "near_text": "不要一下加太多水加着搅着。粉少了就加粉。然后再加点油进去。面也发好了。就已经给它发好了。其实爆小笼包。不要捏太薄。因为小"
+    },
+    {
+      "boundary_sec": 493.84,
+      "near_text": "今天的无敌山姆大餐来啦。今天有什么好吃的。有请今天的主角。首先来吃今天咱的主角。就是这个酱肉小笼包来人一口。再来可以今天"
+    },
+    {
+      "boundary_sec": 713.03,
+      "near_text": "因为我个人比较喜欢吃榴梿的。你看这边榴莲果肉。榴梿味好足。喜欢的人很喜欢。但是不喜欢吃榴梿的话。就是辣完了来吧来来来。这"
+    }
+  ]
+}

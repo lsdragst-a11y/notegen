@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1GofdBZEW7_p0",
+  "local_source": "data/raw/BV1GofdBZEW7_p0.mp4",
+  "duration": 2001.06,
+  "domain": "learning",
+  "label": "33 分钟掌握 Vibe 编码基础知识 | Vibe Coding Fundamentals In 33 minutes",
+  "boundaries_sec": [
+    189.74,
+    358.74,
+    532.92,
+    649.52,
+    859.06,
+    1080.28,
+    1523.5,
+    1712.4,
+    1922.48
+  ],
+  "n_segments": 10,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1GofdBZEW7_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 189.74,
+      "near_text": "how do I play this game。the third level is computational thi"
+    },
+    {
+      "boundary_sec": 358.74,
+      "near_text": "Now for procedural thinking。the highest level of thinking。th"
+    },
+    {
+      "boundary_sec": 532.92,
+      "near_text": "for the front-end。and the back-end。Think about it。This will "
+    },
+    {
+      "boundary_sec": 649.52,
+      "near_text": "these files。Git commit。the changes。your first commit。commit。"
+    },
+    {
+      "boundary_sec": 859.06,
+      "near_text": "I was able。file was probably。section was。was able to go and。"
+    },
+    {
+      "boundary_sec": 1080.28,
+      "near_text": "haves.Great.So。is over here.Awesome.So。me.So I'm。replet.So。w"
+    },
+    {
+      "boundary_sec": 1523.5,
+      "near_text": "looks pretty good.So,SEO。just looks pretty。maze slashmini。li"
+    },
+    {
+      "boundary_sec": 1712.4,
+      "near_text": "new feature or。you're debugging。errors.When you're。new featu"
+    },
+    {
+      "boundary_sec": 1922.48,
+      "near_text": "get smarter。ai.What I。love about。Brilliant is。that it helps。"
+    }
+  ]
+}

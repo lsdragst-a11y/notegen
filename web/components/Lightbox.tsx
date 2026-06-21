@@ -57,6 +57,7 @@ export default function Lightbox({
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
+          data-overlay
           className="fixed inset-0 z-50 flex flex-col"
           style={{ background: "rgba(0,0,0,0.92)", backdropFilter: "blur(12px)" }}
           onClick={onClose}

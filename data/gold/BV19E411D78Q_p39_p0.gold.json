@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p39_p0",
+  "local_source": "data/raw/BV19E411D78Q_p39_p0.mp4",
+  "duration": 1224.38,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p39 3.6.3 VLAN的基本概念与基本原理（咸鱼版）",
+  "boundaries_sec": [
+    314.84,
+    406.63,
+    753.52
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p39_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 314.84,
+      "near_text": "我们可以把一些敏感的节点划分为同一个VLAN。而其他的这些节点再划分更多的VLAN。只要这些终端节点和敏感节点不属于同一"
+    },
+    {
+      "boundary_sec": 406.63,
+      "near_text": "交换机的管理员可以去配置如何划分VLAN。好。我们可以基于接口去划分VLAN。交换机2这边也会有VLAN10。它是通过8"
+    },
+    {
+      "boundary_sec": 753.52,
+      "near_text": "交换机会把这个广播帧。那么交换机2如何去判断这个广播帧。那么交换机1先判断A节点它的VID等于多少,好。所以交换机1会在"
+    }
+  ]
+}

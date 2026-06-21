@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p46_p0",
+  "local_source": "data/raw/BV19E411D78Q_p46_p0.mp4",
+  "duration": 2019.81,
+  "domain": "learning",
+  "label": "BV19E411D78Q_p46_p0",
+  "boundaries_sec": [
+    734.94,
+    1260.16,
+    1786.22
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p46_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 734.94,
+      "near_text": "以及3980字节的这个数据部分总计。这个IP数据报。这4000个字节的IP数据报。第一个IP数据报总长度是1500字节。"
+    },
+    {
+      "boundary_sec": 1260.16,
+      "near_text": "最后的这个分片。还有更多的分片。第二个分片的MF。第三个分片的。比如第1个分片在原始数据报当中。第1个分片。分片的这个数"
+    },
+    {
+      "boundary_sec": 1786.22,
+      "near_text": "如果说我们把首部校验核这16个比特设为全0。这个IP数据报在转发的过程当中。那关于这个首部的校验核。给附到这16个比特这"
+    }
+  ]
+}

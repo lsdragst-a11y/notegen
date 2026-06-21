@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1rZ17BiEff_p0",
+  "local_source": "data/raw/BV1rZ17BiEff_p0.mp4",
+  "duration": 8.46,
+  "domain": "vlog",
+  "label": "禁止干拉！炼狱小镇Inferno最新必学道具！",
+  "boundaries_sec": [],
+  "n_segments": 1,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1rZ17BiEff_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": []
+}

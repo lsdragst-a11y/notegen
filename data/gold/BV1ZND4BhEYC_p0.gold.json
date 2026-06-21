@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1ZND4BhEYC_p0",
+  "local_source": "data/raw/BV1ZND4BhEYC_p0.mp4",
+  "duration": 588.94,
+  "domain": "learning",
+  "label": "探秘朝鲜酒店！标准间 vs 总统套房！住里面什么体验？到底多大区别？",
+  "boundaries_sec": [
+    68.73,
+    214.36,
+    367.95
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1ZND4BhEYC_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 68.73,
+      "near_text": "它是朝鮮专门造了。给外国人住的一家酒店。最豪华的酒店之一到了晚上。朝鮮当地人住的酒店。有朝鳜造的一些高楼大厦。我们都要搭"
+    },
+    {
+      "boundary_sec": 214.36,
+      "near_text": "上面还放了一台液晶电视。朝鲜的电视里都有些什么节目。房间里他给我们配备了一个电暖气。还在房间裡面准备的一台冰箱。那你们觉"
+    },
+    {
+      "boundary_sec": 367.95,
+      "near_text": "我们房间里的这个浴室。感觉比我们刚刚的房间都要大。你们觉得朝鮮酒店。这个880人一晚上的房间。到底值不值。这房间在朝鲜应"
+    }
+  ]
+}

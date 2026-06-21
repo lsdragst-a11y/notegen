@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1XY546vE1o_p0",
+  "local_source": "data/raw/BV1XY546vE1o_p0.mp4",
+  "duration": 826.71,
+  "domain": "learning",
+  "label": "3台高速机VS刘谦手速！谁更胜一筹？",
+  "boundaries_sec": [
+    99.29,
+    257.68
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1XY546vE1o_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 99.29,
+      "near_text": "你需要按脚吗．。扑克牌吧．。这个是保护扑克牌的壳子．。因为你也知道扑克牌是纸做的．。好我们可以看下一个空间哇哦。你真的不"
+    },
+    {
+      "boundary_sec": 257.68,
+      "near_text": "然后压回去。然后我们现在要假装做这个动作。然后压回去让它压住。鬼牌一般在西方我们叫Wild Card。也就是说如果你有一"
+    }
+  ]
+}

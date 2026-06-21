@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p57_p0",
+  "local_source": "data/raw/BV19E411D78Q_p57_p0.mp4",
+  "duration": 1609.24,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p57 4.4.1 路由算法（咸鱼版）",
+  "boundaries_sec": [
+    446.23,
+    883.5,
+    1311.57
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p57_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 446.23,
+      "near_text": "最终交给苹博公司의CEO。和CEO之间有没有联系。我和苹果CEO。苹国公司的CEO也许是你摄有的。如果把小纸条交给摄有一"
+    },
+    {
+      "boundary_sec": 883.5,
+      "near_text": "如果让V1帮忙转发一个IP数据报的话。那么这个IP数句报。到达Net1 Net2 Net3。就应该是这段路徑的长度。帮忙"
+    },
+    {
+      "boundary_sec": 1311.57,
+      "near_text": "不知不觉的你已经使用了链路状态路由算法。首先你得知道整个网络的各个节点之间的这种拓扑结构。以及每一条边的权值等于多少。那"
+    }
+  ]
+}

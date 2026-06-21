@@ -13,7 +13,6 @@ import {
   TerminalSquare,
 } from "lucide-react";
 import NavBar from "@/components/NavBar";
-import FluidBG from "@/components/FluidBG";
 import RequireAuth from "@/components/RequireAuth";
 import { fetchHistory, retryJob } from "@/lib/api";
 import type { HistoryItem, JobStatus, JobStageMetric } from "@/lib/types";
@@ -163,7 +162,6 @@ function HistoryInner() {
 
   return (
     <main className="relative min-h-screen">
-      <FluidBG />
       <NavBar />
       <section className="relative z-10 mx-auto max-w-5xl px-6 pt-20 pb-32">
         <h1 className="mb-5 flex items-center gap-2 text-xl font-semibold">
@@ -193,7 +191,7 @@ function HistoryInner() {
         ) : items.length === 0 ? (
           <div className="apple-card p-8 text-center">
             <p className="text-sm text-[var(--fg-secondary)]">还没有提交记录。</p>
-            <Link href="/" className="apple-button mt-4 inline-flex">去生成一个</Link>
+            <Link href="/notebooks" className="apple-button mt-4 inline-flex">去生成一个</Link>
           </div>
         ) : (
           <div className="apple-card divide-y divide-[var(--border)] overflow-hidden p-0">

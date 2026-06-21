@@ -1,0 +1,24 @@
+<!doctype html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NoteGen — Refined Three-Screen Landing</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#292925}iframe{display:block;width:100%;height:100%;border:0}</style></head><body><iframe id="shell" src="/files/landing-cinematic-timeline-v3.html" title="NoteGen refined landing page"></iframe><script>
+document.getElementById('shell').addEventListener('load',function(){
+  const nested=this.contentDocument.querySelector('iframe');
+  const refine=()=>{const d=nested.contentDocument;if(!d||d.body.dataset.refinedV4)return;d.body.dataset.refinedV4='true';
+    const style=d.createElement('style');style.textContent=`
+      .copy h1{font-size:clamp(48px,5.15vw,75px);line-height:1.055;letter-spacing:-.06em}.copy h1 em{margin-top:11px;letter-spacing:-.045em}.lead{font-size:17px;line-height:2.05;max-width:520px}
+      .video-copy span:before{content:'正在整理 · ';}.video-copy span{font-size:9px}.video-copy h3{font-size:28px;line-height:1.12}.chapter.active{border-width:2px;border-color:#ca7257;background:#f7efe4;box-shadow:0 12px 36px rgba(202,114,87,.14)}
+      .note-card{opacity:.5;box-shadow:none}.note-card:first-child{opacity:.86;box-shadow:0 8px 22px rgba(0,0,0,.1)}.character{left:-12px;bottom:76px;width:38px;height:54px;opacity:.72;box-shadow:5px 7px 0 rgba(0,0,0,.12)}.character .eyes{left:9px;top:21px;gap:8px}.character small{font-size:4px}.character b{width:7px;height:18px}
+      .flow{grid-template-columns:.95fr 1.05fr}.source{padding:27px}.source label{font-size:11px}.url{height:60px;background:#fffdf9}.go{height:54px;margin-top:11px;font-size:13px;box-shadow:0 11px 26px rgba(48,54,48,.14)}.source-tools{display:flex;flex-wrap:wrap;gap:7px;margin-top:18px}.source-chip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 9px;border:1px solid #c7baa8;border-radius:99px;color:#6f665c;font-size:9px}.source-chip i{width:5px;height:5px;border-radius:50%;background:#a95b45}.drop-note{margin-top:13px;padding:12px;border:1px dashed #c4b6a4;border-radius:10px;color:#847a6e;font-size:10px;text-align:center}.output{padding:25px}.route{margin-top:25px}.route-item{margin-bottom:13px;padding:12px}.demo-intro{font-size:15px;line-height:1.9}
+      .archive-head{grid-template-columns:1fr .72fr}.archive-side p{color:#655e55;font-size:14px;line-height:1.85}.archive-cta{height:46px;margin-top:20px;padding:0 18px;border:1px solid #827564;border-radius:11px;background:#303630;color:#fff;font-size:11px;font-weight:700}.archive-card:nth-child(2) .archive-cover{background:#5d544d}.asset-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px}.asset-tag{padding:5px 7px;border-radius:99px;background:#e8ded0;color:#6f6255;font:7px ui-monospace,monospace;letter-spacing:.04em}.archive-footer{display:none}
+      @media(max-width:980px){.copy h1{font-size:52px}.archive-head{grid-template-columns:1fr}.flow{grid-template-columns:1fr}}@media(max-width:620px){.copy h1{font-size:46px}.copy h1 em{white-space:normal}.lead{font-size:15px}}
+    `;d.head.appendChild(style);
+    d.querySelector('.lead').innerHTML='<span>章节、观点与案例沿时间线展开。</span><span>既能回看原片，也能直达关键内容。</span>';
+    const current=d.querySelector('.video-copy span');current.textContent='04:28';
+    const go=d.querySelector('.go');go.textContent='开始整理视频';
+    const intro=d.querySelector('.demo-intro');intro.textContent='不需要理解复杂功能。粘贴链接或上传文件，NoteGen 会把观看内容整理成可搜索、可跳转、可继续使用的知识结构。';
+    const platforms=d.querySelector('.platforms');platforms.className='source-tools';platforms.innerHTML='<span class="source-chip"><i></i>Bilibili</span><span class="source-chip"><i></i>YouTube</span><span class="source-chip"><i></i>Local video</span>';
+    const drop=d.createElement('div');drop.className='drop-note';drop.textContent='或将 MP4 / MOV / MKV 文件拖到这里';platforms.after(drop);
+    const archiveHead=d.querySelector('.archive-head'),archiveP=archiveHead.querySelector('p'),side=d.createElement('div');side.className='archive-side';archiveP.before(side);side.appendChild(archiveP);const archiveBtn=d.createElement('button');archiveBtn.className='archive-cta';archiveBtn.textContent='查看公开示例';side.appendChild(archiveBtn);
+    d.querySelectorAll('.archive-card').forEach((card,i)=>{const tags=d.createElement('div');tags.className='asset-tags';const sets=[['8 CHAPTERS','12 KEY IDEAS','SEEKABLE'],['12 CHAPTERS','18 KEY IDEAS','SEEKABLE'],['6 CHAPTERS','9 KEY IDEAS','SEEKABLE']][i];tags.innerHTML=sets.map(x=>'<span class="asset-tag">'+x+'</span>').join('');card.querySelector('.archive-meta').after(tags)});
+  };
+  if(nested.contentDocument&&nested.contentDocument.readyState==='complete')refine();else nested.addEventListener('load',refine,{once:true});
+});
+</script></body></html>

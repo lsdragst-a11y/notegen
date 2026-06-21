@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1t55v6DE2v_p0",
+  "local_source": "data/raw/BV1t55v6DE2v_p0.mp4",
+  "duration": 785.43,
+  "domain": "learning",
+  "label": "Agent和Harness到底是什么？一个动画彻底搞懂！",
+  "boundaries_sec": [
+    270.9,
+    541.84,
+    724.99
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1t55v6DE2v_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 270.9,
+      "near_text": "也能够写网頁。但是配图呢。除了找图片。于是想到用千问做一个网页。把我们四川省内的5A级景区。先去搜索了四川市的5a景匹列"
+    },
+    {
+      "boundary_sec": 541.84,
+      "near_text": "就按照以下的节省格式返回巴拉巴拉。AI总不能搞错了吧。结果AI返回去是这么个玩意儿。后台代砝一解析直接报错。而是要做一道"
+    },
+    {
+      "boundary_sec": 724.99,
+      "near_text": "我们的AI智能体才能稳定运行不出岔子。从最早只会聊天的TelGBT。AI就是这样一步一步。AI怎么干活儿的问题。那Har"
+    }
+  ]
+}

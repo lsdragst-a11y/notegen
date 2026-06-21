@@ -160,7 +160,7 @@ export default function BookmarkMenu({ bm, size = 14, className = "" }: Props) {
               disabled={!newName.trim()}
               title={lang === "en" ? "Create" : "新建"}
               className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md
-                         bg-[var(--accent)] text-white transition-opacity hover:opacity-90
+                         bg-[var(--accent)] text-[var(--on-accent)] transition-opacity hover:opacity-90
                          disabled:opacity-40"
             >
               <Plus size={14} />

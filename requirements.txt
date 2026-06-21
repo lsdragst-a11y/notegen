@@ -19,6 +19,10 @@ pillow
 jieba
 rouge-chinese
 
+# 向量检索 / 语义切分（bge-m3；QA hybrid 与 --chunker semantic 用，
+# 模型本地副本：HF_ENDPOINT=https://hf-mirror.com huggingface-cli download BAAI/bge-m3 --local-dir models/bge-m3）
+sentence-transformers>=3.0
+
 # Web 后端（Week 3 用）
 fastapi
 uvicorn[standard]
@@ -34,3 +38,12 @@ rq>=1.16,<2.0
 redis>=5.0,<6.0
 fakeredis>=2.20  # 仅测试用：无需真 Redis 跑集成断言
 bcrypt>=4.1,<5.0
+
+# 导出 Word（POST /api/export/docx，复用 scripts/md_to_docx.py）
+python-docx>=1.1
+
+# 结构化日志（阶段 B；未装时 logging_setup 自动回落 stdlib logging）
+loguru>=0.7
+
+# 测试（TestClient 依赖）
+httpx>=0.27

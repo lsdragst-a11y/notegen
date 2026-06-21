@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19vXbBiErt_p0",
+  "local_source": "data/raw/BV19vXbBiErt_p0.mp4",
+  "duration": 1164.95,
+  "domain": "learning",
+  "label": "BV19vXbBiErt_p0",
+  "boundaries_sec": [
+    307.9,
+    555.58,
+    649.66,
+    869.52
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19vXbBiErt_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 307.9,
+      "near_text": "一个高精度的游戏人物模型可能有上百万个顶点。游戏引擎会把人物的这上百万个顶点打包成一个巨大的矩阵。游戏底层的代码实际上就"
+    },
+    {
+      "boundary_sec": 555.58,
+      "near_text": "特征值与特征向量。求出一个或者几个根叫做特征值。求出一组非零向量叫做特征向量。特征值和特征向量是线性代数里最深刻。矩阵是"
+    },
+    {
+      "boundary_sec": 649.66,
+      "near_text": "矩形矩阵的主特征向量。如果你去求这个刚度矩阵的特征向量和特征值。比如淘宝的用户商品矩阵。这个矩阵不仅巨大。一个代表拉伸的"
+    },
+    {
+      "boundary_sec": 869.52,
+      "near_text": "怎么用高斯消源法做矩阵初等变换。哪怕是一个4x4的逆矩阵。现代人学习线性代数。你需要知道什么是矩阵的列空间。负理页变换的"
+    }
+  ]
+}

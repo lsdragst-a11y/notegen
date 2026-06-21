@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1E7wtzaEdq_p0",
+  "local_source": "data/raw/BV1E7wtzaEdq_p0.mp4",
+  "duration": 1949.8,
+  "domain": "learning",
+  "label": "从 LLM 到 Agent Skill，一期视频带你打通底层逻辑！",
+  "boundaries_sec": [
+    201.92,
+    560.0,
+    745.31,
+    1242.88,
+    1740.53
+  ],
+  "n_segments": 6,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1E7wtzaEdq_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 201.92,
+      "near_text": "这个中间人就叫做Tokenizer。编码就是把文字变成数字。这些片段就叫做Token。Tokenizer就会把每一个To"
+    },
+    {
+      "boundary_sec": 560.0,
+      "near_text": "理解了context。context window为1万。不过1万的context window算是很小的了。目前主流的"
+    },
+    {
+      "boundary_sec": 745.31,
+      "near_text": "所以prompt怎么写。到这里prompt基本概念应该是搞清楚了。也就是告诉大模型它是谁。说明具体任务的是user pr"
+    },
+    {
+      "boundary_sec": 1242.88,
+      "near_text": "我们需要调用多次工具。之后大模型就发出了工具调用指令。让平台去调用这个定位工具。调用天气工具。然后大模型就向平台发出了工"
+    },
+    {
+      "boundary_sec": 1740.53,
+      "near_text": "这个Agent Scale明确要求需要定位和天气这两个工具。因此就读取了Agent Scale的完整内容。在读取到了Ag"
+    }
+  ]
+}

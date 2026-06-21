@@ -97,6 +97,11 @@ CREATE TABLE IF NOT EXISTS bookmarks (
   added_at REAL NOT NULL,
   PRIMARY KEY(user_id, key)
 );
+CREATE TABLE IF NOT EXISTS note_shares (
+  token TEXT PRIMARY KEY,
+  note_id TEXT UNIQUE NOT NULL,
+  created_at REAL NOT NULL
+);
 CREATE INDEX IF NOT EXISTS idx_notes_owner ON notes(owner_id, visibility);
 CREATE INDEX IF NOT EXISTS idx_notes_vis ON notes(visibility, created_at);
 CREATE INDEX IF NOT EXISTS idx_jobs_user ON jobs(user_id, created_at);

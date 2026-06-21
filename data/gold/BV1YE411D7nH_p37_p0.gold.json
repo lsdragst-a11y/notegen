@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1YE411D7nH_p37_p0",
+  "local_source": "data/raw/BV1YE411D7nH_p37_p0.mp4",
+  "duration": 898.14,
+  "domain": "learning",
+  "label": "王道计算机考研 操作系统 p37 2.3.5_3 哲学家进餐问题",
+  "boundaries_sec": [
+    234.55,
+    432.0,
+    534.57,
+    659.7
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1YE411D7nH_p37_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 234.55,
+      "near_text": "当每一个哲学家在尝试拿自己的右边这只筷子的时候。即使每一个哲学家先都已经拿起了自己身边的一只筷子。但是。这只筷子只要分配"
+    },
+    {
+      "boundary_sec": 432.0,
+      "near_text": "那肯定只会有一个哲学家可以得到这个筷子资源。我们就可以避免一个进程。那么我们可以设置一个初始值为4的同步信号量。我们可以"
+    },
+    {
+      "boundary_sec": 534.57,
+      "near_text": "那么首先他对Mutex执行P操作。那么当2号哲学家对Mutex执行P操作的时候。由于0号哲学家还没有对Mutex执行V操"
+    },
+    {
+      "boundary_sec": 659.7,
+      "near_text": "但是这个哲学家依然拿不起他两边的筷子。4号哲学家他也尝试拿左边的筷子。即使一个哲学家两边的筷子。如果一个哲学家因为拿筷子"
+    }
+  ]
+}

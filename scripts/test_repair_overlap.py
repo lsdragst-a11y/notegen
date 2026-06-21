@@ -49,7 +49,7 @@ def p79_like():
 
 # OLD chain (no overlap fix) must still FAIL with a duplicate/overlap error.
 old_out, old_err = run_chain(p79_like(), with_overlap_fix=False)
-check(old_err is not None and ("多个顶层" in old_err or "重叠" in old_err),
+check(old_err is not None and ("多个顶层" in old_err or "重叠" in old_err or "重复覆盖" in old_err),
       f"(a) OLD chain still fails on overlap -> got: {old_err!r}")
 
 # NEW chain (with overlap fix) must PASS validation.

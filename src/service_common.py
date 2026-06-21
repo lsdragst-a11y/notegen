@@ -91,6 +91,11 @@ def _copy_artifacts(stem: str, note_dir: Path) -> None:
         if src:
             shutil.copy(src, note_dir / f"{kind}.json")
 
+    # chunk 向量（QA hybrid 检索用；pipeline 可能没算，缺失不报错）
+    emb_src = _pick_latest(f"{stem}.large-v3.neural.texttile*.embeddings.npz")
+    if emb_src:
+        shutil.copy(emb_src, note_dir / "embeddings.npz")
+
     meta_stem = stem.split(".")[0]
     meta_src = DATA_RAW / f"{meta_stem}.meta.json"
     if meta_src.exists():

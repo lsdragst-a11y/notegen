@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p37_p0",
+  "local_source": "data/raw/BV19E411D78Q_p37_p0.mp4",
+  "duration": 2101.78,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p37 3.6.1 局域网的基本概念和体系结构（咸鱼版）",
+  "boundaries_sec": [
+    112.65,
+    413.8,
+    930.7,
+    1270.29,
+    1645.85
+  ],
+  "n_segments": 6,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p37_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 112.65,
+      "near_text": "在局域网内部的各个节点之间。局域网内部各个节点之间的数据传输是以帧为单位的。这个局域网之内有ABCDEFG这样的几个节点"
+    },
+    {
+      "boundary_sec": 413.8,
+      "near_text": "在以太网当中。最早的以太网是以同轴电缆作为传输介质。这种以太网传输的是基带信号。在这种以太网当中。那这种类型的以太网。也"
+    },
+    {
+      "boundary_sec": 930.7,
+      "near_text": "因此用极限器连接的这种双绞线以太网。显然用极限器连接的双绞线以太网。那这样就出现了用交换机去连接的双绞线以太网。一个交换"
+    },
+    {
+      "boundary_sec": 1270.29,
+      "near_text": "那每一个网络适配器的MAC地址。去申请MAC地址。那么买到这个MAC地址端之后。我们说这个MAC地址是写死在。这个RAM"
+    },
+    {
+      "boundary_sec": 1645.85,
+      "near_text": "可能已经没有安装以太网的网络适配器了。把USB-C这种接口转换成以太网网络适配器。这个网络适配器的MAC地址。而一个以太"
+    }
+  ]
+}

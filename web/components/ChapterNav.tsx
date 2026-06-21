@@ -28,7 +28,8 @@ export default function ChapterNav({ chapters, currentIdx, currentTime, onSeek }
   return (
     // pb-2 给 active chip shadow 留呼吸空间；不再用 -mb-2 抵消，否则下方
     // ChapterDetailCard 跟 chip 行视觉粘连（截图重叠问题）
-    <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+    <nav aria-label={lang === "en" ? "Chapters" : "章节"}
+         className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
       {chapters.map((ch, i) => {
         const active = i === currentIdx;
         const color = CHAPTER_COLORS[i % CHAPTER_COLORS.length];
@@ -40,9 +41,10 @@ export default function ChapterNav({ chapters, currentIdx, currentTime, onSeek }
             key={i}
             ref={active ? activeRef : undefined}
             onClick={() => onSeek(ch.start)}
+            aria-current={active ? "true" : undefined}
             whileTap={{ scale: 0.97 }}
             whileHover={{ y: -1 }}
-            className={`relative shrink-0 flex items-center gap-2 pl-2 pr-3 py-2 rounded-2xl text-xs
+            className={`relative shrink-0 flex min-h-11 items-center gap-2 pl-2 pr-3 py-2 rounded-2xl text-xs
                         border transition-colors overflow-hidden
                         ${active
                           ? "border-[var(--accent)] bg-[var(--bg-elevated)] text-[var(--fg)] shadow-[var(--shadow-sm)]"
@@ -68,6 +70,6 @@ export default function ChapterNav({ chapters, currentIdx, currentTime, onSeek }
           </motion.button>
         );
       })}
-    </div>
+    </nav>
   );
 }

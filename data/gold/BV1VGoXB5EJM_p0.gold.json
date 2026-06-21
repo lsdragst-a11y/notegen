@@ -1,0 +1,66 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1VGoXB5EJM_p0",
+  "local_source": "data/raw/BV1VGoXB5EJM_p0.mp4",
+  "duration": 1596.31,
+  "domain": "learning",
+  "label": "纽约市24种最具代表性特色美食",
+  "boundaries_sec": [
+    321.92,
+    568.16,
+    662.34,
+    827.56,
+    1019.6,
+    1093.28,
+    1164.62,
+    1307.64,
+    1380.55,
+    1452.96
+  ],
+  "n_segments": 11,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1VGoXB5EJM_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 321.92,
+      "near_text": "It's perfectly creamy。it almost just kind of blends in with "
+    },
+    {
+      "boundary_sec": 568.16,
+      "near_text": "鸵鱼一大块。它们都掉下来了。它们就掉下来哇哇。在上面加上那些橄欖。还加上了橄桨。皮肌很脆脆的,很酥脆。"
+    },
+    {
+      "boundary_sec": 662.34,
+      "near_text": "Cats Delicatessen是纯粹纯纯的纯糯米。级级的约30天。里面有20层肉。肉就像牛肉一样那种辣味那种芝士。然"
+    },
+    {
+      "boundary_sec": 827.56,
+      "near_text": "52 years later going forwardWow。和完美的酱汁。它的酱汁。在纽约的时候,你翻面。翻面,翻面"
+    },
+    {
+      "boundary_sec": 1019.6,
+      "near_text": "Staples like their legendary fried chicken。You can feel the "
+    },
+    {
+      "boundary_sec": 1093.28,
+      "near_text": "尝一下橄欖叶的浓稠度。接下来我们来试吃这些煙燻的肉。这道烘焙酱很棒。是一道最棒的菜式。曼哈頓的Chinatown。"
+    },
+    {
+      "boundary_sec": 1164.62,
+      "near_text": "梅拉娃的著名的苹果蛋糕。它們立即飛出桌子。美國最經典的菜式紐約市。我喜歡這個氣氛。而且有什麼相差。有什麼不同的世界。"
+    },
+    {
+      "boundary_sec": 1307.64,
+      "near_text": "與中國城市的熱情街道有什麼分別。問紐多倫多人。在城市裡找到最棒的漢堡。原來在1937年開業。很可能會是最棒。看起來很油膩"
+    },
+    {
+      "boundary_sec": 1380.55,
+      "near_text": "看看裡面的。其實我真的很興奮要嘗嘗。我還沒看裡面但我覺得。裡面有酸酸的洋蔥。再加一點薄餅很美味。炸到脆脆的太棒。"
+    },
+    {
+      "boundary_sec": 1452.96,
+      "near_text": "哦 我终于找到米有鸡有米很热这米很香很柔软鸪鱼很嫩非常柔軟。24小時一天。謝謝收看,晚安。"
+    }
+  ]
+}

@@ -43,10 +43,10 @@ export default function UserMenu() {
       {open && (
         <div className="absolute right-0 mt-1.5 w-44 glass rounded-xl border border-[var(--border)]
                         shadow-[var(--shadow-lg)] py-1.5 z-40">
-          <Link href="/library" onClick={() => setOpen(false)}
+          <Link href="/notebooks" onClick={() => setOpen(false)}
                 className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--fg-secondary)]
                            hover:bg-[var(--bg-muted)] hover:text-[var(--fg)] transition-colors">
-            <BookMarked size={13} /> 我的笔记
+            <BookMarked size={13} /> 我的笔记本
           </Link>
           <Link href="/history" onClick={() => setOpen(false)}
                 className="flex items-center gap-2 px-3 py-2 text-xs text-[var(--fg-secondary)]

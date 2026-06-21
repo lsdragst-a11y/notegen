@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1pB5T6hEWW_p1_p0",
+  "local_source": "data/raw/BV1pB5T6hEWW_p1_p0.mp4",
+  "duration": 709.59,
+  "domain": "learning",
+  "label": "【YouTube最好的英语播客】level 1 | 适合每日磨耳朵，绝佳的英语听力素材 p01 Episode 1",
+  "boundaries_sec": [
+    431.56,
+    529.62
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1pB5T6hEWW_p1_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 431.56,
+      "near_text": "I haven't done it. Our next phrase is beyond my control. It'"
+    },
+    {
+      "boundary_sec": 529.62,
+      "near_text": "So. I'll do it tomorrow.OK.So. we've seen some really great "
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1dkLr6UEJ6_p0",
+  "local_source": "data/raw/BV1dkLr6UEJ6_p0.mp4",
+  "duration": 926.99,
+  "domain": "learning",
+  "label": "《 陈 泽 测 评 山 姆 零 食 》",
+  "boundaries_sec": [
+    78.13,
+    155.96,
+    317.17,
+    484.89,
+    644.82
+  ],
+  "n_segments": 6,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1dkLr6UEJ6_p0.large-v3.neural.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 78.13,
+      "near_text": "我再说一遍。是个人口味。你不爱吃稍微带甜口的。你就不爱食。带一点那种奥里昂的小甜口。烤鸡绝对是啥航爆了。既然咱吃烤机了。"
+    },
+    {
+      "boundary_sec": 155.96,
+      "near_text": "山姆的瑞士卷。山姪瑞事卷好吃好吃。一口都没吃过。一口就没吃過。测原味就行只测元味。原味瑞士卷 给大伙看看橙色。蛋糕皮子加"
+    },
+    {
+      "boundary_sec": 317.17,
+      "near_text": "这顿给还是咱一人给一个我给他行我给它行真的行。这是这个 咱吃一包的。咱是一包公用。很多也是个网上呼声怎么说呢非常高吧。嗯"
+    },
+    {
+      "boundary_sec": 484.89,
+      "near_text": "各种干的苹果干。配料表只有苹果 没有别的特别干净很干。就是一整块苹苹。第一口香肠是果蛋皮感受。这是山姆的零食 山姢用我卖"
+    },
+    {
+      "boundary_sec": 644.82,
+      "near_text": "我跟人别人能识识这味。黄油鲜腾吐司。它又是不那么过分地甜就好吃。我们学校门口卖那个饼干叫啥叫唱片鸡。就是那个圆的唱片机。"
+    }
+  ]
+}

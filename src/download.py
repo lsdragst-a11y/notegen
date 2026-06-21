@@ -295,6 +295,13 @@ def download_video(url: str, out_dir: Path | str = RAW_DIR,
         "--print", "after_move:filepath",
         "--no-simulate",
         "--no-playlist",
+        # 平台字幕白捡（platform_meta.py 消费）：CC/创作者字幕存在时 pipeline
+        # 可跳过 ASR。统一转 vtt（B 站原生 json、YouTube json3 都归一）。
+        # 没有字幕时这些参数是 no-op，不影响下载。
+        "--write-subs", "--write-auto-subs",
+        "--sub-langs", "zh.*,ai-zh,en.*",
+        "--sub-format", "vtt/srt/best",
+        "--convert-subs", "vtt",
     ]
     cmd += _cli_cookie_args(url)
     cmd.append(url)

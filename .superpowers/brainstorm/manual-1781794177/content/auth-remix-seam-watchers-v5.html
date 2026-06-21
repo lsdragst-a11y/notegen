@@ -1,0 +1,50 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NoteGen — Seam Watchers</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#d9d1c5}iframe{display:block;width:100%;height:100%;border:0}</style></head><body><iframe id="preview" src="/files/auth-remix-warm-fold-v2.html" title="NoteGen interactive seam characters"></iframe><script>
+document.getElementById('preview').addEventListener('load',function(){
+  const d=this.contentDocument;
+  const s=d.createElement('style');
+  s.textContent=`
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Serif+Display&display=swap');
+    :root{--look-x:0px;--look-y:0px}body{font-family:'DM Sans',Arial,sans-serif}.note strong,.scene h1,.form h2{font-family:'DM Serif Display',Georgia,serif}
+    .form{border-radius:22px;box-shadow:0 18px 55px rgba(72,58,40,.16)}.field,.submit,.visibility,.state,.approval{border-radius:12px}.submit,.label{font-family:'DM Sans',Arial,sans-serif}.label{letter-spacing:.08em}
+    .cast,.lounger{display:none!important}.auth{overflow:visible}.scene,.form-side{overflow:hidden}.seam-watchers{position:absolute;z-index:12;left:54%;top:52%;width:186px;height:174px;transform:translate(-50%,-50%);pointer-events:none;filter:drop-shadow(0 12px 8px rgba(52,39,24,.15))}
+    .watcher{position:absolute;width:82px;height:138px;transition:transform .32s cubic-bezier(.2,.8,.2,1)}.watcher.left{left:0;top:18px;transform:rotate(-3deg)}.watcher.right{right:0;top:0;transform:rotate(4deg)}
+    .watcher svg{width:100%;height:100%;overflow:visible}.pupil{transform:translate(var(--look-x),var(--look-y));transition:transform .08s linear}.lid{transform-origin:center;transition:transform .25s ease,opacity .2s ease}.privacy-fold{transform-origin:50% 75%;transition:transform .3s ease}
+    .seam-watchers.is-listening .watcher.left{transform:translate(6px,-3px) rotate(1deg)}.seam-watchers.is-listening .watcher.right{transform:translate(-6px,3px) rotate(-1deg)}
+    .seam-watchers.is-private .pupil{opacity:0}.seam-watchers.is-private .lid{transform:scaleY(1.5)}.seam-watchers.is-private .privacy-fold{transform:translateY(-15px) rotate(-7deg)}
+    .watcher-label{position:absolute;left:50%;bottom:2px;transform:translateX(-50%);white-space:nowrap;color:#7b6e5e;font:7px ui-monospace,monospace;letter-spacing:.1em;opacity:.75}
+    @media(max-width:860px){.auth{overflow:hidden}.seam-watchers{left:50%;top:410px;width:156px;height:128px;transform:translate(-50%,-50%) scale(.82)}.watcher-label{display:none}}
+  `;
+  d.head.appendChild(s);
+  const stage=d.createElement('div'); stage.className='seam-watchers'; stage.setAttribute('aria-hidden','true');
+  stage.innerHTML=`
+    <div class="watcher left"><svg viewBox="0 0 82 138">
+      <defs><linearGradient id="leftPaper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffaf1"/><stop offset="1" stop-color="#dbcfbd"/></linearGradient></defs>
+      <path d="M15 6H61L75 20V109C75 121 67 130 56 130H24C13 130 7 121 7 110V14C7 9 10 6 15 6Z" fill="url(#leftPaper)" stroke="#9f917e"/>
+      <path d="M61 6V20H75Z" fill="#ad9e89"/><path d="M61 6V20H75" fill="none" stroke="#91826f"/>
+      <path d="M19 42H61M19 49H51" stroke="#ab9c88" stroke-width="1" opacity=".42"/>
+      <ellipse cx="29" cy="68" rx="6" ry="7" fill="#f7f1e7" stroke="#a59683"/><ellipse cx="53" cy="68" rx="6" ry="7" fill="#f7f1e7" stroke="#a59683"/>
+      <circle class="pupil" cx="29" cy="68" r="2.4" fill="#302d28"/><circle class="pupil" cx="53" cy="68" r="2.4" fill="#302d28"/>
+      <path class="lid" d="M23 64Q29 61 35 64M47 64Q53 61 59 64" fill="none" stroke="#6c6256" stroke-width="1" opacity=".45"/>
+      <path class="privacy-fold" d="M13 92Q40 82 69 92V119Q67 130 56 130H24Q10 129 8 112Z" fill="#eee5d8" stroke="#a99b88"/>
+      <path d="M55 111H67V138L61 130 55 138Z" fill="#a75b45"/>
+      <text x="18" y="116" fill="#756a5e" font-size="7" font-family="monospace">00:12</text>
+    </svg></div>
+    <div class="watcher right"><svg viewBox="0 0 82 138">
+      <defs><linearGradient id="rightPaper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#e7dccd"/><stop offset="1" stop-color="#c7b8a3"/></linearGradient></defs>
+      <path d="M18 13L65 6 75 21 68 112C67 123 59 130 48 130H24C13 130 7 121 8 110L13 23C13 18 15 15 18 13Z" fill="url(#rightPaper)" stroke="#968774"/>
+      <path d="M65 6L75 21 62 23Z" fill="#9c8d79"/><path d="M65 6L62 23 75 21" fill="none" stroke="#857663"/>
+      <path d="M21 41H60M21 48H52" stroke="#998a77" stroke-width="1" opacity=".45"/>
+      <ellipse cx="29" cy="68" rx="6" ry="7" fill="#eee5d8" stroke="#998a77"/><ellipse cx="52" cy="68" rx="6" ry="7" fill="#eee5d8" stroke="#998a77"/>
+      <circle class="pupil" cx="29" cy="68" r="2.4" fill="#302d28"/><circle class="pupil" cx="52" cy="68" r="2.4" fill="#302d28"/>
+      <path class="lid" d="M23 64Q29 61 35 64M46 64Q52 61 58 64" fill="none" stroke="#665c50" stroke-width="1" opacity=".45"/>
+      <path class="privacy-fold" d="M12 92Q38 81 70 90L68 112Q67 124 50 130H24Q8 127 8 109Z" fill="#d7c9b7" stroke="#988976"/>
+      <circle cx="59" cy="109" r="8" fill="none" stroke="#9d624f" stroke-width="1" opacity=".7"/><path d="M55 109H63M59 105V113" stroke="#9d624f" stroke-width=".8" opacity=".7"/>
+      <text x="17" y="116" fill="#6f6457" font-size="7" font-family="monospace">21:05</text>
+    </svg></div><span class="watcher-label">FOLLOWING THE THREAD</span>`;
+  d.querySelector('.auth').appendChild(stage);
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  d.addEventListener('pointermove',e=>{const r=stage.getBoundingClientRect(),cx=r.left+r.width/2,cy=r.top+r.height/2;d.documentElement.style.setProperty('--look-x',clamp((e.clientX-cx)/45,-3.2,3.2)+'px');d.documentElement.style.setProperty('--look-y',clamp((e.clientY-cy)/45,-2.6,2.6)+'px')});
+  const fields=d.querySelectorAll('.field'); fields.forEach((f,i)=>{f.addEventListener('pointerenter',()=>stage.classList.toggle('is-private',i===1));f.addEventListener('pointerleave',()=>stage.classList.remove('is-private'));if(i===0){f.addEventListener('pointerenter',()=>stage.classList.add('is-listening'));f.addEventListener('pointerleave',()=>stage.classList.remove('is-listening'))}});
+  const note=d.querySelector('.note strong');if(note)note.textContent='Warm Fold · Seam Watchers 04';
+});
+</script></body></html>

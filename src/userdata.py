@@ -324,6 +324,57 @@ class _BookmarksRepo:
             conn.close()
 
 
+class _SharesRepo:
+    """笔记分享 token：一笔记一 token（UNIQUE note_id），revoke 即删行。"""
+
+    def ensure(self, note_id: str) -> str:
+        """返回该笔记的分享 token，没有则创建（幂等）。"""
+        import secrets
+        conn = db.connect()
+        try:
+            row = conn.execute("SELECT token FROM note_shares WHERE note_id=?",
+                               (note_id,)).fetchone()
+            if row is not None:
+                return row["token"]
+            token = secrets.token_urlsafe(16)
+            conn.execute(
+                "INSERT INTO note_shares(token, note_id, created_at) VALUES(?,?,?)",
+                (token, note_id, time.time()))
+            conn.commit()
+            return token
+        finally:
+            conn.close()
+
+    def get_token(self, note_id: str) -> Optional[str]:
+        conn = db.connect()
+        try:
+            row = conn.execute("SELECT token FROM note_shares WHERE note_id=?",
+                               (note_id,)).fetchone()
+            return row["token"] if row else None
+        finally:
+            conn.close()
+
+    def resolve(self, token: str) -> Optional[str]:
+        """token → note_id；无效 token → None。"""
+        conn = db.connect()
+        try:
+            row = conn.execute("SELECT note_id FROM note_shares WHERE token=?",
+                               (token,)).fetchone()
+            return row["note_id"] if row else None
+        finally:
+            conn.close()
+
+    def revoke(self, note_id: str) -> bool:
+        conn = db.connect()
+        try:
+            cur = conn.execute("DELETE FROM note_shares WHERE note_id=?", (note_id,))
+            conn.commit()
+            return cur.rowcount > 0
+        finally:
+            conn.close()
+
+
 notes_repo = _NotesRepo()
 jobs_repo = _JobsRepo()
 bookmarks_repo = _BookmarksRepo()
+shares_repo = _SharesRepo()

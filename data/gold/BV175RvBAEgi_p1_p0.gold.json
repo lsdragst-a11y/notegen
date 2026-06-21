@@ -1,0 +1,14 @@
+{
+  "schema_version": 1,
+  "video_id": "BV175RvBAEgi_p1_p0",
+  "local_source": "data/raw/BV175RvBAEgi_p1_p0.mp4",
+  "duration": 798.49,
+  "domain": "learning",
+  "label": "花128元吃全球唯一可口可乐自助餐！就是跟可口可乐没啥关系",
+  "boundaries_sec": [],
+  "n_segments": 1,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV175RvBAEgi_p1_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": []
+}

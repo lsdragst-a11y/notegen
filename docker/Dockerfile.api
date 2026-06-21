@@ -1,0 +1,22 @@
+# NoteGen API 镜像（阶段 B #1）。只装在线服务的轻依赖——
+# GPU 栈（torch/faster-whisper/transformers）不进来，pipeline 由宿主机 worker 跑。
+# ffmpeg：/api/upload 的 ffprobe 时长探测用。
+FROM python:3.10-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir \
+    fastapi "uvicorn[standard]" python-multipart \
+    "rq>=1.16,<2.0" "redis>=5.0,<6.0" "bcrypt>=4.1,<5.0" \
+    "python-docx>=1.1" "loguru>=0.7" yt-dlp
+
+COPY src/ src/
+COPY scripts/ scripts/
+COPY server.py .
+
+EXPOSE 8000
+CMD ["uvicorn", "server:app", "--host", "0.0.0.0", "--port", "8000"]

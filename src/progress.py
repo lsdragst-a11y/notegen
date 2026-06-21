@@ -27,6 +27,7 @@ STAGE_LABELS = {
     "chapters": "章节切分",
     "bilingual": "双语生成",
     "write_outputs": "写出产物",
+    "embeddings": "向量索引",
     "classify_category_for_meta": "分类(meta)",
     "write_md": "写笔记",
 }

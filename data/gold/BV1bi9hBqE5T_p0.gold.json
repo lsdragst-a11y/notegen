@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1bi9hBqE5T_p0",
+  "local_source": "data/raw/BV1bi9hBqE5T_p0.mp4",
+  "duration": 943.12,
+  "domain": "learning",
+  "label": "【英语食堂】这不是普通汉堡！把洋葱压进牛肉里煎出焦脆肉壳🍔，再叠双层芝士🧀和黄油土豆面包，一口爆汁太犯规！｜中英字幕",
+  "boundaries_sec": [
+    245.01,
+    526.1,
+    862.27
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1bi9hBqE5T_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 245.01,
+      "near_text": "我会被更换的好. 我会把肉放在一边. 我们会先烘炒粽子. 让它们冷却. 这样它们就能锁住. 所以我会先这样做好的. 我喜"
+    },
+    {
+      "boundary_sec": 526.1,
+      "near_text": "這是一個好的東西. 它不需要看起來,你知道,它還好,哦,它們會. 它們真的會很好,呃. 所以一個我的鍵是我喜歡超濕的芝麻"
+    },
+    {
+      "boundary_sec": 862.27,
+      "near_text": "每天都可以在bash pro店买到每天老师. 让它酥脆了是的,那太棒了老师. 我们的视频就会开始了很开心. 我们很喜欢做"
+    }
+  ]
+}

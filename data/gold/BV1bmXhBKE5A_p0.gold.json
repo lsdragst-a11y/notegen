@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1bmXhBKE5A_p0",
+  "local_source": "data/raw/BV1bmXhBKE5A_p0.mp4",
+  "duration": 1655.26,
+  "domain": "learning",
+  "label": "废品堆 8 千淘到坏 5090D，拆开瞬间我直接惊傻了",
+  "boundaries_sec": [
+    97.33,
+    196.84,
+    259.58,
+    383.03,
+    604.82,
+    926.24,
+    1140.54,
+    1355.74,
+    1562.08
+  ],
+  "n_segments": 10,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1bmXhBKE5A_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 97.33,
+      "near_text": "你没有办法验证核心的好坏。你这张牌的话。是好是坏的话。需要搬个板子。换上去试一下看行不行。这种核心的话。所以说你想验证的"
+    },
+    {
+      "boundary_sec": 196.84,
+      "near_text": "这时候我们把这个显卡拿到响应镜下面看一看。GB202-250-A1。多了一排这样的英文标词。让队友兄兄看一看。残留的还有"
+    },
+    {
+      "boundary_sec": 259.58,
+      "near_text": "放到BGA焊台上去核心接下来了。对着显纯进行均匀的加热可以看到。显存次完以后。先用风枫对着核金进行均匀的加热。我们还是用"
+    },
+    {
+      "boundary_sec": 383.03,
+      "near_text": "还是说我板子下面联系了。我宁愿相信是我板子联席了我天哪。这是我专门准备的5090的PCB华硕的。把核芯显存再给它拆下来拆"
+    },
+    {
+      "boundary_sec": 604.82,
+      "near_text": "这个BIOS我们要换回来。是5090的 是吧。对应的肯定是5060的BIOS。咱要把原BIOS给它挪过来。华硕的5090"
+    },
+    {
+      "boundary_sec": 926.24,
+      "near_text": "这显程的焊盘都已经数据点正常了。但是核心供电又短路了。这下面是MSVDD 上面那是NVDD。好像是NVDD短路了。下面M"
+    },
+    {
+      "boundary_sec": 1140.54,
+      "near_text": "B2停顿一岁年99。我去屏幕点亮了。这时候咱們把镜头稍微转一转。可以看到屏幕成功点亮。但是能点亮。看看还能不能顺利点亮插"
+    },
+    {
+      "boundary_sec": 1355.74,
+      "near_text": "接下来。我们换成咱們这一个。这时候咱们插上DP的信号线。好 接下来咱們看一下屏幕能否成功点亮。阿丽莎5090D显存大小3"
+    },
+    {
+      "boundary_sec": 1562.08,
+      "near_text": "这时候咱们直接进系统烤机这个心情。咱們可以看到。TDP已经干到了97%左右了。电脑板的整体功耗575瓦。功耗达不满。咱们"
+    }
+  ]
+}

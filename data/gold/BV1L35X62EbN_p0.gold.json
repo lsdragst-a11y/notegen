@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1L35X62EbN_p0",
+  "local_source": "data/raw/BV1L35X62EbN_p0.mp4",
+  "duration": 849.67,
+  "domain": "learning",
+  "label": "装完 Claude Code后先学这三件事｜进阶指南上篇",
+  "boundaries_sec": [
+    73.53,
+    382.92,
+    618.44
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1L35X62EbN_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 73.53,
+      "near_text": "然后我们就在中端去打开这文件夾。然后具体怎么在中段去打開这文件夺呢。对然后我们cd。cd到这文件夹的入金。cd的意思就是"
+    },
+    {
+      "boundary_sec": 382.92,
+      "near_text": "这个claude.nd呢。第二个就是我们直接跟claude讲。然后让claude帮我们写就好了。我们去写入claude."
+    },
+    {
+      "boundary_sec": 618.44,
+      "near_text": "就是在用Claude call。因为很多时候Claude call。或者其他AI。所以我们可以把这句话写入我们的Clau"
+    }
+  ]
+}

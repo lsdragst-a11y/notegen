@@ -11,6 +11,8 @@ import { useLang, pickByLang } from "./LangContext";
 export interface VideoPlayerHandle {
   seek: (sec: number) => void;
   getCurrentTime: () => number;
+  /** 播放/暂停切换（全局 Space 快捷键用） */
+  toggle: () => void;
 }
 
 interface Props {
@@ -44,6 +46,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(function VideoPlayer(
       if (plyrRef.current) plyrRef.current.currentTime = sec;
     },
     getCurrentTime: () => plyrRef.current?.currentTime ?? 0,
+    toggle: () => { plyrRef.current?.togglePlay(); },
   }), []);
 
   useEffect(() => {
@@ -55,7 +58,7 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(function VideoPlayer(
       if (cancelled || !videoRef.current) return;
       const player = new PlyrCtor(videoRef.current, {
         controls: ["play-large", "play", "progress", "current-time", "duration",
-                   "mute", "volume", "settings", "fullscreen"],
+                   "mute", "volume", "settings", "pip", "fullscreen"],
         settings: ["speed"],
         speed: { selected: 1, options: [0.5, 0.75, 1, 1.25, 1.5, 2] },
         keyboard: { focused: true, global: false },
@@ -73,6 +76,14 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(function VideoPlayer(
         player.once("loadedmetadata", doSeek);
         player.once("canplay", doSeek);
       }
+      // 倍速记忆：恢复上次选择，变更时持久化（localStorage 跨笔记共享）
+      try {
+        const saved = parseFloat(localStorage.getItem("notegen-rate") || "");
+        if ([0.5, 0.75, 1, 1.25, 1.5, 2].includes(saved)) player.speed = saved;
+      } catch { /* 隐私模式等 localStorage 不可用时静默 */ }
+      const onRate = () => {
+        try { localStorage.setItem("notegen-rate", String(player.speed)); } catch {}
+      };
       const handler = () => {
         if (onTimeUpdate && plyrRef.current) onTimeUpdate(plyrRef.current.currentTime);
       };
@@ -81,10 +92,12 @@ const VideoPlayer = forwardRef<VideoPlayerHandle, Props>(function VideoPlayer(
       player.on("timeupdate", handler);
       player.on("play", onPlay);
       player.on("pause", onPause);
+      player.on("ratechange", onRate);
       cleanup = () => {
         player.off("timeupdate", handler);
         player.off("play", onPlay);
         player.off("pause", onPause);
+        player.off("ratechange", onRate);
         try { player.destroy(); } catch {}
         plyrRef.current = null;
       };

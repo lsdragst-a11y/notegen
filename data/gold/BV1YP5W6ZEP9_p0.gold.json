@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1YP5W6ZEP9_p0",
+  "local_source": "data/raw/BV1YP5W6ZEP9_p0.mp4",
+  "duration": 788.4,
+  "domain": "learning",
+  "label": "BV1YP5W6ZEP9_p0",
+  "boundaries_sec": [
+    120.16,
+    666.8
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1YP5W6ZEP9_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 120.16,
+      "near_text": "这里我已经提前用UV生成了一个Python工程。现在就让我们正式开始用AI编程。答案是我们可以和AI进行讨论。我建议给A"
+    },
+    {
+      "boundary_sec": 666.8,
+      "near_text": "我们就可以正式让AI来写程序了。然后我们让cloud code直接读取刚刚生成的提示词文件。AI就会根据提示词的要求开始"
+    }
+  ]
+}

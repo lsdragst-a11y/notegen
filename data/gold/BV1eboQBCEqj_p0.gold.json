@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1eboQBCEqj_p0",
+  "local_source": "data/raw/BV1eboQBCEqj_p0.mp4",
+  "duration": 1173.77,
+  "domain": "learning",
+  "label": "世界最大迪士尼游轮！5天到底吃什么？玩什么？",
+  "boundaries_sec": [
+    279.75,
+    571.72,
+    778.25,
+    1045.28
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1eboQBCEqj_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 279.75,
+      "near_text": "我点了酥皮鸭 泰国船面 还有牛排。这两边还有一些餐厅。还有印度飞饼。还有这家Grandma餐厅。还有海南鸡饭黄油炸鸭。这"
+    },
+    {
+      "boundary_sec": 571.72,
+      "near_text": "石楼花园这边有一个很好吃的汉堡餐厅。真的很好吃还挺甜。然后它用的都是安德斯牛肉的汉堡排。还可以吃到好吃的茄子泥和鹰嘴豆泥"
+    },
+    {
+      "boundary_sec": 778.25,
+      "near_text": "整个航程还有两个晚上。也有菜单点菜的館。这个米奇华夫饼还挺好吃的。这里边上还有一些小孩玩的项目。你可以自己打甜筒超级好吃"
+    },
+    {
+      "boundary_sec": 1045.28,
+      "near_text": "我点了这个烧麦。还挺特别的。甜品是一个椰汁米布丁。真的会感觉很特别很开心。这次迪士尼邮轮的花费。你知道这几天每天在邮轮上"
+    }
+  ]
+}

@@ -1,5 +1,12 @@
-# 子项目 #1 只容器化 Redis（一条命令起队列后端）。api / worker / web 原生跑——
-# worker 要直吃本机 GPU，Windows 下 GPU 透传进容器很痛，全容器化留到子项目 #3。
+# 阶段 B #1：compose 全栈。
+# - 老流程不变：`docker compose up -d redis` 仍然只起队列后端
+# - 全栈：     `docker compose --profile full up -d --build` 起 redis + api + web
+# - worker 留宿主机跑 GPU（Windows GPU 透传进容器太痛）：
+#     .venv\Scripts\python.exe scripts\run_worker.py   （或 run_worker_forever.ps1 守护）
+#   worker 连 redis://127.0.0.1:6379（compose 已发布端口），无需任何改动
+# - 局域网他机访问：浏览器要直连 api:8000，构建 web 前设
+#     NEXT_PUBLIC_API_URL=http://<宿主机IP>:8000（build arg，烧进前端）
+#   并给 api 设 NOTEGEN_CORS_ORIGINS=http://<宿主机IP>:3000
 services:
   redis:
     image: redis:7-alpine
@@ -10,3 +17,47 @@ services:
     volumes:
       - ./data/redis:/data
     restart: unless-stopped
+
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.api
+    profiles: ["full"]
+    ports:
+      - "8000:8000"
+    environment:
+      NOTEGEN_REDIS_URL: redis://redis:6379/0
+      NOTEGEN_CORS_ORIGINS: ${NOTEGEN_CORS_ORIGINS:-}
+      NOTEGEN_COOKIE_SECURE: ${NOTEGEN_COOKIE_SECURE:-0}
+      NOTEGEN_VERIFY_BASE: ${NOTEGEN_VERIFY_BASE:-http://localhost:3000}
+      NOTEGEN_AUTO_MAINTENANCE: ${NOTEGEN_AUTO_MAINTENANCE:-1}
+      NOTEGEN_AUTO_BACKUP: ${NOTEGEN_AUTO_BACKUP:-1}
+    volumes:
+      - ./data:/app/data            # db / raw / user_notes（与宿主机 worker 共享）
+      - ./web/public:/app/web/public  # 笔记产物 publish 目标
+      - ./logs:/app/logs
+      - ./backups:/app/backups
+    depends_on:
+      - redis
+    restart: unless-stopped
+
+  web:
+    build:
+      context: ./web
+      args:
+        NEXT_PUBLIC_API_URL: ${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    profiles: ["full"]
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./web/public:/app/public    # notes/videos 不进镜像，运行时挂入
+    restart: unless-stopped
+
+  # HTTPS 网关：等有域名/公网入口再开（ROADMAP 阶段 B #2）
+  # caddy:
+  #   image: caddy:2-alpine
+  #   profiles: ["full"]
+  #   ports: ["80:80", "443:443"]
+  #   volumes:
+  #     - ./docker/Caddyfile:/etc/caddy/Caddyfile
+  #     - caddy_data:/data

@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1YE411D7nH_p47_p0",
+  "local_source": "data/raw/BV1YE411D7nH_p47_p0.mp4",
+  "duration": 1530.58,
+  "domain": "learning",
+  "label": "BV1YE411D7nH_p47_p0",
+  "boundaries_sec": [
+    313.19,
+    914.76
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1YE411D7nH_p47_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 313.19,
+      "near_text": "可以给它分配一个大的分区。当前这个分区的大小。然后把这个分区分配出去。所以固定分区分配。动态分区分配的策略。动态分区分配"
+    },
+    {
+      "boundary_sec": 914.76,
+      "near_text": "那么我们需要对这个空闲分区表进行一定的处理。那由于这个空闲分区的大小。最后决定把这4兆字节的空闲分区分配给这个进程物。那"
+    }
+  ]
+}

@@ -18,6 +18,8 @@ from rq import Queue, Retry
 
 REDIS_URL = os.environ.get("NOTEGEN_REDIS_URL", "redis://127.0.0.1:6379/0")
 JOB_TIMEOUT = 7200  # pipeline 长视频可能跑十几分钟，给足 2h
+QA_TIMEOUT = 600    # 单条 QA：模型冷加载 ~1min + 生成，10min 封顶
+QA_TTL = 24 * 3600  # qa:{id} 结果保留一天，过期自动清
 REDIS_CONNECT_TIMEOUT = float(os.environ.get("NOTEGEN_REDIS_CONNECT_TIMEOUT", "1.0"))
 REDIS_KV_TIMEOUT = float(os.environ.get("NOTEGEN_REDIS_KV_TIMEOUT", "2.0"))
 
@@ -54,6 +56,13 @@ def get_rq():
 
 def get_queue() -> Queue:
     return Queue("default", connection=get_rq())
+
+
+def get_qa_queue() -> Queue:
+    """QA 专用高优队列。worker 监听 ["qa", "default"]（列表序即优先级），
+    问答插队在排队 pipeline 任务之前，但仍与运行中的任务串行——单 worker
+    并发=1 的铁律不破。"""
+    return Queue("qa", connection=get_rq())
 
 
 def _job_key(jid: str) -> str: return f"job:{jid}"
@@ -198,6 +207,12 @@ def job_state(jid: str) -> Optional[dict]:
     return h
 
 
+def job_stage(jid: str) -> Optional[str]:
+    """只读 stage 单字段（HGET）。SSE 轮询循环用：job_state 每次 HGETALL +
+    拉整段 log（最多 500 行），0.4s 一次纯属浪费。job 不存在 → None。"""
+    return get_kv().hget(_job_key(jid), "stage")
+
+
 def read_events(jid: str, start: int) -> tuple[list, int]:
     """从 start 起读事件 json 串增量，返回 (新事件串列表, 新游标)。"""
     evs = get_kv().lrange(_events_key(jid), start, -1)
@@ -210,6 +225,80 @@ def queue_position(jid: str) -> Optional[int]:
         return get_queue().get_job_position(jid)
     except Exception:
         return None
+
+
+# ============ QA（视频问答）：qa:{id} hash + 每用户单飞限制 ============
+
+class ActiveQAError(Exception):
+    """该用户已有进行中的 QA。"""
+
+
+def _qa_key(qid: str) -> str: return f"qa:{qid}"
+def _qa_active_key(uid: str) -> str: return f"qa:active:{uid}"
+
+
+def create_qa(qid: str, note_id: str, question: str, lang: str, user_id: str) -> None:
+    kv = get_kv()
+    kv.hset(_qa_key(qid), mapping={
+        "id": qid, "note_id": note_id, "question": question,
+        "lang": lang, "user_id": user_id,
+        "status": "queued", "created": str(time.time()),
+    })
+    kv.expire(_qa_key(qid), QA_TTL)
+
+
+def set_qa(qid: str, *, status=None, result=None, error=None) -> None:
+    kv = get_kv()
+    fields = {}
+    if status is not None:
+        fields["status"] = str(status)
+    if result is not None:
+        fields["result_json"] = json.dumps(result, ensure_ascii=False)
+    if error is not None:
+        fields["error"] = str(error)[:500]
+    if fields:
+        kv.hset(_qa_key(qid), mapping=fields)
+        kv.expire(_qa_key(qid), QA_TTL)
+
+
+def qa_state(qid: str) -> Optional[dict]:
+    h = get_kv().hgetall(_qa_key(qid))
+    if not h:
+        return None
+    raw = h.pop("result_json", None)
+    if raw:
+        try:
+            h["result"] = json.loads(raw)
+        except ValueError:
+            h["result"] = None
+    if h.get("status") == "queued":
+        try:
+            h["queue_ahead"] = get_qa_queue().get_job_position(qid)
+        except Exception:
+            pass
+    return h
+
+
+def enqueue_ask(note_id: str, question: str, lang: str, user_id: str,
+                history: Optional[list[dict]] = None) -> str:
+    """每用户同时只允许 1 个进行中 QA（GPU 串行，排队多了纯堵）。
+    active 指针带 QA_TTL 过期，残留不会永久卡死。
+    history: [{question, answer}] 追问上下文，直接随任务参数传给 worker。"""
+    kv = get_kv()
+    existing = kv.get(_qa_active_key(user_id))
+    if existing:
+        st = qa_state(existing)
+        if st and st.get("status") in ("queued", "running"):
+            raise ActiveQAError(existing)
+    qid = uuid.uuid4().hex[:12]
+    create_qa(qid, note_id, question, lang, user_id)
+    import worker_tasks  # lazy 避免 import 环
+    get_qa_queue().enqueue(
+        worker_tasks.run_ask, qid, note_id, question, lang, history,
+        job_id=qid, job_timeout=QA_TIMEOUT,
+    )
+    kv.set(_qa_active_key(user_id), qid, ex=QA_TIMEOUT)
+    return qid
 
 
 def _note_exists(note_id: Optional[str]) -> bool:
@@ -246,11 +335,13 @@ def enqueue_generate(source: str, opts: dict) -> tuple[str, bool]:
         return existing, False
     jid = uuid.uuid4().hex[:12]
     create_job(jid, source, opts)
-    kv.set(_idem_key(key), jid)
     import worker_tasks  # lazy 避免 import 环
     get_queue().enqueue(
         worker_tasks.run_generate, jid, source, opts,
         job_id=jid, retry=Retry(max=2, interval=[10, 30]),
         job_timeout=JOB_TIMEOUT,
     )
+    # idem 映射必须在 enqueue 成功之后写：否则 enqueue 抛异常时 idem 指向一个
+    # 永远 stage=queued 却没入队的死 job，_reusable 会一直复用它把用户卡死
+    kv.set(_idem_key(key), jid)
     return jid, True

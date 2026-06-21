@@ -1,0 +1,26 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>NoteGen — Interactive Auth Prototype</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#d9d1c5}iframe{display:block;width:100%;height:100%;border:0}</style></head><body><iframe id="shell" src="/files/auth-remix-seam-watchers-v5.html" title="NoteGen interactive authentication prototype"></iframe><script>
+document.getElementById('shell').addEventListener('load',function(){
+  const inner=this.contentDocument.querySelector('iframe');
+  const enhance=()=>{
+    const d=inner.contentDocument;if(!d||d.querySelector('[data-prototype-ready]'))return;
+    d.body.setAttribute('data-prototype-ready','true');
+    const style=d.createElement('style');style.textContent=`
+      .auth-input{width:100%;font:500 12px 'DM Sans',Arial,sans-serif;outline:none}.auth-input::placeholder{color:#9a9186}.field:has(.auth-input:focus){border-color:#87503f;box-shadow:0 0 0 3px rgba(167,91,69,.11)}
+      .auth-status{min-height:18px;margin-top:11px;font-size:10px;line-height:1.5;color:#8b4334}.auth-status.success{color:#456047}.visibility[aria-pressed=true]{background:#e9ded0;color:#7e4334}
+      .seam-watchers.is-peeking .pupil{opacity:1;transform:translate(var(--look-x),calc(var(--look-y) + 1px)) scaleY(.45)}
+      .seam-watchers.is-error .watcher.left{transform:translate(11px,2px) rotate(5deg)}.seam-watchers.is-error .watcher.right{transform:translate(-11px,2px) rotate(-5deg)}
+      .seam-watchers.is-success .watcher.left{transform:translate(18px,-5px) rotate(7deg)}.seam-watchers.is-success .watcher.right{transform:translate(-18px,-5px) rotate(-7deg)}
+      .submit:disabled{opacity:.65;cursor:wait}
+    `;d.head.appendChild(style);
+    const form=d.querySelector('.form'),stage=d.querySelector('.seam-watchers');form.noValidate=true;
+    const emailWrap=d.querySelector('.field.focus');emailWrap.textContent='';const email=d.createElement('input');email.className='auth-input';email.type='email';email.id='prototype-email';email.placeholder='name@example.com';email.autocomplete='email';emailWrap.appendChild(email);
+    const passWrap=d.querySelector('.password .field');passWrap.textContent='';const pass=d.createElement('input');pass.className='auth-input';pass.type='password';pass.id='prototype-password';pass.placeholder='8+ characters';pass.autocomplete='current-password';passWrap.appendChild(pass);
+    const labels=form.querySelectorAll('.label');if(labels[0])labels[0].setAttribute('for',email.id);if(labels[1])labels[1].setAttribute('for',pass.id);
+    const status=d.createElement('div');status.className='auth-status';status.setAttribute('role','status');status.setAttribute('aria-live','polite');d.querySelector('.submit').before(status);
+    const visibility=d.querySelector('.visibility');visibility.setAttribute('aria-pressed','false');visibility.addEventListener('click',()=>{const show=pass.type==='password';pass.type=show?'text':'password';visibility.setAttribute('aria-pressed',String(show));visibility.setAttribute('aria-label',show?'Hide password':'Show password');stage.classList.toggle('is-private',!show&&d.activeElement===pass);stage.classList.toggle('is-peeking',show)});
+    email.addEventListener('focus',()=>{stage.className='seam-watchers is-listening';status.textContent=''});pass.addEventListener('focus',()=>{stage.className='seam-watchers '+(pass.type==='password'?'is-private':'is-peeking');status.textContent=''});email.addEventListener('input',()=>stage.classList.add('is-listening'));pass.addEventListener('input',()=>stage.classList.toggle('is-private',pass.type==='password'));
+    const submit=d.querySelector('.submit');submit.type='submit';form.addEventListener('submit',e=>{e.preventDefault();stage.className='seam-watchers';status.className='auth-status';if(!email.validity.valid||pass.value.length<8){status.textContent=!email.validity.valid?'Enter a valid email address.':'Password must be at least 8 characters.';status.setAttribute('role','alert');stage.classList.add('is-error');return}status.setAttribute('role','status');submit.disabled=true;submit.textContent='OPENING YOUR NOTEBOOK…';stage.classList.add('is-success');status.className='auth-status success';status.textContent='Welcome back. Your notes are ready.';setTimeout(()=>{submit.disabled=false;submit.textContent='SIGN IN TO NOTEGEN'},1400)});
+  };
+  if(inner.contentDocument&&inner.contentDocument.readyState==='complete')enhance();else inner.addEventListener('load',enhance,{once:true});
+});
+</script></body></html>

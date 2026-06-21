@@ -1,0 +1,51 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1G4dnBDEb1_p0",
+  "local_source": "data/raw/BV1G4dnBDEb1_p0.mp4",
+  "duration": 1030.58,
+  "domain": "learning",
+  "label": "淀粉肠臭豆腐烤冷面 火遍全国的小吃是怎么诞生的？",
+  "boundaries_sec": [
+    71.56,
+    143.9,
+    215.42,
+    285.9,
+    623.46,
+    704.4,
+    968.68
+  ],
+  "n_segments": 8,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1G4dnBDEb1_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 71.56,
+      "near_text": "河南洛阳肉联厂。生产出了第一根国产火腿肠。春都狂达50多万登陆央市。在今天看来都有点魔性的广报。洛阳肉联厂一觉醒来。火腿"
+    },
+    {
+      "boundary_sec": 143.9,
+      "near_text": "淀粉越来多了。都说这哪是火腿肠啊。明明是淀粉肠。才能叫火腔肠。淀粉过油加热产生反应。其实是重归火腿肠市场的没落。面对大众"
+    },
+    {
+      "boundary_sec": 215.42,
+      "near_text": "路边摊创业项目。就是台式烤肠。这台式考肠怎么甜甜的这么好吃呀。但是现在台式的烤腸。但是在夜市路边探已经很难见到了。接下来"
+    },
+    {
+      "boundary_sec": 285.9,
+      "near_text": "像是安徽浙江农地。安御人王志和在北京开酱原卖豆腑。这是北方人对臭 tofu 的固有印象。炸馒头片上抹上臭tofu 乳。北"
+    },
+    {
+      "boundary_sec": 623.46,
+      "near_text": "还诞胜了鸠膝大冷面。他没事就好把这个冷面。最初的烤冷面。就是冷面的面条。烤冷面传到了哈尔滨。原来的面条变成了预制的那种冷"
+    },
+    {
+      "boundary_sec": 704.4,
+      "near_text": "也是90年代在东北改良推广。所以接下来登场的是烤鸡架长言道来沈阳了必须有你鸪架子吃啥是鸭架。把鸯头鸵翅鸸腿鸫胸肉啥的。收"
+    },
+    {
+      "boundary_sec": 968.68,
+      "near_text": "而现在煎冰果子里的那个果子。结婚的时候要炸果子。门卦鼻原本应该是写做门掛壁。最终融合而成煎冰果子。这种方便边走边吃又顶饿"
+    }
+  ]
+}

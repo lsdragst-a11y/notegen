@@ -710,6 +710,10 @@ class PipelineConfig:
     ocr_captions: bool = False
     quality: str = "best"
     force_outline: str | None = None
+    platform_subs: bool = True        # 创作者字幕存在时跳过 ASR（--no-platform-subs 关）
+    use_auto_subs: bool = False       # 自动/AI 字幕也采用（默认 whisper 更准，不采）
+    platform_chapters: bool = True    # 创作者章节锚定切分（--no-platform-chapters 关）
+    embeddings: bool = True           # 末尾算 bge-m3 chunk 向量（QA hybrid 检索用）
 
 
 @dataclass
@@ -764,6 +768,14 @@ def _stage_prepare_video(cfg: PipelineConfig, state: PipelineState) -> None:
         META_DIR.mkdir(parents=True, exist_ok=True)
         slim_meta = {k: state.meta.get(k) for k in
                      ("id", "title", "uploader", "duration", "webpage_url", "description")}
+        # 平台白捡元数据：创作者章节（锚定切分）+ 字幕轨清单（区分手传/自动）
+        if state.meta.get("chapters"):
+            slim_meta["chapters"] = [
+                {"start_time": c.get("start_time"), "end_time": c.get("end_time"),
+                 "title": c.get("title")} for c in state.meta["chapters"]]
+        slim_meta["subtitle_langs"] = list((state.meta.get("subtitles") or {}).keys())
+        slim_meta["auto_caption_langs"] = list(
+            (state.meta.get("automatic_captions") or {}).keys())
         (META_DIR / f"{video.stem}.meta.json").write_text(
             json.dumps(slim_meta, ensure_ascii=False, indent=2), encoding="utf-8")
     state.video = video
@@ -804,6 +816,32 @@ def _stage_build_asr_context(cfg: PipelineConfig, state: PipelineState) -> None:
 def _stage_asr(cfg: PipelineConfig, state: PipelineState) -> None:
     assert state.audio is not None
     state.tag = _tag_for_model(cfg.model_size)
+
+    # 平台字幕直通：创作者字幕 = 零 WER 零 GPU 时间，优先于 ASR 缓存与 whisper。
+    # 自动/AI 字幕默认不采（whisper large-v3 通常更准），--use-auto-subs 显式打开。
+    # 字幕 segments 无 word 级置信度，下游低置信标记/难点检测自动退化（None-safe）。
+    if cfg.platform_subs and not cfg.is_local and state.video is not None:
+        from platform_meta import load_platform_subtitle
+        sub_result = load_platform_subtitle(
+            state.video, state.meta_for_terms, state.resolved_lang,
+            use_auto=cfg.use_auto_subs)
+        if sub_result is not None:
+            print(f"[3/4] 命中平台字幕（{sub_result['subtitle_lang']}, "
+                  f"{sub_result['subtitle_kind']}, {len(sub_result['segments'])} 段），"
+                  f"跳过 ASR")
+            asr_result = sub_result
+            verified_lang = _verify_lang(asr_result, state.resolved_lang)
+            if verified_lang != state.resolved_lang:
+                print(f"      [lang] 字幕实际语言为 {verified_lang}，覆盖 "
+                      f"{state.resolved_lang}")
+                state.resolved_lang = verified_lang
+            if state.corrections:
+                asr_result = apply_term_corrections(asr_result, state.corrections)
+            print(f"      duration={asr_result['duration']:.1f}s, "
+                  f"segments={len(asr_result['segments'])}")
+            state.asr_result = asr_result
+            return
+
     asr_cache = OUTPUT_DIR / f"{state.audio.stem}.{state.tag}.asr.json"
     if asr_cache.exists() and not cfg.force_asr:
         print(f"[3/4] 命中 ASR 缓存: {asr_cache}")
@@ -839,6 +877,20 @@ def _stage_asr(cfg: PipelineConfig, state: PipelineState) -> None:
             for r in dd_stats["runs"][:3]:
                 print(f"        run x{r['run_len']} @ {r['start']:.1f}s: "
                       f"{r['text']}")
+    # 第三道防线：视频内频率投票修复（高置信近形非词典错字，如 数据→数捷/数损。
+    # 置信度掩码与静态词典都拦不住这类失败模式，见 asr_votefix.py docstring）
+    try:
+        from asr_votefix import vote_fix
+        asr_result, vf_stats = vote_fix(asr_result)
+        if vf_stats:
+            total = sum(n for _, n in vf_stats.values())
+            shown = ", ".join(f"{w}→{r}×{n}"
+                              for w, (r, n) in list(vf_stats.items())[:6])
+            print(f"      [votefix] 近形错字投票归一 {total} 处"
+                  f"（{len(vf_stats)} 种变体）: {shown}"
+                  f"{'...' if len(vf_stats) > 6 else ''}")
+    except Exception as e:
+        print(f"      [votefix] 跳过（{e}）")
     print(f"      duration={asr_result['duration']:.1f}s, "
           f"segments={len(asr_result['segments'])}")
     state.asr_result = asr_result
@@ -847,7 +899,21 @@ def _stage_asr(cfg: PipelineConfig, state: PipelineState) -> None:
 # ============ Stage 5: chunk + 超长硬切 ============
 def _stage_chunk(cfg: PipelineConfig, state: PipelineState) -> None:
     assert state.asr_result is not None
-    if cfg.chunker == "texttile":
+    if cfg.chunker == "semantic":
+        # bge-m3 dense 向量切分；模型/依赖缺失回落 texttile（benchmark 对比用
+        # --chunker semantic 显式启用，生产默认仍 texttile）
+        try:
+            from summarize import chunk_by_semantic
+            chunks = chunk_by_semantic(state.asr_result["segments"],
+                                       target_chunk_chars=cfg.chunk_chars)
+            chunker_desc = f"chunker=semantic(bge-m3) target≈{cfg.chunk_chars}c"
+        except Exception as e:
+            print(f"      [chunk] semantic chunker 失败（{e}），回落 texttile",
+                  flush=True)
+            chunks = chunk_by_texttile(state.asr_result["segments"],
+                                       target_chunk_chars=cfg.chunk_chars)
+            chunker_desc = f"chunker=texttile(semantic-fallback) target≈{cfg.chunk_chars}c"
+    elif cfg.chunker == "texttile":
         chunks = chunk_by_texttile(state.asr_result["segments"],
                                    target_chunk_chars=cfg.chunk_chars)
         chunker_desc = f"chunker=texttile target≈{cfg.chunk_chars}c"
@@ -1203,12 +1269,24 @@ def _load_forced_outline(path: str, summaries: list[dict]) -> dict:
 
 def _do_llm_chapters(cfg: PipelineConfig, state: PipelineState) -> None:
     """LLM 层级章节切分（替代 TextTiling 章节路径）。失败时不写 state.chapter_list。"""
+    outline = None
     if cfg.force_outline:
         outline = _load_forced_outline(cfg.force_outline, state.summaries)
         print(f"[chapters] 人工固定 partition：{len(outline['chapters'])} 章"
               f"（--force-outline，跳过 LLM 自动分段）", flush=True)
         state.seg_meta["forced_outline"] = True
-    else:
+    elif cfg.platform_chapters:
+        # 创作者章节锚定：B 站分段 / YouTube chapters 是人工 ground truth，
+        # 顶层边界与标题直接采用，LLM 只做章内摘要/recap/quiz（下游共用块）。
+        # 数据不合格（<2 有效章等）返回 None → 照常走 LLM 切分。
+        from platform_meta import platform_chapter_outline
+        meta_chs = (state.meta_for_terms or {}).get("chapters")
+        outline = platform_chapter_outline(meta_chs, state.summaries)
+        if outline:
+            print(f"[chapters] 平台章节锚定：{len(outline['chapters'])} 章"
+                  f"（创作者自带章节，跳过 LLM 切分）", flush=True)
+            state.seg_meta["platform_chapters"] = True
+    if outline is None:
         print("[chapters] LLM 层级章节切分（Qwen2.5-7B-AWQ）...", flush=True)
         # given-K oracle：仅当 --chapters N（N>0）显式给定时约束章数；
         # bare --chapters（const=-1）或 --chapters 缺省走 free-K 自适应（生产默认）。
@@ -1512,6 +1590,28 @@ def _stage_write_outputs(cfg: PipelineConfig, state: PipelineState) -> None:
     state.md_meta = _load_meta_safe(meta_path)
 
 
+# ============ Stage 16b: chunk 向量落盘（QA hybrid 检索用） ============
+def _stage_embeddings(cfg: PipelineConfig, state: PipelineState) -> None:
+    """bge-m3 给全部 chunk 算 dense 向量 → {stem}.embeddings.npz。
+    模型/依赖缺失时打印提示跳过（QA 回落 BM25，不影响其余产物）。"""
+    if not cfg.embeddings or not state.summaries:
+        return
+    stem = _output_stem(state.audio, state.tag, cfg.summarizer, cfg.chunker,
+                         cfg.chunk_chars, keyframes=cfg.keyframes,
+                         vlm_captions=cfg.vlm_captions)
+    out = OUTPUT_DIR / f"{stem}.embeddings.npz"
+    try:
+        import embeddings as emb
+        n = emb.write_chunk_embeddings(state.summaries, out)
+        emb.unload()
+        print(f"      [embed] {n} 个 chunk 向量 → {out.name}", flush=True)
+    except ImportError:
+        print("      [embed] sentence-transformers 未安装，跳过向量计算"
+              "（QA 将回落 BM25 检索）", flush=True)
+    except Exception as e:
+        print(f"      [embed] 向量计算失败（{e}），跳过（QA 回落 BM25）", flush=True)
+
+
 # ============ Stage 17: 内容大类回写 meta（拿 confidence 字段）============
 def _stage_classify_category_for_meta(cfg: PipelineConfig, state: PipelineState) -> None:
     # 写入 raw/{stem}.meta.json，server._publish_to_web 会 copy 到 web/public。
@@ -1578,6 +1678,7 @@ _STAGES = [
     _stage_chapters,
     _stage_bilingual,
     _stage_write_outputs,
+    _stage_embeddings,
     _stage_classify_category_for_meta,
     _stage_write_md,
 ]
@@ -1596,8 +1697,12 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         vlm_captions: bool = False,
         ocr_captions: bool = False,
         quality: str = "best",
-        force_outline: str | None = None) -> Path:
-    """Orchestrator：把 17 个 kwarg 装进 PipelineConfig，依次跑 18 个 stage。"""
+        force_outline: str | None = None,
+        platform_subs: bool = True,
+        use_auto_subs: bool = False,
+        platform_chapters: bool = True,
+        embeddings: bool = True) -> Path:
+    """Orchestrator：把全部 kwarg 装进 PipelineConfig，依次跑 stage。"""
     cfg = PipelineConfig(
         source=source, is_local=is_local, chunk_chars=chunk_chars,
         model_size=model_size, target_ratio=target_ratio, force_asr=force_asr,
@@ -1606,7 +1711,9 @@ def run(source: str, is_local: bool = False, chunk_chars: int = 800,
         learning_mode=learning_mode, dedupe_asr=dedupe_asr,
         llm_chapters=llm_chapters, confidence_threshold=confidence_threshold,
         lang=lang, vlm_captions=vlm_captions, ocr_captions=ocr_captions,
-        quality=quality, force_outline=force_outline)
+        quality=quality, force_outline=force_outline,
+        platform_subs=platform_subs, use_auto_subs=use_auto_subs,
+        platform_chapters=platform_chapters, embeddings=embeddings)
     state = PipelineState()
     n_stages = len(_STAGES)
     for idx, stage in enumerate(_STAGES, start=1):
@@ -1639,9 +1746,11 @@ def main():
                    help="多模态章节切分中视觉权重 (0=纯文本, 1.0=纯视觉)。"
                         "默认 0.3 让视觉做 tie-breaking 但不主导。"
                         "只有 --keyframes + --chapters 同时启用时生效")
-    p.add_argument("--chunker", choices=("chars", "texttile"), default="chars",
+    p.add_argument("--chunker", choices=("chars", "texttile", "semantic"),
+                   default="chars",
                    help="chars=按字符数硬切（baseline）；"
-                        "texttile=按 segment 间隙 keyword Jaccard 找语义跳变点切")
+                        "texttile=按 segment 间隙 keyword Jaccard 找语义跳变点切；"
+                        "semantic=bge-m3 句向量余弦（需 models/bge-m3，失败回落 texttile）")
     p.add_argument("--learning-mode", dest="learning_mode",
                    action="store_true", default=True,
                    help="md 加入顶部摘要卡 / TOC / 知识点速览 / 术语表 / 章末小结"
@@ -1682,6 +1791,20 @@ def main():
                         "{\"title\", \"indices\": [chunk_idx...]}），跳过 LLM 自动分段，"
                         "其余章节内容（abstract/recap/quiz/双语）仍由 LLM 重新生成。"
                         "需配合 --llm-chapters。")
+    p.add_argument("--no-platform-subs", dest="platform_subs",
+                   action="store_false", default=True,
+                   help="不使用平台字幕（默认创作者字幕存在时跳过 ASR 直接采用）")
+    p.add_argument("--use-auto-subs", action="store_true",
+                   help="自动/AI 字幕也采用（默认只认创作者手传字幕，"
+                        "自动字幕走 whisper 更准）")
+    p.add_argument("--no-platform-chapters", dest="platform_chapters",
+                   action="store_false", default=True,
+                   help="不使用创作者章节锚定（默认 B 站分段/YouTube chapters "
+                        "存在时顶层切分直接采用，LLM 只做章内内容）")
+    p.add_argument("--no-embeddings", dest="embeddings",
+                   action="store_false", default=True,
+                   help="跳过末尾的 bge-m3 chunk 向量计算（QA hybrid 检索用；"
+                        "模型缺失时本来就会自动跳过）")
     args = p.parse_args()
     extra_terms = {}
     for t in args.term:
@@ -1697,7 +1820,9 @@ def main():
         llm_chapters=args.llm_chapters, lang=args.lang,
         vlm_captions=args.vlm_captions, ocr_captions=args.ocr_captions,
         quality=args.quality,
-        force_outline=args.force_outline)
+        force_outline=args.force_outline,
+        platform_subs=args.platform_subs, use_auto_subs=args.use_auto_subs,
+        platform_chapters=args.platform_chapters, embeddings=args.embeddings)
 
 
 if __name__ == "__main__":

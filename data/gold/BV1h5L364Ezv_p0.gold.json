@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1h5L364Ezv_p0",
+  "local_source": "data/raw/BV1h5L364Ezv_p0.mp4",
+  "duration": 402.23,
+  "domain": "learning",
+  "label": "BV1h5L364Ezv_p0",
+  "boundaries_sec": [
+    109.68,
+    311.77
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1h5L364Ezv_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 109.68,
+      "near_text": "对于这个项目我们可以做一个形象的比喻。这个项目其实门槛还是不低的。本项目是一个开源的平台。安装的话可以直接使用项目的Do"
+    },
+    {
+      "boundary_sec": 311.77,
+      "near_text": "本项目是一个3D高斯Split的编辑器。在浏览器里直接去查看编辑还有优化发布3D高斯Split。这个高斯Split是什么"
+    }
+  ]
+}

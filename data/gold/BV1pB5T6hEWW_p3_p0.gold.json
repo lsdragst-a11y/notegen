@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1pB5T6hEWW_p3_p0",
+  "local_source": "data/raw/BV1pB5T6hEWW_p3_p0.mp4",
+  "duration": 691.12,
+  "domain": "learning",
+  "label": "【YouTube最好的英语播客】level 1 | 适合每日磨耳朵，绝佳的英语听力素材 p03 Episode 4",
+  "boundaries_sec": [
+    312.41,
+    370.69,
+    509.35,
+    614.72
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1pB5T6hEWW_p3_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 312.41,
+      "near_text": "Oh。that would have been really bad for me。Oh no。actually I h"
+    },
+    {
+      "boundary_sec": 370.69,
+      "near_text": "when they're sick。Why do they do this。I agree。Very sick。Repo"
+    },
+    {
+      "boundary_sec": 509.35,
+      "near_text": "Day off because you're sick。How may I help you。Be sick。Quite"
+    },
+    {
+      "boundary_sec": 614.72,
+      "near_text": "Coming down。You have a runny nose. Are you coming down with "
+    }
+  ]
+}

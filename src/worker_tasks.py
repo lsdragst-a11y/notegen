@@ -4,6 +4,7 @@ subprocess 跑 pipeline.py（崩溃隔离），解析 stdout 的 [PROGRESS] mark
 但状态走 jobqueue（Redis）而非内存。"""
 from __future__ import annotations
 
+import json
 import os
 import re
 import subprocess
@@ -20,6 +21,18 @@ from progress import parse_progress_marker, stage_band, interpolate
 
 class PipelineFailed(Exception):
     """pipeline 跑完无产物：标 failed 并抛出，让 RQ 记 failed registry。"""
+
+
+# ============ 输出文件名后缀（与 _build_cmd 参数和 pipeline._output_stem 对应）============
+# 完整 stem 格式：{id}.{OUT_TAG}.neural.texttile[.cc{N}][.mm[.vl]]
+#   - .cc{N}：adaptive_chunk_chars ≠ 800 时出现（_run_pipeline_subprocess 按时长自适应）
+#   - .mm.vl：--keyframes --vlm-captions（_build_cmd 默认开）
+# 换 ASR 模型 / chunker 时只改这里，stem 提取和 fallback 扫描两处共用。
+_OUT_TAG = "large-v3"
+_OUT_GLOB = f"*.{_OUT_TAG}.neural.texttile*.md"
+_OUT_STEM_RE = re.compile(rf"data[\\/]outputs[\\/]([^\\/]+)\.{re.escape(_OUT_TAG)}")
+_OUT_SUFFIX_RE = re.compile(
+    rf"\.{re.escape(_OUT_TAG)}\.neural\.texttile(\.cc\d+)?(\.mm(\.vl)?)?$")
 
 
 def _no_retry() -> None:
@@ -50,6 +63,7 @@ def _publish(stem: str, opts: dict) -> str:
 
 def run_generate(job_id: str, source: str, opts: dict) -> Optional[str]:
     started = time.time()
+    unload_qa_model()  # QA 模型若常驻必须先让出 VRAM
     jobqueue.set_progress(job_id, stage="running", percent=4, msg="启动 pipeline")
     _mirror_job(opts, job_id, "running")
     try:
@@ -87,6 +101,88 @@ def run_generate(job_id: str, source: str, opts: dict) -> Optional[str]:
                           note_id=note_id, returncode=returncode)
     _mirror_job(opts, job_id, "done", note_id=note_id)
     return note_id
+
+
+def _resolve_summary_path(note_id: str):
+    """note_id → summary.json 路径。私有/已入库笔记走对象存储；
+    旧公开 demo 笔记落在 web/public/notes/<id>/。找不到返回 None。"""
+    safe = (note_id or "").strip()
+    if not safe or "/" in safe or "\\" in safe or ".." in safe:
+        return None
+    try:
+        row = userdata.notes_repo.get(safe)
+    except Exception:
+        row = None
+    if row is not None:
+        try:
+            p = _get_store().file_path(row["storage_path"], "summary.json")
+            if p.is_file():
+                return p
+        except Exception:
+            pass
+    p = SC.NOTES_DIR / safe / "summary.json"
+    return p if p.is_file() else None
+
+
+def _get_store():
+    from object_store import default_store  # lazy：测试可 monkeypatch
+    return default_store
+
+
+def unload_qa_model() -> None:
+    """卸载常驻在 worker 进程里的 QA 模型（Qwen ~5GB VRAM）。
+    每个 pipeline 任务开跑前必须调用：12GB 卡上 pipeline 子进程内部还要加载
+    全套模型（Whisper/Pegasus/CLIP/Qwen），不让位必 OOM。"""
+    try:
+        import segment_llm
+        if getattr(segment_llm, "_MODEL", None) is None:
+            return
+        segment_llm._MODEL = None
+        segment_llm._TOKENIZER = None
+        import gc
+        import torch
+        gc.collect()
+        torch.cuda.empty_cache()
+        print("[worker] 已卸载常驻 QA 模型，VRAM 让位给 pipeline", flush=True)
+    except Exception as e:
+        print(f"[worker] QA 模型卸载异常（继续跑 pipeline）：{e}", flush=True)
+
+
+def run_ask(qa_id: str, note_id: str, question: str, lang: str,
+            history: Optional[list[dict]] = None) -> None:
+    """RQ 任务：worker 进程内直接跑 qa.answer_question——模型常驻，首问冷加载
+    ~1min，后续问题秒级（2026-06-11 从子进程模式改造，换首答延迟）。
+    代价：CUDA 级硬崩会带垮 worker（Python 异常已兜住）；与 pipeline 的 VRAM
+    互斥靠 run_generate 开头的 unload_qa_model()，worker 串行保证不并发。"""
+    jobqueue.set_qa(qa_id, status="running")
+    summary = _resolve_summary_path(note_id)
+    if summary is None:
+        jobqueue.set_qa(qa_id, status="failed", error="笔记不存在或缺 summary.json")
+        return
+    try:
+        chunks = json.loads(summary.read_text(encoding="utf-8"))
+        if not isinstance(chunks, list) or not chunks:
+            jobqueue.set_qa(qa_id, status="failed", error="summary.json 为空或格式不对")
+            return
+        import qa as qa_mod
+        # hybrid 检索：pipeline 落盘的 chunk 向量存在则启用（查询编码走 CPU，
+        # 不与常驻 Qwen 抢 VRAM）；缺失/不匹配静默回落 BM25
+        doc_vecs, embed_fn = None, None
+        emb_file = summary.parent / "embeddings.npz"
+        if emb_file.is_file():
+            try:
+                import embeddings as emb_mod
+                vecs = emb_mod.load_chunk_embeddings(emb_file)
+                if vecs and len(vecs) == len(chunks):
+                    doc_vecs, embed_fn = vecs, emb_mod.encode_query
+            except Exception:
+                pass
+        result = qa_mod.answer_question(chunks, question, lang=lang, history=history,
+                                        doc_vecs=doc_vecs, embed_fn=embed_fn)
+    except Exception as e:
+        jobqueue.set_qa(qa_id, status="failed", error=f"问答失败：{e}")
+        raise  # 让 RQ 记 failed registry（QA 未配 retry，不会重跑烧卡）
+    jobqueue.set_qa(qa_id, status="done", result=result)
 
 
 def _build_cmd(source: str, opts: dict, chunk_chars: int) -> list[str]:
@@ -179,7 +275,7 @@ def _run_pipeline_subprocess(job_id: str, source: str, opts: dict):
                                   msg=f"CLIP 关键帧 {m.group(1)}/{m.group(2)}")
             continue
         if "[OK]" in line and "笔记" in line:
-            mm = re.search(r"data[\\/]outputs[\\/]([^\\/]+)\.large-v3", line)
+            mm = _OUT_STEM_RE.search(line)
             if mm:
                 stem = mm.group(1)
     proc.wait()
@@ -190,9 +286,11 @@ def _scan_output_fallback(job_id: str, started: float) -> Optional[str]:
     """subprocess 没吐 stem 时，扫 data/outputs 找 job 时段内新写的 md（Windows
     cleanup crash 但产物完整的情形）。返回 stem 或 None。
     （测试 monkeypatch 此函数。）"""
-    candidates = [p for p in SC.DATA_OUTPUTS.glob("*.large-v3.neural.texttile*.md")
+    candidates = [p for p in SC.DATA_OUTPUTS.glob(_OUT_GLOB)
                   if p.stat().st_mtime >= started - 30]
     if not candidates:
         return None
     candidates.sort(key=lambda p: -p.stat().st_mtime)
-    return re.sub(r"\.large-v3\.neural\.texttile(\.mm)?$", "", candidates[0].stem)
+    # 旧 regex 只认 (.mm)?，线上配置实际产出 .cc{N}.mm.vl → 剥不掉后缀，
+    # publish 拿到带后缀的假 stem 必然找不到文件。现在覆盖全部可选段。
+    return _OUT_SUFFIX_RE.sub("", candidates[0].stem)

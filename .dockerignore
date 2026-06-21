@@ -1,0 +1,18 @@
+# API 镜像构建上下文瘦身：大目录全排除（data/models 等运行时用 volume 挂进去）
+.git
+.venv
+.codex-run
+__pycache__
+**/__pycache__
+data
+models
+models_msc_cache
+wheels
+web
+paper
+presentation
+logs
+backups
+docs
+*.zip
+*.docx

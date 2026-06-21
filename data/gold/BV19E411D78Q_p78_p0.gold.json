@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p78_p0",
+  "local_source": "data/raw/BV19E411D78Q_p78_p0.mp4",
+  "duration": 2106.33,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p78 5.3.2 TCP报文段（咸鱼版）",
+  "boundaries_sec": [
+    869.28,
+    1474.89,
+    1821.79
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p78_p0.large-v3.neural.texttile.mm.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 869.28,
+      "near_text": "这个软件可以支持文件的传输。以及聊天文字的传输。传输两个文件。左边这个微信进程。想要给右边这个微信进程。但是现在显然文字"
+    },
+    {
+      "boundary_sec": 1474.89,
+      "near_text": "我还可以再接收多少个字节的数据。大小是2500字节。已经到达接收方的这个。接收缓冲区那么显然。那么这个接收缓冲区就只剩下"
+    },
+    {
+      "boundary_sec": 1821.79,
+      "near_text": "进程B的接收缓冲区。可以设置为64倍的MSS。接下来的MSS。去预留接收缓冲区。两个进程通知对方的这个MSS。那如果进程"
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1G85V6cE1g_p0",
+  "local_source": "data/raw/BV1G85V6cE1g_p0.mp4",
+  "duration": 406.44,
+  "domain": "learning",
+  "label": "懂王一到轰20就起飞？？懂王访华前连发10多条推文像极了上学放假之前的我",
+  "boundaries_sec": [
+    120.12
+  ],
+  "n_segments": 2,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1G85V6cE1g_p0.large-v3.extractive.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 120.12,
+      "near_text": "什么马斯克,苹果,库克。科技类的就是苹果,库克,特斯拉,马斯克,高通。马斯克的话就是他那特斯拉。美国视角看完了。那按照董"
+    }
+  ]
+}

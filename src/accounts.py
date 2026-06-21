@@ -12,8 +12,13 @@ import bcrypt
 
 import db
 
+# bcrypt cost factor 显式钉死（2026 复查：12 仍是 OWASP 推荐区间；
+# bcrypt>=4 的默认也是 12，显式写出避免上游默认变更悄悄降级）。
+_BCRYPT_ROUNDS = 12
+
 # 不存在用户时也跑一次 checkpw，抹平时序侧信道（尽力，非强保证）。
-_DUMMY_HASH = bcrypt.hashpw(b"dummy-password", bcrypt.gensalt()).decode("utf-8")
+_DUMMY_HASH = bcrypt.hashpw(b"dummy-password",
+                            bcrypt.gensalt(rounds=_BCRYPT_ROUNDS)).decode("utf-8")
 
 _PUBLIC_USER_COLS = ("id", "email", "display_name", "role", "email_verified", "created_at")
 
@@ -26,7 +31,8 @@ def _to_user(row) -> Optional[dict]:
 
 # ---------------- 密码 ----------------
 def hash_password(pw: str) -> str:
-    return bcrypt.hashpw(pw.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
+    return bcrypt.hashpw(pw.encode("utf-8"),
+                         bcrypt.gensalt(rounds=_BCRYPT_ROUNDS)).decode("utf-8")
 
 
 def verify_password(pw: str, hashed: str) -> bool:

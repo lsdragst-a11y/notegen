@@ -288,11 +288,11 @@ export function removeCategory(id: string): void {
   syncAfterRemote(deleteRemoteCategory(id));
 }
 
-function useSync<T>(getter: () => T, deps: unknown[] = []): T {
-  const [val, setVal] = useState<T>(getter);
+function useSync<T>(getter: () => T, deps: unknown[] = [], initial: T): T {
+  const [val, setVal] = useState<T>(initial);
   useEffect(() => {
     const sync = () => setVal(getter());
-    sync();
+    queueMicrotask(sync);
     void refreshFromBackend();
     window.addEventListener(BOOKMARKS_EVENT, sync);
     window.addEventListener("storage", sync);
@@ -306,13 +306,13 @@ function useSync<T>(getter: () => T, deps: unknown[] = []): T {
 }
 
 export function useBookmarksList(): Bookmark[] {
-  return useSync(() => read(), []);
+  return useSync(() => read(), [], []);
 }
 
 export function useBookmark(key: string): Bookmark | undefined {
-  return useSync(() => read().find(b => b.key === key), [key]);
+  return useSync(() => read().find(b => b.key === key), [key], undefined);
 }
 
 export function useCategories(): Category[] {
-  return useSync(() => readCats(), []);
+  return useSync(() => readCats(), [], []);
 }

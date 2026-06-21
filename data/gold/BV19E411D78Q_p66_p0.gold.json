@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p66_p0",
+  "local_source": "data/raw/BV19E411D78Q_p66_p0.mp4",
+  "duration": 1446.16,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p66 4.4.4_3 OSPF的分组类型（咸鱼版）",
+  "boundaries_sec": [
+    402.03,
+    835.6,
+    1295.06
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p66_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 402.03,
+      "near_text": "每台路由器每隔10秒会向直接邻居发送一次问候分组。比如说R1每驰10秒的时间会给R3和R4这两台直接邴居。会给 R1 R"
+    },
+    {
+      "boundary_sec": 835.6,
+      "near_text": "接下来我想要抄对方的哪几道题对吧。告诉R2说。那相应的R2会告诉R1说。所以接下R1会构造LSU分续。会把刚才R2请求抄"
+    },
+    {
+      "boundary_sec": 1295.06,
+      "near_text": "所以被洪泛的LSU分组。从各个邻居那收到。但是即便是重处收到。不会无休无止的重备。好的在这节课中。我已经总结在了这一页课"
+    }
+  ]
+}

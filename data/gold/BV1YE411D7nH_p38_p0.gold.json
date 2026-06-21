@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1YE411D7nH_p38_p0",
+  "local_source": "data/raw/BV1YE411D7nH_p38_p0.mp4",
+  "duration": 1210.42,
+  "domain": "learning",
+  "label": "BV1YE411D7nH_p38_p0",
+  "boundaries_sec": [
+    402.14,
+    575.8,
+    1004.21
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1YE411D7nH_p38_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 402.14,
+      "near_text": "管程的精髓所在。看一下管程是怎么解决生产者消费者问题的。管程当中的这一系列逻辑。用这样一堆关键字来定义一个管程。就是管程"
+    },
+    {
+      "boundary_sec": 575.8,
+      "near_text": "如果有两个消费者进程先执行。第二个消费者进程。那他会执行这个管程的insert函数。这个生产者进程。等待队列当中的某一个"
+    },
+    {
+      "boundary_sec": 1004.21,
+      "near_text": "那么其实Java当中也提供了类似于广程的机制。广程这个概念其实离我们并不遥远。广程其实无非也就是为了实现进程的同步和互斥"
+    }
+  ]
+}

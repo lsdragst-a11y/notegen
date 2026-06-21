@@ -160,6 +160,97 @@ def chunk_by_texttile(segments: list[dict], target_chunk_chars: int = 800,
     return chunks
 
 
+def chunk_by_semantic(segments: list[dict], target_chunk_chars: int = 800,
+                      window_chars: int = 400,
+                      min_chunk_chars: int | None = None) -> list[dict]:
+    """dense 向量语义 chunker（bge-m3）：与 chunk_by_texttile 同构——
+    同样的 depth score + target_breaks 贪心选切点，但相似度从 jieba keyword
+    Jaccard 换成句向量余弦。同义改写（"行列式"↔"determinant"）、中英混排、
+    关键词稀疏的口语段上更稳。
+
+    依赖 sentence-transformers + models/bge-m3（缺失时抛 ImportError，
+    调用方回落 texttile）。窗口语义：左右各累计 ≤ window_chars 的相邻
+    segment 文本拼接后整体编码（窗文本一次编码比逐段编码再平均更贴语义）。
+    """
+    if min_chunk_chars is None:
+        min_chunk_chars = max(200, target_chunk_chars // 2)
+
+    segs = [s for s in segments if s.get("text", "").strip()]
+    n = len(segs)
+    if n <= 2:
+        return chunk_by_chars(segs, chunk_chars=target_chunk_chars)
+
+    char_lens = [len(s["text"]) for s in segs]
+    total_chars = sum(char_lens)
+    cum = [0]
+    for c in char_lens:
+        cum.append(cum[-1] + c)
+
+    # 每个 gap 的左右窗文本（与 texttile 同样的窗界定）
+    left_texts, right_texts = [], []
+    for i in range(n - 1):
+        lt, acc = [], 0
+        for j in range(i, -1, -1):
+            lt.append(segs[j]["text"])
+            acc += char_lens[j]
+            if acc >= window_chars:
+                break
+        rt, acc = [], 0
+        for j in range(i + 1, n):
+            rt.append(segs[j]["text"])
+            acc += char_lens[j]
+            if acc >= window_chars:
+                break
+        left_texts.append(" ".join(reversed(lt)))
+        right_texts.append(" ".join(rt))
+
+    from embeddings import encode_texts
+    vecs = encode_texts(left_texts + right_texts)
+    m = n - 1
+    dists: list[float] = []
+    for i in range(m):
+        l, r = vecs[i], vecs[m + i]
+        dot = float(sum(a * b for a, b in zip(l, r)))   # 已归一化 → dot 即 cos
+        dists.append(1.0 - dot)
+
+    depths: list[float] = []
+    for i in range(len(dists)):
+        left = dists[i - 1] if i > 0 else dists[i]
+        right = dists[i + 1] if i < len(dists) - 1 else dists[i]
+        depths.append(dists[i] - 0.5 * (left + right))
+
+    target_breaks = max(1, total_chars // target_chunk_chars - 1)
+    candidates = sorted(range(len(depths)), key=lambda i: -depths[i])
+    chosen: list[int] = []
+    chosen_positions: list[int] = []
+    for idx in candidates:
+        if len(chosen) >= target_breaks:
+            break
+        pos = cum[idx + 1]
+        if pos < min_chunk_chars or pos > total_chars - min_chunk_chars:
+            continue
+        if any(abs(pos - p) < min_chunk_chars for p in chosen_positions):
+            continue
+        chosen.append(idx)
+        chosen_positions.append(pos)
+    chosen.sort()
+
+    chunks: list[dict] = []
+    last = 0
+    for idx in chosen:
+        buf = segs[last:idx + 1]
+        chunks.append({"start": buf[0]["start"], "end": buf[-1]["end"],
+                       "text": "\n".join(s["text"] for s in buf),
+                       "segments": list(buf)})
+        last = idx + 1
+    if last < n:
+        buf = segs[last:]
+        chunks.append({"start": buf[0]["start"], "end": buf[-1]["end"],
+                       "text": "\n".join(s["text"] for s in buf),
+                       "segments": list(buf)})
+    return chunks
+
+
 def split_oversize_chunks(chunks: list[dict],
                           max_dur_sec: float = 120.0,
                           min_split_chars: int = 400) -> tuple[list[dict], list[dict]]:
@@ -330,13 +421,41 @@ def extractive_summary(text: str, target_ratio: float = 0.25,
     return "。".join(picked) + "。"
 
 
+# 序数/量词碎片：一号 / 第二个 / 三种 / 第5步 这类无概念价值 token
+# （P1 2026-06-12 实测上术语表）。
+_ORDINAL_RE = re.compile(
+    r"^第?[一二两三四五六七八九十百千0-9]+"
+    r"[个号种条款点章节步位名次张行列遍层段题道]?$")
+
+
+def _is_garbled_or_ordinal(kw: str) -> bool:
+    """脏 token 过滤（P1 2026-06-12）：
+    - 序数/量词模式（一号/第二个/三种）；
+    - 2~4 字纯中文但不在 jieba 词典 → ASR 近形错字残留（数捷/结枯）。
+      代价：极少数不在词典的真领域新词也会被滤出关键词/术语表（正文不受影响，
+      且 votefix 已在 ASR 层保护一致高频的真新词不被改写）——按精度优先取舍。"""
+    if _ORDINAL_RE.match(kw):
+        return True
+    if 2 <= len(kw) <= 4 and all("一" <= c <= "鿿" for c in kw):
+        try:
+            if not jieba.dt.initialized:
+                jieba.initialize()
+            return jieba.dt.FREQ.get(kw, 0) == 0
+        except Exception:
+            return False
+    return False
+
+
 def keywords_for(text: str, k: int = 6) -> list[str]:
     # ASR 按 segment 分行（每段 \n 间隔），跨行的英文词 jieba 会粘成一个 token
     # （"want\nto" → "wantto"、"you\ncan" → "youcan"）。BV1GofdBZEW7 实测发现
     # 顶部摘要卡出 youcan/wantto/yourrules 等 50+ 合词。统一把空白压成单空格
     # 再喂 jieba，确保英文 token 切对；中文段无影响（jieba 中文分词不依赖空格）。
+    # 多取一倍再过滤脏 token，保证过滤后仍有 ~k 个。
     normalized = " ".join(text.split())
-    return jieba.analyse.extract_tags(normalized, topK=k)
+    tags = jieba.analyse.extract_tags(normalized, topK=k * 2)
+    clean = [t for t in tags if not _is_garbled_or_ordinal(t)]
+    return clean[:k]
 
 
 def summarize_chunks(chunks: Iterable[dict], target_ratio: float = 0.25,
@@ -528,6 +647,8 @@ def build_overview_keywords(summaries: list[dict], top_k: int = 8) -> list[str]:
                 continue
             if _is_short_english_filler(kw):  # 'll', 're', 've', 'is' 等撇号残片
                 continue
+            if _is_garbled_or_ordinal(kw):   # 近形错字残留/序数碎片（P1 2026-06-12）
+                continue
             key = kw.lower()
             if key in seen:
                 continue
@@ -584,6 +705,8 @@ def build_glossary(summaries: list[dict], top_k: int = 15,
             if _is_short_english_filler(kw):
                 continue
             if _example_label_re.match(kw):
+                continue
+            if _is_garbled_or_ordinal(kw):   # 近形错字残留/序数碎片（P1 2026-06-12）
                 continue
             df[kw] = df.get(kw, 0) + 1
             first_idx.setdefault(kw, i)

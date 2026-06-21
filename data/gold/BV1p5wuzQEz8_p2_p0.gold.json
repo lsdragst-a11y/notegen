@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1p5wuzQEz8_p2_p0",
+  "local_source": "data/raw/BV1p5wuzQEz8_p2_p0.mp4",
+  "duration": 948.97,
+  "domain": "learning",
+  "label": "【中配+原声】2026年，如何学习编程 - Tina Huang _ 26-03-10 p02 原声",
+  "boundaries_sec": [
+    328.89,
+    426.57,
+    574.1,
+    727.62,
+    899.55
+  ],
+  "n_segments": 6,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1p5wuzQEz8_p2_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 328.89,
+      "near_text": "topic that was not particularly important when somebody is l"
+    },
+    {
+      "boundary_sec": 426.57,
+      "near_text": "computer and is able to run consistently across different co"
+    },
+    {
+      "boundary_sec": 574.1,
+      "near_text": "your agents at a glance you can see what they're working on "
+    },
+    {
+      "boundary_sec": 727.62,
+      "near_text": "that and put that into ai to help you explain what's going o"
+    },
+    {
+      "boundary_sec": 899.55,
+      "near_text": "I just don't like reading it。so this is a great way to under"
+    }
+  ]
+}

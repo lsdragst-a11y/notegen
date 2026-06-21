@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1EBdcBrEea_p0",
+  "local_source": "data/raw/BV1EBdcBrEea_p0.mp4",
+  "duration": 946.48,
+  "domain": "learning",
+  "label": "一万八千元。8个显卡盲盒",
+  "boundaries_sec": [
+    242.74,
+    366.94,
+    488.08,
+    716.58
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1EBdcBrEea_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 242.74,
+      "near_text": "还没有問題啊借点借點功过不弃不远百为一这测完了。现在不得值个1600块钱吗。挣一两百块钱。8100才那么几十块钱。也就本"
+    },
+    {
+      "boundary_sec": 366.94,
+      "near_text": "卖的话能卖到9000块钱但是。这玩意我说32G的这好卖吗。没查到价值查须1000按到了多多。隐私406年1000块钱。这"
+    },
+    {
+      "boundary_sec": 488.08,
+      "near_text": "又是京东牌的1500电脑配件。买俩一副啊1500。2080呗。2080呢。这玩意儿也值不到1500呀连厂铁子。2080 "
+    },
+    {
+      "boundary_sec": 716.58,
+      "near_text": "这X79双路的。科老的X79 双陆一份主板580。RX580。GT220半个G。"
+    }
+  ]
+}

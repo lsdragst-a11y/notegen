@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p34_p0",
+  "local_source": "data/raw/BV19E411D78Q_p34_p0.mp4",
+  "duration": 2283.96,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p34 3.5.2_4 CSMA CA协议（咸鱼版）",
+  "boundaries_sec": [
+    496.42,
+    885.14,
+    1175.86,
+    1835.49
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p34_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 496.42,
+      "near_text": "假设现在A这台手机正在给AP发送信号。信号就越强。信号就越弱,对吧。也就是D给AP发送这个电磁波信号的同时。那么信号越强"
+    },
+    {
+      "boundary_sec": 885.14,
+      "near_text": "如果信道盲的话。如果信道空闲。如果信道不空闲。我们先来看信道空闲的情况。它需要先监听信道。只有信道空闲的时候。才会发送数"
+    },
+    {
+      "boundary_sec": 1175.86,
+      "near_text": "先监听信道。如果信道空闲那么。如果信道不空闲。数据的这个发送房会保持监听信道。会先预约信道。接下来我A节点要给AP这个节"
+    },
+    {
+      "boundary_sec": 1835.49,
+      "near_text": "信道预约的机制。那么我在发送这个数据帧之前就不预约信道。就会先进行信道预约。只有同意了信道预约之后我才会发出我的这个长数"
+    }
+  ]
+}

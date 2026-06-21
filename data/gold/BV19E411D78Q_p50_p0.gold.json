@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p50_p0",
+  "local_source": "data/raw/BV19E411D78Q_p50_p0.mp4",
+  "duration": 1852.42,
+  "domain": "learning",
+  "label": "BV19E411D78Q_p50_p0",
+  "boundaries_sec": [
+    1057.17,
+    1165.89
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p50_p0.large-v3.neural.texttile.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 1057.17,
+      "near_text": "这个学校采用了定常子网划分的方式。但是在这个公司的内部并没有划分子网。并没有划分子网好。没有划分子网的。学校网络是采用了"
+    },
+    {
+      "boundary_sec": 1165.89,
+      "near_text": "还需要给他们配置一个默认网关。默认网关就是如果一台电脑一台主机。它的IP数据报是要发往互联网。我们可以把它的默认网关配置"
+    }
+  ]
+}

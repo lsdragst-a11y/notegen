@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1B3DMByEDP_p0",
+  "local_source": "data/raw/BV1B3DMByEDP_p0.mp4",
+  "duration": 757.59,
+  "domain": "learning",
+  "label": "日本平民烤肉自助！厚切牛舌吃回本！实在太爽了！",
+  "boundaries_sec": [
+    90.5,
+    543.66
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1B3DMByEDP_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 90.5,
+      "near_text": "你看我们点了薄切牛舍和一个厚切牛车。那么我们可以看一下他们家后切牛舌的品质。吃后切的牛舍的时候一定要吃蛇干部分。这后牛舌"
+    },
+    {
+      "boundary_sec": 543.66,
+      "near_text": "家烤的块状牛肉的牛肉粒。这不是合成牛肉类。这是纯牛肉汁水挺多。你这盘牛肉串了。牛肉方面我们鉴赏完了。要论官職最高。他空有"
+    }
+  ]
+}

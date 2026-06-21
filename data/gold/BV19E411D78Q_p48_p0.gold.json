@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p48_p0",
+  "local_source": "data/raw/BV19E411D78Q_p48_p0.mp4",
+  "duration": 2304.1,
+  "domain": "learning",
+  "label": "BV19E411D78Q_p48_p0",
+  "boundaries_sec": [
+    540.8,
+    870.78,
+    1707.33
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p48_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 540.8,
+      "near_text": "所以只有网络号和子网号完全相同的两个IP地址才属于同一个子网,好。网络号加子网号的这个部分。接下来介绍子网研码的用法。只"
+    },
+    {
+      "boundary_sec": 870.78,
+      "near_text": "它会用这个目的IP地址和自己的每一行进行对比。会用这个子网研码和目的IP地址进行逐位的语运算。这样的话就可以提取出这个目"
+    },
+    {
+      "boundary_sec": 1707.33,
+      "near_text": "到达了下一条路由器。默认路由的配置通常就是网络号全零。子网掩码也是全零。全零的子网掩码和任何目的IP地址主位相语。默认路"
+    }
+  ]
+}

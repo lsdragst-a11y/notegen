@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p60_p0",
+  "local_source": "data/raw/BV19E411D78Q_p60_p0.mp4",
+  "duration": 1345.11,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p60 4.4.3_2 RIP的工作示例（从路由器启动到收敛）（咸鱼版）",
+  "boundaries_sec": [
+    351.35,
+    710.62,
+    1197.34
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p60_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 351.35,
+      "near_text": "包含着每一台路由器自己的路由表。各个路由器开机。类似的R22这台路由器会把自己的整张路由表信息发送给邻居R1。于是每一台"
+    },
+    {
+      "boundary_sec": 710.62,
+      "near_text": "来自R1的这条报文。是不是也可以帮助R2这台路由器。对于R3这台路由器来说。通过R1发来的这个报文。帮助R3路由器发现了"
+    },
+    {
+      "boundary_sec": 1197.34,
+      "near_text": "这个网络的路由信息。我们总共交换了三轮路由信息。更新完路由表之后。所有的路由器。意味着每一台路由。这些路由器之间。还会交"
+    }
+  ]
+}

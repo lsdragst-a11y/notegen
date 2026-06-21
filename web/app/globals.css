@@ -6,19 +6,20 @@
    会在 hydration 前设好 data-theme（system 模式下读 matchMedia） */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-/* === Apple-inspired design tokens === */
+/* === NotebookLM-inspired design tokens（docs/frontend-redesign.md §2）=== */
 :root {
-  --bg: #fbfbfd;
+  --bg: #f8fafd;            /* 纸面感页面底色 */
   --bg-elevated: #ffffff;
-  --bg-muted: #f5f5f7;
-  --fg: #1d1d1f;
-  --fg-secondary: #6e6e73;
-  --fg-tertiary: #86868b;
-  --accent: #0071e3;
-  --accent-hover: #0077ed;
+  --bg-muted: #eef2f8;
+  --fg: #1f1f1f;
+  --fg-secondary: #5f6368;
+  --fg-tertiary: #80868b;
+  --accent: #0b57d0;        /* Google 蓝，全站唯一强调色 */
+  --accent-hover: #0842a0;
+  --on-accent: #ffffff;     /* accent 背景上的文字色 */
   --border: rgba(0, 0, 0, 0.08);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.10);
   --glass: rgba(255, 255, 255, 0.72);
   --warm-glow: #ffba2e;
@@ -28,19 +29,20 @@
 /* 深色 tokens（data-theme="dark" 时启用）。Apple 系统色调，对比度按 WCAG AA 校准。
    inline script 在 layout 顶部根据 localStorage / matchMedia 设 data-theme。 */
 :root[data-theme="dark"] {
-  --bg: #000000;
-  --bg-elevated: #1c1c1e;
-  --bg-muted: #2c2c2e;
-  --fg: #f5f5f7;
-  --fg-secondary: #b0b0b5;        /* 原 #aeaeb2 微提亮 */
-  --fg-tertiary: #a8a8ad;          /* 原 #8e8e93 仅 3.2:1，提到 4.6:1 达 AA */
-  --accent: #0a84ff;
-  --accent-hover: #409cff;
-  --border: rgba(255, 255, 255, 0.14);  /* 原 0.10 在 #000 上几乎不可见 */
+  --bg: #1f1f20;                   /* NotebookLM 深灰而非纯黑，卡片层次更清楚 */
+  --bg-elevated: #28292a;
+  --bg-muted: #333537;
+  --fg: #e8eaed;
+  --fg-secondary: #bdc1c6;
+  --fg-tertiary: #9aa0a6;
+  --accent: #8ab4f8;               /* 暗色下用浅蓝（文字/图标用） */
+  --accent-hover: #aecbfa;
+  --on-accent: #062e6f;            /* 浅蓝底上用深蓝字 */
+  --border: rgba(255, 255, 255, 0.12);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.40);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.50);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.35);
   --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.60);
-  --glass: rgba(28, 28, 30, 0.72);
+  --glass: rgba(40, 41, 42, 0.72);
 }
 
 @theme inline {
@@ -66,10 +68,11 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-feature-settings: "kern", "liga", "calt";
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
 }
 
-::selection { background: rgba(0, 113, 227, 0.20); }
+::selection { background: rgba(11, 87, 208, 0.20); }
+[data-theme="dark"] ::selection { background: rgba(138, 180, 248, 0.30); }
 
 ::-webkit-scrollbar { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -83,17 +86,17 @@ html, body {
   border: 1px solid var(--border);
 }
 
+/* 静止态靠边框分层（NotebookLM 手感），阴影只在 hover 出现一档 */
 .apple-card {
   background: var(--bg-elevated);
-  border-radius: 18px;
-  box-shadow: var(--shadow-md);
+  border-radius: 16px;
   border: 1px solid var(--border);
   transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
               box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .apple-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
 }
 
 /* 可拖拽卡片：禁用 apple-card 自带的 hover transform 与 transition，
@@ -108,7 +111,7 @@ html, body {
 
 .apple-button {
   background: var(--accent);
-  color: white;
+  color: var(--on-accent);
   border-radius: 980px;
   padding: 0.625rem 1.25rem;
   font-weight: 500;

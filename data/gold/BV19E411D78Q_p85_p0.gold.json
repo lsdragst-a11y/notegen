@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p85_p0",
+  "local_source": "data/raw/BV19E411D78Q_p85_p0.mp4",
+  "duration": 2468.23,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p85 5.3.6_1 TCP拥塞控制（慢开始和拥塞避免）（咸鱼版）",
+  "boundaries_sec": [
+    460.81,
+    850.14,
+    1048.78,
+    1187.98,
+    1565.53,
+    1975.75
+  ],
+  "n_segments": 7,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p85_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 460.81,
+      "near_text": "自己的这个拥塞窗口。到底是没有拥塞。自己的拥塞窗口。而拥塞避免算法。拥塞控制这个考点。拥塞窗户的大小。而拥塞窗口的大小等"
+    },
+    {
+      "boundary_sec": 850.14,
+      "near_text": "这个拥塞窗口的大小是什么樣子。拥塞窗口的大小是16。我们知道拥塞窗头等于16。拥塞窗頭等于 16 倍的 MSS 对吧。这"
+    },
+    {
+      "boundary_sec": 1048.78,
+      "near_text": "第四天迥动量再番一倍。那么对于TCP协议。先把拥塞窗口的值设置为1从1开始。就让拥塞窗头的值加1。这个拥塞窗口的大小就会"
+    },
+    {
+      "boundary_sec": 1187.98,
+      "near_text": "好那么数捷的接收方收到这个TCP报文段之后。于是返回一个ACK。我们每收到一个ACK。所以拥塞窗口的值。它就会返回一个A"
+    },
+    {
+      "boundary_sec": 1565.53,
+      "near_text": "而是收到冗余ACK。返回一个ACK。拥塞窗导了2。每个ACK导致拥塞窗宽。拥塞窗可加1。拥塞窗口变成了4。返回4个ACK"
+    },
+    {
+      "boundary_sec": 1975.75,
+      "near_text": "拥塞窗口的大小应该等于多少再次强调。拥塞窗可是9倍的MSS。拥塞窗的这个数字和MSS之间。这个题目我们就得把拥塞窗口和接"
+    }
+  ]
+}

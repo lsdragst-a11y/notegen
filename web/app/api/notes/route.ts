@@ -79,8 +79,9 @@ export async function GET() {
   }
   dirents.sort((a, b) => b.mtimeMs - a.mtimeMs);
 
-  const items: NoteEntry[] = [];
-  for (const d of dirents) {
+  // 每个目录 4 次 fs 操作，串行 await 会随笔记数线性放大首页延迟 → 并行。
+  // Promise.all 保持 dirents 的 mtime 倒序，失败目录映射为 null 再过滤。
+  const settled = await Promise.all(dirents.map(async (d): Promise<NoteEntry | null> => {
     const dir = path.join(NOTES_DIR, d.name);
     let summary: { end?: number }[];
     let chapters: { chapters?: unknown[] };
@@ -92,7 +93,7 @@ export async function GET() {
       summary = JSON.parse(sRaw);
       chapters = JSON.parse(cRaw);
     } catch {
-      continue;  // 缺 summary/chapters → 半成品，跳过
+      return null;  // 缺 summary/chapters → 半成品，跳过
     }
 
     let meta: Record<string, string | number | undefined> = {};
@@ -109,7 +110,7 @@ export async function GET() {
       videoSizeMb = +(stat.size / 1024 / 1024).toFixed(1);
     } catch { /* video missing */ }
 
-    items.push({
+    return {
       id: d.name,
       title: (meta.title as string) || d.name,
       domain: guessDomain((meta.title as string) || "", meta.category as string | undefined),
@@ -119,7 +120,8 @@ export async function GET() {
       uploader: (meta.uploader as string) || "",
       webpage_url: (meta.webpage_url as string) || "",
       video_size_mb: videoSizeMb,
-    });
-  }
+    };
+  }));
+  const items = settled.filter((x): x is NoteEntry => x !== null);
   return NextResponse.json(items, { headers: { "Cache-Control": "no-store" } });
 }

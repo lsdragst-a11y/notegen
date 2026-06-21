@@ -4,8 +4,6 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import NavBar from "@/components/NavBar";
-import FluidBG from "@/components/FluidBG";
-import ParticleBG from "@/components/ParticleBG";
 import { subscribeJob, type JobEvent } from "@/lib/api";
 
 function GenerateInner() {
@@ -77,8 +75,6 @@ function GenerateInner() {
 
   return (
     <main className="relative min-h-screen">
-      <FluidBG />
-      <ParticleBG />
       <NavBar />
 
       <section className="relative z-10 max-w-2xl mx-auto px-6 pt-20 pb-20">
@@ -158,7 +154,7 @@ function GenerateInner() {
                   <div
                     key={s.name}
                     className={`rounded-lg p-2 text-center transition-colors
-                                ${done ? "bg-[var(--accent)] text-white"
+                                ${done ? "bg-[var(--accent)] text-[var(--on-accent)]"
                                       : active ? "bg-[var(--bg-muted)] text-[var(--fg)] ring-1 ring-[var(--accent)]"
                                               : "bg-[var(--bg-muted)] text-[var(--fg-tertiary)]"}`}
                   >

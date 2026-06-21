@@ -1,0 +1,6 @@
+node_modules
+.next
+tsconfig.tsbuildinfo
+# 笔记产物与视频不进镜像（几个 GB），compose 里 volume 挂 ./web/public:/app/public
+public/notes
+public/videos

@@ -24,7 +24,7 @@ export default function GlossaryList({ glossary, onSeek }: Props) {
           >
             <button
               onClick={() => onSeek(g.firstStart)}
-              className="tag-chip hover:bg-[var(--accent)] hover:text-white transition-colors
+              className="tag-chip hover:bg-[var(--accent)] hover:text-[var(--on-accent)] transition-colors
                          inline-flex items-center gap-1"
             >
               <Book size={11} />

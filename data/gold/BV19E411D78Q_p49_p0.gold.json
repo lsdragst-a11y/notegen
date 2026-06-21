@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p49_p0",
+  "local_source": "data/raw/BV19E411D78Q_p49_p0.mp4",
+  "duration": 2002.3,
+  "domain": "learning",
+  "label": "BV19E411D78Q_p49_p0",
+  "boundaries_sec": [
+    267.62,
+    569.63,
+    1014.75
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p49_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 267.62,
+      "near_text": "那么在子网划分的时候。假设这个学校采用定常子网划分的策略。那定常子网。如果要划分为4个定常的子网。那这就意味着每个子网都"
+    },
+    {
+      "boundary_sec": 569.63,
+      "near_text": "可以看到第一级的这个ISP在划分下一级的子网的时候。可以根据各个子网对IP地址的实际需求去调整每一个子网的大小。省一级的"
+    },
+    {
+      "boundary_sec": 1014.75,
+      "near_text": "那么给狗肾分配4个IP地址之后。闲鱼电信就只剩下4个IP地址可以用了。那剩下的这4个IP地址还可以再划分为下一级的子网吗"
+    }
+  ]
+}

@@ -1,0 +1,46 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1uHL16SEBp_p0",
+  "local_source": "data/raw/BV1uHL16SEBp_p0.mp4",
+  "duration": 485.54,
+  "domain": "learning",
+  "label": "从0.5一个到25元一个都能吃到什么样的包子",
+  "boundaries_sec": [
+    73.18,
+    145.0,
+    217.42,
+    290.69,
+    375.88,
+    461.56
+  ],
+  "n_segments": 7,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1uHL16SEBp_p0.large-v3.neural.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 73.18,
+      "near_text": "这一袋六个。盛周的盛洲小笨包。剩油的小笼包。我是知道你什么味道的好好吃。像是有弹劲的你压回去。是比上一款好吃的值得風味派"
+    },
+    {
+      "boundary_sec": 145.0,
+      "near_text": "口感 味道 肉量。甚至它这个面皮。而且还是红烧牛肉包。看这几个大包子。哇 大包子庆祝了一点啊。再配上一些牛肉沫。里面馅料"
+    },
+    {
+      "boundary_sec": 217.42,
+      "near_text": "这个包子有点意思。这个价格就是5块钱一个。这一笼就是35块钱樱花限定。不愧是5块钱一个。四个大包子就这样寄过来了。四个打"
+    },
+    {
+      "boundary_sec": 290.69,
+      "near_text": "由于包子和肉馅太大了。感觉肉丸是肉临面皮是面皮。我这光是肉碗都比之前的包子大了。我们食材必须得更换了蟹黄汤包。皮冻小麦粉"
+    },
+    {
+      "boundary_sec": 375.88,
+      "near_text": "这是一个鸡黄大肉包。25块一个。配的有吸管。这个就是咱们的蟹黄大肉包。哇 好吃多了这汉又鲜。这是蟾黄大肉包。嗯 哇 好吃"
+    },
+    {
+      "boundary_sec": 461.56,
+      "near_text": "哇塞 这还太过瘾了。99一个也是那么蟹黄大肉包。可以算是一款平剃款。但总体来说还是很香的。"
+    }
+  ]
+}

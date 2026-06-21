@@ -1,7 +1,6 @@
 "use client";
 import { useEffect, useMemo, useState } from "react";
 import NavBar from "@/components/NavBar";
-import FluidBG from "@/components/FluidBG";
 import { ArrowDownUp, Check, TriangleAlert, Zap } from "lucide-react";
 
 interface ChapterSlim {
@@ -137,7 +136,6 @@ export default function MMAblationPage() {
   if (!manifest) {
     return (
       <>
-        <FluidBG />
         <NavBar />
         <div className="p-8 text-[var(--fg-secondary)]">加载中…</div>
       </>
@@ -148,7 +146,6 @@ export default function MMAblationPage() {
 
   return (
     <>
-      <FluidBG />
       <NavBar />
       <main className="relative max-w-7xl mx-auto px-6 py-10 space-y-8">
         <header className="space-y-3">

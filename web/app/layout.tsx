@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { DM_Sans, DM_Serif_Display } from "next/font/google";
+import Script from "next/script";
 import "./globals.css";
 import { LangProvider } from "@/components/LangContext";
 import { AuthProvider } from "@/components/AuthContext";
@@ -46,7 +47,11 @@ export default function RootLayout({
   return (
     <html lang="zh-CN" className={`h-full antialiased ${dmSans.variable} ${dmSerifDisplay.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <Script
+          id="theme-init"
+          strategy="beforeInteractive"
+          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
+        />
       </head>
       <body className="min-h-full flex flex-col">
         <AuthProvider>

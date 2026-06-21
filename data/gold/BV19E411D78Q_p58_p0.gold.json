@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "video_id": "BV19E411D78Q_p58_p0",
+  "local_source": "data/raw/BV19E411D78Q_p58_p0.mp4",
+  "duration": 673.23,
+  "domain": "learning",
+  "label": "王道计算机考研 计算机网络 p58 4.4.2 分层次的路由协议（咸鱼版）",
+  "boundaries_sec": [
+    276.06,
+    472.56
+  ],
+  "n_segments": 3,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV19E411D78Q_p58_p0.large-v3.neural.texttile.cc600.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 276.06,
+      "near_text": "在一个自治器统内部路游器的数量和网络的数��不会特别多。大致被划分为了将近8万个自治系统。在自治统之间。而在一个自治器统"
+    },
+    {
+      "boundary_sec": 472.56,
+      "near_text": "在自治器统内部使用的这种内部的路由协议。我们可以把它称为内部网关协义。就是典型的内部网关协议。路由器通常被称为网關所以内"
+    }
+  ]
+}

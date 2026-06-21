@@ -30,7 +30,9 @@ export interface NoteBundle {
   meta: NoteMeta | null;
   videoUrl: string;
   keyframeBase: string;   // 末尾带 /，拼 keyframe.rel
-  isPrivate: boolean;
+  /** 经 backend /file 端点加载（含公开 DB 笔记与私有笔记），false = Next 静态目录。
+   *  注意这不是可见性——真实 visibility 在后端 notes 表，前端目前不需要。 */
+  viaBackend: boolean;
 }
 
 async function loadNoteFromFileBase(
@@ -38,7 +40,7 @@ async function loadNoteFromFileBase(
   fileBase: string,
   videoUrl: string,
   keyframeBase: string,
-  isPrivate: boolean,
+  viaBackend: boolean,
 ): Promise<NoteBundle | null> {
   const summaryR = await fetch(`${fileBase}/summary.json`, {
     credentials: "include",
@@ -62,7 +64,7 @@ async function loadNoteFromFileBase(
     meta,
     videoUrl,
     keyframeBase,
-    isPrivate,
+    viaBackend,
   };
 }
 
@@ -94,10 +96,20 @@ export async function fetchNote(id: string): Promise<NoteBundle> {
       meta,
       videoUrl: `${PUBLIC_BASE}/videos/${id}.mp4`,
       keyframeBase: `${pub}/keyframes/`,
-      isPrivate: false,
+      viaBackend: false,
     };
   }
   throw new Error("笔记不存在或无权访问");
+}
+
+/** 分享链接加载：/api/shared/{token}/file 免登录托管同一套笔记文件。 */
+export async function fetchSharedNote(token: string, noteId: string): Promise<NoteBundle> {
+  const base = `${API_BASE}/api/shared/${encodeURIComponent(token)}/file`;
+  const bundle = await loadNoteFromFileBase(
+    noteId, base, `${base}/video.mp4`, `${base}/keyframes/`, true,
+  );
+  if (!bundle) throw new Error("分享链接无效或已被撤销");
+  return bundle;
 }
 
 // === 重难点检测（同 backend src/summarize.py:chunk_marks 的 JS 端实现）===

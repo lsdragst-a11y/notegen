@@ -1,0 +1,80 @@
+# NoteGen CI：无 GPU 可验证的部分全跑一遍。
+# - python：语法编译 + 单测子集（fakeredis / 临时 SQLite / TestClient，不碰 Redis、模型、GPU）
+# - web：   TypeScript 全量类型检查（tsc --noEmit）
+# GPU 路径（pipeline / worker / QA 生成）无法在 runner 上验证，靠本机手测。
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  python:
+    name: Python · py_compile + unit tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          cache: pip
+          cache-dependency-path: requirements.txt
+
+      # 只装单测子集需要的轻依赖（faster-whisper / torch / transformers 等 GPU 栈不装）
+      - name: Install test dependencies
+        run: >
+          pip install
+          fastapi httpx python-multipart uvicorn
+          rq "redis>=5,<6" fakeredis bcrypt
+          jieba python-docx pyyaml loguru
+
+      - name: Syntax check (py_compile)
+        run: |
+          python -m py_compile server.py src/*.py
+          python -m py_compile scripts/test_*.py scripts/md_to_docx.py scripts/run_worker.py
+
+      - name: Unit tests (no GPU / no Redis)
+        env:
+          PYTHONIOENCODING: utf-8
+        run: |
+          python scripts/test_service_common.py
+          python scripts/test_jobqueue.py
+          python scripts/test_qa_unit.py
+          python scripts/test_accounts_unit.py
+          python scripts/test_userdata_unit.py
+          python scripts/test_shares_unit.py
+          python scripts/test_auth_api.py
+          python scripts/test_export_unit.py
+          python scripts/test_maintenance_unit.py
+          python scripts/test_ratelimit_unit.py
+          python scripts/test_mailer_unit.py
+          python scripts/test_backup_unit.py
+          python scripts/test_platform_meta_unit.py
+          python scripts/test_retrieval_hybrid_unit.py
+          python scripts/test_votefix_unit.py
+          python scripts/test_quality_filters_unit.py
+          python scripts/test_hardening_api.py
+
+  web:
+    name: Web · tsc --noEmit
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: web
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+
+      - name: Install
+        run: npm ci
+
+      - name: Type check
+        run: npx tsc --noEmit

@@ -1,0 +1,36 @@
+{
+  "schema_version": 1,
+  "video_id": "BV1ky97B9EAG_p0",
+  "local_source": "data/raw/BV1ky97B9EAG_p0.mp4",
+  "duration": 550.12,
+  "domain": "learning",
+  "label": "零下20度也要喝，韩国人为啥对冰美式这么疯狂？",
+  "boundaries_sec": [
+    87.14,
+    258.06,
+    408.12,
+    472.14
+  ],
+  "n_segments": 5,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV1ky97B9EAG_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 87.14,
+      "near_text": "而是深深地刻进了韩国人的骨髓和DNA里。或者热拿铁。然后小口小口的去喝。但在今天的首尔。和内卷做题家们。首尔�的都市圈。"
+    },
+    {
+      "boundary_sec": 258.06,
+      "near_text": "这时候你拿起手边的冰美式。一口零度以下的冻水。够冰够劲就足够了。如果你现在走在首尔街头。你会发现最火排队最长的往往不是星"
+    },
+    {
+      "boundary_sec": 408.12,
+      "near_text": "冰美式就是唯一的选择。在韩国年轻人的社交圈里。喝冰美味也越来越流行了。韩國的校园里。社交媒体上年轻人晒自拍。必配一杯冰美"
+    },
+    {
+      "boundary_sec": 472.14,
+      "near_text": "极致内卷的商业逻辑里。还记得那杯只要1500韩元的平价冰美味吗。可是咖飞店老板们绝望的发现。你敢涮价500韩元。底层的年"
+    }
+  ]
+}

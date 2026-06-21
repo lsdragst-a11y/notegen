@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "video_id": "BV13QQKBYEbz_p0",
+  "local_source": "data/raw/BV13QQKBYEbz_p0.mp4",
+  "duration": 443.72,
+  "domain": "learning",
+  "label": "一次性开6款热卖的麻辣烫，才发现麻辣烫比泡面好吃多了",
+  "boundaries_sec": [
+    89.25,
+    177.42,
+    316.47
+  ],
+  "n_segments": 4,
+  "annotated_by": "draft",
+  "draft_source": "llm:BV13QQKBYEbz_p0.large-v3.neural.texttile.mm.vl.chapters.json",
+  "notes": "",
+  "_draft_snippets": [
+    {
+      "boundary_sec": 89.25,
+      "near_text": "跟这种香辣辣油混合在一起。哇 好爽啊这个蔬菜。这个汤底是真鲜真香。800毫升水。这个要求800毫升水有点多。唯一区別就是"
+    },
+    {
+      "boundary_sec": 177.42,
+      "near_text": "土豆是种狼牙土豆很软烂。可以压成土豆泥的。木耳藕片这些蔬菜就差不多了。天水麻辣烫。先放入粉条透明的。直接放入苦菜。放入这"
+    },
+    {
+      "boundary_sec": 316.47,
+      "near_text": "它雖然熱量高 但是它真的好吃。它的好吃度真的對得起它熱量。你熱量又高 又難吃。我既然都吃熱量夠了。熱量爆炸不怕啦。骨湯好"
+    }
+  ]
+}
