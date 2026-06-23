@@ -78,3 +78,9 @@ jobs:
 
       - name: Type check
         run: npx tsc --noEmit
+
+      - name: Validate Warm Fold assets
+        run: npm run validate:warm-fold
+
+      - name: Next.js build
+        run: npm run build
