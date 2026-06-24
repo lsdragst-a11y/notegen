@@ -24,6 +24,8 @@ import { useChapterProgress } from "@/lib/progress";
 import { useLang, pickByLang } from "@/components/LangContext";
 import { useAuth } from "@/components/AuthContext";
 
+type RailTab = "chapters" | "transcript";
+
 interface Props {
   noteId: string;
   bundle: NoteBundle;
@@ -92,6 +94,111 @@ export function WorkspaceSkeleton({ backHref }: { backHref: string }) {
   );
 }
 
+function WorkspaceRail({
+  bundle,
+  chaptersDone,
+  currentChapter,
+  currentTime,
+  lang,
+  onSeek,
+  railTab,
+  setRailTab,
+  shared,
+  sourceLabel,
+  sourceUrl,
+  title,
+  toggleChapterDone,
+}: {
+  bundle: NoteBundle;
+  chaptersDone: number[];
+  currentChapter: number;
+  currentTime: number;
+  lang: "zh" | "en";
+  onSeek: (sec: number) => void;
+  railTab: RailTab;
+  setRailTab: (tab: RailTab) => void;
+  shared: boolean;
+  sourceLabel: string;
+  sourceUrl: string;
+  title: string;
+  toggleChapterDone: (idx: number) => void;
+}) {
+  return (
+    <>
+      <p className="px-3 pb-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--wf-text-tertiary)]">
+        {lang === "en" ? "Source" : "来源"}
+      </p>
+      {sourceUrl ? (
+        <a
+          href={sourceUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="flex items-center gap-2 rounded-[var(--wf-radius-sm)] bg-[var(--wf-surface-muted)] px-3 py-2 transition-opacity hover:opacity-80"
+        >
+          <Link2 size={13} className="shrink-0 text-[var(--wf-accent)]" />
+          <span className="min-w-0">
+            <span className="block truncate text-xs font-medium text-[var(--wf-text)]">{sourceLabel}</span>
+            <span className="block truncate text-[11px] text-[var(--wf-text-tertiary)]">
+              {bundle.meta?.uploader || title}
+            </span>
+          </span>
+        </a>
+      ) : (
+        <div className="flex items-center gap-2 rounded-[var(--wf-radius-sm)] bg-[var(--wf-surface-muted)] px-3 py-2">
+          <Link2 size={13} className="shrink-0 text-[var(--wf-text-tertiary)]" />
+          <span className="min-w-0">
+            <span className="block truncate text-xs font-medium text-[var(--wf-text)]">{sourceLabel}</span>
+            <span className="block truncate text-[11px] text-[var(--wf-text-tertiary)]">
+              {bundle.meta?.uploader || title}
+            </span>
+          </span>
+        </div>
+      )}
+      <div className="mb-2 mt-5 flex items-center gap-1 px-1" role="tablist">
+        {([
+          ["chapters", lang === "en" ? "Chapters" : "章节"],
+          ["transcript", lang === "en" ? "Transcript" : "逐字稿"],
+        ] as const).map(([key, label]) => {
+          const active = railTab === key;
+          return (
+            <button
+              key={key}
+              role="tab"
+              aria-selected={active}
+              onClick={() => setRailTab(key)}
+              className={`rounded-full px-3 py-1 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wf-focus)] ${
+                active
+                  ? "bg-[color-mix(in_srgb,var(--wf-brand-coral)_14%,var(--wf-surface))] text-[var(--wf-accent)]"
+                  : "text-[var(--wf-text-secondary)] hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)]"
+              }`}
+            >
+              {label}
+            </button>
+          );
+        })}
+      </div>
+      {railTab === "chapters" ? (
+        bundle.chapters.length > 0 ? (
+          <ChapterRail
+            chapters={bundle.chapters}
+            currentIdx={currentChapter}
+            currentTime={currentTime}
+            onSeek={onSeek}
+            done={shared ? undefined : chaptersDone}
+            onToggleDone={shared ? undefined : toggleChapterDone}
+          />
+        ) : (
+          <p className="px-3 py-4 text-xs text-[var(--wf-text-tertiary)]">
+            {lang === "en" ? "No chapters." : "这篇笔记没有章节数据。"}
+          </p>
+        )
+      ) : (
+        <TranscriptPanel summary={bundle.summary} currentTime={currentTime} onSeek={onSeek} />
+      )}
+    </>
+  );
+}
+
 /**
  * 三栏笔记工作台（docs/frontend-redesign.md §3.2）。
  * /notes/[id] 与 /s/[token] 共用；后者以 shared 模式渲染。
@@ -112,7 +219,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
   const [mainInView, setMainInView] = useState(true);
   const [miniDismissed, setMiniDismissed] = useState(false);
   const [railOpen, setRailOpen] = useState(false);   // <lg 章节抽屉
-  const [railTab, setRailTab] = useState<"chapters" | "transcript">("chapters");
+  const [railTab, setRailTab] = useState<RailTab>("chapters");
   const [shareToken, setShareToken] = useState<string | null>(null);
   const [shareCopied, setShareCopied] = useState(false);
   const [shareHint, setShareHint] = useState<string | null>(null);
@@ -266,82 +373,8 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
        : (lang === "en" ? "Web link" : "网页链接"))
     : (lang === "en" ? "Local file" : "本地上传");
 
-  // 左栏内容：桌面 aside 与 <lg 抽屉共用。普通函数返回 JSX（非组件），避免每次渲染重挂载
-  const renderRail = (onSeekFn: (sec: number) => void) => (
-    <>
-      <p className="px-3 pb-2 text-[11px] font-medium tracking-wide text-[var(--fg-tertiary)]">
-        {lang === "en" ? "Source" : "来源"}
-      </p>
-      {sourceUrl ? (
-        <a href={sourceUrl} target="_blank" rel="noreferrer"
-           className="flex items-center gap-2 rounded-xl bg-[var(--bg-muted)] px-3 py-2 transition-opacity hover:opacity-80">
-          <Link2 size={13} className="shrink-0 text-[var(--accent)]" />
-          <span className="min-w-0">
-            <span className="block truncate text-xs font-medium text-[var(--fg)]">{sourceLabel}</span>
-            <span className="block truncate text-[11px] text-[var(--fg-tertiary)]">
-              {bundle.meta?.uploader || title}
-            </span>
-          </span>
-        </a>
-      ) : (
-        <div className="flex items-center gap-2 rounded-xl bg-[var(--bg-muted)] px-3 py-2">
-          <Link2 size={13} className="shrink-0 text-[var(--fg-tertiary)]" />
-          <span className="min-w-0">
-            <span className="block truncate text-xs font-medium text-[var(--fg)]">{sourceLabel}</span>
-            <span className="block truncate text-[11px] text-[var(--fg-tertiary)]">
-              {bundle.meta?.uploader || title}
-            </span>
-          </span>
-        </div>
-      )}
-      {/* 章节 | 逐字稿 tab 切换 */}
-      <div className="mt-5 mb-2 flex items-center gap-1 px-1" role="tablist">
-        {([["chapters", lang === "en" ? "Chapters" : "章节"],
-           ["transcript", lang === "en" ? "Transcript" : "逐字稿"]] as const).map(([key, label]) => {
-          const active = railTab === key;
-          return (
-            <button
-              key={key}
-              role="tab"
-              aria-selected={active}
-              onClick={() => setRailTab(key)}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors
-                          ${active
-                            ? "bg-[color-mix(in_srgb,var(--accent)_14%,transparent)] text-[var(--accent)]"
-                            : "text-[var(--fg-secondary)] hover:bg-[var(--bg-muted)] hover:text-[var(--fg)]"}`}
-            >
-              {label}
-            </button>
-          );
-        })}
-      </div>
-      {railTab === "chapters" ? (
-        bundle.chapters.length > 0 ? (
-          <ChapterRail
-            chapters={bundle.chapters}
-            currentIdx={currentChapter}
-            currentTime={currentTime}
-            onSeek={onSeekFn}
-            done={shared ? undefined : chaptersDone}
-            onToggleDone={shared ? undefined : toggleChapterDone}
-          />
-        ) : (
-          <p className="px-3 py-4 text-xs text-[var(--fg-tertiary)]">
-            {lang === "en" ? "No chapters." : "这篇笔记没有章节数据。"}
-          </p>
-        )
-      ) : (
-        <TranscriptPanel
-          summary={bundle.summary}
-          currentTime={currentTime}
-          onSeek={onSeekFn}
-        />
-      )}
-    </>
-  );
-
   return (
-    <main className="flex min-h-screen flex-col pb-24 lg:h-screen lg:overflow-hidden lg:pb-0">
+    <main className="flex min-h-screen flex-col bg-[var(--wf-canvas)] pb-24 text-[var(--wf-text)] lg:h-screen lg:overflow-hidden lg:pb-0">
       <NavBar>
         <div className="flex items-center gap-2 min-w-0">
           <Link href={backHref}
@@ -383,13 +416,27 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
 
       {/* 三栏工作台：来源/章节 · 笔记 · 视频/工具（docs/frontend-redesign.md §3.2）。
           lg 整页不滚、三栏独立滚动；<lg 回落单列（视频在上，笔记在下）。 */}
-      <div className="mx-auto grid w-full max-w-[1680px] flex-1 grid-cols-1 lg:min-h-0 lg:grid-cols-[260px_minmax(0,1fr)_400px]">
+      <div className="mx-auto grid w-full max-w-[1680px] flex-1 grid-cols-1 lg:min-h-0 lg:grid-cols-[280px_minmax(0,1fr)_420px]">
         {/* 左栏：来源 + 垂直章节（仅 lg；<lg 走顶栏抽屉 + 视频下方横向 ChapterNav） */}
         <aside
           aria-label={lang === "en" ? "Source and chapters" : "来源与章节"}
-          className="hidden border-r border-[var(--border)] px-3 py-5 lg:block lg:overflow-y-auto"
+          className="hidden border-r border-[var(--wf-border)] bg-[var(--wf-surface)]/55 px-3 py-5 lg:block lg:overflow-y-auto"
         >
-          {renderRail(seek)}
+          <WorkspaceRail
+            bundle={bundle}
+            chaptersDone={chaptersDone}
+            currentChapter={currentChapter}
+            currentTime={currentTime}
+            lang={lang}
+            onSeek={seek}
+            railTab={railTab}
+            setRailTab={setRailTab}
+            shared={shared}
+            sourceLabel={sourceLabel}
+            sourceUrl={sourceUrl}
+            title={title}
+            toggleChapterDone={toggleChapterDone}
+          />
         </aside>
 
         {/* 中栏：笔记内容 + 问答 */}
@@ -418,9 +465,9 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
         {/* 右栏：视频 + 当前章 + 工具组（<lg 时排最上） */}
         <aside
           aria-label={lang === "en" ? "Video and tools" : "视频与工具"}
-          className="order-1 space-y-3 px-5 pt-5 lg:order-none lg:overflow-y-auto lg:border-l lg:border-[var(--border)] lg:px-4 lg:py-6"
+          className="order-1 space-y-3 px-5 pt-5 lg:order-none lg:overflow-y-auto lg:border-l lg:border-[var(--wf-border)] lg:bg-[var(--wf-surface)]/55 lg:px-4 lg:py-6"
         >
-          <div ref={mainWrapRef} className="apple-card relative overflow-hidden p-0">
+          <div ref={mainWrapRef} className="relative overflow-hidden rounded-[var(--wf-radius-lg)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-0 shadow-[var(--wf-shadow-md)]">
             <VideoPlayer
               ref={playerRef}
               src={bundle.videoUrl}
@@ -584,7 +631,21 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
                   <X size={15} />
                 </button>
               </div>
-              {renderRail(seekAndCloseRail)}
+              <WorkspaceRail
+                bundle={bundle}
+                chaptersDone={chaptersDone}
+                currentChapter={currentChapter}
+                currentTime={currentTime}
+                lang={lang}
+                onSeek={seekAndCloseRail}
+                railTab={railTab}
+                setRailTab={setRailTab}
+                shared={shared}
+                sourceLabel={sourceLabel}
+                sourceUrl={sourceUrl}
+                title={title}
+                toggleChapterDone={toggleChapterDone}
+              />
             </motion.aside>
           </motion.div>
         )}

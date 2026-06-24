@@ -259,3 +259,280 @@ html, body {
   }
 }
 /* === Warm Fold foundation tokens: END === */
+
+/* === Warm Fold button primitives: START === */
+.wf-button,
+.wf-icon-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid transparent;
+  font-family: var(--wf-font-sans);
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background var(--wf-motion-fast) var(--wf-ease),
+    border-color var(--wf-motion-fast) var(--wf-ease),
+    color var(--wf-motion-fast) var(--wf-ease),
+    transform var(--wf-motion-fast) var(--wf-ease);
+}
+
+.wf-button {
+  gap: 0.5rem;
+  border-radius: var(--wf-radius-sm);
+}
+
+.wf-button[data-size="sm"] {
+  min-height: 36px;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8125rem;
+}
+
+.wf-button[data-size="md"] {
+  min-height: 44px;
+  padding: 0.625rem 1rem;
+  font-size: 0.9375rem;
+}
+
+.wf-button[data-size="lg"] {
+  min-height: 48px;
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+}
+
+.wf-button[data-variant="primary"] {
+  background: var(--wf-accent);
+  color: var(--wf-on-accent);
+}
+
+.wf-button[data-variant="primary"]:hover:not(:disabled) {
+  background: var(--wf-accent-hover);
+}
+
+.wf-button[data-variant="primary"]:active:not(:disabled) {
+  background: var(--wf-accent-active);
+}
+
+.wf-button[data-variant="secondary"],
+.wf-icon-button[data-variant="secondary"] {
+  background: var(--wf-surface);
+  border-color: var(--wf-border);
+  color: var(--wf-text);
+}
+
+.wf-button[data-variant="ghost"],
+.wf-icon-button[data-variant="ghost"] {
+  background: transparent;
+  color: var(--wf-text-secondary);
+}
+
+.wf-button[data-variant="secondary"]:hover:not(:disabled),
+.wf-icon-button[data-variant="secondary"]:hover:not(:disabled) {
+  background: var(--wf-surface-muted);
+  border-color: var(--wf-border-strong);
+}
+
+.wf-button[data-variant="ghost"]:hover:not(:disabled),
+.wf-icon-button[data-variant="ghost"]:hover:not(:disabled) {
+  background: var(--wf-surface-muted);
+  color: var(--wf-text);
+}
+
+.wf-button[data-variant="danger"],
+.wf-icon-button[data-variant="danger"] {
+  background: var(--wf-danger);
+  color: var(--wf-on-danger);
+}
+
+.wf-button[data-variant="danger"]:hover:not(:disabled),
+.wf-icon-button[data-variant="danger"]:hover:not(:disabled) {
+  background: var(--wf-danger-hover);
+}
+
+.wf-button:focus-visible,
+.wf-icon-button:focus-visible {
+  outline: 2px solid var(--wf-focus);
+  outline-offset: 3px;
+}
+
+.wf-button:disabled,
+.wf-icon-button:disabled {
+  background: var(--wf-disabled-bg);
+  border-color: var(--wf-disabled-border);
+  color: var(--wf-disabled-fg);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.wf-button[data-loading="true"],
+.wf-icon-button[data-loading="true"] {
+  cursor: progress;
+}
+
+.wf-button[data-loading="true"] .wf-button__content,
+.wf-icon-button[data-loading="true"] .wf-icon-button__content {
+  opacity: 0;
+}
+
+.wf-button__spinner,
+.wf-icon-button__spinner {
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  animation: wf-spin 800ms linear infinite;
+}
+
+.wf-icon-button {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: var(--wf-radius-sm);
+}
+
+.wf-icon-button[data-size="lg"] {
+  width: 48px;
+  height: 48px;
+}
+
+@keyframes wf-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wf-button__spinner,
+  .wf-icon-button__spinner {
+    animation: none;
+  }
+}
+/* === Warm Fold button primitives: END === */
+
+/* === Warm Fold surface primitives: START === */
+.wf-card {
+  color: var(--wf-text);
+  border-radius: var(--wf-radius-md);
+  font-family: var(--wf-font-sans);
+}
+
+.wf-card[data-variant="surface"] {
+  background: var(--wf-surface);
+  border: 1px solid var(--wf-border);
+  box-shadow: var(--wf-shadow-sm);
+}
+
+.wf-card[data-variant="muted"] {
+  background: var(--wf-surface-muted);
+  border: 1px solid transparent;
+}
+
+.wf-card[data-variant="outlined"] {
+  background: transparent;
+  border: 1px solid var(--wf-border-strong);
+}
+
+.wf-card[data-padding="none"] {
+  padding: 0;
+}
+
+.wf-card[data-padding="sm"] {
+  padding: 0.75rem;
+}
+
+.wf-card[data-padding="md"] {
+  padding: 1rem;
+}
+
+.wf-card[data-padding="lg"] {
+  padding: 1.5rem;
+}
+
+.wf-input {
+  width: 100%;
+  border: 1px solid var(--wf-border);
+  border-radius: var(--wf-radius-sm);
+  background: var(--wf-surface);
+  color: var(--wf-text);
+  font-family: var(--wf-font-sans);
+  transition:
+    border-color var(--wf-motion-fast) var(--wf-ease),
+    background var(--wf-motion-fast) var(--wf-ease);
+}
+
+.wf-input::placeholder {
+  color: var(--wf-text-tertiary);
+}
+
+.wf-input[data-size="sm"] {
+  min-height: 36px;
+  padding: 0.5rem 0.625rem;
+  font-size: 0.8125rem;
+}
+
+.wf-input[data-size="md"] {
+  min-height: 44px;
+  padding: 0.625rem 0.75rem;
+  font-size: 0.9375rem;
+}
+
+.wf-input[data-size="lg"] {
+  min-height: 48px;
+  padding: 0.75rem 0.875rem;
+  font-size: 1rem;
+}
+
+.wf-input:focus-visible {
+  outline: 2px solid var(--wf-focus);
+  outline-offset: 3px;
+  border-color: var(--wf-accent);
+}
+
+.wf-input[aria-invalid="true"] {
+  border-color: var(--wf-danger);
+  background: var(--wf-danger-surface);
+}
+
+.wf-input:disabled {
+  background: var(--wf-disabled-bg);
+  border-color: var(--wf-disabled-border);
+  color: var(--wf-disabled-fg);
+  cursor: not-allowed;
+}
+
+.wf-chip {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border-radius: var(--wf-radius-full);
+  font-family: var(--wf-font-sans);
+  font-weight: 600;
+}
+
+.wf-chip[data-size="sm"] {
+  min-height: 24px;
+  padding: 0.1875rem 0.5rem;
+  font-size: 0.75rem;
+}
+
+.wf-chip[data-size="md"] {
+  min-height: 28px;
+  padding: 0.25rem 0.625rem;
+  font-size: 0.8125rem;
+}
+
+.wf-chip[data-variant="neutral"] {
+  background: var(--wf-surface-muted);
+  color: var(--wf-text-secondary);
+}
+
+.wf-chip[data-variant="accent"] {
+  background: color-mix(in srgb, var(--wf-brand-coral) 14%, var(--wf-surface));
+  color: var(--wf-accent);
+}
+
+.wf-chip[data-variant="danger"] {
+  background: var(--wf-danger-surface);
+  color: var(--wf-danger);
+}
+/* === Warm Fold surface primitives: END === */
