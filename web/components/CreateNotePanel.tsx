@@ -133,9 +133,9 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-[var(--shadow-lg)]">
+    <div className="rounded-2xl border border-[var(--wf-border)] bg-[var(--wf-surface)] shadow-[var(--wf-shadow-lg)]">
       <div className="p-4 sm:p-5">
-        <div className="mb-3 inline-flex rounded-[8px] border border-[var(--border)] bg-[var(--bg-muted)] p-1">
+        <div className="mb-3 inline-flex rounded-[8px] border border-[var(--wf-border)] bg-[var(--wf-surface-muted)] p-1">
           {(["url", "file"] as const).map(m => {
             const active = mode === m;
             return (
@@ -143,12 +143,12 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                 key={m}
                 onClick={() => { setMode(m); setHint(null); }}
                 className={`relative z-10 inline-flex h-8 items-center gap-1.5 rounded-[6px] px-3 text-xs font-medium transition-colors
-                            ${active ? "text-[var(--fg)]" : "text-[var(--fg-tertiary)] hover:text-[var(--fg-secondary)]"}`}
+                            ${active ? "text-[var(--wf-text)]" : "text-[var(--wf-text-tertiary)] hover:text-[var(--wf-text-secondary)]"}`}
               >
                 {active && (
                   <motion.span
                     layoutId="create-note-mode-pill"
-                    className="absolute inset-0 -z-10 rounded-[6px] border border-[var(--border)] bg-[var(--bg-elevated)] shadow-[var(--shadow-sm)]"
+                    className="absolute inset-0 -z-10 rounded-[6px] border border-[var(--wf-border)] bg-[var(--wf-surface)] shadow-[var(--wf-shadow-sm)]"
                     transition={{ type: "spring", stiffness: 380, damping: 32 }}
                   />
                 )}
@@ -168,10 +168,10 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.18 }}
-              className="flex flex-col gap-2 rounded-[8px] border border-[var(--border)] bg-[var(--bg)] p-2 sm:flex-row sm:items-center"
+              className="flex flex-col gap-2 rounded-[8px] border border-[var(--wf-border)] bg-[var(--wf-canvas)] p-2 sm:flex-row sm:items-center"
             >
               <div className="flex min-h-10 flex-1 items-center gap-2 px-2">
-                <Video size={16} className="shrink-0 text-[var(--fg-tertiary)]" />
+                <Video size={16} className="shrink-0 text-[var(--wf-text-tertiary)]" />
                 <input
                   type="text"
                   placeholder="粘贴 B 站 / YouTube 视频链接"
@@ -185,13 +185,13 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                     if (e.key !== "Enter") return;
                     if (probed) handleSubmitUrl(); else handleProbe();
                   }}
-                  className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--fg-tertiary)]"
+                  className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--wf-text-tertiary)]"
                 />
               </div>
               {!probed ? (
                 <button onClick={handleProbe}
                         disabled={probing}
-                        className="apple-button inline-flex items-center justify-center gap-1 text-sm sm:shrink-0">
+                        className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-accent)] px-4 py-2 font-semibold text-[var(--wf-on-accent)] transition-colors hover:bg-[var(--wf-accent-hover)] disabled:bg-[var(--wf-disabled-bg)] disabled:text-[var(--wf-disabled-fg)] disabled:cursor-not-allowed inline-flex items-center justify-center gap-1 text-sm sm:shrink-0">
                   {probing ? (
                     <><Loader2 size={14} className="animate-spin" />查询中</>
                   ) : (
@@ -201,7 +201,7 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
               ) : (
                 <button onClick={handleSubmitUrl}
                         disabled={submitting}
-                        className="apple-button inline-flex items-center justify-center gap-1 text-sm sm:shrink-0">
+                        className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-accent)] px-4 py-2 font-semibold text-[var(--wf-on-accent)] transition-colors hover:bg-[var(--wf-accent-hover)] disabled:bg-[var(--wf-disabled-bg)] disabled:text-[var(--wf-disabled-fg)] disabled:cursor-not-allowed inline-flex items-center justify-center gap-1 text-sm sm:shrink-0">
                   {submitting ? (
                     <><Loader2 size={14} className="animate-spin" />提交中</>
                   ) : (
@@ -239,26 +239,26 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                   }}
                   className={`flex w-full flex-col items-center justify-center gap-2 rounded-[8px] border-2 border-dashed px-6 py-8 transition-all
                               ${dragging
-                                ? "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_8%,transparent)]"
-                                : "border-[var(--border)] bg-[var(--bg)] hover:border-[var(--fg-tertiary)] hover:bg-[var(--bg-muted)]"}`}
+                                ? "border-[var(--wf-accent)] bg-[color-mix(in_srgb,var(--wf-accent)_8%,transparent)]"
+                                : "border-[var(--wf-border)] bg-[var(--wf-canvas)] hover:border-[var(--wf-text-tertiary)] hover:bg-[var(--wf-surface-muted)]"}`}
                 >
-                  <FolderUp size={22} className={dragging ? "text-[var(--accent)]" : "text-[var(--fg-tertiary)]"} />
-                  <div className="text-sm font-medium text-[var(--fg)]">
+                  <FolderUp size={22} className={dragging ? "text-[var(--wf-accent)]" : "text-[var(--wf-text-tertiary)]"} />
+                  <div className="text-sm font-medium text-[var(--wf-text)]">
                     {dragging ? "松开以放入" : "点击选择或拖入视频文件"}
                   </div>
-                  <div className="text-[11px] text-[var(--fg-tertiary)]">
+                  <div className="text-[11px] text-[var(--wf-text-tertiary)]">
                     支持 mp4 / mkv / mov / avi / webm / flv / m4v / ts
                   </div>
                 </button>
               ) : (
-                <div className="space-y-3 rounded-[8px] border border-[var(--border)] bg-[var(--bg)] p-4">
+                <div className="space-y-3 rounded-[8px] border border-[var(--wf-border)] bg-[var(--wf-canvas)] p-4">
                   <div className="flex items-center gap-3">
-                    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-[var(--bg-muted)] text-[var(--accent)]">
+                    <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-[var(--wf-surface-muted)] text-[var(--wf-accent)]">
                       <FileVideo size={16} />
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-sm font-medium">{file.name}</div>
-                      <div className="text-[11px] tabular-nums text-[var(--fg-tertiary)]">
+                      <div className="text-[11px] tabular-nums text-[var(--wf-text-tertiary)]">
                         {formatBytes(file.size)}
                       </div>
                     </div>
@@ -266,7 +266,7 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                       type="button"
                       onClick={() => { setFile(null); setFileTitle(""); setUploadPct(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
                       disabled={submitting}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--bg-muted)] text-[var(--fg-tertiary)] transition-colors hover:bg-[var(--border)] hover:text-[var(--fg)] disabled:opacity-40"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--wf-surface-muted)] text-[var(--wf-text-tertiary)] transition-colors hover:bg-[var(--wf-border)] hover:text-[var(--wf-text)] disabled:opacity-40"
                       title="移除"
                     >
                       <X size={13} />
@@ -277,16 +277,16 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                     placeholder="视频标题（可选，留空用文件名）"
                     value={fileTitle}
                     onChange={e => setFileTitle(e.target.value)}
-                    className="w-full rounded-[8px] border border-[var(--border)] bg-[var(--bg-muted)] px-3 py-2 text-sm outline-none transition-colors placeholder:text-[var(--fg-tertiary)] focus:border-[var(--accent)]"
+                    className="w-full rounded-[8px] border border-[var(--wf-border)] bg-[var(--wf-surface-muted)] px-3 py-2 text-sm outline-none transition-colors placeholder:text-[var(--wf-text-tertiary)] focus:border-[var(--wf-accent)]"
                   />
                   {uploadPct !== null && uploadPct < 1 && (
                     <div className="space-y-1">
-                      <div className="flex justify-between text-[10.5px] tabular-nums text-[var(--fg-tertiary)]">
+                      <div className="flex justify-between text-[10.5px] tabular-nums text-[var(--wf-text-tertiary)]">
                         <span>上传中</span>
                         <span>{Math.round(uploadPct * 100)}%</span>
                       </div>
-                      <div className="h-1 overflow-hidden rounded-full bg-[var(--bg-muted)]">
-                        <div className="h-full bg-[var(--accent)] transition-[width] duration-150"
+                      <div className="h-1 overflow-hidden rounded-full bg-[var(--wf-surface-muted)]">
+                        <div className="h-full bg-[var(--wf-accent)] transition-[width] duration-150"
                              style={{ width: `${uploadPct * 100}%` }} />
                       </div>
                     </div>
@@ -294,7 +294,7 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                   <button
                     onClick={handleSubmitFile}
                     disabled={submitting}
-                    className="apple-button inline-flex w-full items-center justify-center gap-1.5 text-sm"
+                    className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-accent)] px-4 py-2 font-semibold text-[var(--wf-on-accent)] transition-colors hover:bg-[var(--wf-accent-hover)] disabled:bg-[var(--wf-disabled-bg)] disabled:text-[var(--wf-disabled-fg)] disabled:cursor-not-allowed inline-flex w-full items-center justify-center gap-1.5 text-sm"
                   >
                     {submitting ? (
                       uploadPct !== null && uploadPct < 1
@@ -318,17 +318,17 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -6 }}
               transition={{ duration: 0.2 }}
-              className="mt-3 space-y-3 rounded-[8px] border border-[var(--border)] bg-[var(--bg)] p-4"
+              className="mt-3 space-y-3 rounded-[8px] border border-[var(--wf-border)] bg-[var(--wf-canvas)] p-4"
             >
               <div className="flex items-start gap-3">
-                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-[var(--bg-muted)] text-[var(--accent)]">
+                <span className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-[8px] bg-[var(--wf-surface-muted)] text-[var(--wf-accent)]">
                   <Video size={16} />
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-medium">
                     {probed.title || "（无标题）"}
                   </div>
-                  <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-[var(--fg-tertiary)]">
+                  <div className="mt-0.5 flex flex-wrap items-center gap-2 text-[11px] text-[var(--wf-text-tertiary)]">
                     {probed.uploader && <span className="max-w-[20ch] truncate">{probed.uploader}</span>}
                     {probed.uploader && probed.duration > 0 && <span>·</span>}
                     {probed.duration > 0 && (
@@ -353,9 +353,9 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
 
               {probed.heights.length > 1 ? (
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="shrink-0 text-[11px] text-[var(--fg-tertiary)]">下载画质</span>
+                  <span className="shrink-0 text-[11px] text-[var(--wf-text-tertiary)]">下载画质</span>
                   <div
-                    className="inline-flex items-center gap-0.5 rounded-full bg-[var(--bg-muted)] p-0.5"
+                    className="inline-flex items-center gap-0.5 rounded-full bg-[var(--wf-surface-muted)] p-0.5"
                     role="radiogroup"
                     aria-label="下载画质"
                   >
@@ -371,8 +371,8 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                           aria-checked={active}
                           className={`inline-flex h-7 items-center justify-center rounded-full px-3 text-[11px] font-medium tabular-nums transition-colors
                                       ${active
-                                        ? "border border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--fg)] shadow-[var(--shadow-sm)]"
-                                        : "text-[var(--fg-tertiary)] hover:text-[var(--fg-secondary)]"}`}
+                                        ? "border border-[var(--wf-border)] bg-[var(--wf-surface)] text-[var(--wf-text)] shadow-[var(--wf-shadow-sm)]"
+                                        : "text-[var(--wf-text-tertiary)] hover:text-[var(--wf-text-secondary)]"}`}
                         >
                           {v}
                         </button>
@@ -381,8 +381,8 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                   </div>
                 </div>
               ) : probed.heights.length === 1 ? (
-                <div className="text-[11px] text-[var(--fg-tertiary)]">
-                  只有 1 种画质可下：<span className="font-medium text-[var(--fg)]">{probed.heights[0]}p</span>
+                <div className="text-[11px] text-[var(--wf-text-tertiary)]">
+                  只有 1 种画质可下：<span className="font-medium text-[var(--wf-text)]">{probed.heights[0]}p</span>
                 </div>
               ) : (
                 <div className="text-[11px] text-amber-600 dark:text-amber-400">
@@ -399,7 +399,7 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -4 }}
-              className="mt-3 text-center text-xs text-[var(--fg-tertiary)]"
+              className="mt-3 text-center text-xs text-[var(--wf-text-tertiary)]"
             >
               {hint}
             </motion.p>

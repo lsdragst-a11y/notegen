@@ -25,6 +25,14 @@ interface Props {
 const POLL_MS = 1500;
 const POLL_MAX_MS = 10 * 60 * 1000;   // 与后端 QA_TIMEOUT 对齐
 
+function sleep(ms: number) {
+  return new Promise<void>(resolve => setTimeout(resolve, ms));
+}
+
+function now() {
+  return Date.now();
+}
+
 /**
  * 「对视频提问」面板（docs/frontend-redesign.md §5 落地）。
  * 提交 → /api/notes/{id}/ask 入队 → 轮询 /api/qa/{id} → 答案 + 时间戳引用 chip。
@@ -80,9 +88,9 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
     setStatusText(t("提交中…", "Submitting…"));
     try {
       const { qa_id } = await postAsk(noteId, q, lang, history.slice(-2));
-      const started = Date.now();
-      while (aliveRef.current && Date.now() - started < POLL_MAX_MS) {
-        await new Promise(r => setTimeout(r, POLL_MS));
+      const started = now();
+      while (aliveRef.current && now() - started < POLL_MAX_MS) {
+        await sleep(POLL_MS);
         if (!aliveRef.current) return;
         const st = await fetchQa(qa_id);
         if (st.status === "done" && st.result) {
@@ -131,14 +139,14 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
   // 未登录（公开笔记游客）：提示登录后可提问
   if (!user) {
     return (
-      <div className="flex items-center gap-2.5 rounded-full border border-[var(--border)]
-                      bg-[var(--bg-elevated)] px-4 py-3 shadow-[var(--shadow-sm)]">
-        <MessageCircle size={15} className="shrink-0 text-[var(--fg-tertiary)]" />
-        <span className="flex-1 truncate text-sm text-[var(--fg-tertiary)]">
+      <div className="flex items-center gap-2.5 rounded-[var(--wf-radius-full)] border border-[var(--wf-border)]
+                      bg-[var(--wf-surface)] px-4 py-3 shadow-[var(--wf-shadow-sm)]">
+        <MessageCircle size={15} className="shrink-0 text-[var(--wf-text-tertiary)]" />
+        <span className="flex-1 truncate text-sm text-[var(--wf-text-tertiary)]">
           {t("登录后可对这个视频提问，回答附时间戳引用", "Sign in to ask about this video")}
         </span>
         <Link href={`/login?next=/notes/${noteId}`}
-              className="shrink-0 text-xs font-medium text-[var(--accent)] hover:underline">
+              className="shrink-0 text-xs font-semibold text-[var(--wf-accent)] hover:underline">
           {t("去登录", "Sign in")}
         </Link>
       </div>
@@ -146,23 +154,23 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
   }
 
   return (
-    <div className="rounded-2xl border border-[var(--border)] bg-[var(--bg-elevated)] shadow-[var(--shadow-sm)]">
+    <div className="rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] shadow-[var(--wf-shadow-sm)]">
       {/* 历史消息 */}
       {msgs.length > 0 && (
         <div ref={listRef} className="max-h-72 space-y-3 overflow-y-auto px-4 pt-4">
           {msgs.map((m, i) => m.role === "user" ? (
             <div key={i} className="flex justify-end">
-              <div className="max-w-[85%] rounded-2xl rounded-br-md bg-[color-mix(in_srgb,var(--accent)_12%,transparent)]
-                              px-3.5 py-2 text-sm leading-relaxed text-[var(--fg)]">
+              <div className="max-w-[85%] rounded-[var(--wf-radius-md)] rounded-br-md bg-[color-mix(in_srgb,var(--wf-brand-coral)_14%,var(--wf-surface))]
+                              px-3.5 py-2 text-sm leading-relaxed text-[var(--wf-text)]">
                 {m.text}
               </div>
             </div>
           ) : (
             <div key={i} className="flex justify-start">
-              <div className={`max-w-[92%] rounded-2xl rounded-bl-md px-3.5 py-2 text-sm leading-relaxed
+              <div className={`max-w-[92%] rounded-[var(--wf-radius-md)] rounded-bl-md px-3.5 py-2 text-sm leading-relaxed
                                ${m.failed
-                                 ? "bg-[rgba(217,48,37,0.08)] text-[#c5221f] dark:text-[#f28b82]"
-                                 : "bg-[var(--bg-muted)] text-[var(--fg)]"}`}>
+                                 ? "bg-[var(--wf-danger-surface)] text-[var(--wf-danger)]"
+                                 : "bg-[var(--wf-surface-muted)] text-[var(--wf-text)]"}`}>
                 <p className="whitespace-pre-wrap">{m.text}</p>
                 {!!m.citations?.length && (
                   <div className="mt-2 flex flex-wrap gap-1.5">
@@ -172,10 +180,10 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
                         type="button"
                         onClick={() => onSeek(c.start)}
                         title={c.quote || undefined}
-                        className="inline-flex items-center gap-1 rounded-full bg-[var(--bg-elevated)]
-                                   px-2 py-0.5 text-[11px] tabular-nums text-[var(--accent)]
-                                   border border-[var(--border)] transition-colors
-                                   hover:bg-[var(--accent)] hover:text-[var(--on-accent)]"
+                        className="inline-flex items-center gap-1 rounded-[var(--wf-radius-full)] bg-[var(--wf-surface)]
+                                   px-2 py-0.5 text-[11px] tabular-nums text-[var(--wf-accent)]
+                                   border border-[var(--wf-border)] transition-colors
+                                   hover:bg-[var(--wf-accent)] hover:text-[var(--wf-on-accent)]"
                       >
                         ▶ {formatTime(c.start)}
                       </button>
@@ -186,7 +194,7 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
             </div>
           ))}
           {busy && (
-            <div className="flex items-center gap-2 pb-1 text-xs text-[var(--fg-tertiary)]">
+            <div className="flex items-center gap-2 pb-1 text-xs text-[var(--wf-text-tertiary)]">
               <Loader2 size={12} className="animate-spin" /> {statusText}
             </div>
           )}
@@ -201,9 +209,9 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
               key={s}
               type="button"
               onClick={() => submit(s)}
-              className="inline-flex max-w-full items-center gap-1 rounded-full border border-[var(--border)]
-                         bg-[var(--bg-muted)] px-3 py-1.5 text-xs text-[var(--fg-secondary)]
-                         transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)]"
+              className="inline-flex max-w-full items-center gap-1 rounded-[var(--wf-radius-full)] border border-[var(--wf-border)]
+                         bg-[var(--wf-surface-muted)] px-3 py-1.5 text-xs text-[var(--wf-text-secondary)]
+                         transition-colors hover:border-[var(--wf-accent)] hover:text-[var(--wf-accent)]"
             >
               <Sparkles size={11} className="shrink-0" />
               <span className="truncate">{s}</span>
@@ -214,7 +222,7 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
 
       {/* 输入行 */}
       <div className="flex items-center gap-2.5 px-4 py-3">
-        <MessageCircle size={15} className="shrink-0 text-[var(--fg-tertiary)]" />
+        <MessageCircle size={15} className="shrink-0 text-[var(--wf-text-tertiary)]" />
         <input
           type="text"
           value={input}
@@ -225,16 +233,16 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
           placeholder={busy
             ? statusText
             : t("对这个视频提问，回答附时间戳引用…", "Ask about this video — answers cite timestamps…")}
-          className="min-w-0 flex-1 bg-transparent text-sm outline-none
-                     placeholder:text-[var(--fg-tertiary)] disabled:opacity-60"
+          className="min-w-0 flex-1 bg-transparent text-sm text-[var(--wf-text)] outline-none
+                     placeholder:text-[var(--wf-text-tertiary)] disabled:opacity-60"
         />
         <button
           type="button"
           onClick={() => submit()}
           disabled={busy || !input.trim()}
           aria-label={t("发送", "Send")}
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full
-                     bg-[var(--accent)] text-[var(--on-accent)] transition-opacity
+          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--wf-radius-full)]
+                     bg-[var(--wf-accent)] text-[var(--wf-on-accent)] transition-opacity
                      hover:opacity-90 disabled:opacity-40"
         >
           {busy ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}

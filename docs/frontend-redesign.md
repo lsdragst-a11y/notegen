@@ -1,5 +1,10 @@
 # NoteGen 前端重设计方案（NotebookLM 风格）
 
+> 2026-06-25 v1 收敛更新：`FluidBG.tsx`、`ParticleBG.tsx`、`AskBar.tsx`
+> 已确认无运行代码引用并删除。核心页面已完成 Warm Fold token 迁移：
+> `ChatPanel`、`NoteWorkspace`、`CreateNotePanel`。剩余未完成项集中在浏览器
+> walkthrough、截图/GIF、a11y 复查和可提交工作树收敛。
+
 > 2026-06-10 · 参照 [NotebookLM](https://notebooklm.google/) · 配套视觉稿见会话内 mockup
 > 范围：首页（笔记本库）+ 笔记详情（三栏工作台）两个核心页，其余页面只做 token 级统一
 > 2026-06-15 状态更新：P0/P1 主体已落地，实际产品入口调整为 `/` 精简 landing、

@@ -116,6 +116,12 @@ cd web; npm run dev                         # 4. Web → http://localhost:3000
 
 输出在 `data/outputs/<video_id>.large-v3.neural.texttile.mm.vl.md`。
 
+## v1 checkpoint docs
+
+- [CHANGELOG.md](CHANGELOG.md) records the `v1.0.0-demo` checkpoint and known baseline.
+- [docs/SMOKE_TEST.md](docs/SMOKE_TEST.md) explains the local smoke path and expected results.
+- [docs/DEPLOY_LOCAL.md](docs/DEPLOY_LOCAL.md) documents the local deployment/startup flow.
+
 ## API 概览
 
 | 分组 | 端点 |
