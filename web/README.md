@@ -22,7 +22,8 @@ app/
   page.tsx                # landing：粒子背景 + hero + demo 卡片
   notes/[id]/page.tsx     # 详情：左视频 + 右笔记
 components/
-  ParticleBG.tsx          # canvas 流动粒子
+  NoteWorkspace.tsx       # 三栏工作台：章节、笔记、视频与工具
+  ChatPanel.tsx           # 时间戳问答入口
   VideoPlayer.tsx         # Plyr 包装，dynamic import 避开 SSR
   ChapterChip.tsx         # Dynamic Island 风格章节浮窗
   NotesContent.tsx        # 笔记主体（顶部卡 + 知识点速览 + 章节 + 术语表）

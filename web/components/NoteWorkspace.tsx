@@ -37,11 +37,11 @@ interface Props {
 /** 加载失败卡（/notes/[id] 与 /s/[token] 共用） */
 export function WorkspaceError({ error, backHref }: { error: string; backHref: string }) {
   return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="apple-card p-8 max-w-md">
+    <main className="flex min-h-screen items-center justify-center bg-[var(--wf-canvas)] text-[var(--wf-text)]">
+      <div className="max-w-md rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-8 shadow-[var(--wf-shadow-sm)]">
         <h2 className="text-lg font-semibold mb-2">加载失败</h2>
-        <p className="text-sm text-[var(--fg-secondary)]">{error}</p>
-        <Link href={backHref} className="apple-button inline-flex mt-4">返回</Link>
+        <p className="text-sm text-[var(--wf-text-secondary)]">{error}</p>
+        <Link href={backHref} className="mt-4 inline-flex rounded-[var(--wf-radius-sm)] bg-[var(--wf-accent)] px-4 py-2 text-sm font-semibold text-[var(--wf-on-accent)] transition-colors hover:bg-[var(--wf-accent-hover)]">返回</Link>
       </div>
     </main>
   );
@@ -50,44 +50,44 @@ export function WorkspaceError({ error, backHref }: { error: string; backHref: s
 /** 三栏同构骨架屏（/notes/[id] 与 /s/[token] 共用） */
 export function WorkspaceSkeleton({ backHref }: { backHref: string }) {
   return (
-    <main className="min-h-screen pb-24">
+    <main className="min-h-screen bg-[var(--wf-canvas)] pb-24 text-[var(--wf-text)]">
       <NavBar>
         <div className="flex items-center gap-2 min-w-0">
           <Link href={backHref}
-                className="inline-flex items-center gap-1 text-xs text-[var(--fg-tertiary)]
-                           hover:text-[var(--fg)] transition-colors shrink-0">
+                className="inline-flex items-center gap-1 text-xs text-[var(--wf-text-tertiary)]
+                           hover:text-[var(--wf-text)] transition-colors shrink-0">
             <ArrowLeft size={12} /> 返回
           </Link>
-          <span className="text-[var(--fg-tertiary)] shrink-0">·</span>
-          <span className="text-sm text-[var(--fg-tertiary)] truncate">加载中…</span>
+          <span className="text-[var(--wf-text-tertiary)] shrink-0">·</span>
+          <span className="text-sm text-[var(--wf-text-tertiary)] truncate">加载中…</span>
         </div>
       </NavBar>
       <div className="mx-auto grid w-full max-w-[1680px] grid-cols-1 gap-5 px-5 pt-5 animate-pulse lg:grid-cols-[260px_minmax(0,1fr)_400px] lg:gap-0 lg:px-0">
-        <div className="hidden space-y-2 border-r border-[var(--border)] px-6 py-6 lg:block">
-          <div className="h-3 w-10 rounded bg-[var(--bg-muted)]" />
-          <div className="h-10 rounded-xl bg-[var(--bg-muted)]" />
+        <div className="hidden space-y-2 border-r border-[var(--wf-border)] px-6 py-6 lg:block">
+          <div className="h-3 w-10 rounded bg-[var(--wf-surface-muted)]" />
+          <div className="h-10 rounded-xl bg-[var(--wf-surface-muted)]" />
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="h-9 rounded-xl bg-[var(--bg-muted)]" />
+            <div key={i} className="h-9 rounded-xl bg-[var(--wf-surface-muted)]" />
           ))}
         </div>
         <div className="order-2 space-y-4 lg:order-none lg:px-8 lg:py-6">
-          <div className="apple-card space-y-3 p-6">
-            <div className="h-6 w-3/4 rounded bg-[var(--bg-muted)]" />
-            <div className="h-4 w-1/2 rounded bg-[var(--bg-muted)]" />
+          <div className="space-y-3 rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-6 shadow-[var(--wf-shadow-sm)]">
+            <div className="h-6 w-3/4 rounded bg-[var(--wf-surface-muted)]" />
+            <div className="h-4 w-1/2 rounded bg-[var(--wf-surface-muted)]" />
           </div>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="apple-card space-y-2 p-4">
-                <div className="aspect-video rounded-lg bg-[var(--bg-muted)]" />
-                <div className="h-4 w-5/6 rounded bg-[var(--bg-muted)]" />
+              <div key={i} className="space-y-2 rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-4 shadow-[var(--wf-shadow-sm)]">
+                <div className="aspect-video rounded-lg bg-[var(--wf-surface-muted)]" />
+                <div className="h-4 w-5/6 rounded bg-[var(--wf-surface-muted)]" />
               </div>
             ))}
           </div>
         </div>
-        <div className="order-1 space-y-3 lg:order-none lg:border-l lg:border-[var(--border)] lg:px-4 lg:py-6">
-          <div className="apple-card aspect-video bg-[var(--bg-muted)]" />
-          <div className="h-9 rounded-xl bg-[var(--bg-muted)]" />
-          <div className="h-9 rounded-xl bg-[var(--bg-muted)]" />
+        <div className="order-1 space-y-3 lg:order-none lg:border-l lg:border-[var(--wf-border)] lg:px-4 lg:py-6">
+          <div className="aspect-video rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface-muted)] shadow-[var(--wf-shadow-sm)]" />
+          <div className="h-9 rounded-xl bg-[var(--wf-surface-muted)]" />
+          <div className="h-9 rounded-xl bg-[var(--wf-surface-muted)]" />
         </div>
       </div>
     </main>
@@ -378,8 +378,8 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
       <NavBar>
         <div className="flex items-center gap-2 min-w-0">
           <Link href={backHref}
-                className="inline-flex items-center gap-1 text-xs text-[var(--fg-tertiary)]
-                           hover:text-[var(--fg)] transition-colors shrink-0">
+                className="inline-flex items-center gap-1 text-xs text-[var(--wf-text-tertiary)]
+                           hover:text-[var(--wf-text)] transition-colors shrink-0">
             <ArrowLeft size={12} /> 返回
           </Link>
           <button
@@ -387,24 +387,24 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             onClick={() => setRailOpen(true)}
             aria-label={lang === "en" ? "Open chapter navigation" : "打开章节导航"}
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md
-                       text-[var(--fg-tertiary)] transition-colors hover:bg-[var(--bg-muted)]
-                       hover:text-[var(--fg)] lg:hidden"
+                       text-[var(--wf-text-tertiary)] transition-colors hover:bg-[var(--wf-surface-muted)]
+                       hover:text-[var(--wf-text)] lg:hidden"
           >
             <PanelLeft size={15} />
           </button>
-          <span className="text-[var(--fg-tertiary)] shrink-0 max-lg:hidden">·</span>
+          <span className="text-[var(--wf-text-tertiary)] shrink-0 max-lg:hidden">·</span>
           <span className="text-sm font-medium truncate">{title}</span>
           {shared && (
-            <span className="shrink-0 rounded-full bg-[var(--bg-muted)] px-2 py-0.5 text-[10px] text-[var(--fg-secondary)]">
+            <span className="shrink-0 rounded-full bg-[var(--wf-surface-muted)] px-2 py-0.5 text-[10px] text-[var(--wf-text-secondary)]">
               {lang === "en" ? "Shared" : "分享页"}
             </span>
           )}
           <button
             onClick={() => setSpotOpen(true)}
             className="ml-auto hidden lg:inline-flex items-center gap-1.5 text-xs
-                       text-[var(--fg-tertiary)] hover:text-[var(--fg)]
-                       px-2 py-1 rounded-lg border border-[var(--border)]
-                       hover:bg-[var(--bg-muted)] transition-colors shrink-0"
+                       text-[var(--wf-text-tertiary)] hover:text-[var(--wf-text)]
+                       px-2 py-1 rounded-lg border border-[var(--wf-border)]
+                       hover:bg-[var(--wf-surface-muted)] transition-colors shrink-0"
             title="搜索（⌘K）"
           >
             <Search size={11} />
@@ -501,7 +501,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             </div>
           )}
           {bundle.chapters.length > 0 && currentChapter >= 0 && (
-            <div className="lg:hidden text-xs text-[var(--fg-tertiary)] flex items-center gap-2 px-1">
+            <div className="lg:hidden text-xs text-[var(--wf-text-tertiary)] flex items-center gap-2 px-1">
               <span className="tabular-nums">{formatTime(currentTime)}</span>
               <span>·</span>
               <span className="truncate">
@@ -523,23 +523,23 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             <button
               type="button"
               onClick={handleExport}
-              className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]
-                         px-3 py-2 text-xs text-[var(--fg-secondary)] transition-colors
-                         hover:bg-[var(--bg-muted)] hover:text-[var(--fg)] max-lg:min-h-11"
+              className="flex items-center gap-2 rounded-xl border border-[var(--wf-border)] bg-[var(--wf-surface)]
+                         px-3 py-2 text-xs text-[var(--wf-text-secondary)] transition-colors
+                         hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)] max-lg:min-h-11"
             >
-              <Download size={14} className="text-[var(--accent)]" />
+              <Download size={14} className="text-[var(--wf-accent)]" />
               {lang === "en" ? "Export Markdown" : "导出 Markdown"}
             </button>
             <button
               type="button"
               onClick={handleExportDocx}
               disabled={docxState === "busy"}
-              className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]
-                         px-3 py-2 text-xs text-[var(--fg-secondary)] transition-colors
-                         hover:bg-[var(--bg-muted)] hover:text-[var(--fg)] max-lg:min-h-11
+              className="flex items-center gap-2 rounded-xl border border-[var(--wf-border)] bg-[var(--wf-surface)]
+                         px-3 py-2 text-xs text-[var(--wf-text-secondary)] transition-colors
+                         hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)] max-lg:min-h-11
                          disabled:opacity-60 disabled:cursor-wait"
             >
-              <FileText size={14} className={docxState === "error" ? "text-[#d93025]" : "text-[var(--accent)]"} />
+              <FileText size={14} className={docxState === "error" ? "text-[var(--wf-danger)]" : "text-[var(--wf-accent)]"} />
               {docxState === "busy"
                 ? (lang === "en" ? "Exporting…" : "导出中…")
                 : docxState === "error"
@@ -551,13 +551,13 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
                 <button
                   type="button"
                   onClick={handleShare}
-                  className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]
-                             px-3 py-2 text-xs text-[var(--fg-secondary)] transition-colors
-                             hover:bg-[var(--bg-muted)] hover:text-[var(--fg)] max-lg:min-h-11"
+                  className="flex items-center gap-2 rounded-xl border border-[var(--wf-border)] bg-[var(--wf-surface)]
+                             px-3 py-2 text-xs text-[var(--wf-text-secondary)] transition-colors
+                             hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)] max-lg:min-h-11"
                 >
                   {shareCopied
                     ? <Check size={14} className="text-[#1d9e75]" />
-                    : <Share2 size={14} className="text-[var(--accent)]" />}
+                    : <Share2 size={14} className="text-[var(--wf-accent)]" />}
                   {shareCopied
                     ? (lang === "en" ? "Link copied" : "链接已复制")
                     : shareToken
@@ -572,23 +572,23 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
                         if (e.key === "Enter") { e.stopPropagation(); handleRevoke(); }
                       }}
                       title={lang === "en" ? "Revoke link" : "撤销分享"}
-                      className="ml-auto rounded-full px-1.5 py-0.5 text-[10px] text-[var(--fg-tertiary)]
-                                 hover:bg-[rgba(217,48,37,0.10)] hover:text-[#d93025]"
+                      className="ml-auto rounded-full px-1.5 py-0.5 text-[10px] text-[var(--wf-text-tertiary)]
+                                 hover:bg-[var(--wf-danger-surface)] hover:text-[var(--wf-danger)]"
                     >
                       {lang === "en" ? "Revoke" : "撤销"}
                     </span>
                   )}
                 </button>
                 {shareHint && (
-                  <p className="px-1 text-[11px] text-[var(--fg-tertiary)]">{shareHint}</p>
+                  <p className="px-1 text-[11px] text-[var(--wf-text-tertiary)]">{shareHint}</p>
                 )}
                 <Link
                   href="/bookmarks"
-                  className="flex items-center gap-2 rounded-xl border border-[var(--border)] bg-[var(--bg-elevated)]
-                             px-3 py-2 text-xs text-[var(--fg-secondary)] transition-colors
-                             hover:bg-[var(--bg-muted)] hover:text-[var(--fg)] max-lg:min-h-11"
+                  className="flex items-center gap-2 rounded-xl border border-[var(--wf-border)] bg-[var(--wf-surface)]
+                             px-3 py-2 text-xs text-[var(--wf-text-secondary)] transition-colors
+                             hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)] max-lg:min-h-11"
                 >
-                  <Bookmark size={14} className="text-[var(--accent)]" />
+                  <Bookmark size={14} className="text-[var(--wf-accent)]" />
                   {lang === "en" ? "My bookmarks" : "我的书签"}
                 </Link>
               </>
@@ -616,7 +616,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
               aria-modal="true"
               aria-label={lang === "en" ? "Chapter navigation" : "章节导航"}
               className="absolute left-0 top-0 h-full w-72 overflow-y-auto border-r
-                         border-[var(--border)] bg-[var(--bg-elevated)] px-3 py-4"
+                         border-[var(--wf-border)] bg-[var(--wf-surface)] px-3 py-4"
               onClick={e => e.stopPropagation()}
             >
               <div className="mb-2 flex items-center justify-between px-3">
@@ -626,7 +626,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
                   onClick={() => setRailOpen(false)}
                   aria-label={lang === "en" ? "Close" : "关闭"}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full
-                             text-[var(--fg-tertiary)] hover:bg-[var(--bg-muted)] hover:text-[var(--fg)]"
+                             text-[var(--wf-text-tertiary)] hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)]"
                 >
                   <X size={15} />
                 </button>
