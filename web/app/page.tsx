@@ -355,7 +355,7 @@ export default function LandingPage() {
               从一段视频，到一套可以复习的笔记
             </h2>
             <p className="mt-5 text-base leading-8 text-[var(--wf-text-secondary)]">
-              首页只展示静态模拟流程，重点让用户理解视频、章节、笔记和问答之间的关系。
+              从章节定位到逐字稿，再从笔记跳回视频片段。NoteGen 把学习过程整理成一条可以反复回看的时间线。
             </p>
           </div>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
