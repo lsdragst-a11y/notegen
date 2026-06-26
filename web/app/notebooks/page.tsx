@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import {
   BookOpen,
@@ -25,12 +26,20 @@ import type { LucideIcon } from "lucide-react";
 import CreateNotePanel from "@/components/CreateNotePanel";
 import NavBar from "@/components/NavBar";
 import RequireAuth from "@/components/RequireAuth";
+import { useAuth } from "@/components/AuthContext";
 import { Button, Card, Chip, IconButton, Input } from "@/components/ui";
 import { deleteNote, fetchHistory, fetchMyNotes } from "@/lib/api";
 import { fetchCatalog, formatDuration } from "@/lib/notes";
 import type { CatalogItem, HistoryItem, NoteView } from "@/lib/types";
-
-type Filter = "mine" | "all" | "public";
+import {
+  canCreateNotebook,
+  getNotebookHeroCopy,
+  NOTEBOOK_FILTERS,
+  parseNotebookFilter,
+  shouldAllowPublicCatalog,
+  shouldShowProgressPanel,
+  type NotebookFilter as Filter,
+} from "./filter";
 
 interface CardItem {
   id: string;
@@ -43,12 +52,6 @@ interface CardItem {
   mine: boolean;
   recentAt?: number;
 }
-
-const FILTERS: { key: Filter; label: string }[] = [
-  { key: "mine", label: "我的笔记" },
-  { key: "all", label: "全部" },
-  { key: "public", label: "公开示例" },
-];
 
 const DOMAIN_STYLE: Record<string, { icon: LucideIcon }> = {
   编程教学: { icon: Code2 },
@@ -199,30 +202,37 @@ function EmptyState({
   );
 }
 
-function NotebooksInner() {
+function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
+  const { user } = useAuth();
   const [pub, setPub] = useState<CatalogItem[] | null>(null);
   const [mine, setMine] = useState<NoteView[] | null>(null);
   const [history, setHistory] = useState<HistoryItem[] | null>(null);
-  const [filter, setFilter] = useState<Filter>("mine");
+  const [filter, setFilter] = useState<Filter>(initialFilter);
   const [query, setQuery] = useState("");
   const [createOpen, setCreateOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState<CardItem | null>(null);
   const [delId, setDelId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const canCreate = canCreateNotebook(user);
+  const guestPublicCatalog = shouldAllowPublicCatalog(filter) && !user;
+  const heroCopy = getNotebookHeroCopy(filter, user);
+  const showProgressPanel = shouldShowProgressPanel(filter, user);
 
   useEffect(() => {
     let alive = true;
     fetchCatalog()
       .then((d) => { if (alive) setPub(d); })
       .catch(() => { if (alive) setPub([]); });
-    fetchMyNotes()
-      .then((d) => { if (alive) setMine(d); })
-      .catch(() => { if (alive) setMine([]); });
-    fetchHistory()
-      .then((d) => { if (alive) setHistory(d); })
-      .catch(() => { if (alive) setHistory([]); });
+    if (!guestPublicCatalog) {
+      fetchMyNotes()
+        .then((d) => { if (alive) setMine(d); })
+        .catch(() => { if (alive) setMine([]); });
+      fetchHistory()
+        .then((d) => { if (alive) setHistory(d); })
+        .catch(() => { if (alive) setHistory([]); });
+    }
     return () => { alive = false; };
-  }, []);
+  }, [guestPublicCatalog]);
 
   useEffect(() => {
     if (!createOpen && !confirmDelete) return;
@@ -236,7 +246,7 @@ function NotebooksInner() {
     return () => window.removeEventListener("keydown", onKey);
   }, [createOpen, confirmDelete]);
 
-  const loading = pub === null || mine === null || history === null;
+  const loading = guestPublicCatalog ? pub === null : pub === null || mine === null || history === null;
 
   const recentByNote = useMemo(() => {
     const map = new Map<string, number>();
@@ -249,7 +259,7 @@ function NotebooksInner() {
   }, [history]);
 
   const items: CardItem[] = useMemo(() => {
-    const mineCards: CardItem[] = (mine ?? []).map((n) => ({
+    const mineCards: CardItem[] = (user ? (mine ?? []) : []).map((n) => ({
       id: n.id,
       title: n.title,
       domain: n.domain,
@@ -281,7 +291,7 @@ function NotebooksInner() {
         if (a.mine !== b.mine) return a.mine ? -1 : 1;
         return (b.recentAt ?? 0) - (a.recentAt ?? 0);
       });
-  }, [filter, mine, pub, query, recentByNote]);
+  }, [filter, mine, pub, query, recentByNote, user]);
 
   const latestJob = useMemo(() => {
     return [...(history ?? [])].sort((a, b) => b.updated_at - a.updated_at)[0] ?? null;
@@ -303,70 +313,78 @@ function NotebooksInner() {
 
   return (
     <main className="min-h-screen bg-[var(--wf-canvas)] text-[var(--wf-text)]">
-      <NavBar />
+      <NavBar suppressOfflineBadge={guestPublicCatalog} />
 
       <section className="mx-auto max-w-7xl px-5 pb-24 pt-8 sm:px-6">
-        <div className="grid gap-5 lg:grid-cols-[1fr_22rem]">
+        <div className={`grid gap-5 ${showProgressPanel ? "lg:grid-cols-[1fr_22rem]" : ""}`}>
           <Card padding="lg" className="overflow-hidden">
             <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
               <div>
                 <Chip variant="accent" className="gap-2">
                   <Sparkles size={14} aria-hidden="true" />
-                  Notebook Library
+                  {heroCopy.eyebrow}
                 </Chip>
                 <h1 className="mt-5 font-[var(--wf-font-display)] text-4xl font-semibold tracking-[-0.04em] md:text-5xl">
-                  我的笔记
+                  {heroCopy.title}
                 </h1>
                 <p className="mt-4 max-w-2xl text-sm leading-7 text-[var(--wf-text-secondary)]">
-                  优先查看自己的视频笔记、最近生成进度和可复习材料；公开示例保留为参考内容。
+                  {heroCopy.description}
                 </p>
               </div>
-              <Button onClick={() => setCreateOpen(true)} size="lg">
-                <Plus size={16} aria-hidden="true" />
-                新建笔记本
-              </Button>
+              {canCreate ? (
+                <Button onClick={() => setCreateOpen(true)} size="lg">
+                  <Plus size={16} aria-hidden="true" />
+                  {heroCopy.cta}
+                </Button>
+              ) : (
+                <Link href="/login?next=/notebooks" className="wf-button" data-size="lg" data-variant="primary">
+                  <span className="wf-button__content">{heroCopy.cta}</span>
+                </Link>
+              )}
             </div>
           </Card>
 
-          <Card padding="lg">
-            <p className="text-sm font-semibold text-[var(--wf-text)]">最近进度</p>
-            {loading ? (
-              <div className="mt-4 space-y-3">
-                <div className="h-4 w-2/3 animate-pulse rounded bg-[var(--wf-surface-muted)]" />
-                <div className="h-3 w-full animate-pulse rounded bg-[var(--wf-surface-muted)]" />
-              </div>
-            ) : latestJob ? (
-              <div className="mt-4">
-                <div className="flex items-center justify-between gap-3">
-                  <Chip variant={latestJob.status === "failed" ? "danger" : "accent"} size="sm">
-                    {jobStatusLabel(latestJob.status)}
-                  </Chip>
-                  <span className="text-xs text-[var(--wf-text-tertiary)]">
-                    {formatRelativeTime(latestJob.updated_at)}
-                  </span>
+          {showProgressPanel ? (
+            <Card padding="lg">
+              <p className="text-sm font-semibold text-[var(--wf-text)]">最近进度</p>
+              {loading ? (
+                <div className="mt-4 space-y-3">
+                  <div className="h-4 w-2/3 animate-pulse rounded bg-[var(--wf-surface-muted)]" />
+                  <div className="h-3 w-full animate-pulse rounded bg-[var(--wf-surface-muted)]" />
                 </div>
-                <p className="mt-3 truncate text-sm font-medium text-[var(--wf-text)]">{latestJob.source}</p>
-                <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--wf-text)_10%,transparent)]">
-                  <div
-                    className="h-full rounded-full bg-[var(--wf-brand-coral)]"
-                    style={{ width: `${Math.max(8, Math.min(100, latestJob.runtime?.percent ?? (latestJob.status === "done" ? 100 : 12)))}%` }}
-                  />
+              ) : latestJob ? (
+                <div className="mt-4">
+                  <div className="flex items-center justify-between gap-3">
+                    <Chip variant={latestJob.status === "failed" ? "danger" : "accent"} size="sm">
+                      {jobStatusLabel(latestJob.status)}
+                    </Chip>
+                    <span className="text-xs text-[var(--wf-text-tertiary)]">
+                      {formatRelativeTime(latestJob.updated_at)}
+                    </span>
+                  </div>
+                  <p className="mt-3 truncate text-sm font-medium text-[var(--wf-text)]">{latestJob.source}</p>
+                  <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--wf-text)_10%,transparent)]">
+                    <div
+                      className="h-full rounded-full bg-[var(--wf-brand-coral)]"
+                      style={{ width: `${Math.max(8, Math.min(100, latestJob.runtime?.percent ?? (latestJob.status === "done" ? 100 : 12)))}%` }}
+                    />
+                  </div>
+                  <Link href="/history" className="mt-4 inline-flex text-xs font-medium text-[var(--wf-accent)] hover:underline">
+                    查看任务历史
+                  </Link>
                 </div>
-                <Link href="/history" className="mt-4 inline-flex text-xs font-medium text-[var(--wf-accent)] hover:underline">
-                  查看任务历史
-                </Link>
-              </div>
-            ) : (
-              <p className="mt-4 text-sm leading-6 text-[var(--wf-text-secondary)]">
-                还没有生成任务。创建一本笔记后，这里会显示最近处理进度。
-              </p>
-            )}
-          </Card>
+              ) : (
+                <p className="mt-4 text-sm leading-6 text-[var(--wf-text-secondary)]">
+                  还没有生成任务。创建一本笔记后，这里会显示最近处理进度。
+                </p>
+              )}
+            </Card>
+          ) : null}
         </div>
 
         <div className="mt-6 flex flex-col gap-4 rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-4 shadow-[var(--wf-shadow-sm)] md:flex-row md:items-center">
           <div className="flex flex-wrap gap-2">
-            {FILTERS.map((f) => (
+            {NOTEBOOK_FILTERS.map((f) => (
               <button
                 key={f.key}
                 type="button"
@@ -401,17 +419,19 @@ function NotebooksInner() {
         </div>
 
         <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          <button
-            type="button"
-            onClick={() => setCreateOpen(true)}
-            className="flex min-h-56 flex-col items-center justify-center gap-3 rounded-[var(--wf-radius-md)] border-2 border-dashed border-[var(--wf-border-strong)] bg-[color-mix(in_srgb,var(--wf-surface)_60%,transparent)] p-5 text-[var(--wf-text-secondary)] transition-colors hover:border-[var(--wf-accent)] hover:text-[var(--wf-accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wf-focus)]"
-          >
-            <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--wf-surface-muted)]">
-              <Plus size={20} aria-hidden="true" />
-            </span>
-            <span className="text-sm font-semibold">新建笔记本</span>
-            <span className="text-xs text-[var(--wf-text-tertiary)]">链接 / 本地视频</span>
-          </button>
+          {canCreate ? (
+            <button
+              type="button"
+              onClick={() => setCreateOpen(true)}
+              className="flex min-h-56 flex-col items-center justify-center gap-3 rounded-[var(--wf-radius-md)] border-2 border-dashed border-[var(--wf-border-strong)] bg-[color-mix(in_srgb,var(--wf-surface)_60%,transparent)] p-5 text-[var(--wf-text-secondary)] transition-colors hover:border-[var(--wf-accent)] hover:text-[var(--wf-accent)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wf-focus)]"
+            >
+              <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-[var(--wf-surface-muted)]">
+                <Plus size={20} aria-hidden="true" />
+              </span>
+              <span className="text-sm font-semibold">新建笔记本</span>
+              <span className="text-xs text-[var(--wf-text-tertiary)]">链接 / 本地视频</span>
+            </button>
+          ) : null}
 
           {loading
             ? Array.from({ length: 7 }).map((_, i) => (
@@ -516,10 +536,30 @@ function NotebooksInner() {
   );
 }
 
+function NotebooksRouteFallback() {
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center gap-3 px-6 text-center text-[var(--wf-text-secondary)]">
+      <div className="h-5 w-5 animate-spin rounded-full border-2 border-[var(--wf-border-strong)] border-t-[var(--wf-accent)]" />
+      <p className="text-sm">加载笔记库…</p>
+    </main>
+  );
+}
+
+function NotebooksPageContent() {
+  const searchParams = useSearchParams();
+  const initialFilter = parseNotebookFilter(searchParams.get("filter"));
+
+  return (
+    <RequireAuth allowUnauthenticated={shouldAllowPublicCatalog(initialFilter)}>
+      <NotebooksInner key={initialFilter} initialFilter={initialFilter} />
+    </RequireAuth>
+  );
+}
+
 export default function NotebooksPage() {
   return (
-    <RequireAuth>
-      <NotebooksInner />
-    </RequireAuth>
+    <Suspense fallback={<NotebooksRouteFallback />}>
+      <NotebooksPageContent />
+    </Suspense>
   );
 }

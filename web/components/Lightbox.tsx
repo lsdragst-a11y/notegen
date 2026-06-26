@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight, X, Play } from "lucide-react";
 import { formatTime } from "@/lib/notes";
@@ -90,18 +91,24 @@ export default function Lightbox({
           {/* 大图区 + 左右箭头 */}
           <div className="flex-1 relative flex items-center justify-center px-12 py-4 min-h-0">
             <AnimatePresence mode="wait" initial={false}>
-              <motion.img
+              <motion.div
                 key={cur.src}
-                src={cur.src}
-                alt={cur.headline}
                 initial={{ opacity: 0, scale: 0.98 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0, scale: 0.98 }}
                 transition={{ duration: 0.18 }}
-                className="max-w-full max-h-full object-contain rounded-xl
+                className="relative h-full w-full max-w-6xl overflow-hidden rounded-xl
                            shadow-[0_30px_80px_rgba(0,0,0,0.6)]"
                 onClick={e => e.stopPropagation()}
-              />
+              >
+                <Image
+                  src={cur.src}
+                  alt={cur.headline}
+                  fill
+                  sizes="100vw"
+                  className="object-contain"
+                />
+              </motion.div>
             </AnimatePresence>
 
             {canPrev && (
@@ -142,7 +149,9 @@ export default function Lightbox({
                               ? "ring-2 ring-white scale-[1.06]"
                               : "opacity-55 hover:opacity-90"}`}
               >
-                <img src={it.src} alt="" className="w-full h-full object-cover" />
+                <span className="relative block h-full w-full">
+                  <Image src={it.src} alt="" fill sizes="80px" className="object-cover" />
+                </span>
               </button>
             ))}
           </div>

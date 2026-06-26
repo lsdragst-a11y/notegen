@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Bookmark, Layers, WifiOff } from "lucide-react";
+import { Bookmark, WifiOff } from "lucide-react";
 
 import { BrandMark } from "@/components/brand/BrandMark";
 import { Button, Chip } from "@/components/ui";
@@ -16,7 +16,13 @@ import UserMenu from "./UserMenu";
  * Shared app navigation. Uses the Warm Fold brand mark and tokens,
  * while keeping route behavior unchanged for existing pages.
  */
-export default function NavBar({ children }: { children?: React.ReactNode }) {
+export default function NavBar({
+  children,
+  suppressOfflineBadge = false,
+}: {
+  children?: React.ReactNode;
+  suppressOfflineBadge?: boolean;
+}) {
   const { user, loading, offline } = useAuth();
   const { lang } = useLang();
   const bmCount = useBookmarksList().length;
@@ -54,15 +60,6 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
           </Link>
         ) : null}
 
-        <Link
-          href="/mm-ablation"
-          className="hidden items-center gap-1.5 rounded-[var(--wf-radius-xs)] px-2.5 py-1.5 text-xs text-[var(--wf-text-secondary)] transition-colors hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wf-focus)] sm:inline-flex"
-          title="多模态切分 ablation 实验对比"
-        >
-          <Layers size={13} aria-hidden="true" />
-          <span className="hidden md:inline">多模态 ablation</span>
-        </Link>
-
         <div className="hidden items-center gap-1.5 sm:flex">
           <LangToggle />
           <ThemeToggle />
@@ -70,7 +67,7 @@ export default function NavBar({ children }: { children?: React.ReactNode }) {
 
         {!loading && user ? <UserMenu /> : null}
 
-        {!loading && !user && offline ? (
+        {!loading && !user && offline && !suppressOfflineBadge ? (
           <span
             className="hidden items-center gap-1.5 rounded-[var(--wf-radius-xs)] bg-[var(--wf-surface-muted)] px-2.5 py-1.5 text-xs text-[var(--wf-text-tertiary)] sm:inline-flex"
             title="无法连接服务器，鉴权状态未知"

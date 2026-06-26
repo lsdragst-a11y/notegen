@@ -9,16 +9,26 @@ import { useAuth } from "./AuthContext";
  * 后端连不上（offline）时不弹登录页——此时无法判定登录态，弹了也连不上，
  * 改为给离线提示 + 重试，避免把已登录用户误踢去登录。
  */
-export default function RequireAuth({ children }: { children: React.ReactNode }) {
+export default function RequireAuth({
+  allowUnauthenticated = false,
+  children,
+}: {
+  allowUnauthenticated?: boolean;
+  children: React.ReactNode;
+}) {
   const { user, loading, offline, refresh } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   useEffect(() => {
+    if (allowUnauthenticated) return;
     if (!loading && !offline && !user) {
-      router.replace(`/login?next=${encodeURIComponent(pathname)}`);
+      const search = typeof window === "undefined" ? "" : window.location.search;
+      router.replace(`/login?next=${encodeURIComponent(`${pathname}${search}`)}`);
     }
-  }, [loading, offline, user, pathname, router]);
+  }, [allowUnauthenticated, loading, offline, user, pathname, router]);
+
+  if (allowUnauthenticated) return <>{children}</>;
 
   if (loading) {
     return (
