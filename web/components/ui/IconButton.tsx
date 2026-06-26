@@ -6,7 +6,7 @@ type NativeIconButtonProps = Omit<ButtonHTMLAttributes<HTMLButtonElement>, "aria
 
 export interface IconButtonProps extends NativeIconButtonProps {
   "aria-label": string;
-  variant?: "ghost" | "secondary" | "danger";
+  variant?: "primary" | "ghost" | "secondary" | "danger";
   size?: "sm" | "md" | "lg";
   loading?: boolean;
 }

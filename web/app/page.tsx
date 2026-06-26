@@ -6,6 +6,7 @@ import {
   ArrowRight,
   BookOpenCheck,
   Code2,
+  Film,
   GraduationCap,
   MessageCircleQuestion,
   Play,
@@ -19,6 +20,7 @@ import type { ReactNode } from "react";
 import { BrandMark } from "@/components/brand/BrandMark";
 import { Card, Chip } from "@/components/ui";
 import { useAuth } from "@/components/AuthContext";
+import { CINEMATIC_BEATS } from "./landing-model";
 
 const PROCESS_STEPS = [
   {
@@ -234,6 +236,72 @@ function UseCaseCard({ item }: { item: (typeof USE_CASES)[number] }) {
   );
 }
 
+function CinematicStory() {
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <section className="px-5 py-12 sm:px-6 md:py-20" aria-labelledby="cinematic-story-title">
+      <div className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--wf-brand-coral)_28%,transparent)] bg-[#17120f] text-[#fff7ed] shadow-[var(--wf-shadow-lg)]">
+        <div className="grid gap-0 lg:grid-cols-[0.46fr_0.54fr]">
+          <div className="relative min-h-[28rem] p-7 md:p-10">
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(228,123,89,.26),transparent_34%),linear-gradient(180deg,rgba(255,250,243,.06),transparent)]" />
+            <div className="relative z-10">
+              <Chip variant="accent" className="gap-2 border border-white/10 bg-white/10 text-[#ffb28f]">
+                <Film size={14} aria-hidden="true" />
+                Cinematic Flow
+              </Chip>
+              <h2 id="cinematic-story-title" className="mt-6 font-[var(--wf-font-display)] text-4xl font-semibold leading-tight tracking-[-0.04em] md:text-6xl">
+                像剪一支预告片一样，把学习过程展开
+              </h2>
+              <p className="mt-5 max-w-md text-sm leading-7 text-[#d8c8ba]">
+                入口页负责建立记忆点：视频进入、时间线滑入、纸页展开、播放指针回到证据。工作台仍然保持安静和高效。
+              </p>
+            </div>
+            <div className="absolute bottom-8 left-8 right-8 z-10">
+              <div className="h-1.5 overflow-hidden rounded-full bg-white/12">
+                <motion.div
+                  className="h-full rounded-full bg-[var(--wf-brand-coral)]"
+                  initial={{ width: reduceMotion ? "100%" : "18%" }}
+                  whileInView={{ width: "100%" }}
+                  viewport={{ once: true, amount: 0.45 }}
+                  transition={{ duration: reduceMotion ? 0 : 1.4, ease: "easeOut" }}
+                />
+              </div>
+              <div className="mt-3 flex justify-between text-[10px] uppercase tracking-[0.18em] text-white/45">
+                <span>Import</span>
+                <span>Replay</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="relative border-t border-white/10 bg-[#211a16] p-5 lg:border-l lg:border-t-0 md:p-8">
+            <div className="pointer-events-none absolute inset-y-8 left-9 w-px bg-white/12 md:left-12" />
+            <div className="space-y-4">
+              {CINEMATIC_BEATS.map((beat, index) => (
+                <motion.article
+                  key={beat.id}
+                  initial={reduceMotion ? false : { opacity: 0, x: 18 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true, amount: 0.35 }}
+                  transition={{ delay: reduceMotion ? 0 : index * 0.08, duration: 0.38, ease: "easeOut" }}
+                  className="relative rounded-[1.25rem] border border-white/10 bg-white/[0.055] p-5 pl-12 shadow-[0_18px_44px_rgba(0,0,0,.18)]"
+                >
+                  <span className="absolute left-4 top-5 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--wf-brand-coral)] bg-[#211a16]">
+                    <span className="h-2 w-2 rounded-full bg-[var(--wf-brand-coral)]" />
+                  </span>
+                  <p className="text-xs font-semibold tabular-nums tracking-[0.18em] text-[#ffb28f]">{beat.timecode}</p>
+                  <h3 className="mt-2 text-lg font-semibold text-[#fff7ed]">{beat.title}</h3>
+                  <p className="mt-2 text-sm leading-6 text-[#d8c8ba]">{beat.copy}</p>
+                </motion.article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 export default function LandingPage() {
   const { user } = useAuth();
   const primaryHref = user ? "/notebooks" : "/login?next=/notebooks";
@@ -267,7 +335,7 @@ export default function LandingPage() {
               <LandingLinkButton href={primaryHref}>
                 {heroCtaLabel} <ArrowRight size={16} aria-hidden="true" />
               </LandingLinkButton>
-              <LandingLinkButton href="#preview" variant="secondary">
+              <LandingLinkButton href="/notebooks?filter=public" variant="secondary">
                 查看示例
               </LandingLinkButton>
             </div>
@@ -277,6 +345,8 @@ export default function LandingPage() {
         </div>
       </section>
 
+      <CinematicStory />
+
       <section id="how-it-works" className="px-5 py-16 sm:px-6 md:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto max-w-2xl text-center">
@@ -285,7 +355,7 @@ export default function LandingPage() {
               从一段视频，到一套可以复习的笔记
             </h2>
             <p className="mt-5 text-base leading-8 text-[var(--wf-text-secondary)]">
-              首页只展示静态模拟流程，重点让用户理解视频、章节、笔记和问答之间的关系。
+              从章节定位到逐字稿，再从笔记跳回视频片段。NoteGen 把学习过程整理成一条可以反复回看的时间线。
             </p>
           </div>
           <div className="mt-12 grid gap-5 md:grid-cols-3">

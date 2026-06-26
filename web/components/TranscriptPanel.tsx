@@ -80,7 +80,6 @@ export default function TranscriptPanel({ summary, currentTime, onSeek }: Props)
         </button>
       );
     }),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     [sentences, currentIdx, onSeek],
   );
 

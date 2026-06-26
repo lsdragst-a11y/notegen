@@ -7,6 +7,7 @@ import { useLang, pickByLang } from "./LangContext";
 import { useAuth } from "./AuthContext";
 import { postAsk, fetchQa, ApiError, type QaCitation, type QaHistoryItem } from "@/lib/api";
 import { formatTime } from "@/lib/notes";
+import { Button, IconButton, Input } from "@/components/ui";
 
 interface ChatMsg {
   role: "user" | "assistant";
@@ -205,17 +206,17 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
       {msgs.length === 0 && !busy && suggestions.length > 0 && (
         <div className="flex flex-wrap gap-1.5 px-4 pt-3">
           {suggestions.map(s => (
-            <button
+            <Button
               key={s}
               type="button"
               onClick={() => submit(s)}
-              className="inline-flex max-w-full items-center gap-1 rounded-[var(--wf-radius-full)] border border-[var(--wf-border)]
-                         bg-[var(--wf-surface-muted)] px-3 py-1.5 text-xs text-[var(--wf-text-secondary)]
-                         transition-colors hover:border-[var(--wf-accent)] hover:text-[var(--wf-accent)]"
+              variant="secondary"
+              size="sm"
+              className="max-w-full rounded-[var(--wf-radius-full)]"
             >
               <Sparkles size={11} className="shrink-0" />
               <span className="truncate">{s}</span>
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -223,7 +224,7 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
       {/* 输入行 */}
       <div className="flex items-center gap-2.5 px-4 py-3">
         <MessageCircle size={15} className="shrink-0 text-[var(--wf-text-tertiary)]" />
-        <input
+        <Input
           type="text"
           value={input}
           onChange={e => setInput(e.target.value)}
@@ -233,20 +234,21 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
           placeholder={busy
             ? statusText
             : t("对这个视频提问，回答附时间戳引用…", "Ask about this video — answers cite timestamps…")}
-          className="min-w-0 flex-1 bg-transparent text-sm text-[var(--wf-text)] outline-none
-                     placeholder:text-[var(--wf-text-tertiary)] disabled:opacity-60"
+          size="sm"
+          className="min-w-0 flex-1 border-0 bg-transparent px-0 focus-visible:outline-none disabled:opacity-60"
         />
-        <button
+        <IconButton
           type="button"
           onClick={() => submit()}
           disabled={busy || !input.trim()}
           aria-label={t("发送", "Send")}
-          className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-[var(--wf-radius-full)]
-                     bg-[var(--wf-accent)] text-[var(--wf-on-accent)] transition-opacity
-                     hover:opacity-90 disabled:opacity-40"
+          loading={busy}
+          size="sm"
+          className="h-8 w-8 shrink-0 rounded-[var(--wf-radius-full)]"
+          variant="primary"
         >
-          {busy ? <Loader2 size={14} className="animate-spin" /> : <Send size={14} />}
-        </button>
+          <Send size={14} />
+        </IconButton>
       </div>
     </div>
   );

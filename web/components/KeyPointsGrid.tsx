@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Sparkles, Target, Clock, Expand, Play } from "lucide-react";
 import type { Chunk, Mark } from "@/lib/types";
@@ -65,9 +66,13 @@ export default function KeyPointsGrid({
               {/* 幻灯片大图——卡片主体 */}
               <div className="relative aspect-video bg-[var(--bg-muted)] overflow-hidden group/kf">
                 {kfRel ? (
-                  <img src={`${keyframeBase}${kfRel}`}
-                       alt="" className="h-full w-full object-cover dark:brightness-90
-                                          transition-transform duration-300 group-hover/kf:scale-[1.04]" />
+                  <Image
+                    src={`${keyframeBase}${kfRel}`}
+                    alt=""
+                    fill
+                    sizes="(max-width: 640px) 100vw, (max-width: 1280px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-300 group-hover/kf:scale-[1.04] dark:brightness-90"
+                  />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center
                                   bg-gradient-to-br from-[var(--bg-muted)] to-[var(--bg)]

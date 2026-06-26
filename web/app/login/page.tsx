@@ -3,11 +3,11 @@
 import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowRight, CheckCircle2, LogIn } from "lucide-react";
+import { ArrowRight, Eye, EyeOff, LogIn } from "lucide-react";
 
 import { BrandMark } from "@/components/brand/BrandMark";
-import NavBar from "@/components/NavBar";
-import { Button, Card, Chip, Input } from "@/components/ui";
+import { AccountCompanion, type AccountCompanionState } from "@/components/auth/AccountCompanion";
+import { Button, IconButton, Input } from "@/components/ui";
 import { useAuth } from "@/components/AuthContext";
 import { ApiError } from "@/lib/api";
 
@@ -16,6 +16,17 @@ function getSafeNextPath(value: string | null) {
     return "/notebooks";
   }
   return value;
+}
+
+type AuthFocus = "email" | "password" | "idle";
+type AuthStatus = "idle" | "error" | "success";
+
+function companionState(focus: AuthFocus, passwordVisible: boolean, status: AuthStatus): AccountCompanionState {
+  if (status === "success") return "success";
+  if (status === "error") return "error";
+  if (focus === "email") return "emailFocus";
+  if (focus === "password") return passwordVisible ? "passwordReveal" : "passwordFocus";
+  return "idle";
 }
 
 function LoginInner() {
@@ -28,15 +39,20 @@ function LoginInner() {
   const [err, setErr] = useState<string | null>(null);
   const [unverified, setUnverified] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [focus, setFocus] = useState<AuthFocus>("idle");
+  const [showPassword, setShowPassword] = useState(false);
+  const [authStatus, setAuthStatus] = useState<AuthStatus>("idle");
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setErr(null);
     setUnverified(false);
+    setAuthStatus("idle");
     setBusy(true);
 
     try {
       await login(email.trim(), password);
+      setAuthStatus("success");
       router.push(next);
     } catch (e) {
       if (e instanceof ApiError && e.status === 403) {
@@ -45,45 +61,36 @@ function LoginInner() {
       } else {
         setErr(e instanceof ApiError ? e.message : "登录失败，请确认后端服务是否已启动。");
       }
+      setAuthStatus("error");
       setBusy(false);
     }
   }
 
   const errorId = err ? "login-error" : undefined;
+  const stageStatus = err ? "error" : authStatus;
 
   return (
-    <main className="min-h-screen bg-[var(--wf-canvas)] text-[var(--wf-text)]">
-      <NavBar />
-      <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-14 sm:px-6 md:py-20 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="max-w-xl">
-          <Chip variant="accent" className="gap-2">
-            <BrandMark size="sm" className="text-[var(--wf-text)]" />
-            NoteGen Account
-          </Chip>
-          <h1 className="mt-6 font-[var(--wf-font-display)] text-5xl font-semibold leading-[1.05] tracking-[-0.03em] text-[var(--wf-text)] md:text-6xl">
-            回到你的
-            <br />
-            视频笔记工作台
-          </h1>
-          <p className="mt-6 max-w-lg text-base leading-8 text-[var(--wf-text-secondary)]">
-            登录后可以继续生成私有笔记、查看任务进度，并把每个视频沉淀成自己的复习资料。
-          </p>
-          <div className="mt-8 space-y-3 text-sm text-[var(--wf-text-secondary)]">
-            {["私有笔记库", "提交历史与任务诊断", "支持链接和本地视频"].map((item) => (
-              <div key={item} className="flex items-center gap-2">
-                <CheckCircle2 size={16} className="text-[var(--wf-accent)]" aria-hidden="true" />
-                <span>{item}</span>
-              </div>
-            ))}
-          </div>
-        </div>
+    <main className="relative min-h-screen overflow-hidden bg-[var(--wf-canvas)] text-[var(--wf-text)]">
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-64 bg-[radial-gradient(circle_at_50%_0%,color-mix(in_srgb,var(--wf-brand-coral)_16%,transparent),transparent_62%)]" />
+      <header className="relative z-10 mx-auto flex h-16 max-w-7xl items-center justify-between px-5 sm:px-6">
+        <Link href="/" className="inline-flex items-center gap-2 text-[var(--wf-text)]">
+          <BrandMark variant="full" size="sm" label="NoteGen" />
+        </Link>
+        <Link href="/register" className="text-sm font-medium text-[var(--wf-text-secondary)] hover:text-[var(--wf-text)]">
+          创建账号
+        </Link>
+      </header>
 
-        <Card className="mx-auto w-full max-w-md" padding="lg">
+      <section className="relative z-10 mx-auto grid max-w-7xl items-center gap-8 px-5 pb-16 pt-8 sm:px-6 lg:grid-cols-[1.05fr_0.95fr]">
+        <AccountCompanion state={companionState(focus, showPassword, stageStatus)} variant="login" />
+
+        <div className="mx-auto w-full max-w-md rounded-[2rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-surface)_94%,transparent)] p-6 shadow-[var(--wf-shadow-lg)] backdrop-blur md:p-8">
           <div className="mb-7">
-            <h2 className="font-[var(--wf-font-display)] text-2xl font-semibold tracking-[-0.02em]">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[var(--wf-accent)]">NoteGen Account</p>
+            <h1 className="mt-3 font-[var(--wf-font-display)] text-3xl font-semibold tracking-[-0.03em]">
               登录
-            </h2>
-            <p className="mt-2 text-sm text-[var(--wf-text-secondary)]">进入 NoteGen 工作台。</p>
+            </h1>
+            <p className="mt-2 text-sm leading-6 text-[var(--wf-text-secondary)]">回到视频笔记工作台，继续整理时间线、书签和问答。</p>
           </div>
           <form onSubmit={submit} className="space-y-4">
             <div className="space-y-2">
@@ -98,7 +105,13 @@ function LoginInner() {
                 autoComplete="email"
                 placeholder="you@example.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  setFocus("email");
+                }}
+                onClick={() => setFocus("email")}
+                onFocus={() => setFocus("email")}
+                onBlur={() => setFocus("idle")}
                 aria-describedby={errorId}
                 invalid={Boolean(err)}
               />
@@ -107,18 +120,39 @@ function LoginInner() {
               <label htmlFor="login-password" className="text-sm font-medium text-[var(--wf-text)]">
                 密码
               </label>
-              <Input
-                id="login-password"
-                name="password"
-                type="password"
-                required
-                autoComplete="current-password"
-                placeholder="输入密码"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                aria-describedby={errorId}
-                invalid={Boolean(err)}
-              />
+              <div className="relative">
+                <Input
+                  id="login-password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  autoComplete="current-password"
+                  placeholder="输入密码"
+                  value={password}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    setFocus("password");
+                  }}
+                  onClick={() => setFocus("password")}
+                  onFocus={() => setFocus("password")}
+                  onBlur={() => setFocus("idle")}
+                  aria-describedby={errorId}
+                  invalid={Boolean(err)}
+                  className="pr-11"
+                />
+                <IconButton
+                  type="button"
+                  onClick={() => {
+                    setFocus("password");
+                    setShowPassword((v) => !v);
+                  }}
+                  aria-label={showPassword ? "隐藏密码" : "显示密码"}
+                  className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full"
+                  size="sm"
+                >
+                  {showPassword ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}
+                </IconButton>
+              </div>
             </div>
             {err ? (
               <p id={errorId} className="text-xs leading-5 text-[var(--wf-danger)]" role="alert">
@@ -140,7 +174,7 @@ function LoginInner() {
               注册 <ArrowRight size={12} aria-hidden="true" />
             </Link>
           </p>
-        </Card>
+        </div>
       </section>
     </main>
   );

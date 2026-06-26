@@ -1,5 +1,6 @@
 "use client";
 import { useEffect } from "react";
+import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Play, Sparkles, Target, ChevronDown } from "lucide-react";
 import type { Chunk, Mark } from "@/lib/types";
@@ -72,8 +73,13 @@ export default function KeyPointModal({
             {/* 关键帧大图 */}
             {kfRel && (
               <div className="relative aspect-video w-full shrink-0 overflow-hidden bg-[var(--bg-muted)]">
-                <img src={`${keyframeBase}${kfRel}`} alt=""
-                     className="h-full w-full object-cover dark:brightness-90" />
+                <Image
+                  src={`${keyframeBase}${kfRel}`}
+                  alt=""
+                  fill
+                  sizes="(max-width: 768px) 100vw, 672px"
+                  className="object-cover dark:brightness-90"
+                />
               </div>
             )}
 

@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { Expand } from "lucide-react";
 import type { Chunk } from "@/lib/types";
@@ -83,9 +84,13 @@ export default function VlogTimeline({
                                  bg-[var(--bg-muted)] relative group/kf"
                       title={lang === "en" ? "Open" : "查看大图"}
                     >
-                      <img src={`${keyframeBase}${kfRel}`}
-                           alt="" className="w-full h-full object-cover dark:brightness-90
-                                              transition-transform group-hover/kf:scale-[1.06]" />
+                      <Image
+                        src={`${keyframeBase}${kfRel}`}
+                        alt=""
+                        fill
+                        sizes="112px"
+                        className="object-cover transition-transform group-hover/kf:scale-[1.06] dark:brightness-90"
+                      />
                       <span className="absolute inset-0 bg-black/35 opacity-0
                                        group-hover/kf:opacity-100 transition-opacity
                                        flex items-center justify-center text-white">

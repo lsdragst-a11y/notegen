@@ -1,5 +1,6 @@
 "use client";
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   Bookmark as BookmarkIcon, Play, X, Layers, BookOpen, Settings2, Trash2, Plus,
@@ -235,9 +236,13 @@ export default function BookmarksPage() {
                         {b.kind === "chunk" && b.keyframeRel ? (
                           <span className="relative h-12 w-20 shrink-0 overflow-hidden rounded-lg
                                            bg-[var(--bg-muted)]">
-                            <img src={`/notes/${b.noteId}/keyframes/${b.keyframeRel}`} alt=""
-                                 className="h-full w-full object-cover dark:brightness-90
-                                            transition-transform group-hover:scale-105" />
+                            <Image
+                              src={`/notes/${b.noteId}/keyframes/${b.keyframeRel}`}
+                              alt=""
+                              fill
+                              sizes="80px"
+                              className="object-cover transition-transform group-hover:scale-105 dark:brightness-90"
+                            />
                           </span>
                         ) : (
                           <span className="flex h-12 w-20 shrink-0 items-center justify-center

@@ -26,6 +26,7 @@ data/_compare_*
 data/notegen.db
 data/notegen.db-wal
 data/notegen.db-shm
+data/redis/
 # DB 备份（e2e/迁移留存），同样含 bcrypt 哈希，严禁入库
 data/*.e2ebak
 data/user_notes/

@@ -301,16 +301,19 @@ html, body {
   font-size: 1rem;
 }
 
-.wf-button[data-variant="primary"] {
+.wf-button[data-variant="primary"],
+.wf-icon-button[data-variant="primary"] {
   background: var(--wf-accent);
   color: var(--wf-on-accent);
 }
 
-.wf-button[data-variant="primary"]:hover:not(:disabled) {
+.wf-button[data-variant="primary"]:hover:not(:disabled),
+.wf-icon-button[data-variant="primary"]:hover:not(:disabled) {
   background: var(--wf-accent-hover);
 }
 
-.wf-button[data-variant="primary"]:active:not(:disabled) {
+.wf-button[data-variant="primary"]:active:not(:disabled),
+.wf-icon-button[data-variant="primary"]:active:not(:disabled) {
   background: var(--wf-accent-active);
 }
 

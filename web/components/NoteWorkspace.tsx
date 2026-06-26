@@ -26,6 +26,22 @@ import { useAuth } from "@/components/AuthContext";
 
 type RailTab = "chapters" | "transcript";
 
+function getRailFocusableElements(root: HTMLElement | null) {
+  if (!root) return [];
+  return Array.from(
+    root.querySelectorAll<HTMLElement>(
+      [
+        "a[href]",
+        "button:not([disabled])",
+        "textarea:not([disabled])",
+        "input:not([disabled])",
+        "select:not([disabled])",
+        '[tabindex]:not([tabindex="-1"])',
+      ].join(", ")
+    )
+  ).filter(el => !el.hasAttribute("disabled") && el.getAttribute("aria-hidden") !== "true");
+}
+
 interface Props {
   noteId: string;
   bundle: NoteBundle;
@@ -227,6 +243,10 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
   const { done: chaptersDone, toggle: toggleChapterDone } = useChapterProgress(noteId);
   const playerRef = useRef<VideoPlayerHandle>(null);
   const mainWrapRef = useRef<HTMLDivElement>(null);
+  const railTriggerRef = useRef<HTMLButtonElement>(null);
+  const railDialogRef = useRef<HTMLElement>(null);
+  const railCloseButtonRef = useRef<HTMLButtonElement>(null);
+  const railReturnFocusRef = useRef<HTMLElement | null>(null);
 
   const glossary = useMemo(
     () => buildGlossary(bundle.summary, 30, lang),
@@ -252,6 +272,15 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
     seek(sec);
     setRailOpen(false);
   }, [seek]);
+  const openRail = useCallback(() => {
+    railReturnFocusRef.current = document.activeElement instanceof HTMLElement
+      ? document.activeElement
+      : railTriggerRef.current;
+    setRailOpen(true);
+  }, []);
+  const closeRail = useCallback(() => {
+    setRailOpen(false);
+  }, []);
 
   // 全局快捷键：⌘K Spotlight；Esc 关抽屉；Space 播放/暂停；←/→ ±5s；[ ] 上/下一章。
   // 输入框/可编辑元素/Plyr 容器内/带 data-overlay 的弹层打开时不劫持。
@@ -262,7 +291,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
         setSpotOpen(o => !o);
         return;
       }
-      if (e.key === "Escape") { setRailOpen(false); return; }
+      if (e.key === "Escape") { closeRail(); return; }
       if (e.metaKey || e.ctrlKey || e.altKey) return;
       const t = e.target as HTMLElement | null;
       if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
@@ -286,7 +315,30 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [bundle, currentChapter, currentTime, seek]);
+  }, [bundle, closeRail, currentChapter, currentTime, seek]);
+
+  useEffect(() => {
+    if (!railOpen) return;
+
+    const fallbackReturnTarget = railTriggerRef.current;
+
+    if (!railReturnFocusRef.current) {
+      railReturnFocusRef.current = document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : fallbackReturnTarget;
+    }
+
+    const focusTimer = window.setTimeout(() => {
+      railCloseButtonRef.current?.focus();
+    }, 0);
+
+    return () => {
+      window.clearTimeout(focusTimer);
+      const returnTarget = railReturnFocusRef.current ?? fallbackReturnTarget;
+      railReturnFocusRef.current = null;
+      window.setTimeout(() => returnTarget?.focus(), 0);
+    };
+  }, [railOpen]);
 
   // 主视频可见性观察，决定 Mini PiP 是否弹出
   useEffect(() => {
@@ -383,8 +435,9 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             <ArrowLeft size={12} /> 返回
           </Link>
           <button
+            ref={railTriggerRef}
             type="button"
-            onClick={() => setRailOpen(true)}
+            onClick={openRail}
             aria-label={lang === "en" ? "Open chapter navigation" : "打开章节导航"}
             className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-md
                        text-[var(--wf-text-tertiary)] transition-colors hover:bg-[var(--wf-surface-muted)]
@@ -456,7 +509,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             readOnly={shared}
           />
           {!shared && (
-            <div className="sticky bottom-3 mt-6">
+            <div className="mt-6 lg:sticky lg:bottom-3">
               <ChatPanel noteId={noteId} onSeek={seek} chapters={bundle.chapters} />
             </div>
           )}
@@ -605,9 +658,10 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/40 lg:hidden"
-            onClick={() => setRailOpen(false)}
+            onClick={closeRail}
           >
             <motion.aside
+              ref={railDialogRef}
               initial={{ x: -288 }}
               animate={{ x: 0 }}
               exit={{ x: -288 }}
@@ -615,15 +669,38 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
               role="dialog"
               aria-modal="true"
               aria-label={lang === "en" ? "Chapter navigation" : "章节导航"}
+              tabIndex={-1}
               className="absolute left-0 top-0 h-full w-72 overflow-y-auto border-r
                          border-[var(--wf-border)] bg-[var(--wf-surface)] px-3 py-4"
               onClick={e => e.stopPropagation()}
+              onKeyDown={e => {
+                if (e.key !== "Tab") return;
+
+                const focusable = getRailFocusableElements(railDialogRef.current);
+                if (focusable.length === 0) {
+                  e.preventDefault();
+                  railDialogRef.current?.focus();
+                  return;
+                }
+
+                const first = focusable[0];
+                const last = focusable[focusable.length - 1];
+
+                if (e.shiftKey && document.activeElement === first) {
+                  e.preventDefault();
+                  last.focus();
+                } else if (!e.shiftKey && document.activeElement === last) {
+                  e.preventDefault();
+                  first.focus();
+                }
+              }}
             >
               <div className="mb-2 flex items-center justify-between px-3">
                 <span className="text-sm font-medium">{lang === "en" ? "Chapters" : "章节导航"}</span>
                 <button
+                  ref={railCloseButtonRef}
                   type="button"
-                  onClick={() => setRailOpen(false)}
+                  onClick={closeRail}
                   aria-label={lang === "en" ? "Close" : "关闭"}
                   className="inline-flex h-11 w-11 items-center justify-center rounded-full
                              text-[var(--wf-text-tertiary)] hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)]"
