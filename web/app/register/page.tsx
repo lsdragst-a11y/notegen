@@ -5,11 +5,22 @@ import Link from "next/link";
 import { ArrowRight, CheckCircle2, Eye, EyeOff, UserPlus } from "lucide-react";
 
 import { BrandMark } from "@/components/brand/BrandMark";
-import { AuthBrandStage, type AuthFocus, type AuthStatus } from "@/components/auth/AuthBrandStage";
-import { Button, Input } from "@/components/ui";
+import { AccountCompanion, type AccountCompanionState } from "@/components/auth/AccountCompanion";
+import { Button, IconButton, Input } from "@/components/ui";
 import { useAuth } from "@/components/AuthContext";
 import { apiRegister } from "@/lib/auth";
 import { ApiError } from "@/lib/api";
+
+type AuthFocus = "email" | "password" | "idle";
+type AuthStatus = "idle" | "error" | "success";
+
+function companionState(focus: AuthFocus, passwordVisible: boolean, status: AuthStatus): AccountCompanionState {
+  if (status === "success") return "success";
+  if (status === "error") return "error";
+  if (focus === "email") return "emailFocus";
+  if (focus === "password") return passwordVisible ? "passwordReveal" : "passwordFocus";
+  return "idle";
+}
 
 export default function RegisterPage() {
   const { refresh } = useAuth();
@@ -64,7 +75,7 @@ export default function RegisterPage() {
       </header>
 
       <section className="relative z-10 mx-auto grid max-w-7xl items-center gap-8 px-5 pb-16 pt-8 sm:px-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <AuthBrandStage focus={focus} passwordVisible={showPassword} status={stageStatus} variant="register" />
+        <AccountCompanion state={companionState(focus, showPassword, stageStatus)} variant="register" />
 
         <div className="mx-auto w-full max-w-md rounded-[2rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-surface)_94%,transparent)] p-6 shadow-[var(--wf-shadow-lg)] backdrop-blur md:p-8">
           {done ? (
@@ -162,17 +173,18 @@ export default function RegisterPage() {
                       invalid={Boolean(err)}
                       className="pr-11"
                     />
-                    <button
+                    <IconButton
                       type="button"
                       onClick={() => {
                         setFocus("password");
                         setShowPassword((v) => !v);
                       }}
                       aria-label={showPassword ? "隐藏密码" : "显示密码"}
-                      className="absolute right-2 top-1/2 inline-flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full text-[var(--wf-text-tertiary)] hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text)]"
+                      className="absolute right-2 top-1/2 h-8 w-8 -translate-y-1/2 rounded-full"
+                      size="sm"
                     >
                       {showPassword ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}
-                    </button>
+                    </IconButton>
                   </div>
                 </div>
                 {err ? (
