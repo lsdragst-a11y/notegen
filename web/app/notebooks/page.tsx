@@ -33,8 +33,8 @@ import { fetchCatalog, formatDuration } from "@/lib/notes";
 import type { CatalogItem, HistoryItem, NoteView } from "@/lib/types";
 import {
   canCreateNotebook,
+  getVisibleNotebookFilters,
   getNotebookHeroCopy,
-  NOTEBOOK_FILTERS,
   parseNotebookFilter,
   shouldAllowPublicCatalog,
   shouldShowProgressPanel,
@@ -203,7 +203,7 @@ function EmptyState({
 }
 
 function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
-  const { user } = useAuth();
+  const { loading: authLoading, user } = useAuth();
   const [pub, setPub] = useState<CatalogItem[] | null>(null);
   const [mine, setMine] = useState<NoteView[] | null>(null);
   const [history, setHistory] = useState<HistoryItem[] | null>(null);
@@ -214,11 +214,14 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
   const [delId, setDelId] = useState<string | null>(null);
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const canCreate = canCreateNotebook(user);
-  const guestPublicCatalog = shouldAllowPublicCatalog(filter) && !user;
-  const heroCopy = getNotebookHeroCopy(filter, user);
-  const showProgressPanel = shouldShowProgressPanel(filter, user);
+  const activeFilter = !authLoading && !user ? "public" : filter;
+  const visibleFilters = getVisibleNotebookFilters(user);
+  const guestPublicCatalog = !authLoading && shouldAllowPublicCatalog(activeFilter) && !user;
+  const heroCopy = getNotebookHeroCopy(activeFilter, user);
+  const showProgressPanel = shouldShowProgressPanel(activeFilter, user);
 
   useEffect(() => {
+    if (authLoading) return;
     let alive = true;
     fetchCatalog()
       .then((d) => { if (alive) setPub(d); })
@@ -232,7 +235,7 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
         .catch(() => { if (alive) setHistory([]); });
     }
     return () => { alive = false; };
-  }, [guestPublicCatalog]);
+  }, [authLoading, guestPublicCatalog]);
 
   useEffect(() => {
     if (!createOpen && !confirmDelete) return;
@@ -246,7 +249,7 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
     return () => window.removeEventListener("keydown", onKey);
   }, [createOpen, confirmDelete]);
 
-  const loading = guestPublicCatalog ? pub === null : pub === null || mine === null || history === null;
+  const loading = authLoading || (guestPublicCatalog ? pub === null : pub === null || mine === null || history === null);
 
   const recentByNote = useMemo(() => {
     const map = new Map<string, number>();
@@ -284,14 +287,14 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
         mine: false,
       }));
 
-    const source = filter === "mine" ? mineCards : filter === "public" ? pubCards : [...mineCards, ...pubCards];
+    const source = activeFilter === "mine" ? mineCards : activeFilter === "public" ? pubCards : [...mineCards, ...pubCards];
     return source
       .filter((item) => matchesSearch(item, query))
       .sort((a, b) => {
         if (a.mine !== b.mine) return a.mine ? -1 : 1;
         return (b.recentAt ?? 0) - (a.recentAt ?? 0);
       });
-  }, [filter, mine, pub, query, recentByNote, user]);
+  }, [activeFilter, mine, pub, query, recentByNote, user]);
 
   const latestJob = useMemo(() => {
     return [...(history ?? [])].sort((a, b) => b.updated_at - a.updated_at)[0] ?? null;
@@ -384,15 +387,15 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
 
         <div className="mt-6 flex flex-col gap-4 rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-4 shadow-[var(--wf-shadow-sm)] md:flex-row md:items-center">
           <div className="flex flex-wrap gap-2">
-            {NOTEBOOK_FILTERS.map((f) => (
+            {visibleFilters.map((f) => (
               <button
                 key={f.key}
                 type="button"
                 onClick={() => setFilter(f.key)}
                 className="rounded-full px-3 py-1.5 text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wf-focus)]"
                 style={{
-                  background: filter === f.key ? "color-mix(in srgb, var(--wf-brand-coral) 14%, var(--wf-surface))" : "transparent",
-                  color: filter === f.key ? "var(--wf-accent)" : "var(--wf-text-secondary)",
+                  background: activeFilter === f.key ? "color-mix(in srgb, var(--wf-brand-coral) 14%, var(--wf-surface))" : "transparent",
+                  color: activeFilter === f.key ? "var(--wf-accent)" : "var(--wf-text-secondary)",
                 }}
               >
                 {f.label}
@@ -455,7 +458,7 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
               ))}
 
           {!loading && items.length === 0 ? (
-            <EmptyState filter={filter} onCreate={() => setCreateOpen(true)} query={query} />
+            <EmptyState filter={activeFilter} onCreate={() => setCreateOpen(true)} query={query} />
           ) : null}
         </div>
       </section>
@@ -550,7 +553,7 @@ function NotebooksPageContent() {
   const initialFilter = parseNotebookFilter(searchParams.get("filter"));
 
   return (
-    <RequireAuth allowUnauthenticated={shouldAllowPublicCatalog(initialFilter)}>
+    <RequireAuth allowUnauthenticated>
       <NotebooksInner key={initialFilter} initialFilter={initialFilter} />
     </RequireAuth>
   );

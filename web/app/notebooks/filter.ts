@@ -6,9 +6,15 @@ export const NOTEBOOK_FILTERS: { key: NotebookFilter; label: string }[] = [
   { key: "public", label: "公开示例" },
 ];
 
-export function parseNotebookFilter(value: string | null): NotebookFilter {
+export function parseNotebookFilter(value: string | null, user?: { id: string } | null): NotebookFilter {
+  if (user === null) return "public";
   if (value === "all" || value === "public") return value;
   return "mine";
+}
+
+export function getVisibleNotebookFilters(user: { id: string } | null) {
+  if (!user) return NOTEBOOK_FILTERS.filter((item) => item.key === "public");
+  return NOTEBOOK_FILTERS;
 }
 
 export function shouldAllowPublicCatalog(filter: NotebookFilter) {
