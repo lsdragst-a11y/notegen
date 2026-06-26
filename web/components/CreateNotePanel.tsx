@@ -9,7 +9,6 @@ import {
   FileVideo,
   FolderUp,
   Link2,
-  Loader2,
   Lock,
   LockOpen,
   Search,
@@ -25,6 +24,7 @@ import {
   type DownloadQuality,
   type ProbeResult,
 } from "@/lib/api";
+import { Button, IconButton, Input } from "@/components/ui";
 
 type SubmitMode = "url" | "file";
 
@@ -172,7 +172,7 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
             >
               <div className="flex min-h-10 flex-1 items-center gap-2 px-2">
                 <Video size={16} className="shrink-0 text-[var(--wf-text-tertiary)]" />
-                <input
+                <Input
                   type="text"
                   placeholder="粘贴 B 站 / YouTube 视频链接"
                   value={url}
@@ -185,29 +185,19 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                     if (e.key !== "Enter") return;
                     if (probed) handleSubmitUrl(); else handleProbe();
                   }}
-                  className="min-w-0 flex-1 bg-transparent text-sm outline-none placeholder:text-[var(--wf-text-tertiary)]"
+                  size="sm"
+                  className="min-w-0 flex-1 border-0 bg-transparent px-0 focus-visible:outline-none"
                 />
               </div>
               {!probed ? (
-                <button onClick={handleProbe}
-                        disabled={probing}
-                        className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-accent)] px-4 py-2 font-semibold text-[var(--wf-on-accent)] transition-colors hover:bg-[var(--wf-accent-hover)] disabled:bg-[var(--wf-disabled-bg)] disabled:text-[var(--wf-disabled-fg)] disabled:cursor-not-allowed inline-flex items-center justify-center gap-1 text-sm sm:shrink-0">
-                  {probing ? (
-                    <><Loader2 size={14} className="animate-spin" />查询中</>
-                  ) : (
-                    <><Search size={14} /> 查询</>
-                  )}
-                </button>
+                <Button onClick={handleProbe} loading={probing} size="sm" className="sm:shrink-0">
+                  <Search size={14} aria-hidden="true" />
+                  查询
+                </Button>
               ) : (
-                <button onClick={handleSubmitUrl}
-                        disabled={submitting}
-                        className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-accent)] px-4 py-2 font-semibold text-[var(--wf-on-accent)] transition-colors hover:bg-[var(--wf-accent-hover)] disabled:bg-[var(--wf-disabled-bg)] disabled:text-[var(--wf-disabled-fg)] disabled:cursor-not-allowed inline-flex items-center justify-center gap-1 text-sm sm:shrink-0">
-                  {submitting ? (
-                    <><Loader2 size={14} className="animate-spin" />提交中</>
-                  ) : (
-                    <>生成笔记 <ArrowRight size={14} /></>
-                  )}
-                </button>
+                <Button onClick={handleSubmitUrl} loading={submitting} size="sm" className="sm:shrink-0">
+                  生成笔记 <ArrowRight size={14} aria-hidden="true" />
+                </Button>
               )}
             </motion.div>
           ) : (
@@ -262,22 +252,25 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                         {formatBytes(file.size)}
                       </div>
                     </div>
-                    <button
+                    <IconButton
                       type="button"
                       onClick={() => { setFile(null); setFileTitle(""); setUploadPct(null); if (fileInputRef.current) fileInputRef.current.value = ""; }}
                       disabled={submitting}
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-[var(--wf-surface-muted)] text-[var(--wf-text-tertiary)] transition-colors hover:bg-[var(--wf-border)] hover:text-[var(--wf-text)] disabled:opacity-40"
-                      title="移除"
+                      aria-label="移除"
+                      className="h-7 w-7 rounded-full"
+                      size="sm"
+                      variant="secondary"
                     >
-                      <X size={13} />
-                    </button>
+                      <X size={13} aria-hidden="true" />
+                    </IconButton>
                   </div>
-                  <input
+                  <Input
                     type="text"
                     placeholder="视频标题（可选，留空用文件名）"
                     value={fileTitle}
                     onChange={e => setFileTitle(e.target.value)}
-                    className="w-full rounded-[8px] border border-[var(--wf-border)] bg-[var(--wf-surface-muted)] px-3 py-2 text-sm outline-none transition-colors placeholder:text-[var(--wf-text-tertiary)] focus:border-[var(--wf-accent)]"
+                    size="sm"
+                    className="bg-[var(--wf-surface-muted)]"
                   />
                   {uploadPct !== null && uploadPct < 1 && (
                     <div className="space-y-1">
@@ -291,19 +284,14 @@ export default function CreateNotePanel({ next = "/notebooks" }: { next?: string
                       </div>
                     </div>
                   )}
-                  <button
+                  <Button
                     onClick={handleSubmitFile}
                     disabled={submitting}
-                    className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-accent)] px-4 py-2 font-semibold text-[var(--wf-on-accent)] transition-colors hover:bg-[var(--wf-accent-hover)] disabled:bg-[var(--wf-disabled-bg)] disabled:text-[var(--wf-disabled-fg)] disabled:cursor-not-allowed inline-flex w-full items-center justify-center gap-1.5 text-sm"
+                    className="w-full"
                   >
-                    {submitting ? (
-                      uploadPct !== null && uploadPct < 1
-                        ? <><Loader2 size={14} className="animate-spin" />上传 {Math.round(uploadPct * 100)}%</>
-                        : <><Loader2 size={14} className="animate-spin" />处理中</>
-                    ) : (
-                      <>生成笔记 <ArrowRight size={14} /></>
-                    )}
-                  </button>
+                    {uploadPct !== null && uploadPct < 1 ? `上传 ${Math.round(uploadPct * 100)}%` : "生成笔记"}
+                    <ArrowRight size={14} aria-hidden="true" />
+                  </Button>
                 </div>
               )}
             </motion.div>
