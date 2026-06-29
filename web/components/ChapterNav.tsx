@@ -41,7 +41,7 @@ export default function ChapterNav({ chapters, currentIdx, currentTime, onSeek }
             key={i}
             ref={active ? activeRef : undefined}
             onClick={() => onSeek(ch.start)}
-            aria-current={active ? "true" : undefined}
+            aria-current={active ? "location" : undefined}
             whileTap={{ scale: 0.97 }}
             whileHover={{ y: -1 }}
             className={`relative shrink-0 flex min-h-11 items-center gap-2 pl-2 pr-3 py-2 rounded-2xl text-xs

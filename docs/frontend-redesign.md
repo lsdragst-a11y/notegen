@@ -82,7 +82,7 @@
 - [x] `/` 精简 landing，`/notebooks` 承接登录后笔记本库
 - [x] `dashboard`、`library` 保留 redirect
 - [x] 「新建笔记本」panel 复用 `CreateNotePanel`
-- [ ] 确认 `FluidBG`/`ParticleBG` 无引用后删除
+- [x] 确认 `FluidBG`/`ParticleBG` 无引用后删除
 
 **P1 · 三栏工作台** ✅ 主体完成
 - [x] `notes/[id]/page.tsx` 收敛到 `NoteWorkspace`
@@ -97,8 +97,8 @@
 - [x] 公开导航不再暴露 `/mm-ablation` 内部实验页入口
 - [x] 移动端 `ChatPanel` 回到内容流，避免 sticky 遮挡正文
 - [ ] 浏览器 smoke：视频播放、seek、分享、导出、QA 轮询、书签同步
-- [ ] a11y：三栏 landmark、章节列表 `aria-current`、Lighthouse a11y ≥ 90
-- [ ] 删除确认无引用的旧视觉组件和 `AskBar`
+- [ ] a11y：三栏 landmark、章节列表 `aria-current`、Lighthouse a11y ≥ 90（章节 `aria-current` 已补齐）
+- [x] 删除确认无引用的旧视觉组件和 `AskBar`
 - 验收：`npx tsc --noEmit` 通过；浏览器 smoke 记录写入 `docs/memory/`
 
 ## 4.1 2026-06-25 二次升级计划：电影感首页 + 品牌系统 + 沉浸式登录
@@ -141,6 +141,7 @@
 - 修复移动端内容优先级：视频不能长期挤占首屏，笔记内容和提问入口要更早出现。
 - 问答入口避免遮挡正文，移动端改成稳定的底部输入或内容流内卡片。
 - 章节抽屉补齐焦点管理、`aria-modal` 语义和关闭后的焦点恢复。
+- 章节列表使用 `aria-current="location"` 标记当前主章节和当前子章节，帮助读屏器理解播放位置。
 - 公开导航不暴露内部实验页，`/mm-ablation` 保留为直接访问或开发入口。（已完成）
 - 继续清理 lint、无效 eslint-disable、废弃组件引用和图片加载 warning。
 
