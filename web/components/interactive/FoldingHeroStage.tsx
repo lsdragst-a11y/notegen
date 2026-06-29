@@ -196,7 +196,7 @@ export function FoldingHeroStage() {
             max={100}
             value={rangeValue}
             onChange={(event) => setFoldProgress(Number(event.target.value) / 100)}
-            className="mt-3 w-full accent-[var(--wf-brand-coral)]"
+            className="wf-fold-range mt-3 w-full"
             aria-valuetext={PHASE_LABEL[phase]}
           />
         </div>

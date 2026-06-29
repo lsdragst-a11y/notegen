@@ -393,6 +393,15 @@ html, body {
   border-radius: var(--wf-radius-sm);
 }
 
+.wf-icon-button.absolute {
+  position: absolute;
+}
+
+.wf-icon-button[data-size="sm"] {
+  width: 32px;
+  height: 32px;
+}
+
 .wf-icon-button[data-size="lg"] {
   width: 48px;
   height: 48px;
@@ -501,6 +510,20 @@ html, body {
   border-color: var(--wf-disabled-border);
   color: var(--wf-disabled-fg);
   cursor: not-allowed;
+}
+
+.wf-fold-range {
+  accent-color: var(--wf-brand-coral);
+}
+
+.wf-fold-range:focus {
+  outline: none;
+}
+
+.wf-fold-range:focus-visible {
+  outline: 2px solid rgba(255, 178, 143, 0.72);
+  outline-offset: 6px;
+  border-radius: var(--wf-radius-full);
 }
 
 .wf-chip {
