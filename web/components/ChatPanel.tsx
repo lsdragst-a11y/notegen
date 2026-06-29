@@ -18,7 +18,7 @@ interface ChatMsg {
 
 interface Props {
   noteId: string;
-  onSeek: (sec: number) => void;
+  onSeek: (sec: number, sourceElement?: HTMLElement | null) => void;
   /** 用于生成推荐问题，可不传 */
   chapters?: Chapter[];
 }
@@ -179,7 +179,7 @@ export default function ChatPanel({ noteId, onSeek, chapters }: Props) {
                       <button
                         key={c.chunk_idx}
                         type="button"
-                        onClick={() => onSeek(c.start)}
+                        onClick={(event) => onSeek(c.start, event.currentTarget)}
                         title={c.quote || undefined}
                         className="inline-flex items-center gap-1 rounded-[var(--wf-radius-full)] bg-[var(--wf-surface)]
                                    px-2 py-0.5 text-[11px] tabular-nums text-[var(--wf-accent)]

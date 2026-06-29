@@ -4,6 +4,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import NavBar from "@/components/NavBar";
+import { GenerationCompanion } from "@/components/interactive/GenerationCompanion";
 import { subscribeJob, type JobEvent } from "@/lib/api";
 
 function GenerateInner() {
@@ -120,50 +121,14 @@ function GenerateInner() {
             </div>
           )}
 
-          {/* 进度条 */}
-          {!isError && (
-            <>
-              <div className="relative h-2.5 rounded-full bg-[var(--bg-muted)] overflow-hidden mb-2">
-                <motion.div
-                  className="absolute inset-y-0 left-0 rounded-full
-                             bg-gradient-to-r from-[var(--accent)] to-[#bf5af2]"
-                  initial={{ width: 0 }}
-                  animate={{ width: `${progress.percent}%` }}
-                  transition={{ type: "spring", stiffness: 80, damping: 20 }}
-                />
-              </div>
-              <div className="flex items-center justify-between text-xs text-[var(--fg-tertiary)] tabular-nums">
-                <span>{progress.stage}</span>
-                <span>{progress.percent}%</span>
-              </div>
-            </>
-          )}
-
-          {/* 阶段说明 */}
-          {!isError && !isDone && (
-            <div className="mt-6 grid grid-cols-4 gap-2 text-[10px]">
-              {[
-                { name: "下载", min: 0, max: 12 },
-                { name: "ASR", min: 12, max: 60 },
-                { name: "摘要", min: 60, max: 78 },
-                { name: "关键帧", min: 78, max: 100 },
-              ].map((s) => {
-                const done = progress.percent >= s.max;
-                const active = progress.percent >= s.min && progress.percent < s.max;
-                return (
-                  <div
-                    key={s.name}
-                    className={`rounded-lg p-2 text-center transition-colors
-                                ${done ? "bg-[var(--accent)] text-[var(--on-accent)]"
-                                      : active ? "bg-[var(--bg-muted)] text-[var(--fg)] ring-1 ring-[var(--accent)]"
-                                              : "bg-[var(--bg-muted)] text-[var(--fg-tertiary)]"}`}
-                  >
-                    {s.name}
-                  </div>
-                );
-              })}
-            </div>
-          )}
+          <GenerationCompanion
+            stage={progress.stage}
+            percent={progress.percent}
+            error={error}
+            message={error ?? progress.msg}
+            title={meta.videoTitle}
+            elapsed={elapsed}
+          />
 
           {/* 提示文案 */}
           {!isError && !isDone && (

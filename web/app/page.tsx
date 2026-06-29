@@ -9,7 +9,6 @@ import {
   Film,
   GraduationCap,
   MessageCircleQuestion,
-  Play,
   Presentation,
   Search,
   Sparkles,
@@ -18,6 +17,7 @@ import {
 import type { ReactNode } from "react";
 
 import { BrandMark } from "@/components/brand/BrandMark";
+import { FoldingHeroStage } from "@/components/interactive/FoldingHeroStage";
 import { Card, Chip } from "@/components/ui";
 import { useAuth } from "@/components/AuthContext";
 import { CINEMATIC_BEATS } from "./landing-model";
@@ -113,85 +113,6 @@ function LandingNav({ primaryHref, primaryLabel }: { primaryHref: string; primar
         </div>
       </nav>
     </header>
-  );
-}
-
-function ProductPreview() {
-  const reduceMotion = useReducedMotion();
-
-  return (
-    <div id="preview" className="relative mx-auto w-full max-w-xl" aria-label="静态产品预览">
-      <div className="absolute -left-4 top-10 hidden h-28 w-28 rounded-[2rem] bg-[var(--wf-brand-coral)] opacity-10 blur-3xl md:block" />
-      <Card
-        padding="lg"
-        className="relative overflow-hidden rounded-[2rem] border-[var(--wf-border-strong)] shadow-[var(--wf-shadow-lg)]"
-      >
-        <div className="mb-5 flex items-center justify-between">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--wf-text-tertiary)]">
-              Product preview
-            </p>
-            <h2 className="mt-1 text-lg font-semibold text-[var(--wf-text)]">线性代数公开课</h2>
-          </div>
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-[var(--wf-accent)] text-[var(--wf-on-accent)]">
-            <Play size={16} fill="currentColor" aria-hidden="true" />
-          </span>
-        </div>
-
-        <div className="rounded-[1.4rem] border border-[var(--wf-border)] bg-[var(--wf-surface-muted)] p-4">
-          <div className="flex items-center justify-between text-xs tabular-nums text-[var(--wf-text-tertiary)]">
-            <span>03:11</span>
-            <span>16:42</span>
-          </div>
-          <div className="mt-3 h-2 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--wf-text)_12%,transparent)]">
-            <motion.div
-              className="h-full rounded-full bg-[var(--wf-brand-coral)]"
-              initial={{ width: reduceMotion ? "44%" : "12%" }}
-              animate={{ width: "44%" }}
-              transition={{ duration: reduceMotion ? 0 : 1.1, ease: "easeOut" }}
-            />
-          </div>
-        </div>
-
-        <div className="mt-5 grid gap-4 md:grid-cols-[0.9fr_1.1fr]">
-          <div className="space-y-3">
-            {[
-              ["00:00", "课程目标与学习路线"],
-              ["03:11", "矩阵变换的直觉"],
-              ["08:42", "特征值如何定位重点"],
-            ].map(([time, title], index) => (
-              <motion.div
-                key={time}
-                className="rounded-[var(--wf-radius-sm)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-3"
-                initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.08, duration: 0.32, ease: "easeOut" }}
-              >
-                <p className="text-xs tabular-nums text-[var(--wf-accent)]">{time}</p>
-                <p className="mt-1 text-sm font-medium text-[var(--wf-text)]">{title}</p>
-              </motion.div>
-            ))}
-          </div>
-
-          <div className="space-y-3">
-            <div className="rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-4">
-              <Chip variant="accent" size="sm">
-                笔记摘要
-              </Chip>
-              <p className="mt-3 text-sm leading-6 text-[var(--wf-text-secondary)]">
-                矩阵可以被理解为对空间的变换。复习时先看几何直觉，再回到公式推导。
-              </p>
-            </div>
-            <div className="rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-brand-coral)_10%,var(--wf-surface))] p-4">
-              <p className="text-xs font-semibold text-[var(--wf-accent)]">问答</p>
-              <p className="mt-2 text-sm leading-6 text-[var(--wf-text-secondary)]">
-                “为什么特征向量方向不变？” 已定位到 08:42 附近的讲解片段。
-              </p>
-            </div>
-          </div>
-        </div>
-      </Card>
-    </div>
   );
 }
 
@@ -341,7 +262,7 @@ export default function LandingPage() {
             </div>
           </motion.div>
 
-          <ProductPreview />
+          <FoldingHeroStage />
         </div>
       </section>
 

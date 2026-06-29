@@ -16,6 +16,7 @@ import MiniPlayer from "@/components/MiniPlayer";
 import ChapterRail from "@/components/ChapterRail";
 import TranscriptPanel from "@/components/TranscriptPanel";
 import ChatPanel from "@/components/ChatPanel";
+import { CitationJumpLayer, useCitationJump } from "@/components/interactive/CitationJumpLayer";
 import { formatTime, buildGlossary } from "@/lib/notes";
 import type { NoteBundle } from "@/lib/notes";
 import { getShare, postShare, revokeShare, ApiError } from "@/lib/api";
@@ -241,6 +242,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
   const [shareHint, setShareHint] = useState<string | null>(null);
   const [docxState, setDocxState] = useState<"idle" | "busy" | "error">("idle");
   const { done: chaptersDone, toggle: toggleChapterDone } = useChapterProgress(noteId);
+  const { jump, triggerJump } = useCitationJump();
   const playerRef = useRef<VideoPlayerHandle>(null);
   const mainWrapRef = useRef<HTMLDivElement>(null);
   const railTriggerRef = useRef<HTMLButtonElement>(null);
@@ -268,6 +270,10 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
     playerRef.current?.seek(sec);
     setCurrentTime(sec);
   }, []);
+  const seekFromCitation = useCallback((sec: number, sourceElement?: HTMLElement | null) => {
+    seek(sec);
+    triggerJump(sourceElement ?? null, mainWrapRef.current, sec);
+  }, [seek, triggerJump]);
   const seekAndCloseRail = useCallback((sec: number) => {
     seek(sec);
     setRailOpen(false);
@@ -510,7 +516,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
           />
           {!shared && (
             <div className="mt-6 lg:sticky lg:bottom-3">
-              <ChatPanel noteId={noteId} onSeek={seek} chapters={bundle.chapters} />
+              <ChatPanel noteId={noteId} onSeek={seekFromCitation} chapters={bundle.chapters} />
             </div>
           )}
         </div>
@@ -750,6 +756,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
         onClose={() => setMiniDismissed(true)}
         onExpand={() => mainWrapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
       />
+      <CitationJumpLayer jump={jump} />
     </main>
   );
 }
