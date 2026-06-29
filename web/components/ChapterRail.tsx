@@ -59,7 +59,7 @@ export default function ChapterRail({
             <button
               ref={active ? activeRef : undefined}
               onClick={() => onSeek(ch.start)}
-              aria-current={active ? "true" : undefined}
+              aria-current={active ? "location" : undefined}
               className={`relative w-full overflow-hidden rounded-xl px-3 py-2 text-left transition-colors
                           ${showProgress ? "pr-9" : ""}
                           ${active
@@ -107,6 +107,7 @@ export default function ChapterRail({
                     <button
                       key={si}
                       onClick={() => onSeek(sub.start)}
+                      aria-current={subActive ? "location" : undefined}
                       className={`rounded-lg px-2 py-1.5 text-left text-xs leading-snug transition-colors
                                   ${subActive
                                     ? "text-[var(--accent)]"
