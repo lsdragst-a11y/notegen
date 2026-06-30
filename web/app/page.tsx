@@ -18,6 +18,11 @@ import type { ReactNode } from "react";
 
 import { BrandMark } from "@/components/brand/BrandMark";
 import { FoldingHeroStage } from "@/components/interactive/FoldingHeroStage";
+import {
+  LandingScrollRail,
+  RevealOnScroll,
+  ScrollKineticPanel,
+} from "@/components/interactive/LandingScrollMotion";
 import { Card, Chip } from "@/components/ui";
 import { useAuth } from "@/components/AuthContext";
 import { CINEMATIC_BEATS } from "./landing-model";
@@ -126,7 +131,9 @@ function ProcessCard({
   const Icon = step.icon;
 
   return (
-    <Card className="group relative h-full" padding="lg">
+    <Card className="group relative h-full overflow-hidden transition-transform duration-300 ease-out hover:-translate-y-1" padding="lg">
+      <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-[var(--wf-brand-coral)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-70" />
+      <div className="pointer-events-none absolute -right-10 -top-10 h-28 w-28 rounded-full bg-[color-mix(in_srgb,var(--wf-brand-coral)_10%,transparent)] opacity-0 blur-2xl transition-opacity duration-300 group-hover:opacity-100" />
       <div className="flex items-center justify-between">
         <span className="flex h-11 w-11 items-center justify-center rounded-[var(--wf-radius-sm)] bg-[color-mix(in_srgb,var(--wf-brand-coral)_13%,var(--wf-surface))] text-[var(--wf-accent)]">
           <Icon size={20} aria-hidden="true" />
@@ -137,10 +144,10 @@ function ProcessCard({
       </div>
       <h3 className="mt-6 text-xl font-semibold text-[var(--wf-text)]">{step.title}</h3>
       <p className="mt-3 text-sm leading-7 text-[var(--wf-text-secondary)]">{step.desc}</p>
-      <div className="mt-6 h-1.5 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--wf-text)_10%,transparent)]">
-        <div className="h-full w-2/3 rounded-full bg-[var(--wf-brand-coral)] transition-transform duration-200 ease-out group-hover:translate-x-4" />
+      <div className="mt-7 flex items-center gap-3 text-xs text-[var(--wf-text-tertiary)]">
+        <span className="h-px flex-1 origin-left scale-x-75 bg-[color-mix(in_srgb,var(--wf-brand-coral)_34%,transparent)] transition-transform duration-300 group-hover:scale-x-100" />
+        <span>{step.meta}</span>
       </div>
-      <p className="mt-3 text-xs text-[var(--wf-text-tertiary)]">{step.meta}</p>
     </Card>
   );
 }
@@ -149,10 +156,13 @@ function UseCaseCard({ item }: { item: (typeof USE_CASES)[number] }) {
   const Icon = item.icon;
 
   return (
-    <div className="rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-5 shadow-[var(--wf-shadow-sm)]">
-      <Icon size={22} className="text-[var(--wf-brand-coral)]" aria-hidden="true" />
-      <h3 className="mt-4 text-lg font-semibold text-[var(--wf-text)]">{item.title}</h3>
-      <p className="mt-2 text-sm leading-6 text-[var(--wf-text-secondary)]">{item.desc}</p>
+    <div className="group relative overflow-hidden rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-5 shadow-[var(--wf-shadow-sm)] transition-transform duration-300 ease-out hover:-translate-y-1">
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_0%,color-mix(in_srgb,var(--wf-brand-coral)_10%,transparent),transparent_34%)] opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      <div className="relative">
+        <Icon size={22} className="text-[var(--wf-brand-coral)]" aria-hidden="true" />
+        <h3 className="mt-4 text-lg font-semibold text-[var(--wf-text)]">{item.title}</h3>
+        <p className="mt-2 text-sm leading-6 text-[var(--wf-text-secondary)]">{item.desc}</p>
+      </div>
     </div>
   );
 }
@@ -162,7 +172,10 @@ function CinematicStory() {
 
   return (
     <section className="px-5 py-12 sm:px-6 md:py-20" aria-labelledby="cinematic-story-title">
-      <div className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--wf-brand-coral)_28%,transparent)] bg-[#17120f] text-[#fff7ed] shadow-[var(--wf-shadow-lg)]">
+      <ScrollKineticPanel
+        intensity={0.65}
+        className="mx-auto max-w-7xl overflow-hidden rounded-[2rem] border border-[color-mix(in_srgb,var(--wf-brand-coral)_28%,transparent)] bg-[#17120f] text-[#fff7ed] shadow-[var(--wf-shadow-lg)]"
+      >
         <div className="grid gap-0 lg:grid-cols-[0.46fr_0.54fr]">
           <div className="relative min-h-[28rem] p-7 md:p-10">
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,rgba(228,123,89,.26),transparent_34%),linear-gradient(180deg,rgba(255,250,243,.06),transparent)]" />
@@ -198,14 +211,10 @@ function CinematicStory() {
           <div className="relative border-t border-white/10 bg-[#211a16] p-5 lg:border-l lg:border-t-0 md:p-8">
             <div className="pointer-events-none absolute inset-y-8 left-9 w-px bg-white/12 md:left-12" />
             <div className="space-y-4">
-              {CINEMATIC_BEATS.map((beat, index) => (
-                <motion.article
+              {CINEMATIC_BEATS.map((beat) => (
+                <article
                   key={beat.id}
-                  initial={reduceMotion ? false : { opacity: 0, x: 18 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true, amount: 0.35 }}
-                  transition={{ delay: reduceMotion ? 0 : index * 0.08, duration: 0.38, ease: "easeOut" }}
-                  className="relative rounded-[1.25rem] border border-white/10 bg-white/[0.055] p-5 pl-12 shadow-[0_18px_44px_rgba(0,0,0,.18)]"
+                  className="relative rounded-[1.25rem] border border-white/10 bg-white/[0.055] p-5 pl-12 shadow-[0_18px_44px_rgba(0,0,0,.18)] transition-transform duration-300 ease-out hover:-translate-y-1"
                 >
                   <span className="absolute left-4 top-5 inline-flex h-5 w-5 items-center justify-center rounded-full border border-[var(--wf-brand-coral)] bg-[#211a16]">
                     <span className="h-2 w-2 rounded-full bg-[var(--wf-brand-coral)]" />
@@ -213,12 +222,12 @@ function CinematicStory() {
                   <p className="text-xs font-semibold tabular-nums tracking-[0.18em] text-[#ffb28f]">{beat.timecode}</p>
                   <h3 className="mt-2 text-lg font-semibold text-[#fff7ed]">{beat.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-[#d8c8ba]">{beat.copy}</p>
-                </motion.article>
+                </article>
               ))}
             </div>
           </div>
         </div>
-      </div>
+      </ScrollKineticPanel>
     </section>
   );
 }
@@ -232,16 +241,13 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-[var(--wf-canvas)] font-[var(--wf-font-sans)] text-[var(--wf-text)]">
+      <LandingScrollRail />
       <LandingNav primaryHref={primaryHref} primaryLabel={primaryLabel} />
 
       <section className="relative overflow-hidden px-5 py-16 sm:px-6 md:py-24">
         <div className="pointer-events-none absolute left-1/2 top-10 h-64 w-[42rem] -translate-x-1/2 rounded-full bg-[color-mix(in_srgb,var(--wf-brand-coral)_12%,transparent)] blur-3xl" />
         <div className="relative mx-auto grid max-w-7xl items-center gap-12 lg:grid-cols-[0.45fr_0.55fr]">
-          <motion.div
-            initial={{ opacity: 0, y: 14 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.42, ease: "easeOut" }}
-          >
+          <div>
             <Chip variant="accent" className="gap-2">
               <Sparkles size={14} aria-hidden="true" />
               Warm Fold Learning
@@ -260,9 +266,11 @@ export default function LandingPage() {
                 查看示例
               </LandingLinkButton>
             </div>
-          </motion.div>
+          </div>
 
-          <FoldingHeroStage />
+          <div>
+            <FoldingHeroStage />
+          </div>
         </div>
       </section>
 
@@ -270,7 +278,7 @@ export default function LandingPage() {
 
       <section id="how-it-works" className="px-5 py-16 sm:px-6 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <div className="mx-auto max-w-2xl text-center">
+          <RevealOnScroll className="mx-auto max-w-2xl text-center">
             <p className="text-sm font-semibold text-[var(--wf-accent)]">How It Works</p>
             <h2 className="mt-3 font-[var(--wf-font-display)] text-4xl font-semibold leading-tight tracking-[-0.03em] md:text-5xl">
               从一段视频，到一套可以复习的笔记
@@ -278,10 +286,12 @@ export default function LandingPage() {
             <p className="mt-5 text-base leading-8 text-[var(--wf-text-secondary)]">
               从章节定位到逐字稿，再从笔记跳回视频片段。NoteGen 把学习过程整理成一条可以反复回看的时间线。
             </p>
-          </div>
+          </RevealOnScroll>
           <div className="mt-12 grid gap-5 md:grid-cols-3">
             {PROCESS_STEPS.map((step, index) => (
-              <ProcessCard key={step.title} index={index} step={step} />
+              <RevealOnScroll key={step.title} delay={index * 0.07} variant="fold">
+                <ProcessCard index={index} step={step} />
+              </RevealOnScroll>
             ))}
           </div>
         </div>
@@ -290,7 +300,7 @@ export default function LandingPage() {
       <section id="use-cases" className="px-5 py-16 sm:px-6 md:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-10 lg:grid-cols-[0.38fr_0.62fr] lg:items-start">
-            <div>
+            <RevealOnScroll variant="slide">
               <p className="text-sm font-semibold text-[var(--wf-accent)]">Use Cases</p>
               <h2 className="mt-3 font-[var(--wf-font-display)] text-4xl font-semibold leading-tight tracking-[-0.03em] md:text-5xl">
                 适合所有需要“看完还要记住”的内容
@@ -298,15 +308,18 @@ export default function LandingPage() {
               <p className="mt-5 text-base leading-8 text-[var(--wf-text-secondary)]">
                 不把首页变成工作台，只用清晰场景帮助用户判断 NoteGen 是否适合自己的学习材料。
               </p>
-            </div>
+            </RevealOnScroll>
             <div className="grid gap-4 sm:grid-cols-2">
-              {USE_CASES.map((item) => (
-                <UseCaseCard key={item.title} item={item} />
+              {USE_CASES.map((item, index) => (
+                <RevealOnScroll key={item.title} delay={index * 0.06} variant="rise">
+                  <UseCaseCard item={item} />
+                </RevealOnScroll>
               ))}
             </div>
           </div>
 
-          <Card className="mt-14 overflow-hidden text-center" padding="lg">
+          <RevealOnScroll variant="fold" className="mt-14">
+          <Card className="overflow-hidden text-center" padding="lg">
             <div className="mx-auto max-w-2xl">
               <BrandMark size="lg" className="mx-auto text-[var(--wf-text)]" label="NoteGen" />
               <h2 className="mt-6 font-[var(--wf-font-display)] text-3xl font-semibold tracking-[-0.03em] md:text-4xl">
@@ -322,6 +335,7 @@ export default function LandingPage() {
               </div>
             </div>
           </Card>
+          </RevealOnScroll>
         </div>
       </section>
 
