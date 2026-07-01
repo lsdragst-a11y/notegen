@@ -47,9 +47,7 @@ export function AccountCompanion({ state, variant }: AccountCompanionProps) {
   return (
     <section
       aria-label={isRegister ? "NoteGen 注册角色入口" : "NoteGen 登录角色入口"}
-      className="relative block min-h-[27rem] overflow-hidden rounded-[2rem] border border-[var(--wf-border)]
-                 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--wf-surface)_96%,transparent),color-mix(in_srgb,var(--wf-canvas)_78%,transparent))]
-                 p-5 shadow-[var(--wf-shadow-lg)] lg:min-h-[34rem] lg:p-8"
+      className="wf-account-companion relative block min-h-[27rem] overflow-hidden rounded-[2rem] p-5 lg:min-h-[34rem] lg:p-8"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,color-mix(in_srgb,var(--wf-brand-coral)_13%,transparent),transparent_34%),radial-gradient(circle_at_82%_74%,color-mix(in_srgb,var(--wf-caramel)_18%,transparent),transparent_30%)]" />
       <motion.div

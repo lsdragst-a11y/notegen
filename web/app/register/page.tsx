@@ -81,10 +81,24 @@ export default function RegisterPage() {
           </Link>
         </header>
 
-        <section className="mx-auto grid max-w-7xl items-center gap-8 px-5 pb-16 pt-6 sm:px-6 lg:grid-cols-[1.05fr_0.95fr]">
-          <AccountCompanion state={companionState(focus, showPassword, stageStatus)} variant="register" />
+        <section className="mx-auto px-5 pb-16 pt-6 sm:px-6 lg:pt-10">
+          <div className="wf-auth-workbench mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
+            <div className="wf-auth-connector" aria-hidden="true" />
+            <div className="relative z-10 grid items-center gap-7 lg:grid-cols-[1.08fr_0.92fr]">
+              <div className="relative min-w-0">
+                <div className="pointer-events-none absolute -left-4 top-8 hidden rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_24%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_70%,transparent)] px-3 py-1 font-mono text-xs tabular-nums text-[var(--wf-accent)] shadow-[var(--wf-shadow-sm)] md:block">
+                  00:04 笔记位就绪
+                </div>
+                <AccountCompanion state={companionState(focus, showPassword, stageStatus)} variant="register" />
+              </div>
 
-          <div className="wf-auth-form-card relative mx-auto w-full max-w-md overflow-hidden rounded-[2rem] p-6 backdrop-blur md:p-8">
+              <div className="relative min-w-0">
+                <div className="pointer-events-none absolute -left-5 top-10 hidden h-3 w-3 rounded-full bg-[var(--wf-brand-coral)] shadow-[0_0_22px_color-mix(in_srgb,var(--wf-brand-coral)_62%,transparent)] lg:block" />
+                <div className="mb-4 flex items-center justify-between rounded-full border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-surface)_72%,transparent)] px-4 py-2 text-xs text-[var(--wf-text-tertiary)] shadow-[var(--wf-shadow-sm)] backdrop-blur">
+                  <span className="font-mono tabular-nums text-[var(--wf-accent)]">00:04</span>
+                  <span>准备第一本私有视频笔记</span>
+                </div>
+                <div className="wf-auth-form-card relative mx-auto w-full max-w-md overflow-hidden rounded-[2rem] p-6 backdrop-blur md:p-8">
             <div className="relative z-10">
               {done ? (
                 <div className="text-center">
@@ -225,6 +239,9 @@ export default function RegisterPage() {
                   </p>
                 </>
               )}
+            </div>
+                </div>
+              </div>
             </div>
           </div>
         </section>

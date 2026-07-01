@@ -75,7 +75,7 @@ function LandingLinkButton({
   variant?: "primary" | "secondary" | "ghost";
 }) {
   return (
-    <Link className="wf-button" data-size="lg" data-variant={variant} href={href}>
+    <Link className="wf-button wf-brand-button" data-size="lg" data-variant={variant} href={href}>
       <span className="wf-button__content">{children}</span>
     </Link>
   );
@@ -83,7 +83,7 @@ function LandingLinkButton({
 
 function LandingNav({ primaryHref, primaryLabel }: { primaryHref: string; primaryLabel: string }) {
   return (
-    <header className="sticky top-0 z-30 border-b border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-canvas)_88%,transparent)] backdrop-blur-xl">
+    <header className="sticky top-0 z-30 border-b border-[color-mix(in_srgb,var(--wf-border)_72%,transparent)] bg-[color-mix(in_srgb,var(--wf-canvas)_76%,transparent)] backdrop-blur-xl">
       <nav className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-5 sm:px-6" aria-label="首页导航">
         <Link href="/" className="inline-flex items-center gap-3 text-[var(--wf-text)]">
           <BrandMark variant="full" size="sm" label="NoteGen" />
@@ -106,7 +106,7 @@ function LandingNav({ primaryHref, primaryLabel }: { primaryHref: string; primar
           >
             登录
           </Link>
-          <Link className="wf-button" data-size="sm" data-variant="primary" href={primaryHref}>
+          <Link className="wf-button wf-brand-button" data-size="sm" data-variant="primary" href={primaryHref}>
             <span className="wf-button__content">{primaryLabel}</span>
           </Link>
         </div>
@@ -175,19 +175,24 @@ export default function LandingPage() {
       <div className="relative z-10">
         <LandingNav primaryHref={primaryHref} primaryLabel={primaryLabel} />
 
-        <section className="relative overflow-hidden px-5 py-12 sm:px-6 md:py-20">
-          <div className="pointer-events-none absolute left-1/2 top-8 h-64 w-[42rem] -translate-x-1/2 rounded-full bg-[color-mix(in_srgb,var(--wf-brand-coral)_13%,transparent)] blur-3xl" />
-          <div className="relative mx-auto grid max-w-7xl items-center gap-10 lg:grid-cols-[0.47fr_0.53fr]">
-            <div>
-              <Chip variant="accent" className="gap-2">
+        <section className="wf-hero-workbench relative min-h-[calc(100dvh-4rem)] overflow-hidden px-5 pb-16 pt-12 sm:px-6 lg:pb-20 lg:pt-16">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--wf-canvas)_70%,#211812)_72%,#211812_140%)]" />
+          <div className="pointer-events-none absolute left-0 right-0 top-[55%] hidden h-24 -translate-y-1/2 border-y border-[color-mix(in_srgb,var(--wf-brand-coral)_16%,transparent)] bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,var(--wf-brand-coral)_10%,transparent),transparent)] lg:block" />
+          <div className="pointer-events-none absolute left-0 right-0 top-[55%] hidden h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-[var(--wf-brand-coral)] to-transparent opacity-55 lg:block" />
+
+          <div className="relative mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.45fr_0.55fr] lg:items-center">
+            <div className="relative z-20 max-w-xl pt-4 lg:pt-10">
+              <Chip variant="accent" className="gap-2 border border-[color-mix(in_srgb,var(--wf-brand-coral)_18%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_76%,transparent)] shadow-[0_10px_26px_rgba(92,58,36,.08)]">
                 <Sparkles size={14} aria-hidden="true" />
                 Warm Fold Learning
               </Chip>
-              <h1 className="mt-6 max-w-3xl text-balance font-[var(--wf-font-display)] text-5xl font-semibold leading-[1.06] tracking-[-0.04em] text-[var(--wf-text)] sm:text-6xl lg:text-[4.15rem]">
+              <h1 className="mt-7 text-balance font-[var(--wf-font-display)] text-[clamp(3.2rem,7vw,6.8rem)] font-semibold leading-[0.98] tracking-[-0.055em] text-[var(--wf-text)]">
                 把视频折叠成
-                <span className="block text-[var(--wf-accent)]">可回看的学习笔记</span>
+                <span className="block">
+                  可<span className="text-[var(--wf-accent)]">回看</span>的学习笔记
+                </span>
               </h1>
-              <p className="mt-6 max-w-xl text-base leading-8 text-[var(--wf-text-secondary)] md:text-lg">
+              <p className="mt-6 max-w-lg text-base leading-8 text-[var(--wf-text-secondary)] md:text-lg">
                 上传课程、讲座或教程，NoteGen 会沿着时间线提取章节、重点和问答证据。
               </p>
               <div className="mt-8 flex flex-col gap-3 sm:flex-row">
@@ -198,9 +203,21 @@ export default function LandingPage() {
                   观看 30 秒演示
                 </LandingLinkButton>
               </div>
+              <div className="mt-9 hidden max-w-lg grid-cols-3 gap-3 text-xs text-[var(--wf-text-tertiary)] sm:grid">
+                {[
+                  ["03:11", "章节展开"],
+                  ["08:42", "重点折页"],
+                  ["12:18", "证据回放"],
+                ].map(([time, label]) => (
+                  <div key={time} className="rounded-[1rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-surface)_62%,transparent)] px-3 py-2 shadow-[0_12px_32px_rgba(92,58,36,.06)]">
+                    <span className="block font-mono text-[var(--wf-accent)]">{time}</span>
+                    <span className="mt-1 block">{label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
-            <div>
+            <div className="relative z-10 -mx-2 mt-4 lg:-ml-16 lg:mr-0 lg:mt-0">
               <FoldingHeroStage />
             </div>
           </div>
