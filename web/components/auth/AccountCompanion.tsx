@@ -2,8 +2,6 @@
 
 import { motion, useReducedMotion } from "framer-motion";
 
-import { BrandMark } from "@/components/brand/BrandMark";
-
 export type AccountCompanionState =
   | "idle"
   | "emailFocus"
@@ -60,13 +58,12 @@ export function AccountCompanion({ state, variant }: AccountCompanionProps) {
 
       <div className="relative z-10 flex h-full min-h-[24rem] flex-col justify-between lg:min-h-[30rem]">
         <div>
-          <BrandMark variant="full" size="sm" label="NoteGen" />
-          <p className="mt-6 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--wf-accent)]">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--wf-accent)]">
             {isRegister ? "Create notebook" : "Back to notebook"}
           </p>
-          <h1 className="mt-4 max-w-lg text-balance font-[var(--wf-font-display)] text-3xl font-semibold leading-[1.06] tracking-[-0.04em] lg:text-5xl">
+          <h2 className="mt-4 max-w-lg text-balance font-[var(--wf-font-display)] text-3xl font-semibold leading-[1.06] tracking-[-0.04em] lg:text-5xl">
             {isRegister ? "给第一本视频笔记留一个位置" : "回到你的时间线和笔记页"}
-          </h1>
+          </h2>
           <p className="mt-4 max-w-md text-sm leading-7 text-[var(--wf-text-secondary)]">
             {isRegister
               ? "创建账号后，视频、章节、提问和复习进度会收进同一个私有空间。"

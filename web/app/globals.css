@@ -192,6 +192,19 @@ html, body {
   --wf-accent-active: #7F3927;
   --wf-on-accent: #FFFAF3;
   --wf-caramel: #8B5A35;
+  --wf-cinema-bg: #211812;
+  --wf-cinema-panel: #241A15;
+  --wf-cinema-panel-soft: #33251D;
+  --wf-cinema-border: rgba(255, 238, 220, 0.12);
+  --wf-cinema-text: #FFEFE1;
+  --wf-cinema-muted: #D8C8BA;
+  --wf-film-frame: #4A2B1F;
+  --wf-playhead: #E47B59;
+  --wf-timecode: #FFB28F;
+  --wf-cinema-line: rgba(255, 178, 143, 0.54);
+  --wf-paper-front: #FFF8EC;
+  --wf-paper-back: #F2E4D3;
+  --wf-warm-glow: #E47B59;
   --wf-border: rgba(45, 41, 37, 0.14);
   --wf-border-strong: rgba(45, 41, 37, 0.28);
   --wf-danger: #B43A31;
@@ -234,6 +247,19 @@ html, body {
   --wf-accent-active: #C96343;
   --wf-on-accent: #2B1710;
   --wf-caramel: #D3A173;
+  --wf-cinema-bg: #16100E;
+  --wf-cinema-panel: #211812;
+  --wf-cinema-panel-soft: #2F211A;
+  --wf-cinema-border: rgba(255, 238, 220, 0.12);
+  --wf-cinema-text: #FFF2E8;
+  --wf-cinema-muted: #D8C8BA;
+  --wf-film-frame: #553024;
+  --wf-playhead: #F08D6B;
+  --wf-timecode: #FFC1A3;
+  --wf-cinema-line: rgba(255, 193, 163, 0.54);
+  --wf-paper-front: #FFF4E8;
+  --wf-paper-back: #EEDCCA;
+  --wf-warm-glow: #F08D6B;
   --wf-border: rgba(244, 234, 223, 0.14);
   --wf-border-strong: rgba(244, 234, 223, 0.28);
   --wf-danger: #FF8A7A;
@@ -742,6 +768,27 @@ html, body {
   opacity: 0.58;
 }
 
+.wf-auth-stage {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.wf-auth-companion-layer {
+  z-index: 1;
+}
+
+.wf-auth-form-dock {
+  z-index: 3;
+}
+
+.wf-auth-companion-layer .wf-account-companion {
+  border-color: transparent;
+  background:
+    radial-gradient(circle at 18% 12%, color-mix(in srgb, var(--wf-brand-coral) 10%, transparent), transparent 34%),
+    radial-gradient(circle at 76% 78%, color-mix(in srgb, var(--wf-caramel) 12%, transparent), transparent 30%);
+  box-shadow: none;
+}
+
 .wf-account-companion {
   border: 1px solid color-mix(in srgb, var(--wf-border) 70%, transparent);
   background:
@@ -784,6 +831,30 @@ html, body {
 
   .wf-auth-workbench {
     border-radius: 2rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .wf-auth-stage {
+    display: block;
+  }
+
+  .wf-auth-companion-layer {
+    position: absolute;
+    inset: 0 21rem 0 0;
+  }
+
+  .wf-auth-companion-layer .wf-account-companion {
+    min-height: 100%;
+    padding-right: clamp(7rem, 15vw, 17rem);
+  }
+
+  .wf-auth-form-dock {
+    position: absolute;
+    right: clamp(1rem, 4vw, 4rem);
+    top: 50%;
+    width: min(29rem, 42vw);
+    transform: translateY(-50%);
   }
 }
 

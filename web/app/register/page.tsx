@@ -13,6 +13,11 @@ import { apiRegister } from "@/lib/auth";
 
 type AuthFocus = "email" | "password" | "idle";
 type AuthStatus = "idle" | "error" | "success";
+type RegisterErrors = {
+  email?: string;
+  password?: string;
+  form?: string;
+};
 
 function companionState(focus: AuthFocus, passwordVisible: boolean, status: AuthStatus): AccountCompanionState {
   if (status === "success") return "success";
@@ -27,7 +32,7 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [password, setPassword] = useState("");
-  const [err, setErr] = useState<string | null>(null);
+  const [errors, setErrors] = useState<RegisterErrors>({});
   const [done, setDone] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [focus, setFocus] = useState<AuthFocus>("idle");
@@ -42,11 +47,11 @@ export default function RegisterPage() {
 
   async function submit(e: FormEvent) {
     e.preventDefault();
-    setErr(null);
+    setErrors({});
     setAuthStatus("idle");
 
     if (password.length < 8) {
-      setErr("密码至少需要 8 位。");
+      setErrors({ password: "密码至少需要 8 位。" });
       setAuthStatus("error");
       return;
     }
@@ -58,15 +63,16 @@ export default function RegisterPage() {
       setAuthStatus("success");
       await refresh();
     } catch (e) {
-      setErr(e instanceof ApiError ? e.message : "注册失败，请确认后端服务是否已启动。");
+      setErrors({ form: e instanceof ApiError ? e.message : "注册失败，请确认后端服务是否已启动。" });
       setAuthStatus("error");
     } finally {
       setBusy(false);
     }
   }
 
-  const errorId = err ? "register-error" : undefined;
-  const stageStatus = done ? "success" : err ? "error" : authStatus;
+  const formErrorId = errors.form ? "register-form-error" : undefined;
+  const passwordErrorId = errors.password ? "register-password-error" : undefined;
+  const stageStatus = done ? "success" : errors.form || errors.password || errors.email ? "error" : authStatus;
 
   return (
     <main className="relative isolate min-h-[100dvh] overflow-hidden bg-[var(--wf-canvas)] text-[var(--wf-text)]">
@@ -84,15 +90,12 @@ export default function RegisterPage() {
         <section className="mx-auto px-5 pb-16 pt-6 sm:px-6 lg:pt-10">
           <div className="wf-auth-workbench mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
             <div className="wf-auth-connector" aria-hidden="true" />
-            <div className="relative z-10 grid items-center gap-7 lg:grid-cols-[1.08fr_0.92fr]">
-              <div className="relative min-w-0">
-                <div className="pointer-events-none absolute -left-4 top-8 hidden rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_24%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_70%,transparent)] px-3 py-1 font-mono text-xs tabular-nums text-[var(--wf-accent)] shadow-[var(--wf-shadow-sm)] md:block">
-                  00:04 笔记位就绪
-                </div>
+            <div className="wf-auth-stage relative z-10 min-h-[43rem]">
+              <div className="wf-auth-companion-layer relative min-w-0">
                 <AccountCompanion state={companionState(focus, showPassword, stageStatus)} variant="register" />
               </div>
 
-              <div className="relative min-w-0">
+              <div className="wf-auth-form-dock relative min-w-0">
                 <div className="pointer-events-none absolute -left-5 top-10 hidden h-3 w-3 rounded-full bg-[var(--wf-brand-coral)] shadow-[0_0_22px_color-mix(in_srgb,var(--wf-brand-coral)_62%,transparent)] lg:block" />
                 <div className="mb-4 flex items-center justify-between rounded-full border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-surface)_72%,transparent)] px-4 py-2 text-xs text-[var(--wf-text-tertiary)] shadow-[var(--wf-shadow-sm)] backdrop-blur">
                   <span className="font-mono tabular-nums text-[var(--wf-accent)]">00:04</span>
@@ -137,6 +140,7 @@ export default function RegisterPage() {
                     onClickCapture={(e) => updateFocusFromTarget(e.target)}
                     onFocusCapture={(e) => updateFocusFromTarget(e.target)}
                     onInputCapture={(e) => updateFocusFromTarget(e.target)}
+                    aria-describedby={formErrorId}
                     className="space-y-4"
                   >
                     <div className="space-y-2">
@@ -157,8 +161,7 @@ export default function RegisterPage() {
                         }}
                         onClick={() => setFocus("email")}
                         onFocus={() => setFocus("email")}
-                        aria-describedby={errorId}
-                        invalid={Boolean(err)}
+                        invalid={Boolean(errors.email)}
                       />
                     </div>
                     <div className="space-y-2">
@@ -200,8 +203,8 @@ export default function RegisterPage() {
                           }}
                           onClick={() => setFocus("password")}
                           onFocus={() => setFocus("password")}
-                          aria-describedby={errorId}
-                          invalid={Boolean(err)}
+                          aria-describedby={passwordErrorId}
+                          invalid={Boolean(errors.password)}
                           className="pr-11"
                         />
                         <IconButton
@@ -217,10 +220,15 @@ export default function RegisterPage() {
                           {showPassword ? <EyeOff size={15} aria-hidden="true" /> : <Eye size={15} aria-hidden="true" />}
                         </IconButton>
                       </div>
+                      {errors.password ? (
+                        <p id={passwordErrorId} className="text-xs leading-5 text-[var(--wf-danger)]" role="alert">
+                          {errors.password}
+                        </p>
+                      ) : null}
                     </div>
-                    {err ? (
-                      <p id={errorId} className="rounded-[var(--wf-radius-sm)] border border-[var(--wf-danger-border)] bg-[var(--wf-danger-surface)] px-3 py-2 text-xs leading-5 text-[var(--wf-danger)]" role="alert">
-                        {err}
+                    {errors.form ? (
+                      <p id={formErrorId} className="rounded-[var(--wf-radius-sm)] border border-[var(--wf-danger-border)] bg-[var(--wf-danger-surface)] px-3 py-2 text-xs leading-5 text-[var(--wf-danger)]" role="alert">
+                        {errors.form}
                       </p>
                     ) : null}
                     <Button type="submit" loading={busy} className="w-full">

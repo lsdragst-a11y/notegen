@@ -18,6 +18,10 @@ function getSafeNextPath(value: string | null) {
   return value;
 }
 
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
 type AuthFocus = "email" | "password" | "idle";
 type AuthStatus = "idle" | "error" | "success";
 
@@ -59,6 +63,7 @@ function LoginInner() {
     try {
       await login(email.trim(), password);
       setAuthStatus("success");
+      await sleep(600);
       router.push(next);
     } catch (e) {
       if (e instanceof ApiError && e.status === 403) {
@@ -91,15 +96,12 @@ function LoginInner() {
         <section className="mx-auto px-5 pb-16 pt-6 sm:px-6 lg:pt-10">
           <div className="wf-auth-workbench mx-auto max-w-7xl overflow-hidden rounded-[2.5rem] px-4 py-5 sm:px-6 lg:px-8 lg:py-8">
             <div className="wf-auth-connector" aria-hidden="true" />
-            <div className="relative z-10 grid items-center gap-7 lg:grid-cols-[1.08fr_0.92fr]">
-              <div className="relative min-w-0">
-                <div className="pointer-events-none absolute -left-4 top-8 hidden rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_24%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_70%,transparent)] px-3 py-1 font-mono text-xs tabular-nums text-[var(--wf-accent)] shadow-[var(--wf-shadow-sm)] md:block">
-                  03:11 工作台打开
-                </div>
+            <div className="wf-auth-stage relative z-10 min-h-[43rem]">
+              <div className="wf-auth-companion-layer relative min-w-0">
                 <AccountCompanion state={companionState(focus, showPassword, stageStatus)} variant="login" />
               </div>
 
-              <div className="relative min-w-0">
+              <div className="wf-auth-form-dock relative min-w-0">
                 <div className="pointer-events-none absolute -left-5 top-10 hidden h-3 w-3 rounded-full bg-[var(--wf-brand-coral)] shadow-[0_0_22px_color-mix(in_srgb,var(--wf-brand-coral)_62%,transparent)] lg:block" />
                 <div className="mb-4 flex items-center justify-between rounded-full border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-surface)_72%,transparent)] px-4 py-2 text-xs text-[var(--wf-text-tertiary)] shadow-[var(--wf-shadow-sm)] backdrop-blur">
                   <span className="font-mono tabular-nums text-[var(--wf-accent)]">00:00</span>
@@ -121,6 +123,7 @@ function LoginInner() {
                 onClickCapture={(e) => updateFocusFromTarget(e.target)}
                 onFocusCapture={(e) => updateFocusFromTarget(e.target)}
                 onInputCapture={(e) => updateFocusFromTarget(e.target)}
+                aria-describedby={errorId}
                 className="space-y-4"
               >
                 <div className="space-y-2">
@@ -141,8 +144,6 @@ function LoginInner() {
                     }}
                     onClick={() => setFocus("email")}
                     onFocus={() => setFocus("email")}
-                    aria-describedby={errorId}
-                    invalid={Boolean(err)}
                   />
                 </div>
                 <div className="space-y-2">
@@ -164,8 +165,6 @@ function LoginInner() {
                       }}
                       onClick={() => setFocus("password")}
                       onFocus={() => setFocus("password")}
-                      aria-describedby={errorId}
-                      invalid={Boolean(err)}
                       className="pr-11"
                     />
                     <IconButton

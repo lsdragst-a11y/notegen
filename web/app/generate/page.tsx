@@ -75,48 +75,49 @@ function GenerateInner() {
   ), 0);
 
   return (
-    <main className="relative min-h-screen">
+    <main className="relative isolate min-h-[100dvh] overflow-hidden bg-[var(--wf-canvas)] text-[var(--wf-text)]">
+      <div className="wf-paper-atmosphere" aria-hidden="true" />
       <NavBar />
 
-      <section className="relative z-10 max-w-2xl mx-auto px-6 pt-20 pb-20">
+      <section className="relative z-10 mx-auto max-w-3xl px-5 pb-20 pt-20 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", stiffness: 160, damping: 22 }}
-          className="apple-card p-8"
+          className="relative overflow-hidden rounded-[2rem] border border-[var(--wf-border)] bg-[linear-gradient(145deg,color-mix(in_srgb,var(--wf-surface)_96%,transparent),color-mix(in_srgb,var(--wf-surface-muted)_30%,var(--wf-surface)))] p-6 shadow-[var(--wf-shadow-lg)] md:p-8"
         >
           {/* 状态头 */}
           <div className="flex items-center gap-3 mb-2">
             {isError ? (
-              <AlertCircle size={22} className="text-[#ff3b30]" />
+              <AlertCircle size={22} className="text-[var(--wf-danger)]" />
             ) : isDone ? (
-              <CheckCircle2 size={22} className="text-[#30d158]" />
+              <CheckCircle2 size={22} className="text-[var(--wf-accent)]" />
             ) : (
-              <Loader2 size={22} className="text-[var(--accent)] animate-spin" />
+              <Loader2 size={22} className="animate-spin text-[var(--wf-accent)]" />
             )}
             <h1 className="text-xl font-semibold">
               {isError ? "生成失败" : isDone ? "生成完成" : "生成中"}
             </h1>
-            <span className="ml-auto text-xs text-[var(--fg-tertiary)] tabular-nums">
+            <span className="ml-auto text-xs tabular-nums text-[var(--wf-text-tertiary)]">
               {fmtMS(elapsed)}
             </span>
           </div>
           {meta.videoTitle && (
-            <p className="text-sm font-medium text-[var(--fg)] mb-1 truncate">
+            <p className="mb-1 truncate text-sm font-medium text-[var(--wf-text)]">
               {meta.videoTitle}
             </p>
           )}
-          <p className="text-sm text-[var(--fg-secondary)] mb-2">
+          <p className="mb-2 text-sm text-[var(--wf-text-secondary)]">
             {error ?? progress.msg}
           </p>
           {/* 预估行：视频时长 / 总耗时估算（一次性给出，不跟随） */}
           {(meta.videoDuration || meta.estTotal) && !isError && (
-            <div className="text-xs text-[var(--fg-tertiary)] mb-5 flex flex-wrap gap-x-4 gap-y-1">
+            <div className="mb-5 flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--wf-text-tertiary)]">
               {meta.videoDuration && (
-                <span>视频时长 <span className="tabular-nums font-medium text-[var(--fg-secondary)]">{fmtMS(meta.videoDuration)}</span></span>
+                <span>视频时长 <span className="font-medium tabular-nums text-[var(--wf-text-secondary)]">{fmtMS(meta.videoDuration)}</span></span>
               )}
               {meta.estTotal && (
-                <span>预估约 <span className="tabular-nums font-medium text-[var(--fg-secondary)]">{fmtMS(meta.estTotal)}</span></span>
+                <span>预估约 <span className="font-medium tabular-nums text-[var(--wf-text-secondary)]">{fmtMS(meta.estTotal)}</span></span>
               )}
             </div>
           )}
@@ -132,18 +133,18 @@ function GenerateInner() {
 
           {/* 提示文案 */}
           {!isError && !isDone && (
-            <p className="mt-5 text-xs text-[var(--fg-tertiary)] leading-relaxed">
+            <p className="mt-5 text-xs leading-relaxed text-[var(--wf-text-tertiary)]">
               ASR (faster-whisper large-v3) 是最久的步骤。10 分钟的视频大约要 5-8 分钟。
-              页面可以放着不动 — 完成会自动跳转。
+              页面可以放着不动 - 完成会自动跳转。
             </p>
           )}
 
           {/* 阶段耗时 */}
           {visibleMetrics.length > 0 && (
-            <div className="mt-6 border-t border-[var(--border)] pt-4">
+            <div className="mt-6 border-t border-[var(--wf-border)] pt-4">
               <div className="flex items-center justify-between gap-3 text-xs">
-                <span className="font-medium text-[var(--fg-secondary)]">阶段耗时</span>
-                <span className="tabular-nums text-[var(--fg-tertiary)]">
+                <span className="font-medium text-[var(--wf-text-secondary)]">阶段耗时</span>
+                <span className="tabular-nums text-[var(--wf-text-tertiary)]">
                   {fmtMS(totalMetricSec)}
                 </span>
               </div>
@@ -156,15 +157,15 @@ function GenerateInner() {
                   return (
                     <div
                       key={`${item.i}-${item.stage}`}
-                      className="flex items-center gap-3 text-xs text-[var(--fg-secondary)]"
+                      className="flex items-center gap-3 text-xs text-[var(--wf-text-secondary)]"
                     >
-                      <span className="w-5 shrink-0 tabular-nums text-[var(--fg-tertiary)]">
+                      <span className="w-5 shrink-0 tabular-nums text-[var(--wf-text-tertiary)]">
                         {item.i}
                       </span>
                       <span className="min-w-0 flex-1 truncate">
                         {item.label || item.stage}
                       </span>
-                      <span className={`shrink-0 tabular-nums ${isRunning ? "text-[var(--accent)]" : "text-[var(--fg-tertiary)]"}`}>
+                      <span className={`shrink-0 tabular-nums ${isRunning ? "text-[var(--wf-accent)]" : "text-[var(--wf-text-tertiary)]"}`}>
                         {duration}
                       </span>
                     </div>
@@ -177,19 +178,19 @@ function GenerateInner() {
           {/* 最近事件日志（折叠） */}
           {history.length > 0 && (
             <details className="mt-6">
-              <summary className="text-xs text-[var(--fg-tertiary)] cursor-pointer
-                                  hover:text-[var(--fg-secondary)]">
+              <summary className="cursor-pointer text-xs text-[var(--wf-text-tertiary)]
+                                  hover:text-[var(--wf-text-secondary)]">
                 查看详细日志（{history.length} 条）
               </summary>
-              <div className="mt-2 max-h-48 overflow-y-auto bg-[var(--bg-muted)] rounded-lg p-3
+              <div className="mt-2 max-h-48 overflow-y-auto rounded-lg bg-[var(--wf-surface-muted)] p-3
                               text-[11px] font-mono leading-relaxed">
                 {history.slice(-30).map((e, i) => (
-                  <div key={i} className="text-[var(--fg-secondary)]">
-                    <span className="text-[var(--fg-tertiary)] tabular-nums mr-2">
+                  <div key={i} className="text-[var(--wf-text-secondary)]">
+                    <span className="mr-2 tabular-nums text-[var(--wf-text-tertiary)]">
                       [{e.percent.toString().padStart(3, " ")}%]
                     </span>
-                    <span className="text-[var(--accent)]">{e.stage}</span>
-                    <span className="text-[var(--fg-secondary)] ml-2">{e.msg}</span>
+                    <span className="text-[var(--wf-accent)]">{e.stage}</span>
+                    <span className="ml-2 text-[var(--wf-text-secondary)]">{e.msg}</span>
                   </div>
                 ))}
               </div>
@@ -199,9 +200,11 @@ function GenerateInner() {
           {(isError) && (
             <button
               onClick={() => router.push("/")}
-              className="apple-button mt-5"
+              className="wf-button mt-5"
+              data-size="md"
+              data-variant="primary"
             >
-              返回首页
+              <span className="wf-button__content">返回首页</span>
             </button>
           )}
         </motion.div>
@@ -213,7 +216,7 @@ function GenerateInner() {
 export default function GeneratePage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen flex items-center justify-center text-sm text-[var(--fg-tertiary)]">
+      <main className="flex min-h-[100dvh] items-center justify-center bg-[var(--wf-canvas)] text-sm text-[var(--wf-text-tertiary)]">
         加载中…
       </main>
     }>

@@ -11,6 +11,8 @@ describe("AccountCompanion", () => {
 
     expect(screen.getByTestId("account-companion")).toHaveAttribute("data-state", "passwordReveal");
     expect(screen.getAllByText("纸页从书签旁确认密码可见").length).toBeGreaterThan(0);
+    expect(screen.queryByRole("heading", { level: 1 })).not.toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 2 })).toBeInTheDocument();
   });
 
   it("marks error and success states distinctly", () => {
