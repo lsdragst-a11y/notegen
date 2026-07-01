@@ -10,7 +10,7 @@ describe("AccountCompanion", () => {
     render(<AccountCompanion state="passwordReveal" variant="login" />);
 
     expect(screen.getByTestId("account-companion")).toHaveAttribute("data-state", "passwordReveal");
-    expect(screen.getAllByText("纸页角色从书签旁确认密码可见").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("纸页从书签旁确认密码可见").length).toBeGreaterThan(0);
   });
 
   it("marks error and success states distinctly", () => {
@@ -21,6 +21,6 @@ describe("AccountCompanion", () => {
     rerender(<AccountCompanion state="success" variant="register" />);
 
     expect(screen.getByTestId("account-companion")).toHaveAttribute("data-state", "success");
-    expect(screen.getAllByText("纸页角色把书签归档完成").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("纸页把书签归档完成").length).toBeGreaterThan(0);
   });
 });
