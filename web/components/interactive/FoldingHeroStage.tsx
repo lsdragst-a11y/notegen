@@ -184,7 +184,7 @@ export function FoldingHeroStage() {
   return (
     <section
       ref={stageRef}
-      className="relative mx-auto h-[34rem] w-full max-w-7xl overflow-visible"
+      className="relative mx-auto h-[36rem] w-full max-w-7xl overflow-visible"
       aria-label="可交互的视频折叠成笔记演示"
       data-phase={phase}
       data-mode={reduceMotion ? "reducedMotion" : interactionMode}
@@ -199,15 +199,20 @@ export function FoldingHeroStage() {
     >
       <motion.div
         aria-hidden="true"
-        className="absolute -inset-x-10 top-10 h-80 rounded-full bg-[radial-gradient(circle_at_50%_50%,color-mix(in_srgb,var(--wf-warm-glow)_28%,transparent),color-mix(in_srgb,var(--wf-cinema-bg)_18%,transparent)_38%,transparent_72%)] blur-2xl"
+        className="absolute -inset-x-16 top-6 h-80 rounded-full bg-[radial-gradient(circle_at_54%_50%,color-mix(in_srgb,var(--wf-warm-glow)_20%,transparent),color-mix(in_srgb,var(--wf-cinema-bg)_10%,transparent)_34%,transparent_72%)] blur-2xl"
         style={reduceMotion ? undefined : { x: haloX, y: haloY }}
       />
 
-      <div className="absolute left-[3%] right-[3%] top-[15rem] h-28 rounded-[999px] border border-[var(--wf-cinema-border)] bg-[var(--wf-cinema-bg)] shadow-[0_30px_90px_color-mix(in_srgb,var(--wf-cinema-bg)_42%,transparent),inset_0_1px_0_color-mix(in_srgb,var(--wf-paper-front)_12%,transparent)]" />
-      <div className="absolute left-[6%] right-[6%] top-[18.15rem] h-px bg-gradient-to-r from-transparent via-[var(--wf-cinema-line)] to-transparent" />
+      <div className="absolute left-[-4%] right-[-4%] top-[17.2rem] h-16 rotate-[-1deg] border-y border-[color-mix(in_srgb,var(--wf-brand-coral)_20%,transparent)] bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,var(--wf-brand-coral)_10%,transparent)_18%,color-mix(in_srgb,var(--wf-cinema-bg)_9%,transparent)_50%,transparent_86%)] shadow-[0_28px_70px_rgba(92,58,36,.08)]" />
+      <div className="absolute left-[-2%] right-[-2%] top-[19.15rem] h-px rotate-[-1deg] bg-gradient-to-r from-transparent via-[var(--wf-brand-coral)] to-transparent opacity-75" />
+      <motion.div
+        aria-hidden="true"
+        className="absolute right-[22%] top-[12.6rem] z-10 hidden h-40 w-60 origin-left rotate-[-8deg] rounded-[1.3rem] border border-[color-mix(in_srgb,var(--wf-brand-coral)_18%,transparent)] bg-[linear-gradient(135deg,color-mix(in_srgb,var(--wf-paper-front)_72%,transparent),color-mix(in_srgb,var(--wf-paper-back)_54%,transparent))] shadow-[0_28px_70px_rgba(92,58,36,.10)] backdrop-blur-sm lg:block"
+        style={reduceMotion ? { x: 0 } : { x: paperX }}
+      />
 
       <motion.div
-        className="absolute top-[7rem] bottom-[3.4rem] z-30 w-px cursor-ew-resize bg-[var(--wf-playhead)] shadow-[0_0_28px_color-mix(in_srgb,var(--wf-playhead)_68%,transparent)]"
+        className="absolute top-[4.25rem] bottom-[3.1rem] z-30 w-px cursor-ew-resize bg-[var(--wf-playhead)] shadow-[0_0_28px_color-mix(in_srgb,var(--wf-playhead)_68%,transparent)]"
         style={{ left: playheadLeft }}
         onPointerDown={beginDrag}
         onPointerUp={endDrag}
@@ -219,24 +224,24 @@ export function FoldingHeroStage() {
         aria-valuenow={rangeValue}
         tabIndex={0}
       >
-        <span className="absolute -left-3 -top-3 flex h-7 w-7 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--wf-playhead)_58%,var(--wf-paper-front))] bg-[var(--wf-cinema-panel)] text-[var(--wf-timecode)] shadow-[0_12px_28px_color-mix(in_srgb,var(--wf-cinema-bg)_34%,transparent)]">
+        <span className="absolute -left-3 -top-3 flex h-7 w-7 items-center justify-center rounded-full border border-[color-mix(in_srgb,var(--wf-playhead)_58%,var(--wf-paper-front))] bg-[color-mix(in_srgb,var(--wf-cinema-panel)_90%,transparent)] text-[var(--wf-timecode)] shadow-[0_12px_28px_color-mix(in_srgb,var(--wf-cinema-bg)_26%,transparent)] backdrop-blur">
           <Play size={11} fill="currentColor" aria-hidden="true" />
         </span>
         <span className="absolute -bottom-2 -left-2 h-4 w-4 rotate-45 rounded-[0.2rem] bg-[var(--wf-playhead)]" />
       </motion.div>
 
-      <div className="absolute left-3 top-5 z-20 flex flex-wrap items-center gap-2">
-        <span className="inline-flex items-center gap-2 rounded-full border border-[var(--wf-cinema-border)] bg-[color-mix(in_srgb,var(--wf-cinema-panel)_88%,transparent)] px-3 py-1 text-xs font-medium text-[var(--wf-cinema-text)] shadow-[0_12px_28px_color-mix(in_srgb,var(--wf-cinema-bg)_18%,transparent)] backdrop-blur">
+      <div className="absolute left-2 top-3 z-20 flex flex-wrap items-center gap-2">
+        <span className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_20%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_76%,transparent)] px-3 py-1 text-xs font-medium text-[var(--wf-text-secondary)] shadow-[0_12px_28px_rgba(92,58,36,.08)] backdrop-blur">
           <MousePointer2 size={13} aria-hidden="true" />
           悬停时间点
         </span>
-        <span className="rounded-full border border-[var(--wf-cinema-border)] bg-[color-mix(in_srgb,var(--wf-cinema-panel)_88%,transparent)] px-3 py-1 text-xs tabular-nums text-[var(--wf-cinema-muted)] shadow-[0_12px_28px_color-mix(in_srgb,var(--wf-cinema-bg)_18%,transparent)] backdrop-blur">
+        <span className="rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_20%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_76%,transparent)] px-3 py-1 text-xs tabular-nums text-[var(--wf-text-secondary)] shadow-[0_12px_28px_rgba(92,58,36,.08)] backdrop-blur">
           {PHASE_LABEL[phase]}
         </span>
       </div>
 
-      <div className="absolute left-[2%] right-[22rem] top-[11.8rem] z-20 overflow-visible max-lg:right-[2%]">
-        <div className="relative h-36 rounded-[1.5rem] border border-[var(--wf-cinema-border)] bg-[var(--wf-cinema-panel)] p-3 shadow-[0_24px_70px_color-mix(in_srgb,var(--wf-cinema-bg)_38%,transparent)]">
+      <div className="absolute left-[-1%] right-[18rem] top-[13.4rem] z-20 rotate-[-1deg] overflow-visible max-lg:right-[-1%]">
+        <div className="relative h-32 border-y border-[color-mix(in_srgb,var(--wf-cinema-bg)_18%,transparent)] bg-[linear-gradient(180deg,color-mix(in_srgb,var(--wf-cinema-bg)_74%,transparent),color-mix(in_srgb,var(--wf-film-frame)_68%,transparent))] p-3 shadow-[0_26px_60px_color-mix(in_srgb,var(--wf-cinema-bg)_18%,transparent)] backdrop-blur-sm">
           <div className="absolute inset-y-3 left-3 flex flex-col justify-between">
             {Array.from({ length: 5 }).map((_, index) => (
               <span key={index} className="h-2.5 w-2 rounded-sm bg-[color-mix(in_srgb,var(--wf-paper-front)_18%,transparent)]" />
@@ -258,13 +263,15 @@ export function FoldingHeroStage() {
                   aria-pressed={active}
                   data-testid={`fold-frame-${frame.time}`}
                   className={clsx(
-                    "relative overflow-hidden rounded-[1rem] border p-3 text-left transition duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wf-playhead)]",
-                    active ? "border-[var(--wf-playhead)]" : "border-[var(--wf-cinema-border)]",
+                    "relative overflow-hidden rounded-[0.8rem] border p-3 text-left transition duration-300 ease-out focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wf-playhead)]",
+                    active
+                      ? "border-[var(--wf-playhead)] shadow-[inset_0_0_0_1px_color-mix(in_srgb,var(--wf-playhead)_34%,transparent),0_16px_30px_color-mix(in_srgb,var(--wf-cinema-bg)_18%,transparent)]"
+                      : "border-[color-mix(in_srgb,var(--wf-paper-front)_14%,transparent)]",
                   )}
                   onFocus={() => setFrameProgress(frame.value)}
                   onMouseEnter={() => setFrameProgress(frame.value)}
                 >
-                  <span className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--wf-film-frame)_88%,transparent),var(--wf-cinema-bg))]" />
+                  <span className="absolute inset-0 bg-[linear-gradient(135deg,color-mix(in_srgb,var(--wf-film-frame)_88%,transparent),color-mix(in_srgb,var(--wf-cinema-bg)_94%,transparent))]" />
                   <span className="absolute inset-x-3 top-9 h-8 rounded-lg bg-[color-mix(in_srgb,var(--wf-paper-front)_10%,transparent)]" />
                   <span className="relative block font-mono text-[10px] font-semibold tabular-nums text-[var(--wf-timecode)]">
                     {frame.time}
@@ -279,7 +286,7 @@ export function FoldingHeroStage() {
       </div>
 
       <motion.div
-        className="absolute right-[2%] top-[5.6rem] z-20 h-[23rem] w-[21rem] max-lg:right-[5%] max-lg:top-[20rem] max-sm:hidden"
+        className="absolute right-[1%] top-[6.2rem] z-20 h-[24rem] w-[22rem] max-lg:right-[5%] max-lg:top-[20.5rem] max-sm:hidden"
         style={reduceMotion ? { x: 0 } : { x: paperX, rotate: paperRotate }}
       >
         {NOTE_CARDS.map((card, index) => {
@@ -290,8 +297,10 @@ export function FoldingHeroStage() {
               data-testid={`fold-note-${card.time}`}
               data-active={active ? "true" : "false"}
               className={clsx(
-                "absolute left-0 right-0 rounded-[1.25rem] border p-4 text-[var(--wf-text)] shadow-[0_20px_54px_color-mix(in_srgb,var(--wf-cinema-bg)_22%,transparent)] transition duration-300 ease-out",
-                active ? "border-[var(--wf-border-strong)] bg-[var(--wf-paper-front)]" : "border-[var(--wf-border)] bg-[var(--wf-paper-back)]",
+                "absolute left-0 right-0 rounded-[1.1rem] border p-4 text-[var(--wf-text)] shadow-[0_22px_54px_rgba(92,58,36,.13)] transition duration-300 ease-out",
+                active
+                  ? "border-[var(--wf-border-strong)] bg-[var(--wf-paper-front)]"
+                  : "border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-paper-back)_84%,transparent)]",
               )}
               animate={
                 reduceMotion
@@ -325,13 +334,13 @@ export function FoldingHeroStage() {
         })}
       </motion.div>
 
-      <div className="absolute bottom-7 left-[7%] right-[7%] z-20 rounded-[1.2rem] border border-[var(--wf-cinema-border)] bg-[color-mix(in_srgb,var(--wf-cinema-panel)_88%,transparent)] p-4 text-[var(--wf-cinema-text)] shadow-[0_18px_50px_color-mix(in_srgb,var(--wf-cinema-bg)_22%,transparent)] backdrop-blur">
-        <div className="flex items-center justify-between gap-3 text-xs text-[var(--wf-cinema-muted)]">
+      <div className="absolute bottom-6 left-[2%] right-[2%] z-20 text-[var(--wf-text-secondary)]">
+        <div className="flex items-center justify-between gap-3 text-xs">
           <span>视频折叠进度</span>
-          <span className="font-mono tabular-nums text-[var(--wf-timecode)]">{rangeValue}%</span>
+          <span className="font-mono tabular-nums text-[var(--wf-accent)]">{rangeValue}%</span>
         </div>
-        <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-[color-mix(in_srgb,var(--wf-paper-front)_12%,transparent)]">
-          <motion.div className="h-full origin-left rounded-full bg-[var(--wf-playhead)]" style={{ scaleX: progressScale }} />
+        <div className="mt-3 h-2 overflow-hidden rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_24%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_58%,transparent)] shadow-[inset_0_1px_0_color-mix(in_srgb,white_28%,transparent)]">
+          <motion.div className="h-full origin-left rounded-full bg-[linear-gradient(90deg,var(--wf-brand-coral),var(--wf-playhead))]" style={{ scaleX: progressScale }} />
         </div>
       </div>
 

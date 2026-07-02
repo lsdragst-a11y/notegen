@@ -45,19 +45,19 @@ export function AccountCompanion({ state, variant }: AccountCompanionProps) {
   return (
     <section
       aria-label={isRegister ? "NoteGen 注册角色入口" : "NoteGen 登录角色入口"}
-      className="wf-account-companion relative block min-h-[27rem] overflow-hidden rounded-[2rem] p-5 lg:min-h-[34rem] lg:p-8"
+      className="wf-account-companion relative block min-h-[27rem] overflow-visible rounded-[1.25rem] p-5 lg:min-h-[34rem] lg:p-8"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,color-mix(in_srgb,var(--wf-brand-coral)_13%,transparent),transparent_34%),radial-gradient(circle_at_82%_74%,color-mix(in_srgb,var(--wf-caramel)_18%,transparent),transparent_30%)]" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,color-mix(in_srgb,var(--wf-brand-coral)_9%,transparent),transparent_34%),radial-gradient(circle_at_82%_74%,color-mix(in_srgb,var(--wf-caramel)_12%,transparent),transparent_30%)]" />
       <motion.div
         aria-hidden="true"
-        className="pointer-events-none absolute -left-12 bottom-24 h-16 w-[34rem] origin-left rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_24%,transparent)] bg-[color-mix(in_srgb,var(--wf-brand-coral)_10%,transparent)]"
+        className="pointer-events-none absolute -left-16 bottom-24 h-14 w-[38rem] origin-left rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_24%,transparent)] bg-[color-mix(in_srgb,var(--wf-brand-coral)_9%,transparent)]"
         animate={reduceMotion ? undefined : { rotate: state === "emailFocus" ? -4 : state === "passwordFocus" ? 4 : -1, y: state === "error" ? -4 : 0 }}
         transition={{ duration: 0.42, ease: "easeOut" }}
       />
       <div aria-hidden="true" className="pointer-events-none absolute bottom-8 left-10 right-10 h-px bg-gradient-to-r from-transparent via-[color-mix(in_srgb,var(--wf-text)_14%,transparent)] to-transparent" />
 
       <div className="relative z-10 flex h-full min-h-[24rem] flex-col justify-between lg:min-h-[30rem]">
-        <div>
+        <div className="lg:max-w-[34rem] lg:pl-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--wf-accent)]">
             {isRegister ? "Create notebook" : "Back to notebook"}
           </p>
@@ -71,11 +71,11 @@ export function AccountCompanion({ state, variant }: AccountCompanionProps) {
           </p>
         </div>
 
-        <div className="grid gap-5 pt-8 lg:grid-cols-[0.64fr_0.36fr] lg:items-end">
+        <div className="relative grid gap-5 pt-8 lg:min-h-[20rem] lg:items-end">
           <motion.div
             data-testid="account-companion"
             data-state={state}
-            className="relative mx-auto h-64 w-72"
+            className="relative mx-auto h-64 w-72 lg:ml-12"
             animate={reduceMotion ? undefined : { x: shakeX }}
             transition={{ duration: 0.34, ease: "easeOut" }}
           >
@@ -146,7 +146,7 @@ export function AccountCompanion({ state, variant }: AccountCompanionProps) {
             </div>
           </motion.div>
 
-          <div className="rounded-[1.35rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-surface)_82%,transparent)] p-4 shadow-[var(--wf-shadow-sm)]">
+          <div className="rounded-[1.05rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-paper-front)_86%,transparent)] p-4 shadow-[0_18px_44px_rgba(92,58,36,.10)] backdrop-blur lg:absolute lg:bottom-12 lg:left-[21.5rem] lg:w-60 lg:-rotate-2">
             <p className="text-xs font-semibold text-[var(--wf-text)]">最近笔记</p>
             <div className="mt-3 space-y-3">
               {RECENT_NOTES.map((note) => (

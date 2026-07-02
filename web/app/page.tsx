@@ -147,42 +147,38 @@ export default function LandingPage() {
       <div className="relative z-10">
         <LandingNav />
 
-        <section className="wf-hero-workbench relative min-h-[calc(100dvh-4rem)] overflow-hidden px-5 pb-14 pt-10 sm:px-6 lg:pb-20 lg:pt-12">
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-44 bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--wf-canvas)_70%,#211812)_72%,#211812_140%)]" />
-          <div className="pointer-events-none absolute left-0 right-0 top-[57%] hidden h-28 -translate-y-1/2 border-y border-[color-mix(in_srgb,var(--wf-brand-coral)_16%,transparent)] bg-[linear-gradient(90deg,transparent,color-mix(in_srgb,var(--wf-brand-coral)_11%,transparent),transparent)] lg:block" />
-          <div className="pointer-events-none absolute left-0 right-0 top-[57%] hidden h-px -translate-y-1/2 bg-gradient-to-r from-transparent via-[var(--wf-brand-coral)] to-transparent opacity-60 lg:block" />
+        <section className="wf-hero-workbench relative min-h-[calc(100dvh-4rem)] overflow-hidden px-5 pb-12 pt-8 sm:px-6 lg:pb-16 lg:pt-10">
+          <div className="wf-hero-timefield pointer-events-none absolute inset-x-0 top-[47%] hidden -translate-y-1/2 lg:block" aria-hidden="true" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--wf-canvas)_80%,#211812)_76%,color-mix(in_srgb,var(--wf-canvas)_62%,#211812)_130%)]" />
 
-          <div className="relative mx-auto min-h-[calc(100dvh-7rem)] max-w-7xl">
-            <div className="relative z-30 max-w-[42rem] pt-4 lg:pt-12">
-              <Chip variant="accent" className="gap-2 border border-[color-mix(in_srgb,var(--wf-brand-coral)_18%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_76%,transparent)] shadow-[0_10px_26px_rgba(92,58,36,.08)]">
+          <div className="relative mx-auto min-h-[calc(100dvh-6rem)] max-w-7xl">
+            <div className="relative z-30 pt-3 lg:pt-8">
+              <Chip variant="accent" className="gap-2 border border-[color-mix(in_srgb,var(--wf-brand-coral)_22%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_68%,transparent)] shadow-[0_10px_26px_rgba(92,58,36,.08)] backdrop-blur">
                 <Sparkles size={14} aria-hidden="true" />
                 Warm Fold Learning
               </Chip>
-              <h1 className="mt-7 text-balance font-[var(--wf-font-display)] text-[clamp(3.15rem,6.8vw,6.25rem)] font-semibold leading-[0.98] tracking-[-0.052em] text-[var(--wf-text)]">
+              <h1 className="mt-5 max-w-[70rem] text-balance font-[var(--wf-font-display)] text-[clamp(3.25rem,8.1vw,7.65rem)] font-semibold leading-[0.9] tracking-[-0.052em] text-[var(--wf-text)]">
                 把视频折叠成
-                <span className="block">
-                  可<span className="text-[var(--wf-accent)]">回看</span>的学习笔记
+                <span className="block lg:translate-x-[8vw]">
+                  可
+                  <span className="wf-timecode-word relative inline-block px-2 text-[var(--wf-accent)]">
+                    回看
+                    <span className="pointer-events-none absolute -right-9 -top-3 rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_28%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_82%,transparent)] px-2 py-0.5 font-mono text-[0.2em] font-bold leading-none tracking-[0.08em] text-[var(--wf-accent)] shadow-[0_10px_24px_rgba(92,58,36,.10)]">
+                      12:18
+                    </span>
+                  </span>
+                  的学习笔记
                 </span>
               </h1>
-              <p className="mt-6 max-w-lg text-base leading-8 text-[var(--wf-text-secondary)] md:text-lg">
+              <p className="mt-5 max-w-[34rem] text-base leading-8 text-[var(--wf-text-secondary)] md:text-lg lg:ml-[min(38vw,31rem)]">
                 上传课程、讲座或教程，NoteGen 会沿着时间线提取章节、重点和问答证据。
               </p>
-              <AuthAwareHeroActions />
-              <div className="mt-9 hidden max-w-lg grid-cols-3 gap-3 text-xs text-[var(--wf-text-tertiary)] sm:grid">
-                {[
-                  ["03:11", "章节展开"],
-                  ["08:42", "重点折页"],
-                  ["12:18", "证据回放"],
-                ].map(([time, label]) => (
-                  <div key={time} className="rounded-[1rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-surface)_62%,transparent)] px-3 py-2 shadow-[0_12px_32px_rgba(92,58,36,.06)]">
-                    <span className="block font-mono text-[var(--wf-accent)]">{time}</span>
-                    <span className="mt-1 block">{label}</span>
-                  </div>
-                ))}
+              <div className="lg:ml-[min(38vw,31rem)]">
+                <AuthAwareHeroActions />
               </div>
             </div>
 
-            <div className="relative z-10 mt-8 lg:absolute lg:inset-x-0 lg:bottom-2 lg:mt-0">
+            <div className="relative z-10 -mt-2 lg:-mt-20">
               <FoldingHeroStage />
             </div>
           </div>

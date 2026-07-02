@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, UploadCloud } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { useAuth } from "@/components/AuthContext";
@@ -53,11 +53,12 @@ export function AuthAwareHeroActions() {
   const cta = useLandingCta();
 
   return (
-    <div className="mt-8 flex flex-col gap-3 sm:flex-row">
-      <LandingLinkButton href={cta.href}>
-        {cta.heroLabel} <ArrowRight size={16} aria-hidden="true" />
+    <div className="wf-hero-cta-row mt-8 flex flex-col gap-3 sm:flex-row">
+      <LandingLinkButton href={cta.href} className="wf-timeline-cta">
+        <UploadCloud size={16} aria-hidden="true" />
+        {cta.heroLabel}
       </LandingLinkButton>
-      <LandingLinkButton href="/notebooks?filter=public" variant="secondary">
+      <LandingLinkButton href="/notebooks?filter=public" variant="secondary" className="wf-secondary-cta">
         观看 30 秒演示
       </LandingLinkButton>
     </div>
