@@ -95,6 +95,11 @@ function LoginInner() {
 
         <section className="mx-auto px-5 pb-16 pt-6 sm:px-6 lg:pt-10">
           <div className="wf-auth-workbench mx-auto max-w-7xl overflow-visible px-1 py-5 sm:px-4 lg:px-8 lg:py-8">
+            <div className="wf-auth-desk-layers" aria-hidden="true">
+              <span className="wf-auth-desk-layers__note" />
+              <span className="wf-auth-desk-layers__bookmark" />
+              <span className="wf-auth-desk-layers__stamp" />
+            </div>
             <div className="wf-auth-connector" aria-hidden="true" />
             <div className="wf-auth-stage relative z-10 min-h-[43rem]">
               <div className="wf-auth-companion-layer relative min-w-0">

@@ -75,7 +75,7 @@ export function AccountCompanion({ state, variant }: AccountCompanionProps) {
           <motion.div
             data-testid="account-companion"
             data-state={state}
-            className="relative mx-auto h-64 w-72 lg:ml-12"
+            className="wf-account-character relative mx-auto h-64 w-72 lg:ml-12"
             animate={reduceMotion ? undefined : { x: shakeX }}
             transition={{ duration: 0.34, ease: "easeOut" }}
           >
@@ -146,7 +146,7 @@ export function AccountCompanion({ state, variant }: AccountCompanionProps) {
             </div>
           </motion.div>
 
-          <div className="rounded-[1.05rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-paper-front)_86%,transparent)] p-4 shadow-[0_18px_44px_rgba(92,58,36,.10)] backdrop-blur lg:absolute lg:bottom-12 lg:left-[21.5rem] lg:w-60 lg:-rotate-2">
+          <div className="wf-account-recent-note rounded-[1.05rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-paper-front)_86%,transparent)] p-4 shadow-[0_18px_44px_rgba(92,58,36,.10)] backdrop-blur lg:absolute lg:bottom-12 lg:left-[21.5rem] lg:w-60 lg:-rotate-2">
             <p className="text-xs font-semibold text-[var(--wf-text)]">最近笔记</p>
             <div className="mt-3 space-y-3">
               {RECENT_NOTES.map((note) => (

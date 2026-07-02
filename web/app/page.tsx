@@ -147,39 +147,39 @@ export default function LandingPage() {
       <div className="relative z-10">
         <LandingNav />
 
-        <section className="wf-hero-workbench relative min-h-[calc(100dvh-4rem)] overflow-hidden px-5 pb-12 pt-8 sm:px-6 lg:pb-16 lg:pt-10">
-          <div className="wf-hero-timefield pointer-events-none absolute inset-x-0 top-[47%] hidden -translate-y-1/2 lg:block" aria-hidden="true" />
+        <section className="wf-hero-workbench relative min-h-[calc(100dvh-4rem)] overflow-hidden px-5 pb-10 pt-6 sm:px-6 lg:pb-12 lg:pt-8">
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-36 bg-[linear-gradient(180deg,transparent,color-mix(in_srgb,var(--wf-canvas)_80%,#211812)_76%,color-mix(in_srgb,var(--wf-canvas)_62%,#211812)_130%)]" />
 
           <div className="relative mx-auto min-h-[calc(100dvh-6rem)] max-w-7xl">
-            <div className="relative z-30 pt-3 lg:pt-8">
-              <Chip variant="accent" className="gap-2 border border-[color-mix(in_srgb,var(--wf-brand-coral)_22%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_68%,transparent)] shadow-[0_10px_26px_rgba(92,58,36,.08)] backdrop-blur">
+            <div className="wf-hero-copy-layer relative z-30 pt-2 lg:pt-4">
+              <Chip variant="accent" className="wf-hero-scene-chip gap-2 border border-[color-mix(in_srgb,var(--wf-brand-coral)_22%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_68%,transparent)] shadow-[0_10px_26px_rgba(92,58,36,.08)] backdrop-blur">
                 <Sparkles size={14} aria-hidden="true" />
                 Warm Fold Learning
               </Chip>
-              <h1 className="mt-5 max-w-[70rem] text-balance font-[var(--wf-font-display)] text-[clamp(3.25rem,8.1vw,7.65rem)] font-semibold leading-[0.9] tracking-[-0.052em] text-[var(--wf-text)]">
-                把视频折叠成
-                <span className="block lg:translate-x-[8vw]">
+              <h1 className="wf-hero-title mt-4 text-balance font-[var(--wf-font-display)] text-[clamp(3.35rem,9vw,8.7rem)] font-semibold leading-[0.88] tracking-[-0.055em] text-[var(--wf-text)]">
+                <span className="block">把视频折叠成</span>
+                <span className="block lg:translate-x-[14vw]">
                   可
                   <span className="wf-timecode-word relative inline-block px-2 text-[var(--wf-accent)]">
                     回看
-                    <span className="pointer-events-none absolute -right-9 -top-3 rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_28%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_82%,transparent)] px-2 py-0.5 font-mono text-[0.2em] font-bold leading-none tracking-[0.08em] text-[var(--wf-accent)] shadow-[0_10px_24px_rgba(92,58,36,.10)]">
+                    <span className="wf-hero-title-time pointer-events-none absolute -right-10 -top-4 rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_28%,transparent)] bg-[color-mix(in_srgb,var(--wf-surface)_82%,transparent)] px-2 py-0.5 font-mono text-[0.18em] font-bold leading-none tracking-[0.08em] text-[var(--wf-accent)] shadow-[0_10px_24px_rgba(92,58,36,.10)]">
                       12:18
                     </span>
                   </span>
                   的学习笔记
                 </span>
               </h1>
-              <p className="mt-5 max-w-[34rem] text-base leading-8 text-[var(--wf-text-secondary)] md:text-lg lg:ml-[min(38vw,31rem)]">
-                上传课程、讲座或教程，NoteGen 会沿着时间线提取章节、重点和问答证据。
-              </p>
-              <div className="lg:ml-[min(38vw,31rem)]">
-                <AuthAwareHeroActions />
-              </div>
             </div>
 
-            <div className="relative z-10 -mt-2 lg:-mt-20">
+            <div className="wf-hero-stage-layer relative z-20 -mt-10 lg:-mt-28">
               <FoldingHeroStage />
+            </div>
+
+            <div className="wf-hero-control-copy relative z-40 ml-auto max-w-[35rem] lg:absolute lg:right-0 lg:top-[20.4rem]">
+              <p className="max-w-[34rem] text-base leading-8 text-[var(--wf-text-secondary)] md:text-lg">
+                上传课程、讲座或教程，NoteGen 会沿着时间线提取章节、重点和问答证据。
+              </p>
+              <AuthAwareHeroActions />
             </div>
           </div>
         </section>
