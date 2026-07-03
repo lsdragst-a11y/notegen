@@ -102,7 +102,7 @@ export function CinematicStoryboard({ beats = CINEMATIC_BEATS }: { beats?: reado
                     key={`${beat.id}-${index}`}
                     className={clsx(
                       "wf-story-film-frame",
-                      index % beats.length === visualIndex && "wf-story-film-frame--active",
+                      index === visualIndex && "wf-story-film-frame--active",
                     )}
                   >
                     <span>{beat.timecode}</span>

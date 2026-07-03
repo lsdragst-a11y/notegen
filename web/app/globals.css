@@ -1323,6 +1323,10 @@ html, body {
   right: 0;
 }
 
+.wf-hero-mobile-note {
+  display: none;
+}
+
 .wf-hero-progress-rail {
   position: absolute;
   left: 2%;
@@ -1395,6 +1399,24 @@ html, body {
 
   .wf-hero-note-cluster {
     display: none;
+  }
+
+  .wf-hero-mobile-note {
+    position: absolute;
+    left: 11%;
+    right: 11%;
+    top: 25.25rem;
+    z-index: 21;
+    display: block;
+    height: 11.5rem;
+  }
+
+  .wf-hero-mobile-note .wf-folding-note-sheet {
+    inset: 0;
+  }
+
+  .wf-hero-mobile-note .wf-folding-note-sheet__edge {
+    width: 2rem;
   }
 
   .wf-hero-progress-rail {

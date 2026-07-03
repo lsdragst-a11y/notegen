@@ -34,6 +34,46 @@ describe("FoldingHeroStage", () => {
     });
   });
 
+  it("switches the active note when clicking a film frame", async () => {
+    reducedMotionState.value = false;
+    render(<FoldingHeroStage />);
+
+    const frame = screen.getByTestId("fold-frame-08:42");
+    fireEvent.click(frame);
+
+    await waitFor(() => {
+      expect(frame).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByTestId("fold-note-08:42")).toHaveAttribute("data-active", "true");
+    });
+  });
+
+  it("lets keyboard users scrub the playhead slider", async () => {
+    reducedMotionState.value = false;
+    render(<FoldingHeroStage />);
+
+    const playhead = document.querySelector(".wf-playhead-beam");
+    expect(playhead).not.toBeNull();
+    const startingValue = Number(playhead?.getAttribute("aria-valuenow"));
+
+    fireEvent.keyDown(playhead as Element, { key: "ArrowLeft" });
+
+    await waitFor(() => {
+      expect(playhead).toHaveAttribute("aria-valuenow", String(Math.max(0, startingValue - 4)));
+    });
+
+    fireEvent.keyDown(playhead as Element, { key: "Home" });
+
+    await waitFor(() => {
+      expect(playhead).toHaveAttribute("aria-valuenow", "0");
+    });
+
+    fireEvent.keyDown(playhead as Element, { key: "End" });
+
+    await waitFor(() => {
+      expect(playhead).toHaveAttribute("aria-valuenow", "100");
+    });
+  });
+
   it("shows a stable final state for reduced motion users", async () => {
     reducedMotionState.value = true;
     render(<FoldingHeroStage />);

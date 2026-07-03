@@ -75,6 +75,7 @@ export function PlayheadBeam({
 export function TimecodeNode({
   frame,
   active,
+  onClick,
   onFocus,
   onMouseEnter,
   testId,
@@ -82,6 +83,7 @@ export function TimecodeNode({
 }: {
   frame: TimelineFrame;
   active: boolean;
+  onClick?: () => void;
   onFocus?: () => void;
   onMouseEnter?: () => void;
   testId?: string;
@@ -95,6 +97,7 @@ export function TimecodeNode({
       data-active={active ? "true" : "false"}
       data-testid={testId}
       className={clsx("wf-timecode-node", className)}
+      onClick={onClick}
       onFocus={onFocus}
       onMouseEnter={onMouseEnter}
     >
@@ -107,12 +110,14 @@ export function TimecodeNode({
 export function FilmTimelineRail({
   frames,
   activeIndex,
+  onFrameClick,
   onFrameFocus,
   onFrameHover,
   className,
 }: {
   frames: readonly TimelineFrame[];
   activeIndex: number;
+  onFrameClick?: (index: number) => void;
   onFrameFocus?: (index: number) => void;
   onFrameHover?: (index: number) => void;
   className?: string;
@@ -127,6 +132,7 @@ export function FilmTimelineRail({
             frame={frame}
             active={index === activeIndex}
             testId={`fold-frame-${frame.time}`}
+            onClick={() => onFrameClick?.(index)}
             onFocus={() => onFrameFocus?.(index)}
             onMouseEnter={() => onFrameHover?.(index)}
           />

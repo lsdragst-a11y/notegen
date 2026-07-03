@@ -1,6 +1,14 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState, type PointerEvent } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type KeyboardEvent,
+  type PointerEvent,
+} from "react";
 import {
   animate,
   motion,
@@ -21,6 +29,8 @@ import {
 } from "./NoteGenMotionPrimitives";
 
 const FINAL_PROGRESS = 0.78;
+const INITIAL_PROGRESS = 0.08;
+const KEYBOARD_STEP = 0.04;
 
 const PHASE_LABEL: Record<FoldPhase, string> = {
   import: "正在识别章节",
@@ -79,15 +89,16 @@ function closestFrameIndex(value: number) {
 
 export function FoldingHeroStage() {
   const reduceMotion = useReducedMotion();
+  const initialProgress = reduceMotion ? FINAL_PROGRESS : INITIAL_PROGRESS;
   const stageRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
   const controlsRef = useRef<{ stop: () => void } | null>(null);
-  const lastRangeRef = useRef(Math.round(FINAL_PROGRESS * 100));
-  const progress = useMotionValue(FINAL_PROGRESS);
+  const lastRangeRef = useRef(Math.round(initialProgress * 100));
+  const progress = useMotionValue(initialProgress);
   const pointerX = useMotionValue(0);
   const pointerY = useMotionValue(0);
-  const [rangeValue, setRangeValue] = useState(Math.round(FINAL_PROGRESS * 100));
-  const [phase, setPhase] = useState<FoldPhase>("note");
+  const [rangeValue, setRangeValue] = useState(Math.round(initialProgress * 100));
+  const [phase, setPhase] = useState<FoldPhase>(() => resolvePhase(initialProgress));
   const [interactionMode, setInteractionMode] = useState<InteractionMode>("autoPlay");
 
   const playheadLeft = useTransform(progress, [0, 1], ["8%", "92%"]);
@@ -97,6 +108,13 @@ export function FoldingHeroStage() {
   const haloY = useTransform(pointerY, [-0.5, 0.5], [-10, 10]);
   const progressScale = useTransform(progress, [0, 1], [0.06, 1]);
   const activeFrameIndex = useMemo(() => closestFrameIndex(rangeValue / 100), [rangeValue]);
+  const mobileNote = useMemo(() => {
+    const currentProgress = rangeValue / 100;
+    return NOTE_CARDS.reduce(
+      (current, card) => (currentProgress >= card.threshold ? card : current),
+      NOTE_CARDS[0],
+    );
+  }, [rangeValue]);
 
   const stopAutoplay = useCallback(() => {
     controlsRef.current?.stop();
@@ -134,6 +152,38 @@ export function FoldingHeroStage() {
       stopAutoplay();
       setInteractionMode(reduceMotion ? "reducedMotion" : "hoverFrame");
       setFoldProgress(value);
+    },
+    [reduceMotion, setFoldProgress, stopAutoplay],
+  );
+
+  const scrubWithKeyboard = useCallback(
+    (event: KeyboardEvent<HTMLElement>) => {
+      const keyProgress = lastRangeRef.current / 100;
+      let nextProgress: number | null = null;
+
+      switch (event.key) {
+        case "ArrowLeft":
+        case "ArrowDown":
+          nextProgress = keyProgress - KEYBOARD_STEP;
+          break;
+        case "ArrowRight":
+        case "ArrowUp":
+          nextProgress = keyProgress + KEYBOARD_STEP;
+          break;
+        case "Home":
+          nextProgress = 0;
+          break;
+        case "End":
+          nextProgress = 1;
+          break;
+        default:
+          return;
+      }
+
+      event.preventDefault();
+      stopAutoplay();
+      setInteractionMode(reduceMotion ? "reducedMotion" : "dragScrub");
+      setFoldProgress(nextProgress);
     },
     [reduceMotion, setFoldProgress, stopAutoplay],
   );
@@ -222,6 +272,7 @@ export function FoldingHeroStage() {
           <FilmTimelineRail
             frames={FILM_FRAMES}
             activeIndex={activeFrameIndex}
+            onFrameClick={(index) => setFrameProgress(FILM_FRAMES[index].value)}
             onFrameFocus={(index) => setFrameProgress(FILM_FRAMES[index].value)}
             onFrameHover={(index) => setFrameProgress(FILM_FRAMES[index].value)}
           />
@@ -237,6 +288,7 @@ export function FoldingHeroStage() {
           onPointerDown={beginDrag}
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
+          onKeyDown={scrubWithKeyboard}
           role="slider"
           aria-label="拖动播放指针调整视频折叠进度"
           aria-valuemin={0}
@@ -277,6 +329,20 @@ export function FoldingHeroStage() {
               </FoldingNoteSheet>
             );
           })}
+        </motion.div>
+
+        <motion.div
+          className="wf-hero-mobile-note"
+          style={reduceMotion ? undefined : { x: paperX }}
+        >
+          <FoldingNoteSheet
+            time={mobileNote.time}
+            title={mobileNote.title}
+            active
+            testId={`fold-mobile-note-${mobileNote.time}`}
+          >
+            {mobileNote.copy}
+          </FoldingNoteSheet>
         </motion.div>
 
         <div className="wf-hero-progress-rail">
