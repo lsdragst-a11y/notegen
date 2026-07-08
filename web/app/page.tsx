@@ -13,7 +13,7 @@ import {
 import { BrandMark } from "@/components/brand/BrandMark";
 import { CinematicStoryboard } from "@/components/interactive/CinematicStoryboard";
 import { FoldingHeroStage } from "@/components/interactive/FoldingHeroStage";
-import { LandingScrollRail, RevealOnScroll } from "@/components/interactive/LandingScrollMotion";
+import { RevealOnScroll } from "@/components/interactive/LandingScrollMotion";
 import { AuthAwareFinalAction, AuthAwareHeroActions, AuthAwareNavAction } from "@/components/landing/AuthAwareLandingActions";
 import { Card, Chip } from "@/components/ui";
 
@@ -143,7 +143,6 @@ export default function LandingPage() {
   return (
     <main className="relative isolate min-h-[100dvh] overflow-hidden bg-[var(--wf-canvas)] font-[var(--wf-font-sans)] text-[var(--wf-text)]">
       <div className="wf-paper-atmosphere" aria-hidden="true" />
-      <LandingScrollRail />
       <div className="relative z-10">
         <LandingNav />
 

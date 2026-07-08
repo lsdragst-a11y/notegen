@@ -1,0 +1,277 @@
+/* === Warm Fold auth workbench: START === */
+.wf-auth-workbench {
+  position: relative;
+  isolation: isolate;
+  border: 0;
+  background:
+    radial-gradient(circle at 16% 14%, color-mix(in srgb, var(--wf-brand-coral) 11%, transparent), transparent 30%),
+    radial-gradient(circle at 78% 24%, color-mix(in srgb, var(--wf-surface) 58%, transparent), transparent 32%),
+    radial-gradient(circle at 76% 82%, color-mix(in srgb, var(--wf-caramel) 10%, transparent), transparent 34%),
+    linear-gradient(135deg, color-mix(in srgb, var(--wf-surface) 22%, transparent), transparent 66%);
+  box-shadow: none;
+}
+
+.wf-auth-workbench::before,
+.wf-auth-workbench::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.wf-auth-workbench::before {
+  z-index: -2;
+  background:
+    linear-gradient(90deg, rgba(92, 58, 36, 0.045) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(92, 58, 36, 0.032) 1px, transparent 1px);
+  background-size: 44px 44px;
+  mask-image: radial-gradient(circle at 52% 42%, black, transparent 74%);
+}
+
+.wf-auth-workbench::after {
+  z-index: -1;
+  background:
+    linear-gradient(180deg, transparent 0 53%, color-mix(in srgb, var(--wf-brand-coral) 16%, transparent) 53% 53.28%, transparent 53.28%),
+    radial-gradient(ellipse at 50% 100%, rgba(58, 35, 22, 0.08), transparent 58%);
+}
+
+.wf-auth-desk-layers {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.wf-auth-desk-layers__note,
+.wf-auth-desk-layers__bookmark,
+.wf-auth-desk-layers__stamp {
+  position: absolute;
+  display: block;
+}
+
+.wf-auth-desk-layers__note {
+  left: clamp(1rem, 5vw, 4.5rem);
+  top: clamp(5rem, 11vw, 8rem);
+  width: clamp(9rem, 16vw, 14rem);
+  height: clamp(6rem, 11vw, 9rem);
+  rotate: -7deg;
+  clip-path: polygon(0 0, calc(100% - 1.6rem) 0, 100% 1.6rem, 100% 100%, 0 100%);
+  border: 1px solid color-mix(in srgb, var(--wf-border-strong) 42%, transparent);
+  border-radius: 1rem;
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--wf-paper-front) 92%, transparent), color-mix(in srgb, var(--wf-paper-back) 30%, var(--wf-paper-front))),
+    var(--wf-paper-front);
+  box-shadow: var(--wf-material-fold-shadow);
+}
+
+.wf-auth-desk-layers__note::before {
+  content: "";
+  position: absolute;
+  inset: 1rem;
+  background:
+    linear-gradient(color-mix(in srgb, var(--wf-text) 14%, transparent) 0 0.1rem, transparent 0.1rem 1.25rem),
+    linear-gradient(90deg, color-mix(in srgb, var(--wf-brand-coral) 30%, transparent) 0 2px, transparent 2px);
+  background-size: 100% 1.25rem, 100% 100%;
+}
+
+.wf-auth-desk-layers__bookmark {
+  left: 7%;
+  right: 6%;
+  top: 52%;
+  height: 3.2rem;
+  rotate: -1.8deg;
+  border: 1px solid color-mix(in srgb, var(--wf-brand-coral) 24%, transparent);
+  border-radius: var(--wf-radius-full);
+  background:
+    linear-gradient(90deg, transparent, color-mix(in srgb, var(--wf-brand-coral) 12%, transparent), transparent),
+    color-mix(in srgb, var(--wf-surface) 36%, transparent);
+  box-shadow:
+    0 18px 44px rgba(92, 58, 36, 0.08),
+    inset 0 1px 0 color-mix(in srgb, white 24%, transparent);
+}
+
+.wf-auth-desk-layers__bookmark::before {
+  content: "";
+  position: absolute;
+  left: 2rem;
+  right: 2rem;
+  top: 50%;
+  height: 1px;
+  transform: translateY(-50%);
+  background: repeating-linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--wf-brand-coral) 62%, transparent) 0 0.75rem,
+    transparent 0.75rem 1.25rem
+  );
+  opacity: 0.58;
+}
+
+.wf-auth-desk-layers__stamp {
+  right: clamp(2rem, 9vw, 7rem);
+  bottom: clamp(2.5rem, 8vw, 6rem);
+  width: 8.5rem;
+  height: 8.5rem;
+  rotate: 8deg;
+  border: 1px dashed color-mix(in srgb, var(--wf-brand-coral) 32%, transparent);
+  border-radius: var(--wf-radius-full);
+  background:
+    radial-gradient(circle, transparent 48%, color-mix(in srgb, var(--wf-brand-coral) 8%, transparent) 49% 54%, transparent 55%);
+  opacity: 0.66;
+}
+
+.wf-auth-connector {
+  display: none;
+}
+
+.wf-auth-stage {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.wf-auth-companion-layer {
+  z-index: 1;
+}
+
+.wf-auth-form-dock {
+  z-index: 3;
+}
+
+.wf-auth-companion-layer .wf-account-companion {
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.wf-account-companion {
+  border: 1px solid transparent;
+  background: transparent;
+  box-shadow: none;
+}
+
+.wf-account-character {
+  filter: drop-shadow(0 22px 42px rgba(92, 58, 36, 0.12));
+}
+
+.wf-account-recent-note {
+  position: relative;
+  overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 1.45rem) 0, 100% 1.45rem, 100% 100%, 0 100%);
+  box-shadow:
+    var(--wf-material-fold-shadow),
+    var(--wf-material-edge-highlight);
+}
+
+.wf-account-recent-note::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.15;
+  background-image: var(--wf-material-paper-grain);
+  background-size: 4px 4px, 7px 7px;
+  mix-blend-mode: multiply;
+}
+
+.wf-auth-form-card {
+  border: 1px dashed color-mix(in srgb, var(--wf-border-strong) 36%, transparent);
+  background:
+    linear-gradient(145deg, color-mix(in srgb, var(--wf-paper-front) 92%, transparent), color-mix(in srgb, var(--wf-surface-muted) 18%, var(--wf-paper-front))),
+    var(--wf-paper-front);
+  backdrop-filter: blur(16px) saturate(108%);
+  -webkit-backdrop-filter: blur(16px) saturate(108%);
+  clip-path: polygon(0 0, calc(100% - 2rem) 0, 100% 2rem, 100% 100%, 1.1rem 100%, 0 calc(100% - 1.1rem));
+  transform: rotate(1.2deg);
+  box-shadow:
+    0 22px 58px rgba(92, 58, 36, 0.10),
+    0 2px 8px rgba(92, 58, 36, 0.04),
+    var(--wf-material-edge-highlight);
+}
+
+.wf-auth-form-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    var(--wf-material-paper-grain),
+    radial-gradient(circle at 20% 0%, color-mix(in srgb, var(--wf-brand-coral) 8%, transparent), transparent 34%),
+    linear-gradient(180deg, color-mix(in srgb, white 18%, transparent), transparent 42%);
+  background-size: 4px 4px, 100% 100%, 100% 100%;
+  opacity: 0.9;
+}
+
+.wf-auth-form-card::after {
+  content: "";
+  position: absolute;
+  left: 0.85rem;
+  top: 1rem;
+  bottom: 1rem;
+  width: 1px;
+  background: repeating-linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--wf-brand-coral) 36%, transparent) 0 0.5rem,
+    transparent 0.5rem 0.9rem
+  );
+  pointer-events: none;
+}
+
+.wf-auth-form-card > .relative {
+  transform: rotate(-1.2deg);
+}
+
+.wf-auth-time-pill {
+  transform: rotate(-0.8deg);
+}
+
+@media (max-width: 1023px) {
+  .wf-auth-connector {
+    display: none;
+  }
+
+  .wf-auth-workbench {
+    border-radius: 0;
+  }
+
+  .wf-auth-form-card,
+  .wf-auth-time-pill {
+    transform: none;
+  }
+
+  .wf-auth-form-card > .relative {
+    transform: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .wf-auth-stage {
+    display: block;
+  }
+
+  .wf-auth-companion-layer {
+    position: absolute;
+    inset: 0 18rem 0 0;
+  }
+
+  .wf-auth-companion-layer .wf-account-companion {
+    min-height: 100%;
+    padding-right: clamp(8rem, 18vw, 20rem);
+  }
+
+  .wf-auth-form-dock {
+    position: absolute;
+    right: clamp(0rem, 2vw, 2.5rem);
+    top: 54%;
+    width: min(28rem, 39vw);
+    transform: translateY(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wf-paper-atmosphere::before,
+  .wf-paper-atmosphere::after {
+    opacity: 0.08;
+  }
+}
+/* === Warm Fold atmospheric primitives: END === */
+/* === Warm Fold auth workbench: END === */

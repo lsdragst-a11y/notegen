@@ -1,9 +1,21 @@
 import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
-const css = readFileSync(resolve(process.cwd(), "app/globals.css"), "utf8");
+function readCssBundle(filePath: string, seen = new Set<string>()): string {
+  const resolved = resolve(filePath);
+  if (seen.has(resolved)) return "";
+  seen.add(resolved);
+
+  const source = readFileSync(resolved, "utf8");
+  return source.replace(/^@import\s+"([^"]+)";/gm, (statement, specifier: string) => {
+    if (!specifier.startsWith(".")) return statement;
+    return readCssBundle(resolve(dirname(resolved), specifier), seen);
+  });
+}
+
+const css = readCssBundle(resolve(process.cwd(), "app/globals.css"));
 const layout = readFileSync(resolve(process.cwd(), "app/layout.tsx"), "utf8");
 
 const requiredTokens = {

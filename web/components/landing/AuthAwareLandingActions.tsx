@@ -34,7 +34,8 @@ function useLandingCta() {
   return {
     href: user ? "/notebooks" : "/login?next=/notebooks",
     navLabel: user ? "进入笔记库" : "开始使用",
-    heroLabel: user ? "进入笔记库" : "上传视频生成笔记",
+    heroLabel: user ? "进入笔记库" : "把视频放入时间线",
+    heroHint: user ? "打开已生成的学习笔记" : "上传课程、讲座或教程",
     finalLabel: user ? "进入笔记库" : "创建第一本视频笔记",
   };
 }
@@ -53,14 +54,22 @@ export function AuthAwareHeroActions() {
   const cta = useLandingCta();
 
   return (
-    <div className="wf-hero-cta-row mt-8 flex flex-col gap-3 sm:flex-row">
-      <LandingLinkButton href={cta.href} className="wf-timeline-cta">
-        <UploadCloud size={16} aria-hidden="true" />
-        {cta.heroLabel}
-      </LandingLinkButton>
-      <LandingLinkButton href="/notebooks?filter=public" variant="secondary" className="wf-secondary-cta">
+    <div className="wf-hero-upload-row mt-7">
+      <Link href={cta.href} className="wf-upload-timeline-control" aria-label={cta.heroLabel}>
+        <span className="wf-upload-timeline-control__icon">
+          <UploadCloud size={18} aria-hidden="true" />
+        </span>
+        <span className="wf-upload-timeline-control__copy">
+          <span>{cta.heroLabel}</span>
+          <small>{cta.heroHint}</small>
+        </span>
+        <span className="wf-upload-timeline-control__playhead" aria-hidden="true">
+          <ArrowRight size={16} />
+        </span>
+      </Link>
+      <Link href="/notebooks?filter=public" className="wf-upload-demo-link">
         观看 30 秒演示
-      </LandingLinkButton>
+      </Link>
     </div>
   );
 }

@@ -5,7 +5,8 @@ import { fileURLToPath } from "node:url";
 import { JSDOM } from "jsdom";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const css = fs.readFileSync(path.join(root, "app", "globals.css"), "utf8");
+const cssEntry = path.join(root, "app", "globals.css");
+const css = readCssBundle(cssEntry);
 const assets = [
   ["brand-mark.svg", 4096, 8],
   ["brand-logo.svg", 18432, 80],
@@ -14,6 +15,18 @@ const assets = [
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
+}
+
+function readCssBundle(filePath, seen = new Set()) {
+  const resolved = path.resolve(filePath);
+  if (seen.has(resolved)) return "";
+  seen.add(resolved);
+
+  const source = fs.readFileSync(resolved, "utf8");
+  return source.replace(/^@import\s+"([^"]+)";/gm, (statement, specifier) => {
+    if (!specifier.startsWith(".")) return statement;
+    return readCssBundle(path.resolve(path.dirname(resolved), specifier), seen);
+  });
 }
 
 function selectorBlock(selector) {

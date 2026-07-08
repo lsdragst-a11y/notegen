@@ -17,11 +17,9 @@ import {
   useReducedMotion,
   useTransform,
 } from "framer-motion";
-import { MousePointer2 } from "lucide-react";
 
 import { clampFoldProgress, getFoldPhase, type FoldPhase } from "./motionModel";
 import {
-  EvidenceConnector,
   FilmTimelineRail,
   FoldingNoteSheet,
   PaperWorkbenchSurface,
@@ -106,7 +104,6 @@ export function FoldingHeroStage() {
   const paperRotate = useTransform(pointerX, [-0.5, 0.5], [-1.4, 1.4]);
   const haloX = useTransform(pointerX, [-0.5, 0.5], [-18, 18]);
   const haloY = useTransform(pointerY, [-0.5, 0.5], [-10, 10]);
-  const progressScale = useTransform(progress, [0, 1], [0.06, 1]);
   const activeFrameIndex = useMemo(() => closestFrameIndex(rangeValue / 100), [rangeValue]);
   const mobileNote = useMemo(() => {
     const currentProgress = rangeValue / 100;
@@ -260,14 +257,6 @@ export function FoldingHeroStage() {
           style={reduceMotion ? undefined : { x: haloX, y: haloY }}
         />
 
-        <div className="wf-hero-stage-controls">
-          <span className="wf-hero-stage-pill">
-            <MousePointer2 size={13} aria-hidden="true" />
-            悬停时间点
-          </span>
-          <span className="wf-hero-stage-pill">{PHASE_LABEL[phase]}</span>
-        </div>
-
         <div className="wf-hero-film-plane">
           <FilmTimelineRail
             frames={FILM_FRAMES}
@@ -277,11 +266,6 @@ export function FoldingHeroStage() {
             onFrameHover={(index) => setFrameProgress(FILM_FRAMES[index].value)}
           />
         </div>
-
-        <EvidenceConnector
-          className="wf-hero-evidence-fold"
-          style={reduceMotion ? { x: 0 } : { x: paperX }}
-        />
 
         <PlayheadBeam
           left={playheadLeft}
@@ -344,16 +328,6 @@ export function FoldingHeroStage() {
             {mobileNote.copy}
           </FoldingNoteSheet>
         </motion.div>
-
-        <div className="wf-hero-progress-rail">
-          <div className="flex items-center justify-between gap-3 text-xs">
-            <span>视频折叠进度</span>
-            <span className="font-mono tabular-nums text-[var(--wf-accent)]">{rangeValue}%</span>
-          </div>
-          <div className="wf-hero-progress-rail__track">
-            <motion.div className="wf-hero-progress-rail__fill" style={{ scaleX: progressScale }} />
-          </div>
-        </div>
       </PaperWorkbenchSurface>
 
       <input
