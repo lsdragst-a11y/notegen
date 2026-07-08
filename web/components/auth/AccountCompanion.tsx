@@ -1,5 +1,6 @@
 "use client";
 
+import type { CSSProperties } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 
 export type AccountCompanionState =
@@ -15,149 +16,268 @@ interface AccountCompanionProps {
   variant: "login" | "register";
 }
 
-const RECENT_NOTES = [
-  { time: "03:11", text: "章节自动展开" },
-  { time: "08:42", text: "重点折进纸页" },
-  { time: "12:18", text: "回答追溯到视频" },
+interface AuthPreviewProps {
+  state: AccountCompanionState;
+  variant: "login" | "register";
+  reduceMotion?: boolean | null;
+}
+
+type SensitiveCoverState = "open" | "locked" | "revealed";
+
+const TIME_NODES = [
+  { id: "03-11", time: "03:11", label: "章节定位", caption: "owner" },
+  { id: "08-42", time: "08:42", label: "重点折叠", caption: "note" },
+  { id: "12-18", time: "12:18", label: "证据问答", caption: "qa" },
+] as const;
+
+const VIDEO_FRAMES = [
+  { time: "03:11", title: "概念开场" },
+  { time: "08:42", title: "例题拆解" },
+  { time: "12:18", title: "证据引用" },
 ] as const;
 
 function stateLabel(state: AccountCompanionState) {
-  if (state === "success") return "纸页把书签归档完成";
-  if (state === "error") return "纸页停在错误时间戳旁";
-  if (state === "passwordReveal") return "纸页从书签旁确认密码可见";
-  if (state === "passwordFocus") return "纸页用书签遮住密码行";
-  if (state === "emailFocus") return "纸页看向邮箱时间戳";
-  return "纸页正在等你继续整理";
+  if (state === "success") return "笔记已折入 notebook";
+  if (state === "error") return "时间线停在 retry 00:08";
+  if (state === "passwordReveal") return "书签已移开，密码可见";
+  if (state === "passwordFocus") return "书签遮住了敏感内容";
+  if (state === "emailFocus") return "账号归属已连接到时间线";
+  return "视频、时间线、笔记和问答证据已准备好";
+}
+
+function sensitiveCoverState(state: AccountCompanionState): SensitiveCoverState {
+  if (state === "passwordFocus") return "locked";
+  if (state === "passwordReveal") return "revealed";
+  return "open";
+}
+
+function activeTimecode(state: AccountCompanionState) {
+  if (state === "emailFocus") return "03:11";
+  if (state === "passwordFocus" || state === "passwordReveal") return "08:42";
+  if (state === "success") return "12:18";
+  return null;
+}
+
+export function AuthVideoStrip({ state }: Pick<AuthPreviewProps, "state">) {
+  const active = activeTimecode(state) ?? "08:42";
+
+  return (
+    <div className="wf-auth-video-strip" data-testid="auth-video-strip" data-state={state} aria-label="视频片段预览">
+      <div className="wf-auth-video-strip__header">
+        <span>视频片段</span>
+        <span className="tabular-nums">14:06</span>
+      </div>
+      <div className="wf-auth-video-strip__frames" aria-hidden="true">
+        {VIDEO_FRAMES.map((frame, index) => (
+          <span
+            key={frame.time}
+            className="wf-auth-video-strip__frame"
+            data-active={frame.time === active ? "true" : "false"}
+            style={{ "--frame-index": index } as CSSProperties}
+          >
+            <span className="wf-auth-video-strip__frame-light" />
+            <span className="wf-auth-video-strip__frame-title">{frame.title}</span>
+            <span className="wf-auth-video-strip__frame-time">{frame.time}</span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function AuthTimelineBeam({ state }: Pick<AuthPreviewProps, "state">) {
+  const active = activeTimecode(state);
+  const showRetry = state === "error";
+
+  return (
+    <div
+      className="wf-auth-timeline-beam"
+      data-testid="auth-timeline-beam"
+      data-retry={showRetry ? "true" : "false"}
+      data-state={state}
+      aria-label="视频时间线"
+    >
+      <div className="wf-auth-timeline-beam__rail" aria-hidden="true" />
+      <div className="wf-auth-timeline-beam__nodes">
+        {TIME_NODES.map((node) => {
+          const isActive = active === node.time || (showRetry && node.time === "03:11");
+          return (
+            <div
+              key={node.id}
+              className="wf-auth-timecode"
+              data-testid={`auth-timecode-${node.id}`}
+              data-active={isActive ? "true" : "false"}
+            >
+              <span className="wf-auth-timecode__pin" aria-hidden="true" />
+              <span className="wf-auth-timecode__time">{node.time}</span>
+              <span className="wf-auth-timecode__label">{node.label}</span>
+            </div>
+          );
+        })}
+      </div>
+      {showRetry ? <span className="wf-auth-timeline-beam__retry">retry 00:08</span> : null}
+    </div>
+  );
+}
+
+export function AuthNoteSheetPreview({ state, variant, reduceMotion }: AuthPreviewProps) {
+  const cover = sensitiveCoverState(state);
+  const isRegister = variant === "register";
+  const label = stateLabel(state);
+  const isFolding = state === "success";
+  const ownerActive = state === "emailFocus";
+
+  return (
+    <motion.article
+      className="wf-auth-note-sheet-preview"
+      data-testid="auth-note-sheet-preview"
+      data-state={state}
+      data-sensitive-cover={cover}
+      data-folding={isFolding ? "true" : "false"}
+      aria-label="生成后的笔记预览"
+      animate={
+        reduceMotion
+          ? undefined
+          : {
+              rotate: isFolding ? -5 : state === "error" ? -2.2 : -1.2,
+              y: isFolding ? -10 : 0,
+              scale: isFolding ? 0.94 : 1,
+            }
+      }
+      transition={{ type: "spring", stiffness: 140, damping: 22 }}
+    >
+      <div className="wf-auth-note-sheet-preview__topline">
+        <span>生成笔记</span>
+      </div>
+      <div
+        className="wf-auth-owner-chip"
+        data-testid="auth-owner-chip"
+        data-active={ownerActive ? "true" : "false"}
+      >
+        <span className="wf-auth-owner-chip__avatar" aria-hidden="true" />
+        <span>{isRegister ? "owner: new workspace" : "owner: you@example.com"}</span>
+      </div>
+      <h3>{isRegister ? "第一本视频笔记预览" : "继续整理的视频笔记"}</h3>
+      <div className="wf-auth-note-sheet-preview__body">
+        <p>章节摘要已经从视频片段生成，并保留可跳回的证据时间戳。</p>
+        <ul>
+          <li>
+            <span>03:11</span>
+            <strong>视频主题和问题背景</strong>
+          </li>
+          <li>
+            <span>08:42</span>
+            <strong>关键步骤折成笔记页</strong>
+          </li>
+          <li>
+            <span>12:18</span>
+            <strong>问答引用回到原片段</strong>
+          </li>
+        </ul>
+      </div>
+      <motion.div
+        className="wf-auth-note-sheet-preview__bookmark"
+        data-cover={cover}
+        aria-hidden={cover === "open" ? "true" : undefined}
+        animate={reduceMotion ? undefined : { x: cover === "revealed" ? 24 : 0, opacity: cover === "open" ? 0.22 : 1 }}
+        transition={{ duration: 0.28, ease: "easeOut" }}
+      >
+        {cover === "locked" ? "书签遮住了敏感内容" : cover === "revealed" ? "书签已移开，密码可见" : "private"}
+      </motion.div>
+      {isFolding ? <span className="wf-auth-note-sheet-preview__saved">{label}</span> : null}
+      <p className="sr-only">{label}</p>
+    </motion.article>
+  );
+}
+
+export function AuthEvidenceCard({ state, reduceMotion }: Pick<AuthPreviewProps, "state" | "reduceMotion">) {
+  const isError = state === "error";
+  const isSuccess = state === "success";
+
+  return (
+    <motion.aside
+      className="wf-auth-evidence-card"
+      data-testid="auth-evidence-card"
+      data-state={state}
+      aria-label="问答证据预览"
+      animate={reduceMotion ? undefined : { y: isSuccess ? -6 : 0, x: isError ? [-2, 2, -1, 0] : 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
+    >
+      <div className="wf-auth-evidence-card__header">
+        <span>问答证据</span>
+        <span>12:18</span>
+      </div>
+      <p className="wf-auth-evidence-card__question">问：这一步为什么成立？</p>
+      <p className="wf-auth-evidence-card__answer">答：引用 12:18 的推导片段，并跳回视频证据。</p>
+      <div className="wf-auth-evidence-card__link">
+        <span aria-hidden="true" />
+        <span>12:18 跳回视频证据</span>
+      </div>
+    </motion.aside>
+  );
+}
+
+export function AccountPaperMascot({ state, reduceMotion }: Pick<AuthPreviewProps, "state" | "reduceMotion">) {
+  return (
+    <motion.div
+      className="wf-account-paper-mascot"
+      data-testid="account-paper-mascot"
+      data-role="supporting-mascot"
+      data-state={state}
+      aria-hidden="true"
+      animate={reduceMotion ? undefined : { rotate: state === "error" ? -6 : state === "success" ? 4 : -2 }}
+      transition={{ type: "spring", stiffness: 150, damping: 20 }}
+    >
+      <span className="wf-account-paper-mascot__fold" />
+      <span className="wf-account-paper-mascot__eyes">
+        <span />
+        <span />
+      </span>
+    </motion.div>
+  );
+}
+
+export function AuthWorkbenchPreview({ state, variant, reduceMotion }: AuthPreviewProps) {
+  return (
+    <div className="wf-auth-workbench-preview" data-testid="auth-workbench-preview" data-state={state}>
+      <AuthVideoStrip state={state} />
+      <AuthTimelineBeam state={state} />
+      <div className="wf-auth-workbench-preview__workspace">
+        <AuthNoteSheetPreview state={state} variant={variant} reduceMotion={reduceMotion} />
+        <AuthEvidenceCard state={state} reduceMotion={reduceMotion} />
+        <AccountPaperMascot state={state} reduceMotion={reduceMotion} />
+      </div>
+    </div>
+  );
 }
 
 export function AccountCompanion({ state, variant }: AccountCompanionProps) {
   const isRegister = variant === "register";
-  const label = stateLabel(state);
   const reduceMotion = useReducedMotion();
-  const paperTilt = state === "success" ? -2 : state === "error" ? -7 : -4;
-  const paperY = state === "emailFocus" ? -4 : state === "success" ? -8 : 0;
-  const eyeX = state === "emailFocus" ? 6 : state === "error" ? -4 : state === "success" ? 3 : 0;
-  const eyeY = state === "emailFocus" ? -2 : state === "passwordReveal" ? 1 : 0;
-  const bookmarkTilt = state === "passwordReveal" ? 10 : state === "passwordFocus" ? -10 : state === "success" ? 8 : 0;
-  const bookmarkY = state === "passwordFocus" ? 18 : state === "passwordReveal" ? 10 : state === "success" ? -10 : state === "error" ? -3 : 0;
-  const shakeX = state === "error" && !reduceMotion ? [0, -4, 4, -3, 0] : 0;
 
   return (
     <section
-      aria-label={isRegister ? "NoteGen 注册角色入口" : "NoteGen 登录角色入口"}
+      aria-label={isRegister ? "NoteGen 注册工作台预览" : "NoteGen 登录工作台预览"}
       className="wf-account-companion relative block min-h-[27rem] overflow-visible rounded-[1.25rem] p-5 lg:min-h-[34rem] lg:p-8"
+      data-state={state}
+      data-testid="account-companion"
     >
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_18%_12%,color-mix(in_srgb,var(--wf-brand-coral)_9%,transparent),transparent_34%),radial-gradient(circle_at_82%_74%,color-mix(in_srgb,var(--wf-caramel)_12%,transparent),transparent_30%)]" />
-      <motion.div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-16 bottom-24 h-14 w-[38rem] origin-left rounded-full border border-[color-mix(in_srgb,var(--wf-brand-coral)_24%,transparent)] bg-[color-mix(in_srgb,var(--wf-brand-coral)_9%,transparent)]"
-        animate={reduceMotion ? undefined : { rotate: state === "emailFocus" ? -4 : state === "passwordFocus" ? 4 : -1, y: state === "error" ? -4 : 0 }}
-        transition={{ duration: 0.42, ease: "easeOut" }}
-      />
-      <div aria-hidden="true" className="pointer-events-none absolute bottom-8 left-10 right-10 h-px bg-gradient-to-r from-transparent via-[color-mix(in_srgb,var(--wf-text)_14%,transparent)] to-transparent" />
-
-      <div className="relative z-10 flex h-full min-h-[24rem] flex-col justify-between lg:min-h-[30rem]">
-        <div className="lg:max-w-[34rem] lg:pl-2">
+      <div className="relative z-10 grid h-full min-h-[24rem] content-between gap-6 lg:min-h-[30rem]">
+        <div className="lg:max-w-[35rem] lg:pl-2">
           <p className="text-xs font-semibold uppercase tracking-[0.18em] text-[var(--wf-accent)]">
-            {isRegister ? "Create notebook" : "Back to notebook"}
+            {isRegister ? "Workspace preview" : "Notebook resume"}
           </p>
           <h2 className="mt-4 max-w-lg text-balance font-[var(--wf-font-display)] text-3xl font-semibold leading-[1.06] tracking-[-0.04em] lg:text-5xl">
-            {isRegister ? "给第一本视频笔记留一个位置" : "回到你的时间线和笔记页"}
+            {isRegister ? "注册前先看到笔记工作台" : "登录后回到视频证据工作台"}
           </h2>
           <p className="mt-4 max-w-md text-sm leading-7 text-[var(--wf-text-secondary)]">
             {isRegister
-              ? "创建账号后，视频、章节、提问和复习进度会收进同一个私有空间。"
-              : "登录后继续从视频时间点回到笔记、书签和问答记录。"}
+              ? "视频、时间线、笔记和问答证据会收进同一个私有空间。"
+              : "继续从视频片段跳到笔记、章节和问答证据。"}
           </p>
         </div>
 
-        <div className="relative grid gap-5 pt-8 lg:min-h-[20rem] lg:items-end">
-          <motion.div
-            data-testid="account-companion"
-            data-state={state}
-            className="wf-account-character relative mx-auto h-64 w-72 lg:ml-12"
-            animate={reduceMotion ? undefined : { x: shakeX }}
-            transition={{ duration: 0.34, ease: "easeOut" }}
-          >
-            <motion.div
-              aria-hidden="true"
-              className="absolute left-8 top-5 h-[13rem] w-44 rounded-[1.35rem] border border-[var(--wf-border-strong)]
-                         bg-[var(--wf-surface)] shadow-[var(--wf-shadow-md)]"
-              data-state={state}
-              animate={reduceMotion ? undefined : { rotate: paperTilt, y: paperY }}
-              transition={{ type: "spring", stiffness: 170, damping: 20 }}
-            >
-              <div className="absolute right-0 top-0 h-16 w-16 rounded-bl-[1.1rem] rounded-tr-[1.35rem] bg-[color-mix(in_srgb,var(--wf-caramel)_24%,var(--wf-surface))]" />
-              <div className="absolute right-1 top-1 h-12 w-12 rounded-bl-[0.9rem] border-b border-l border-[rgba(45,41,37,.12)] bg-[color-mix(in_srgb,var(--wf-caramel)_12%,var(--wf-surface))]" />
-              <div className="absolute left-6 top-8 h-2 w-24 rounded-full bg-[var(--wf-surface-muted)]" />
-              <div className="absolute left-6 top-14 h-2 w-20 rounded-full bg-[var(--wf-surface-muted)]" />
-              <div className="absolute left-6 top-[6.25rem] h-2 w-28 rounded-full bg-[color-mix(in_srgb,var(--wf-brand-coral)_18%,var(--wf-surface-muted))]" />
-              <div className="absolute bottom-8 left-6 h-1.5 w-[7.5rem] rounded-full bg-[color-mix(in_srgb,var(--wf-brand-coral)_40%,var(--wf-surface-muted))]" />
-            </motion.div>
-
-            <motion.div
-              aria-hidden="true"
-              className="absolute right-[3.75rem] top-14 z-20 h-[8.5rem] w-7 rounded-full bg-[var(--wf-brand-coral)] shadow-[var(--wf-shadow-sm)]"
-              data-state={state}
-              animate={reduceMotion ? undefined : { rotate: bookmarkTilt, y: bookmarkY }}
-              transition={{ type: "spring", stiffness: 190, damping: 18 }}
-            />
-
-            <div aria-hidden="true" className="absolute left-[5.4rem] top-[6.8rem] z-30 flex w-28 items-center justify-center gap-6">
-              <motion.span
-                className="h-3 w-3 rounded-full bg-[var(--wf-text)]"
-                animate={reduceMotion ? undefined : { x: eyeX, y: eyeY, scaleY: state === "passwordFocus" ? 0.18 : 1 }}
-                transition={{ type: "spring", stiffness: 260, damping: 22 }}
-              />
-              <motion.span
-                className="h-3 w-3 rounded-full bg-[var(--wf-text)]"
-                animate={reduceMotion ? undefined : { x: eyeX, y: eyeY, scaleY: state === "passwordFocus" ? 0.18 : 1 }}
-                transition={{ type: "spring", stiffness: 260, damping: 22 }}
-              />
-            </div>
-
-            <motion.div
-              aria-hidden="true"
-              className="absolute left-[5.35rem] top-[8.25rem] z-30 h-1.5 w-20 rounded-full bg-[var(--wf-text-secondary)]"
-              animate={reduceMotion ? undefined : { rotate: state === "error" ? 180 : 0, scaleX: state === "success" ? 0.62 : 1 }}
-              transition={{ duration: 0.26, ease: "easeOut" }}
-            />
-
-            {state === "success" ? (
-              <motion.div
-                aria-hidden="true"
-                className="absolute right-7 top-10 z-40 rounded-full border border-[var(--wf-border)] bg-[var(--wf-surface)] px-2 py-1 text-[10px] font-semibold text-[var(--wf-accent)] shadow-[var(--wf-shadow-sm)]"
-                initial={reduceMotion ? false : { opacity: 0, y: 8 }}
-                animate={{ opacity: 1, y: 0 }}
-              >
-                saved
-              </motion.div>
-            ) : null}
-
-            <div
-              aria-hidden="true"
-              className="absolute bottom-6 left-16 rounded-full border border-[var(--wf-border)] bg-[var(--wf-surface)] px-3 py-1 text-[11px] tabular-nums text-[var(--wf-text-tertiary)] shadow-[var(--wf-shadow-sm)]"
-            >
-              {state === "success" ? "00:00 saved" : state === "error" ? "retry 00:08" : "note 01:24"}
-            </div>
-            <p className="sr-only">{label}</p>
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 rounded-full border border-[var(--wf-border)] bg-[var(--wf-surface)] px-4 py-2 text-xs text-[var(--wf-text-secondary)] shadow-[var(--wf-shadow-sm)]">
-              {label}
-            </div>
-          </motion.div>
-
-          <div className="wf-account-recent-note rounded-[1.05rem] border border-[var(--wf-border)] bg-[color-mix(in_srgb,var(--wf-paper-front)_86%,transparent)] p-4 shadow-[0_18px_44px_rgba(92,58,36,.10)] backdrop-blur lg:absolute lg:bottom-12 lg:left-[21.5rem] lg:w-60 lg:-rotate-2">
-            <p className="text-xs font-semibold text-[var(--wf-text)]">最近笔记</p>
-            <div className="mt-3 space-y-3">
-              {RECENT_NOTES.map((note) => (
-                <div key={note.time} className="flex items-start gap-3 text-xs">
-                  <span className="font-mono tabular-nums text-[var(--wf-accent)]">{note.time}</span>
-                  <span className="leading-5 text-[var(--wf-text-secondary)]">{note.text}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
+        <AuthWorkbenchPreview state={state} variant={variant} reduceMotion={reduceMotion} />
       </div>
     </section>
   );
