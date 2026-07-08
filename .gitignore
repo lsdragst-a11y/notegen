@@ -44,6 +44,7 @@ wheels/
 web/node_modules/
 web/.next/
 web/out/
+web/output/
 # 前端 demo 视频 612MB，本地资源不入库
 web/public/videos/
 
