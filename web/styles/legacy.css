@@ -1,15 +1,18 @@
-/* LEGACY: old NotebookLM system. Do not use in new Warm Fold landing/auth pages. */
-/* === NotebookLM-inspired design tokens（docs/frontend-redesign.md §2�?== */
+/* LEGACY COMPATIBILITY ONLY.
+   These NotebookLM-era tokens and apple-* helpers are kept for older product
+   surfaces. New Warm Fold pages/components must use --wf-* tokens and wf-*
+   primitives instead of --bg/--fg/--accent or apple-* classes. */
+/* NotebookLM-inspired design tokens (docs/frontend-redesign.md section 2). */
 :root {
-  --bg: #f8fafd;            /* 纸面感页面底�?*/
+  --bg: #f8fafd;            /* legacy paper-like page background */
   --bg-elevated: #ffffff;
   --bg-muted: #eef2f8;
   --fg: #1f1f1f;
   --fg-secondary: #5f6368;
   --fg-tertiary: #80868b;
-  --accent: #0b57d0;        /* Google 蓝，全站唯一强调�?*/
+  --accent: #0b57d0;        /* legacy Google blue accent */
   --accent-hover: #0842a0;
-  --on-accent: #ffffff;     /* accent 背景上的文字�?*/
+  --on-accent: #ffffff;     /* text on legacy accent backgrounds */
   --border: rgba(0, 0, 0, 0.08);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -19,18 +22,18 @@
   --warn-glow: #ff9f0a;
 }
 
-/* 深色 tokens（data-theme="dark" 时启用）。Apple 系统色调，对比度�?WCAG AA 校准�?
-   inline script �?layout 顶部根据 localStorage / matchMedia �?data-theme�?*/
+/* Dark legacy tokens for data-theme="dark".
+   Set by the layout inline script from localStorage or matchMedia. */
 :root[data-theme="dark"] {
-  --bg: #1f1f20;                   /* NotebookLM 深灰而非纯黑，卡片层次更清楚 */
+  --bg: #1f1f20;                   /* legacy dark gray, not pure black */
   --bg-elevated: #28292a;
   --bg-muted: #333537;
   --fg: #e8eaed;
   --fg-secondary: #bdc1c6;
   --fg-tertiary: #9aa0a6;
-  --accent: #8ab4f8;               /* 暗色下用浅蓝（文�?图标用） */
+  --accent: #8ab4f8;               /* light blue for legacy dark mode text/icons */
   --accent-hover: #aecbfa;
-  --on-accent: #062e6f;            /* 浅蓝底上用深蓝字 */
+  --on-accent: #062e6f;            /* dark text on light blue accent */
   --border: rgba(255, 255, 255, 0.12);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.40);
   --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.35);
@@ -80,7 +83,7 @@ html, body {
   border: 1px solid var(--border);
 }
 
-/* 静止态靠边框分层（NotebookLM 手感），阴影只在 hover 出现一�?*/
+/* Legacy card helper. Keep for old product surfaces only. */
 .apple-card {
   background: var(--bg-elevated);
   border-radius: 16px;
@@ -93,9 +96,7 @@ html, body {
   box-shadow: var(--shadow-md);
 }
 
-/* 可拖拽卡片：禁用 apple-card 自带�?hover transform �?transition�?
-   避免�?framer-motion �?layout 拖拽动画同时跑两�?transform 引擎产生闪烁�?
-   hover 抬升效果改用 framer-motion �?whileHover 在外�?motion.div 上接管�?*/
+/* Drag tiles disable apple-card hover transforms so Motion owns transforms. */
 .draggable-tile .apple-card {
   transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -140,7 +141,7 @@ html, body {
   font-size: 12px;
 }
 [data-theme="dark"] .mark-emphasis {
-  /* dark 上金�?glow 太亮，弱�?*/
+  /* Soften gold glow in dark mode. */
   background: rgba(255, 186, 46, 0.10);
   box-shadow: 0 0 0 1px rgba(255, 186, 46, 0.28),
               0 0 8px rgba(255, 186, 46, 0.18);

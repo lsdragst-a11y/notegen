@@ -43,6 +43,19 @@ function selectorBlock(selector) {
   throw new Error(`Unclosed selector ${selector}`);
 }
 
+function collectFiles(target, out = []) {
+  const stat = fs.statSync(target);
+  if (stat.isDirectory()) {
+    for (const entry of fs.readdirSync(target)) {
+      collectFiles(path.join(target, entry), out);
+    }
+    return out;
+  }
+
+  if (/\.(?:css|tsx?|jsx?)$/.test(target)) out.push(target);
+  return out;
+}
+
 for (const [name, maxBytes, maxPaths] of assets) {
   const file = path.join(root, "public", "brand", name);
   const source = fs.readFileSync(file, "utf8");
@@ -65,5 +78,28 @@ const legacy = [".apple-card {", ".apple-button {", ".tag-chip {"].map(selectorB
 assert(!legacy.includes("--wf-"), "Legacy classes reference Warm Fold tokens");
 assert(css.includes("--wf-accent: #A34A2F"), "Accessible light accent is missing");
 assert(css.includes("--wf-brand-coral: #B65C3A"), "Brand coral is missing");
+
+const warmFoldTargets = [
+  path.join(root, "app", "page.tsx"),
+  path.join(root, "app", "login", "page.tsx"),
+  path.join(root, "app", "register", "page.tsx"),
+  path.join(root, "components", "landing"),
+  path.join(root, "components", "auth"),
+  path.join(root, "components", "interactive"),
+  path.join(root, "styles", "warm-fold.tokens.css"),
+  path.join(root, "styles", "warm-fold.primitives.css"),
+  path.join(root, "styles", "warm-fold.landing.css"),
+  path.join(root, "styles", "warm-fold.auth.css"),
+];
+const legacyStylePattern = /\b(?:apple-[\w-]+|tag-chip)\b|var\(--(?:bg|fg|accent|border|shadow|on-accent)\b/g;
+
+for (const file of warmFoldTargets.flatMap((target) => collectFiles(target))) {
+  const source = fs.readFileSync(file, "utf8");
+  const matches = [...source.matchAll(legacyStylePattern)].map((match) => match[0]);
+  assert(
+    matches.length === 0,
+    `${path.relative(root, file)} uses legacy styling in Warm Fold scope: ${[...new Set(matches)].join(", ")}`,
+  );
+}
 
 console.log(`Warm Fold validation passed (${createHash("sha256").update(legacy).digest("hex").slice(0, 12)})`);

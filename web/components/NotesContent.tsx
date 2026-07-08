@@ -21,7 +21,7 @@ interface Props {
   chapters: Chapter[];
   overview?: Overview | null;
   currentTime: number;
-  onSeek: (sec: number) => void;
+  onSeek: (sec: number, sourceElement?: HTMLElement | null) => void;
   /** 视频内容大类。teaching=保留全部；popsci=去🎯且术语表折叠；
    *  vlog/talk=时间轴卡片替代知识点速览且无术语表。 */
   category?: Category;
@@ -98,10 +98,10 @@ export default function NotesContent({
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ type: "spring", stiffness: 200, damping: 24 }}
-        className="apple-card p-6"
+        className="rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-6 shadow-[var(--wf-shadow-sm)]"
       >
         <h1 className="text-2xl font-semibold leading-tight tracking-tight">{title}</h1>
-        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--fg-secondary)]">
+        <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-[var(--wf-text-secondary)]">
           <span className="inline-flex items-center gap-1"><Clock size={14} />{formatTime(total)}</span>
           <span>·</span>
           <span>
@@ -110,7 +110,14 @@ export default function NotesContent({
         </div>
         {keywords.length > 0 && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {keywords.map((k, i) => <span key={`${k}-${i}`} className="tag-chip">{k}</span>)}
+            {keywords.map((k, i) => (
+              <span
+                key={`${k}-${i}`}
+                className="rounded-[var(--wf-radius-full)] border border-[var(--wf-border)] bg-[var(--wf-surface-muted)] px-2.5 py-1 text-xs font-medium text-[var(--wf-text-secondary)]"
+              >
+                {k}
+              </span>
+            ))}
           </div>
         )}
       </motion.section>

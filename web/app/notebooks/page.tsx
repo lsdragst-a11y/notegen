@@ -33,11 +33,15 @@ import { fetchCatalog, formatDuration } from "@/lib/notes";
 import type { CatalogItem, HistoryItem, NoteView } from "@/lib/types";
 import {
   canCreateNotebook,
+  getPublicDemoRank,
   getVisibleNotebookFilters,
   getNotebookHeroCopy,
+  isFeaturedPublicDemo,
   parseNotebookFilter,
+  parsePublicDemo,
   shouldAllowPublicCatalog,
   shouldShowProgressPanel,
+  type FeaturedPublicDemoId,
   type NotebookFilter as Filter,
 } from "./filter";
 
@@ -170,6 +174,64 @@ function NoteCard({
   );
 }
 
+function FeaturedDemoCard({
+  item,
+  selected,
+  userCanAsk,
+}: {
+  item: CardItem;
+  selected: boolean;
+  userCanAsk: boolean;
+}) {
+  const { icon: Icon } = domainStyle(item.domain);
+
+  return (
+    <article
+      data-selected-demo={selected ? "true" : undefined}
+      className={`rounded-[var(--wf-radius-md)] border bg-[var(--wf-surface)] shadow-[var(--wf-shadow-sm)] transition-colors ${
+        selected ? "border-[var(--wf-accent)] ring-2 ring-[color-mix(in_srgb,var(--wf-brand-coral)_18%,transparent)]" : "border-[var(--wf-border)]"
+      }`}
+    >
+      <Link href={`/notes/${item.id}`} className="flex h-full flex-col p-5 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--wf-focus)]">
+        <div className="flex items-start justify-between gap-3">
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-[var(--wf-radius-sm)] bg-[color-mix(in_srgb,var(--wf-brand-coral)_12%,var(--wf-surface))] text-[var(--wf-accent)]">
+            <Icon size={20} aria-hidden="true" />
+          </span>
+          <Chip variant={selected ? "accent" : "neutral"} size="sm">
+            {selected ? "30 秒演示" : "精选示例"}
+          </Chip>
+        </div>
+        <h3 className="mt-5 text-base font-semibold leading-6 text-[var(--wf-text)]">{item.title}</h3>
+        <p className="mt-2 line-clamp-2 text-sm leading-6 text-[var(--wf-text-secondary)]">
+          {item.uploader || item.domain}
+        </p>
+        <div className="mt-5 grid grid-cols-2 gap-2 text-xs text-[var(--wf-text-secondary)]">
+          <span className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-surface-muted)] px-2.5 py-2">
+            <Layers size={13} className="mb-1 text-[var(--wf-accent)]" aria-hidden="true" />
+            {item.chapters} 章
+          </span>
+          <span className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-surface-muted)] px-2.5 py-2">
+            <Sparkles size={13} className="mb-1 text-[var(--wf-accent)]" aria-hidden="true" />
+            {item.chunks} 个重点
+          </span>
+          <span className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-surface-muted)] px-2.5 py-2">
+            <MessageSquareText size={13} className="mb-1 text-[var(--wf-accent)]" aria-hidden="true" />
+            {userCanAsk ? "可问答" : "登录后可问答"}
+          </span>
+          <span className="rounded-[var(--wf-radius-sm)] bg-[var(--wf-surface-muted)] px-2.5 py-2">
+            <Video size={13} className="mb-1 text-[var(--wf-accent)]" aria-hidden="true" />
+            可跳回视频证据
+          </span>
+        </div>
+        <div className="mt-5 flex items-center justify-between border-t border-[var(--wf-border)] pt-3 text-xs">
+          <span className="text-[var(--wf-text-tertiary)]">{formatDuration(item.duration_sec)}</span>
+          <span className="font-semibold text-[var(--wf-accent)]">打开示例</span>
+        </div>
+      </Link>
+    </article>
+  );
+}
+
 function EmptyState({
   filter,
   onCreate,
@@ -202,7 +264,13 @@ function EmptyState({
   );
 }
 
-function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
+function NotebooksInner({
+  initialDemoId,
+  initialFilter,
+}: {
+  initialDemoId: FeaturedPublicDemoId;
+  initialFilter: Filter;
+}) {
   const { loading: authLoading, user } = useAuth();
   const [pub, setPub] = useState<CatalogItem[] | null>(null);
   const [mine, setMine] = useState<NoteView[] | null>(null);
@@ -261,20 +329,21 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
     return map;
   }, [history]);
 
-  const items: CardItem[] = useMemo(() => {
-    const mineCards: CardItem[] = (user ? (mine ?? []) : []).map((n) => ({
-      id: n.id,
-      title: n.title,
-      domain: n.domain,
-      duration_sec: n.duration_sec,
-      chunks: n.chunks,
-      chapters: n.chapters,
-      uploader: n.uploader,
-      mine: true,
-      recentAt: recentByNote.get(n.id),
-    }));
+  const mineCards: CardItem[] = useMemo(() => (user ? (mine ?? []) : []).map((n) => ({
+    id: n.id,
+    title: n.title,
+    domain: n.domain,
+    duration_sec: n.duration_sec,
+    chunks: n.chunks,
+    chapters: n.chapters,
+    uploader: n.uploader,
+    mine: true,
+    recentAt: recentByNote.get(n.id),
+  })), [mine, recentByNote, user]);
+
+  const publicCards: CardItem[] = useMemo(() => {
     const mineIds = new Set(mineCards.map((c) => c.id));
-    const pubCards: CardItem[] = (pub ?? [])
+    return (pub ?? [])
       .filter((p) => !mineIds.has(p.id))
       .map((p) => ({
         id: p.id,
@@ -286,15 +355,36 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
         uploader: p.uploader,
         mine: false,
       }));
+  }, [mineCards, pub]);
 
-    const source = activeFilter === "mine" ? mineCards : activeFilter === "public" ? pubCards : [...mineCards, ...pubCards];
+  const featuredPublicItems = useMemo(() => {
+    return publicCards
+      .filter((item) => isFeaturedPublicDemo(item.id))
+      .sort((a, b) => {
+        if (a.id === initialDemoId) return -1;
+        if (b.id === initialDemoId) return 1;
+        return getPublicDemoRank(a.id) - getPublicDemoRank(b.id);
+      });
+  }, [initialDemoId, publicCards]);
+
+  const items: CardItem[] = useMemo(() => {
+    const source = activeFilter === "mine" ? mineCards : activeFilter === "public" ? publicCards : [...mineCards, ...publicCards];
     return source
       .filter((item) => matchesSearch(item, query))
       .sort((a, b) => {
         if (a.mine !== b.mine) return a.mine ? -1 : 1;
+        if (!a.mine && !b.mine) {
+          const aRank = getPublicDemoRank(a.id);
+          const bRank = getPublicDemoRank(b.id);
+          if (aRank !== bRank) {
+            if (!Number.isFinite(aRank)) return 1;
+            if (!Number.isFinite(bRank)) return -1;
+            return aRank - bRank;
+          }
+        }
         return (b.recentAt ?? 0) - (a.recentAt ?? 0);
       });
-  }, [activeFilter, mine, pub, query, recentByNote, user]);
+  }, [activeFilter, mineCards, publicCards, query]);
 
   const latestJob = useMemo(() => {
     return [...(history ?? [])].sort((a, b) => b.updated_at - a.updated_at)[0] ?? null;
@@ -384,6 +474,32 @@ function NotebooksInner({ initialFilter }: { initialFilter: Filter }) {
             </Card>
           ) : null}
         </div>
+
+        {activeFilter === "public" && !loading && featuredPublicItems.length > 0 ? (
+          <section className="mt-6">
+            <div className="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
+              <div>
+                <h2 className="text-lg font-semibold text-[var(--wf-text)]">精选公开示例</h2>
+                <p className="mt-1 max-w-2xl text-sm leading-6 text-[var(--wf-text-secondary)]">
+                  从完整视频笔记开始看产品能力：章节、重点、问答和可回放证据都在同一个工作台里。
+                </p>
+              </div>
+              <span className="text-xs text-[var(--wf-text-tertiary)]">
+                首页演示会优先打开第一张示例
+              </span>
+            </div>
+            <div className="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+              {featuredPublicItems.map((item) => (
+                <FeaturedDemoCard
+                  key={item.id}
+                  item={item}
+                  selected={item.id === initialDemoId}
+                  userCanAsk={Boolean(user)}
+                />
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         <div className="mt-6 flex flex-col gap-4 rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] p-4 shadow-[var(--wf-shadow-sm)] md:flex-row md:items-center">
           <div className="flex flex-wrap gap-2">
@@ -551,10 +667,15 @@ function NotebooksRouteFallback() {
 function NotebooksPageContent() {
   const searchParams = useSearchParams();
   const initialFilter = parseNotebookFilter(searchParams.get("filter"));
+  const initialDemoId = parsePublicDemo(searchParams.get("demo"));
 
   return (
     <RequireAuth allowUnauthenticated>
-      <NotebooksInner key={initialFilter} initialFilter={initialFilter} />
+      <NotebooksInner
+        key={`${initialFilter}:${initialDemoId}`}
+        initialDemoId={initialDemoId}
+        initialFilter={initialFilter}
+      />
     </RequireAuth>
   );
 }

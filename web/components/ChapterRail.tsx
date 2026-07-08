@@ -9,7 +9,7 @@ interface Props {
   chapters: Chapter[];
   currentIdx: number;
   currentTime: number;
-  onSeek: (sec: number) => void;
+  onSeek: (sec: number, sourceElement?: HTMLElement | null) => void;
   /** 学习进度：已学完章节下标 + 勾选回调（不传则不显示勾选 UI） */
   done?: number[];
   onToggleDone?: (idx: number) => void;
@@ -34,13 +34,16 @@ export default function ChapterRail({
   const doneCount = (done ?? []).filter(i => i < chapters.length).length;
 
   return (
-    <nav aria-label={lang === "en" ? "Chapters" : "章节"} className="flex flex-col gap-0.5">
+    <nav
+      aria-label={lang === "en" ? "Chapters" : "章节"}
+      className="relative flex flex-col gap-1 pl-3 before:absolute before:bottom-3 before:left-[1.12rem] before:top-9 before:w-px before:bg-[linear-gradient(to_bottom,var(--wf-border-strong),var(--wf-border),transparent)]"
+    >
       {showProgress && chapters.length > 0 && (
-        <div className="flex items-center justify-between px-3 pb-1.5">
-          <span className="text-[11px] tabular-nums text-[var(--fg-tertiary)]">
+        <div className="flex items-center justify-between px-3 pb-2 pl-7">
+          <span className="text-[11px] tabular-nums text-[var(--wf-text-tertiary)]">
             {doneCount}/{chapters.length} {lang === "en" ? "done" : "已学完"}
           </span>
-          <span className="h-1 w-16 overflow-hidden rounded-full bg-[var(--bg-muted)]">
+          <span className="h-1 w-16 overflow-hidden rounded-full bg-[var(--wf-surface-muted)]">
             <span
               className="block h-full rounded-full bg-[#1d9e75] transition-[width] duration-300"
               style={{ width: `${chapters.length ? (doneCount / chapters.length) * 100 : 0}%` }}
@@ -58,26 +61,31 @@ export default function ChapterRail({
           <div key={i} className="group/ch relative">
             <button
               ref={active ? activeRef : undefined}
-              onClick={() => onSeek(ch.start)}
+              onClick={(event) => onSeek(ch.start, event.currentTarget)}
               aria-current={active ? "true" : undefined}
-              className={`relative w-full overflow-hidden rounded-xl px-3 py-2 text-left transition-colors
+              className={`relative w-full overflow-hidden rounded-[var(--wf-radius-sm)] px-3 py-2 pl-7 text-left transition-colors
                           ${showProgress ? "pr-9" : ""}
                           ${active
-                            ? "bg-[color-mix(in_srgb,var(--accent)_12%,transparent)]"
-                            : "hover:bg-[var(--bg-muted)]"}`}
+                            ? "bg-[color-mix(in_srgb,var(--wf-brand-coral)_12%,var(--wf-surface))]"
+                            : "hover:bg-[var(--wf-surface-muted)]"}`}
             >
+              <span
+                aria-hidden="true"
+                className={`absolute left-1 top-3 h-3.5 w-3.5 rounded-full border bg-[var(--wf-surface)] transition-colors
+                            ${active ? "border-[var(--wf-accent)] shadow-[0_0_0_4px_color-mix(in_srgb,var(--wf-brand-coral)_14%,transparent)]" : "border-[var(--wf-border-strong)]"}`}
+              />
               <span className={`block text-[11px] tabular-nums
-                                ${active ? "text-[var(--accent)]" : "text-[var(--fg-tertiary)]"}`}>
+                                ${active ? "text-[var(--wf-accent)]" : "text-[var(--wf-text-tertiary)]"}`}>
                 {formatTime(ch.start)}
               </span>
               <span className={`mt-0.5 line-clamp-2 block text-[13px] font-medium leading-snug
                                 ${isDone && !active ? "opacity-60" : ""}
-                                ${active ? "text-[var(--accent)]" : "text-[var(--fg-secondary)]"}`}>
+                                ${active ? "text-[var(--wf-accent)]" : "text-[var(--wf-text-secondary)]"}`}>
                 {pickByLang(ch, "title", lang)}
               </span>
               {active && (
                 <span
-                  className="absolute bottom-0 left-0 h-0.5 bg-[var(--accent)] transition-[width] duration-150"
+                  className="absolute bottom-0 left-7 h-0.5 bg-[var(--wf-accent)] transition-[width] duration-150"
                   style={{ width: `${progress * 100}%` }}
                 />
               )}
@@ -94,23 +102,23 @@ export default function ChapterRail({
                             justify-center rounded-full transition-all
                             ${isDone
                               ? "text-[#1d9e75]"
-                              : "text-[var(--fg-tertiary)] opacity-0 hover:text-[var(--fg-secondary)] group-hover/ch:opacity-100"}`}
+                              : "text-[var(--wf-text-tertiary)] opacity-0 hover:text-[var(--wf-text-secondary)] group-hover/ch:opacity-100"}`}
               >
                 {isDone ? <CheckCircle2 size={15} /> : <Circle size={15} />}
               </button>
             )}
             {active && !!ch.children?.length && (
-              <div className="mb-1 ml-3 mt-0.5 flex flex-col gap-0.5 border-l border-[var(--border)] pl-2">
+              <div className="mb-1 ml-8 mt-0.5 flex flex-col gap-0.5 border-l border-[var(--wf-border)] pl-2">
                 {ch.children.map((sub, si) => {
                   const subActive = currentTime >= sub.start && currentTime < sub.end;
                   return (
                     <button
                       key={si}
-                      onClick={() => onSeek(sub.start)}
+                      onClick={(event) => onSeek(sub.start, event.currentTarget)}
                       className={`rounded-lg px-2 py-1.5 text-left text-xs leading-snug transition-colors
                                   ${subActive
-                                    ? "text-[var(--accent)]"
-                                    : "text-[var(--fg-tertiary)] hover:bg-[var(--bg-muted)] hover:text-[var(--fg-secondary)]"}`}
+                                    ? "text-[var(--wf-accent)]"
+                                    : "text-[var(--wf-text-tertiary)] hover:bg-[var(--wf-surface-muted)] hover:text-[var(--wf-text-secondary)]"}`}
                     >
                       <span className="mr-1.5 tabular-nums opacity-70">{formatTime(sub.start)}</span>
                       {pickByLang(sub, "title", lang)}

@@ -47,30 +47,73 @@ describe("FoldingHeroStage", () => {
     });
   });
 
-  it("lets keyboard users scrub the playhead slider", async () => {
+  it("exposes only the native range as the accessible progress slider", () => {
     reducedMotionState.value = false;
     render(<FoldingHeroStage />);
 
+    const sliders = screen.getAllByRole("slider");
+    expect(sliders).toHaveLength(1);
+    expect(sliders[0]).toHaveAttribute("id", "fold-progress");
+    expect(sliders[0].tagName).toBe("INPUT");
+
     const playhead = document.querySelector(".wf-playhead-beam");
     expect(playhead).not.toBeNull();
-    const startingValue = Number(playhead?.getAttribute("aria-valuenow"));
+    expect(playhead).not.toHaveAttribute("role");
+    expect(playhead).not.toHaveAttribute("tabindex");
+    expect(playhead).toHaveAttribute("aria-hidden", "true");
+  });
 
-    fireEvent.keyDown(playhead as Element, { key: "ArrowLeft" });
+  it("lets keyboard users scrub the single native range", async () => {
+    reducedMotionState.value = false;
+    render(<FoldingHeroStage />);
+
+    const slider = screen.getByRole("slider", { name: "调整视频折叠进度" });
+    const startingValue = Number((slider as HTMLInputElement).value);
+
+    fireEvent.keyDown(slider, { key: "ArrowLeft" });
 
     await waitFor(() => {
-      expect(playhead).toHaveAttribute("aria-valuenow", String(Math.max(0, startingValue - 4)));
+      expect(slider).toHaveValue(String(Math.max(0, startingValue - 4)));
     });
 
-    fireEvent.keyDown(playhead as Element, { key: "Home" });
+    fireEvent.keyDown(slider, { key: "Home" });
 
     await waitFor(() => {
-      expect(playhead).toHaveAttribute("aria-valuenow", "0");
+      expect(slider).toHaveValue("0");
     });
 
-    fireEvent.keyDown(playhead as Element, { key: "End" });
+    fireEvent.keyDown(slider, { key: "End" });
 
     await waitFor(() => {
-      expect(playhead).toHaveAttribute("aria-valuenow", "100");
+      expect(slider).toHaveValue("100");
+    });
+  });
+
+  it("lets pointer dragging on the visual playhead update the same native range", async () => {
+    reducedMotionState.value = false;
+    render(<FoldingHeroStage />);
+
+    const stage = document.querySelector(".wf-hero-fold-stage") as HTMLElement;
+    const playhead = document.querySelector(".wf-playhead-beam") as HTMLElement;
+    const slider = screen.getByRole("slider", { name: "调整视频折叠进度" });
+
+    stage.getBoundingClientRect = () => ({
+      bottom: 120,
+      height: 120,
+      left: 0,
+      right: 100,
+      top: 0,
+      width: 100,
+      x: 0,
+      y: 0,
+      toJSON: () => ({}),
+    });
+    playhead.setPointerCapture = vi.fn();
+
+    fireEvent.pointerDown(playhead, { clientX: 76, clientY: 40, pointerId: 1 });
+
+    await waitFor(() => {
+      expect(slider).toHaveValue("76");
     });
   });
 

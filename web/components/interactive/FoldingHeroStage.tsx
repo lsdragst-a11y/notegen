@@ -154,7 +154,7 @@ export function FoldingHeroStage() {
   );
 
   const scrubWithKeyboard = useCallback(
-    (event: KeyboardEvent<HTMLElement>) => {
+    (event: KeyboardEvent<HTMLInputElement>) => {
       const keyProgress = lastRangeRef.current / 100;
       let nextProgress: number | null = null;
 
@@ -272,13 +272,7 @@ export function FoldingHeroStage() {
           onPointerDown={beginDrag}
           onPointerUp={endDrag}
           onPointerCancel={endDrag}
-          onKeyDown={scrubWithKeyboard}
-          role="slider"
-          aria-label="拖动播放指针调整视频折叠进度"
-          aria-valuemin={0}
-          aria-valuemax={100}
-          aria-valuenow={rangeValue}
-          tabIndex={0}
+          aria-hidden="true"
         />
 
         <motion.div
@@ -336,13 +330,19 @@ export function FoldingHeroStage() {
         min={0}
         max={100}
         value={rangeValue}
+        aria-label="调整视频折叠进度"
+        aria-valuetext={PHASE_LABEL[phase]}
+        onKeyDown={scrubWithKeyboard}
+        onFocus={() => {
+          stopAutoplay();
+          setInteractionMode(reduceMotion ? "reducedMotion" : "dragScrub");
+        }}
         onChange={(event) => {
           stopAutoplay();
-          setInteractionMode("dragScrub");
+          setInteractionMode(reduceMotion ? "reducedMotion" : "dragScrub");
           setFoldProgress(Number(event.target.value) / 100);
         }}
         className="wf-fold-range sr-only"
-        aria-valuetext={PHASE_LABEL[phase]}
       />
       <p className="sr-only" aria-live="polite">
         当前演示阶段：{PHASE_LABEL[phase]}

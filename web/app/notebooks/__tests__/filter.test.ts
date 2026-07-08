@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 
-import { getVisibleNotebookFilters, parseNotebookFilter } from "../filter";
+import {
+  DEFAULT_PUBLIC_DEMO_ID,
+  FEATURED_PUBLIC_DEMO_IDS,
+  getVisibleNotebookFilters,
+  parseNotebookFilter,
+  parsePublicDemo,
+} from "../filter";
 
 describe("parseNotebookFilter", () => {
   it("opens public examples when requested from the landing page", () => {
@@ -21,5 +27,17 @@ describe("parseNotebookFilter", () => {
   it("only exposes public examples filter to guests", () => {
     expect(getVisibleNotebookFilters(null).map((item) => item.key)).toEqual(["public"]);
     expect(getVisibleNotebookFilters({ id: "u1" }).map((item) => item.key)).toEqual(["mine", "all", "public"]);
+  });
+
+  it("parses the featured public demo route from the landing page", () => {
+    expect(FEATURED_PUBLIC_DEMO_IDS).toEqual([
+      "EH5jx5qPabU_p0",
+      "BV1GofdBZEW7_p0",
+      "claudecode",
+    ]);
+    expect(DEFAULT_PUBLIC_DEMO_ID).toBe("EH5jx5qPabU_p0");
+    expect(parsePublicDemo("BV1GofdBZEW7_p0")).toBe("BV1GofdBZEW7_p0");
+    expect(parsePublicDemo("unknown-note")).toBe(DEFAULT_PUBLIC_DEMO_ID);
+    expect(parsePublicDemo(null)).toBe(DEFAULT_PUBLIC_DEMO_ID);
   });
 });

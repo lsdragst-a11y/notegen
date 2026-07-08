@@ -5,6 +5,7 @@ import { ArrowRight, UploadCloud } from "lucide-react";
 import type { ReactNode } from "react";
 
 import { useAuth } from "@/components/AuthContext";
+import { DEFAULT_PUBLIC_DEMO_ID } from "@/app/notebooks/filter";
 
 type ButtonVariant = "primary" | "secondary" | "ghost";
 
@@ -67,7 +68,7 @@ export function AuthAwareHeroActions() {
           <ArrowRight size={16} />
         </span>
       </Link>
-      <Link href="/notebooks?filter=public" className="wf-upload-demo-link">
+      <Link href={`/notebooks?filter=public&demo=${DEFAULT_PUBLIC_DEMO_ID}`} className="wf-upload-demo-link">
         观看 30 秒演示
       </Link>
     </div>
