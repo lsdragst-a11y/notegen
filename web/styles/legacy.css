@@ -1,0 +1,174 @@
+/* LEGACY COMPATIBILITY ONLY.
+   These NotebookLM-era tokens and apple-* helpers are kept for older product
+   surfaces. New Warm Fold pages/components must use --wf-* tokens and wf-*
+   primitives instead of --bg/--fg/--accent or apple-* classes. */
+/* NotebookLM-inspired design tokens (docs/frontend-redesign.md section 2). */
+:root {
+  --bg: #f8fafd;            /* legacy paper-like page background */
+  --bg-elevated: #ffffff;
+  --bg-muted: #eef2f8;
+  --fg: #1f1f1f;
+  --fg-secondary: #5f6368;
+  --fg-tertiary: #80868b;
+  --accent: #0b57d0;        /* legacy Google blue accent */
+  --accent-hover: #0842a0;
+  --on-accent: #ffffff;     /* text on legacy accent backgrounds */
+  --border: rgba(0, 0, 0, 0.08);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.08), 0 4px 12px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.10);
+  --glass: rgba(255, 255, 255, 0.72);
+  --warm-glow: #ffba2e;
+  --warn-glow: #ff9f0a;
+}
+
+/* Dark legacy tokens for data-theme="dark".
+   Set by the layout inline script from localStorage or matchMedia. */
+:root[data-theme="dark"] {
+  --bg: #1f1f20;                   /* legacy dark gray, not pure black */
+  --bg-elevated: #28292a;
+  --bg-muted: #333537;
+  --fg: #e8eaed;
+  --fg-secondary: #bdc1c6;
+  --fg-tertiary: #9aa0a6;
+  --accent: #8ab4f8;               /* light blue for legacy dark mode text/icons */
+  --accent-hover: #aecbfa;
+  --on-accent: #062e6f;            /* dark text on light blue accent */
+  --border: rgba(255, 255, 255, 0.12);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.40);
+  --shadow-md: 0 1px 3px rgba(0, 0, 0, 0.45), 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.60);
+  --glass: rgba(40, 41, 42, 0.72);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-muted: var(--bg-muted);
+  --color-fg: var(--fg);
+  --color-fg-secondary: var(--fg-secondary);
+  --color-fg-tertiary: var(--fg-tertiary);
+  --color-accent: var(--accent);
+  --color-border: var(--border);
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  position: relative;
+  margin: 0;
+  padding: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text",
+               "Helvetica Neue", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern", "liga", "calt";
+  letter-spacing: 0;
+}
+
+::selection { background: rgba(11, 87, 208, 0.20); }
+[data-theme="dark"] ::selection { background: rgba(138, 180, 248, 0.30); }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--fg-tertiary); }
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--border);
+}
+
+/* Legacy card helper. Keep for old product surfaces only. */
+.apple-card {
+  background: var(--bg-elevated);
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.apple-card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* Drag tiles disable apple-card hover transforms so Motion owns transforms. */
+.draggable-tile .apple-card {
+  transition: box-shadow 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.draggable-tile .apple-card:hover {
+  transform: none;
+}
+
+.apple-button {
+  background: var(--accent);
+  color: var(--on-accent);
+  border-radius: 980px;
+  padding: 0.625rem 1.25rem;
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: background 0.2s ease, transform 0.1s ease;
+  cursor: pointer;
+  border: none;
+}
+.apple-button:hover { background: var(--accent-hover); }
+.apple-button:active { transform: scale(0.97); }
+.apple-button:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-muted);
+  color: var(--fg-secondary);
+  border-radius: 980px;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.mark-emphasis {
+  display: inline-flex; width: 22px; height: 22px;
+  align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 186, 46, 0.15);
+  box-shadow: 0 0 0 1px rgba(255, 186, 46, 0.35),
+              0 0 12px rgba(255, 186, 46, 0.30);
+  font-size: 12px;
+}
+[data-theme="dark"] .mark-emphasis {
+  /* Soften gold glow in dark mode. */
+  background: rgba(255, 186, 46, 0.10);
+  box-shadow: 0 0 0 1px rgba(255, 186, 46, 0.28),
+              0 0 8px rgba(255, 186, 46, 0.18);
+}
+.mark-hard {
+  display: inline-flex; width: 22px; height: 22px;
+  align-items: center; justify-content: center;
+  border-radius: 50%;
+  background: rgba(255, 159, 10, 0.15);
+  box-shadow: 0 0 0 1px rgba(255, 159, 10, 0.35),
+              0 0 12px rgba(255, 159, 10, 0.30);
+  font-size: 12px;
+}
+[data-theme="dark"] .mark-hard {
+  background: rgba(255, 159, 10, 0.10);
+  box-shadow: 0 0 0 1px rgba(255, 159, 10, 0.28),
+              0 0 8px rgba(255, 159, 10, 0.18);
+}
+
+:root {
+  --plyr-color-main: var(--accent);
+  --plyr-video-controls-background: linear-gradient(transparent, rgba(0,0,0,0.65));
+}
+
+*:focus:not(:focus-visible) { outline: none; }
+*:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

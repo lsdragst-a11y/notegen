@@ -16,7 +16,7 @@ interface Props {
   currentChunkIdx: number;
   marksByChunk: Mark[][];
   showMarks: boolean;
-  onSeek: (sec: number) => void;
+  onSeek: (sec: number, sourceElement?: HTMLElement | null) => void;
   onOpenDetail: (chunkIdx: number) => void;
   onOpenLightbox: (chunkIdx: number) => void;
   readOnly?: boolean;
@@ -30,7 +30,7 @@ export default function KeyPointsGrid({
   const { lang } = useLang();
   return (
     <section>
-      <h2 className="text-lg font-semibold mb-3 text-[var(--fg)]">
+      <h2 className="text-lg font-semibold mb-3 text-[var(--wf-text)]">
         {lang === "en" ? "💡 Key Points" : "💡 知识点速览"}
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
@@ -57,14 +57,14 @@ export default function KeyPointsGrid({
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: Math.min(i * 0.04, 0.4), type: "spring", stiffness: 200, damping: 24 }}
               whileHover={{ y: -3 }}
-              className={`apple-card overflow-hidden text-left flex flex-col cursor-pointer
-                          ${isActive ? "ring-2 ring-[var(--accent)]" : ""}`}
+              className={`flex cursor-pointer flex-col overflow-hidden rounded-[var(--wf-radius-md)] border border-[var(--wf-border)] bg-[var(--wf-surface)] text-left shadow-[var(--wf-shadow-sm)]
+                          ${isActive ? "ring-2 ring-[var(--wf-accent)]" : ""}`}
               style={marks.includes("emphasis") ? {
-                boxShadow: "0 0 0 1px rgba(255, 186, 46, 0.45), var(--shadow-md)"
+                boxShadow: "0 0 0 1px rgba(255, 186, 46, 0.35), var(--wf-shadow-md)"
               } : undefined}
             >
               {/* 幻灯片大图——卡片主体 */}
-              <div className="relative aspect-video bg-[var(--bg-muted)] overflow-hidden group/kf">
+              <div className="relative aspect-video bg-[var(--wf-surface-muted)] overflow-hidden group/kf">
                 {kfRel ? (
                   <Image
                     src={`${keyframeBase}${kfRel}`}
@@ -75,8 +75,8 @@ export default function KeyPointsGrid({
                   />
                 ) : (
                   <div className="absolute inset-0 flex items-center justify-center
-                                  bg-gradient-to-br from-[var(--bg-muted)] to-[var(--bg)]
-                                  text-[var(--fg-tertiary)]">
+                                  bg-gradient-to-br from-[var(--wf-surface-muted)] to-[var(--wf-surface)]
+                                  text-[var(--wf-text-tertiary)]">
                     <Clock size={20} />
                   </div>
                 )}
@@ -86,7 +86,7 @@ export default function KeyPointsGrid({
                                 group-hover/kf:bg-black/35 group-hover/kf:opacity-100">
                   <button
                     type="button"
-                    onClick={e => { e.stopPropagation(); onSeek(c.start); }}
+                    onClick={e => { e.stopPropagation(); onSeek(c.start, e.currentTarget); }}
                     title={lang === "en" ? "Jump to this point" : "跳转到此处"}
                     aria-label={lang === "en" ? "Jump to this point" : "跳转到此处"}
                     className="flex h-9 w-9 items-center justify-center rounded-full
@@ -141,18 +141,18 @@ export default function KeyPointsGrid({
                     keyframeRel: kfRel,
                   }}
                     className="absolute left-2 top-2 flex h-7 w-7 items-center justify-center
-                               rounded-full bg-white/90 text-[var(--fg-secondary)] shadow-sm
-                               hover:text-[var(--accent)]"
+                               rounded-full bg-white/90 text-[var(--wf-text-secondary)] shadow-sm
+                               hover:text-[var(--wf-accent)]"
                   />
                 )}
               </div>
               {/* 标题 + 一句话说明 */}
               <div className="flex flex-1 flex-col p-3.5">
-                <div className="text-sm font-semibold leading-snug line-clamp-2 text-[var(--fg)]">
+                <div className="text-sm font-semibold leading-snug line-clamp-2 text-[var(--wf-text)]">
                   {headline}
                 </div>
                 {caption && (
-                  <div className="mt-1.5 text-xs leading-relaxed text-[var(--fg-secondary)] line-clamp-2">
+                  <div className="mt-1.5 text-xs leading-relaxed text-[var(--wf-text-secondary)] line-clamp-2">
                     {caption}
                   </div>
                 )}

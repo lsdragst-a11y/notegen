@@ -16,6 +16,7 @@ import MiniPlayer from "@/components/MiniPlayer";
 import ChapterRail from "@/components/ChapterRail";
 import TranscriptPanel from "@/components/TranscriptPanel";
 import ChatPanel from "@/components/ChatPanel";
+import { CitationJumpLayer, useCitationJump } from "@/components/interactive/CitationJumpLayer";
 import { formatTime, buildGlossary } from "@/lib/notes";
 import type { NoteBundle } from "@/lib/notes";
 import { getShare, postShare, revokeShare, ApiError } from "@/lib/api";
@@ -130,7 +131,7 @@ function WorkspaceRail({
   currentChapter: number;
   currentTime: number;
   lang: "zh" | "en";
-  onSeek: (sec: number) => void;
+  onSeek: (sec: number, sourceElement?: HTMLElement | null) => void;
   railTab: RailTab;
   setRailTab: (tab: RailTab) => void;
   shared: boolean;
@@ -241,6 +242,8 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
   const [shareHint, setShareHint] = useState<string | null>(null);
   const [docxState, setDocxState] = useState<"idle" | "busy" | "error">("idle");
   const { done: chaptersDone, toggle: toggleChapterDone } = useChapterProgress(noteId);
+  const { jump, triggerJump } = useCitationJump();
+  const [evidenceStatus, setEvidenceStatus] = useState<{ id: number; time: number } | null>(null);
   const playerRef = useRef<VideoPlayerHandle>(null);
   const mainWrapRef = useRef<HTMLDivElement>(null);
   const railTriggerRef = useRef<HTMLButtonElement>(null);
@@ -268,10 +271,15 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
     playerRef.current?.seek(sec);
     setCurrentTime(sec);
   }, []);
-  const seekAndCloseRail = useCallback((sec: number) => {
+  const seekFromCitation = useCallback((sec: number, sourceElement?: HTMLElement | null) => {
     seek(sec);
+    setEvidenceStatus({ id: Date.now(), time: sec });
+    triggerJump(sourceElement ?? null, mainWrapRef.current, sec);
+  }, [seek, triggerJump]);
+  const seekAndCloseRail = useCallback((sec: number, sourceElement?: HTMLElement | null) => {
+    seekFromCitation(sec, sourceElement);
     setRailOpen(false);
-  }, [seek]);
+  }, [seekFromCitation]);
   const openRail = useCallback(() => {
     railReturnFocusRef.current = document.activeElement instanceof HTMLElement
       ? document.activeElement
@@ -339,6 +347,12 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
       window.setTimeout(() => returnTarget?.focus(), 0);
     };
   }, [railOpen]);
+
+  useEffect(() => {
+    if (!evidenceStatus) return;
+    const timer = window.setTimeout(() => setEvidenceStatus(null), 1400);
+    return () => window.clearTimeout(timer);
+  }, [evidenceStatus]);
 
   // 主视频可见性观察，决定 Mini PiP 是否弹出
   useEffect(() => {
@@ -424,9 +438,15 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
        : sourceUrl.includes("youtu") ? "YouTube"
        : (lang === "en" ? "Web link" : "网页链接"))
     : (lang === "en" ? "Local file" : "本地上传");
+  const evidenceChapterLabel = evidenceStatus && bundle.chapters[currentChapter]
+    ? pickByLang(bundle.chapters[currentChapter], "title", lang)
+    : "";
 
   return (
-    <main className="flex min-h-screen flex-col bg-[var(--wf-canvas)] pb-24 text-[var(--wf-text)] lg:h-screen lg:overflow-hidden lg:pb-0">
+    <main
+      data-evidence-active={evidenceStatus ? "true" : undefined}
+      className="flex min-h-screen flex-col bg-[var(--wf-canvas)] pb-24 text-[var(--wf-text)] lg:h-screen lg:overflow-hidden lg:pb-0"
+    >
       <NavBar>
         <div className="flex items-center gap-2 min-w-0">
           <Link href={backHref}
@@ -481,7 +501,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             currentChapter={currentChapter}
             currentTime={currentTime}
             lang={lang}
-            onSeek={seek}
+            onSeek={seekFromCitation}
             railTab={railTab}
             setRailTab={setRailTab}
             shared={shared}
@@ -494,6 +514,24 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
 
         {/* 中栏：笔记内容 + 问答 */}
         <div className="order-2 min-w-0 px-5 pt-5 lg:order-none lg:overflow-y-auto lg:px-8 lg:py-6">
+          {evidenceStatus ? (
+            <div
+              role="status"
+              aria-live="polite"
+              data-testid="workspace-body-evidence-status"
+              className="mb-3 rounded-[var(--wf-radius-sm)] border border-[var(--wf-border)] bg-[var(--wf-surface)] px-3 py-2 text-xs text-[var(--wf-text-secondary)] shadow-[var(--wf-shadow-sm)]"
+            >
+              <span className="mr-2 font-semibold tabular-nums text-[var(--wf-accent)]">
+                {formatTime(evidenceStatus.time)}
+              </span>
+              {lang === "en" ? "Notes aligned to evidence" : "正文已对齐到证据片段"}
+              {evidenceChapterLabel ? (
+                <span className="ml-2 text-[var(--wf-text-tertiary)]">
+                  {lang === "en" ? "Chapter" : "章节"} · {evidenceChapterLabel}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
           <NotesContent
             keyframeBase={bundle.keyframeBase}
             noteId={noteId}
@@ -502,7 +540,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             chapters={bundle.chapters}
             overview={bundle.overview}
             currentTime={currentTime}
-            onSeek={seek}
+            onSeek={seekFromCitation}
             category={bundle.meta?.category}
             chaptersDone={shared ? undefined : chaptersDone}
             onToggleChapterDone={shared ? undefined : toggleChapterDone}
@@ -510,7 +548,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
           />
           {!shared && (
             <div className="mt-6 lg:sticky lg:bottom-3">
-              <ChatPanel noteId={noteId} onSeek={seek} chapters={bundle.chapters} />
+              <ChatPanel noteId={noteId} onSeek={seekFromCitation} chapters={bundle.chapters} />
             </div>
           )}
         </div>
@@ -542,6 +580,21 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
                 />
               </div>
             )}
+            <AnimatePresence>
+              {evidenceStatus ? (
+                <motion.div
+                  key={evidenceStatus.id}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  transition={{ duration: 0.18, ease: "easeOut" }}
+                  className="pointer-events-none absolute bottom-3 left-3 rounded-[var(--wf-radius-full)] bg-[#2a1710]/90 px-3 py-1.5 text-[11px] font-semibold tabular-nums text-[#ffb28f] shadow-[0_10px_28px_rgba(0,0,0,.24)]"
+                  aria-live="polite"
+                >
+                  {lang === "en" ? "Evidence" : "证据片段"} {formatTime(evidenceStatus.time)}
+                </motion.div>
+              ) : null}
+            </AnimatePresence>
           </div>
           {bundle.chapters.length > 1 && (
             <div className="lg:hidden">
@@ -549,7 +602,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
                 chapters={bundle.chapters}
                 currentIdx={currentChapter}
                 currentTime={currentTime}
-                onSeek={seek}
+                onSeek={seekFromCitation}
               />
             </div>
           )}
@@ -563,12 +616,12 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
             </div>
           )}
           {bundle.chapters.length > 0 && (
-            <ChapterDetailCard
+              <ChapterDetailCard
               chapters={bundle.chapters}
               currentIdx={currentChapter}
               currentTime={currentTime}
               summary={bundle.summary}
-              onSeek={seek}
+              onSeek={seekFromCitation}
             />
           )}
           {/* 工具组 */}
@@ -731,7 +784,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
       <Spotlight
         open={spotOpen}
         onClose={() => setSpotOpen(false)}
-        onSeek={seek}
+        onSeek={seekFromCitation}
         chapters={bundle.chapters}
         summary={bundle.summary}
         glossary={glossary}
@@ -750,6 +803,7 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
         onClose={() => setMiniDismissed(true)}
         onExpand={() => mainWrapRef.current?.scrollIntoView({ behavior: "smooth", block: "center" })}
       />
+      <CitationJumpLayer jump={jump} />
     </main>
   );
 }

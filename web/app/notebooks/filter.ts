@@ -1,5 +1,15 @@
 export type NotebookFilter = "mine" | "all" | "public";
 
+export const FEATURED_PUBLIC_DEMO_IDS = [
+  "EH5jx5qPabU_p0",
+  "BV1GofdBZEW7_p0",
+  "claudecode",
+] as const;
+
+export type FeaturedPublicDemoId = (typeof FEATURED_PUBLIC_DEMO_IDS)[number];
+
+export const DEFAULT_PUBLIC_DEMO_ID: FeaturedPublicDemoId = FEATURED_PUBLIC_DEMO_IDS[0];
+
 export const NOTEBOOK_FILTERS: { key: NotebookFilter; label: string }[] = [
   { key: "mine", label: "我的笔记" },
   { key: "all", label: "全部" },
@@ -19,6 +29,33 @@ export function getVisibleNotebookFilters(user: { id: string } | null) {
 
 export function shouldAllowPublicCatalog(filter: NotebookFilter) {
   return filter === "public";
+}
+
+export function isFeaturedPublicDemo(value: string) {
+  return FEATURED_PUBLIC_DEMO_IDS.includes(value as FeaturedPublicDemoId);
+}
+
+export function parsePublicDemo(value: string | null): FeaturedPublicDemoId {
+  if (value && isFeaturedPublicDemo(value)) return value as FeaturedPublicDemoId;
+  return DEFAULT_PUBLIC_DEMO_ID;
+}
+
+export function getPublicDemoRank(value: string) {
+  const index = FEATURED_PUBLIC_DEMO_IDS.indexOf(value as FeaturedPublicDemoId);
+  return index === -1 ? Number.POSITIVE_INFINITY : index;
+}
+
+export function getFeaturedPublicDemoItems<T extends { id: string }>(
+  items: T[],
+  selectedDemoId: FeaturedPublicDemoId,
+) {
+  return items
+    .filter((item) => isFeaturedPublicDemo(item.id))
+    .sort((a, b) => {
+      if (a.id === selectedDemoId) return -1;
+      if (b.id === selectedDemoId) return 1;
+      return getPublicDemoRank(a.id) - getPublicDemoRank(b.id);
+    });
 }
 
 export function canCreateNotebook(user: { id: string } | null) {

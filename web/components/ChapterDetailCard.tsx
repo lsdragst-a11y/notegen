@@ -10,7 +10,7 @@ interface Props {
   currentIdx: number;
   currentTime: number;
   summary: Chunk[];
-  onSeek: (sec: number) => void;
+  onSeek: (sec: number, sourceElement?: HTMLElement | null) => void;
 }
 
 const CHAPTER_COLORS = ["#0a84ff", "#bf5af2", "#30d158", "#ff9f0a", "#ff375f", "#5e5ce6"];
@@ -78,8 +78,8 @@ export default function ChapterDetailCard({
 
   return (
     <div
-      className="hidden lg:block rounded-[18px] border border-[var(--border)]
-                 bg-[var(--bg-elevated)] shadow-[var(--shadow-md)] p-5"
+      className="hidden rounded-[var(--wf-radius-md)] border border-[var(--wf-border)]
+                 bg-[var(--wf-surface)] p-5 shadow-[var(--wf-shadow-sm)] lg:block"
     >
       <AnimatePresence mode="wait">
         <motion.div
@@ -99,12 +99,12 @@ export default function ChapterDetailCard({
               {currentIdx + 1}
             </span>
             <div className="min-w-0 flex-1">
-              <div className="text-[10px] text-[var(--fg-tertiary)] uppercase tracking-[0.08em]
+              <div className="text-[10px] text-[var(--wf-text-tertiary)] uppercase tracking-[0.08em]
                               inline-flex items-center gap-1">
                 <Radio size={9} className="animate-pulse" style={{ color }} />
                 {lang === "en" ? "Now Playing" : "正在播放"}
               </div>
-              <div className="text-[15px] font-semibold leading-snug text-[var(--fg)] line-clamp-2">
+              <div className="text-[15px] font-semibold leading-snug text-[var(--wf-text)] line-clamp-2">
                 {title}
               </div>
             </div>
@@ -112,7 +112,7 @@ export default function ChapterDetailCard({
 
           {/* 摘要 */}
           {abstract && (
-            <p className="mt-3.5 text-[12.5px] leading-relaxed text-[var(--fg-secondary)] line-clamp-4">
+            <p className="mt-3.5 text-[12.5px] leading-relaxed text-[var(--wf-text-secondary)] line-clamp-4">
               {abstract}
             </p>
           )}
@@ -120,12 +120,12 @@ export default function ChapterDetailCard({
           {/* 章节内进度 */}
           <div className="mt-4">
             <div className="flex items-center justify-between text-[10.5px]
-                            text-[var(--fg-tertiary)] tabular-nums mb-1.5">
+                            text-[var(--wf-text-tertiary)] tabular-nums mb-1.5">
               <span>{formatTime(elapsed)}</span>
               <span>{Math.round(progress * 100)}%</span>
               <span>{formatTime(dur)}</span>
             </div>
-            <div className="h-1 rounded-full bg-[var(--bg-muted)] overflow-hidden">
+            <div className="h-1 rounded-full bg-[var(--wf-surface-muted)] overflow-hidden">
               <motion.div
                 className="h-full"
                 style={{ background: color }}
@@ -142,7 +142,7 @@ export default function ChapterDetailCard({
               {kws.map((k, i) => (
                 <span
                   key={`${k}-${i}`}
-                  className="tag-chip !text-[11px] !py-0.5 !px-2"
+                  className="rounded-[var(--wf-radius-full)] border border-[var(--wf-border)] bg-[var(--wf-surface-muted)] px-2 py-0.5 text-[11px] font-medium text-[var(--wf-text-secondary)]"
                 >
                   {k}
                 </span>
@@ -151,24 +151,24 @@ export default function ChapterDetailCard({
           )}
 
           {/* prev / next */}
-          <div className="mt-4 pt-3.5 border-t border-[var(--border)] grid grid-cols-2 gap-2">
+          <div className="mt-4 grid grid-cols-2 gap-2 border-t border-[var(--wf-border)] pt-3.5">
             <motion.button
-              onClick={() => hasPrev && onSeek(chapters[currentIdx - 1].start)}
+              onClick={(event) => hasPrev && onSeek(chapters[currentIdx - 1].start, event.currentTarget)}
               disabled={!hasPrev}
               whileTap={hasPrev ? { scale: 0.97 } : undefined}
               className="group inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl
-                         text-[11.5px] text-[var(--fg-secondary)] hover:text-[var(--fg)]
-                         bg-[var(--bg-muted)] hover:bg-[var(--bg)]
-                         border border-[var(--border)]
+                         text-[11.5px] text-[var(--wf-text-secondary)] hover:text-[var(--wf-text)]
+                         bg-[var(--wf-surface-muted)] hover:bg-[var(--wf-surface)]
+                         border border-[var(--wf-border)]
                          transition-colors disabled:opacity-35 disabled:cursor-not-allowed
-                         disabled:hover:bg-[var(--bg-muted)] min-w-0"
+                         disabled:hover:bg-[var(--wf-surface-muted)] min-w-0"
             >
               <ChevronLeft
                 size={13}
                 className="shrink-0 transition-transform group-enabled:group-hover:-translate-x-0.5"
               />
               <span className="flex-1 min-w-0 text-left">
-                <span className="block text-[9.5px] text-[var(--fg-tertiary)] uppercase tracking-wider leading-none">
+                <span className="block text-[9.5px] text-[var(--wf-text-tertiary)] uppercase tracking-wider leading-none">
                   {lang === "en" ? "Prev" : "上一章"}
                 </span>
                 <span className="block truncate font-medium mt-0.5">
@@ -178,18 +178,18 @@ export default function ChapterDetailCard({
             </motion.button>
 
             <motion.button
-              onClick={() => hasNext && onSeek(chapters[currentIdx + 1].start)}
+              onClick={(event) => hasNext && onSeek(chapters[currentIdx + 1].start, event.currentTarget)}
               disabled={!hasNext}
               whileTap={hasNext ? { scale: 0.97 } : undefined}
               className="group inline-flex items-center gap-1.5 px-2.5 py-2 rounded-xl
-                         text-[11.5px] text-[var(--fg-secondary)] hover:text-[var(--fg)]
-                         bg-[var(--bg-muted)] hover:bg-[var(--bg)]
-                         border border-[var(--border)]
+                         text-[11.5px] text-[var(--wf-text-secondary)] hover:text-[var(--wf-text)]
+                         bg-[var(--wf-surface-muted)] hover:bg-[var(--wf-surface)]
+                         border border-[var(--wf-border)]
                          transition-colors disabled:opacity-35 disabled:cursor-not-allowed
-                         disabled:hover:bg-[var(--bg-muted)] min-w-0"
+                         disabled:hover:bg-[var(--wf-surface-muted)] min-w-0"
             >
               <span className="flex-1 min-w-0 text-right">
-                <span className="block text-[9.5px] text-[var(--fg-tertiary)] uppercase tracking-wider leading-none">
+                <span className="block text-[9.5px] text-[var(--wf-text-tertiary)] uppercase tracking-wider leading-none">
                   {lang === "en" ? "Next" : "下一章"}
                 </span>
                 <span className="block truncate font-medium mt-0.5">

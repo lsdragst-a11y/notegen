@@ -9,7 +9,7 @@ interface Props {
   chapters: Chapter[];
   currentIdx: number;
   currentTime: number;
-  onSeek: (sec: number) => void;
+  onSeek: (sec: number, sourceElement?: HTMLElement | null) => void;
 }
 
 const CHAPTER_COLORS = ["#0a84ff", "#bf5af2", "#30d158", "#ff9f0a", "#ff375f", "#5e5ce6"];
@@ -40,19 +40,19 @@ export default function ChapterNav({ chapters, currentIdx, currentTime, onSeek }
           <motion.button
             key={i}
             ref={active ? activeRef : undefined}
-            onClick={() => onSeek(ch.start)}
+            onClick={(event) => onSeek(ch.start, event.currentTarget)}
             aria-current={active ? "true" : undefined}
             whileTap={{ scale: 0.97 }}
             whileHover={{ y: -1 }}
             className={`relative shrink-0 flex min-h-11 items-center gap-2 pl-2 pr-3 py-2 rounded-2xl text-xs
                         border transition-colors overflow-hidden
                         ${active
-                          ? "border-[var(--accent)] bg-[var(--bg-elevated)] text-[var(--fg)] shadow-[var(--shadow-sm)]"
-                          : "border-[var(--border)] bg-[var(--bg-elevated)] text-[var(--fg-secondary)] hover:text-[var(--fg)]"}`}
+                          ? "border-[var(--wf-accent)] bg-[var(--wf-surface)] text-[var(--wf-text)] shadow-[var(--wf-shadow-sm)]"
+                          : "border-[var(--wf-border)] bg-[var(--wf-surface)] text-[var(--wf-text-secondary)] hover:text-[var(--wf-text)]"}`}
           >
             {active && (
               <div
-                className="absolute bottom-0 left-0 h-0.5 bg-[var(--accent)] transition-[width] duration-150"
+                className="absolute bottom-0 left-0 h-0.5 bg-[var(--wf-accent)] transition-[width] duration-150"
                 style={{ width: `${progress * 100}%` }}
               />
             )}

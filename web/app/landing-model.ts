@@ -3,7 +3,7 @@ export const CINEMATIC_BEATS = [
     id: "import",
     timecode: "00:00",
     title: "镜头一：导入视频",
-    copy: "把课程、讲座或教程拖入 NoteGen，系统先建立来源和时间轴。",
+    copy: "课程、讲座或教程进入 NoteGen，系统先建立来源、时长和时间轴。",
   },
   {
     id: "timeline",
@@ -19,7 +19,7 @@ export const CINEMATIC_BEATS = [
   },
   {
     id: "ask",
-    timecode: "12:06",
+    timecode: "12:18",
     title: "镜头四：带引用追问",
     copy: "围绕视频继续提问，答案回到对应片段，而不是脱离原始内容。",
   },
