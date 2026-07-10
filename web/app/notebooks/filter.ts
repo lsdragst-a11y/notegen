@@ -45,6 +45,19 @@ export function getPublicDemoRank(value: string) {
   return index === -1 ? Number.POSITIVE_INFINITY : index;
 }
 
+export function getFeaturedPublicDemoItems<T extends { id: string }>(
+  items: T[],
+  selectedDemoId: FeaturedPublicDemoId,
+) {
+  return items
+    .filter((item) => isFeaturedPublicDemo(item.id))
+    .sort((a, b) => {
+      if (a.id === selectedDemoId) return -1;
+      if (b.id === selectedDemoId) return 1;
+      return getPublicDemoRank(a.id) - getPublicDemoRank(b.id);
+    });
+}
+
 export function canCreateNotebook(user: { id: string } | null) {
   return Boolean(user);
 }

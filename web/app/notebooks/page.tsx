@@ -33,10 +33,10 @@ import { fetchCatalog, formatDuration } from "@/lib/notes";
 import type { CatalogItem, HistoryItem, NoteView } from "@/lib/types";
 import {
   canCreateNotebook,
+  getFeaturedPublicDemoItems,
   getPublicDemoRank,
   getVisibleNotebookFilters,
   getNotebookHeroCopy,
-  isFeaturedPublicDemo,
   parseNotebookFilter,
   parsePublicDemo,
   shouldAllowPublicCatalog,
@@ -358,13 +358,7 @@ function NotebooksInner({
   }, [mineCards, pub]);
 
   const featuredPublicItems = useMemo(() => {
-    return publicCards
-      .filter((item) => isFeaturedPublicDemo(item.id))
-      .sort((a, b) => {
-        if (a.id === initialDemoId) return -1;
-        if (b.id === initialDemoId) return 1;
-        return getPublicDemoRank(a.id) - getPublicDemoRank(b.id);
-      });
+    return getFeaturedPublicDemoItems(publicCards, initialDemoId);
   }, [initialDemoId, publicCards]);
 
   const items: CardItem[] = useMemo(() => {

@@ -438,9 +438,15 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
        : sourceUrl.includes("youtu") ? "YouTube"
        : (lang === "en" ? "Web link" : "网页链接"))
     : (lang === "en" ? "Local file" : "本地上传");
+  const evidenceChapterLabel = evidenceStatus && bundle.chapters[currentChapter]
+    ? pickByLang(bundle.chapters[currentChapter], "title", lang)
+    : "";
 
   return (
-    <main className="flex min-h-screen flex-col bg-[var(--wf-canvas)] pb-24 text-[var(--wf-text)] lg:h-screen lg:overflow-hidden lg:pb-0">
+    <main
+      data-evidence-active={evidenceStatus ? "true" : undefined}
+      className="flex min-h-screen flex-col bg-[var(--wf-canvas)] pb-24 text-[var(--wf-text)] lg:h-screen lg:overflow-hidden lg:pb-0"
+    >
       <NavBar>
         <div className="flex items-center gap-2 min-w-0">
           <Link href={backHref}
@@ -508,6 +514,24 @@ export default function NoteWorkspace({ noteId, bundle, backHref, shared = false
 
         {/* 中栏：笔记内容 + 问答 */}
         <div className="order-2 min-w-0 px-5 pt-5 lg:order-none lg:overflow-y-auto lg:px-8 lg:py-6">
+          {evidenceStatus ? (
+            <div
+              role="status"
+              aria-live="polite"
+              data-testid="workspace-body-evidence-status"
+              className="mb-3 rounded-[var(--wf-radius-sm)] border border-[var(--wf-border)] bg-[var(--wf-surface)] px-3 py-2 text-xs text-[var(--wf-text-secondary)] shadow-[var(--wf-shadow-sm)]"
+            >
+              <span className="mr-2 font-semibold tabular-nums text-[var(--wf-accent)]">
+                {formatTime(evidenceStatus.time)}
+              </span>
+              {lang === "en" ? "Notes aligned to evidence" : "正文已对齐到证据片段"}
+              {evidenceChapterLabel ? (
+                <span className="ml-2 text-[var(--wf-text-tertiary)]">
+                  {lang === "en" ? "Chapter" : "章节"} · {evidenceChapterLabel}
+                </span>
+              ) : null}
+            </div>
+          ) : null}
           <NotesContent
             keyframeBase={bundle.keyframeBase}
             noteId={noteId}

@@ -617,7 +617,44 @@
 }
 
 @media (max-width: 767px) {
+  .wf-auth-workbench {
+    padding-top: 0.5rem;
+  }
+
+  .wf-auth-desk-layers {
+    display: none;
+  }
+
+  .wf-auth-stage {
+    min-height: auto;
+    gap: 0.75rem;
+  }
+
+  .wf-account-companion {
+    min-height: auto;
+    padding: 1rem 1rem 0;
+  }
+
+  .wf-account-companion > .relative {
+    min-height: auto;
+    gap: 0.85rem;
+  }
+
+  .wf-account-companion h2 {
+    margin-top: 0.65rem;
+    max-width: 18rem;
+    font-size: 1.72rem;
+    line-height: 1.04;
+  }
+
+  .wf-account-companion > .relative > div:first-child > p:first-child,
+  .wf-account-companion h2 + p {
+    display: none;
+  }
+
   .wf-auth-workbench-preview {
+    gap: 0.65rem;
+    margin-top: 0.35rem;
     min-height: 0;
   }
 
@@ -627,26 +664,71 @@
   }
 
   .wf-auth-video-strip__frame {
-    min-height: 3.75rem;
+    min-height: 3.15rem;
+  }
+
+  .wf-auth-timeline-beam {
+    min-height: 3.6rem;
+    padding-top: 0.55rem;
+  }
+
+  .wf-auth-timecode__label {
+    display: none;
   }
 
   .wf-auth-workbench-preview__workspace {
-    grid-template-columns: 1fr;
-    gap: 0.95rem;
+    display: block;
+    min-height: 0;
   }
 
-  .wf-auth-evidence-card::before {
-    left: 1rem;
-    top: -0.75rem;
-    width: 1px;
-    height: 0.75rem;
+  .wf-auth-note-sheet-preview {
+    min-height: 8.9rem;
+    padding: 0.8rem 0.9rem;
   }
 
+  .wf-auth-note-sheet-preview h3 {
+    margin-top: 0.55rem;
+    max-width: 13rem;
+    font-size: 1.15rem;
+  }
+
+  .wf-auth-note-sheet-preview__body {
+    margin-top: 0.45rem;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    line-height: 1.35;
+  }
+
+  .wf-auth-note-sheet-preview__body p {
+    display: none;
+  }
+
+  .wf-auth-note-sheet-preview__body li {
+    grid-template-columns: 2.8rem 1fr;
+    gap: 0.45rem;
+  }
+
+  .wf-auth-note-sheet-preview__bookmark {
+    right: 0.85rem;
+    bottom: 0.85rem;
+    min-height: 2rem;
+  }
+
+  .wf-auth-time-pill {
+    display: none !important;
+  }
+
+  .wf-auth-form-card {
+    padding: 1rem;
+  }
+
+  .wf-auth-form-card h1 + p {
+    display: none;
+  }
+
+  .wf-auth-evidence-card,
   .wf-account-paper-mascot {
-    right: 0.9rem;
-    bottom: -0.9rem;
-    width: 2.75rem;
-    height: 3.35rem;
+    display: none;
   }
 }
 
